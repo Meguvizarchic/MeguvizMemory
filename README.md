@@ -1,4 +1,33 @@
+<div align="center">
+
+<img src="docs/brand/MeguvizMemory.svg" width="96" height="96" alt="MeguvizMemory">
+
 # MeguvizMemory
+
+**显式 CPU 内存域、有界 arena 与所有权 / 借用合同库**
+
+System provider · mgmem ABI · 受控字节 lease
+
+<br>
+
+[![Language](https://img.shields.io/badge/lang-Python-DEA584?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory)
+[![Issues](https://img.shields.io/github/issues/Meguvizarchic/MeguvizMemory?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory/issues)
+
+[构建和安装](#构建和安装) · [所有权与关闭](#所有权与关闭)
+
+</div>
+
+---
+
+<details>
+<summary><b>目录</b></summary>
+
+- [构建和安装](#构建和安装)
+- [所有权与关闭](#所有权与关闭)
+
+</details>
+
+---
 
 显式 CPU 内存域、System provider、有界 arena 和可验证的所有权/借用合同。当前版本为 **0.2.0 功能工程预览**，核心原生接口使用 `mgmem_*_v1` / ABI 1.1，压力适配另提供可选的 v2 接口。独立于 BIL、Xposed、GPU 后端及 Android UI；不接管进程全局 allocator。
 
