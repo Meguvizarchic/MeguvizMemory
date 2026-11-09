@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_INTRUSIVE_BACKING_SOURCE_REVIEW",
+  "baseline_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "baseline_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "candidate_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "candidate_tests_sha256": "ea93ed8c4aa1ebbb2356654d29bacc7ad625b1522c30ff467eae1ffbceff9f0d",
+  "supersedes_candidate_source_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "previous_candidate_measurements_inherited": false,
+  "blockers": [],
+  "reviewed_regions": [
+    {
+      "area": "C++17 allocation and object lifetime",
+      "result": "PASS",
+      "detail": "BackingList::emplace_back constructs an ordinary complete Backing with new before append. erase unlinks then delete; list destruction deletes only Backing metadata. Links are ordinary typed pointers. There is no pointer tagging, offset arithmetic, type punning or dependency on later implicit-lifetime language rules."
+    },
+    {
+      "area": "Ownership and stable addresses",
+      "result": "PASS",
+      "detail": "Container owns complete Backing objects and is noncopyable/nonmovable. Iterator holds only Backing*. append, unlink, splice_one and splice_all never relocate an object. Both runtime creation sites use emplace_back and last; the former external list node and self-iterator are removed."
+    },
+    {
+      "area": "Link and head/tail invariants",
+      "result": "PASS",
+      "detail": "append sets previous to old tail and next to null, reconnects tail or initializes head. unlink fixes both neighbor directions and both endpoint cases, then clears removed links. splice_all joins ordered chains, fixes new boundary and clears source head/tail; empty source and self-splice return. All mutation sites serialize through domain mutex or an exclusively owned detached local list."
+    },
+    {
+      "area": "Allocation failure atomicity",
+      "result": "PASS_BY_SOURCE",
+      "detail": "Node allocation/construction completes before existing links change. AllocationTable insertion failure erases the newly appended Backing before rethrow. Claim reservation/claim failure erases owner placeholder then the new Backing. No budget/provider admission occurs until these stages succeed. A new scalar-allocation fault seam has not been executed by this review."
+    },
+    {
+      "area": "Provider/import callback unlock windows",
+      "result": "PASS",
+      "detail": "Pending owner and Backing remain in domain list before unlock. Pending counter prevents quiet reset/trim/collect. During concurrent inserts/deletes the Backing pointer stays stable. After relock owner publication re-finds by exact ID; no Allocation slot pointer is carried across callback."
+    },
+    {
+      "area": "Standalone release detachment",
+      "result": "PASS",
+      "detail": "Valid owner or final lease under domain mutex identifies the sole Backing. Its owner record is consumed, then splice_one removes node from domain list before callback unlock. Detached local list owns node until callback and accounting reconciliation finish, including failure. No empty-list sentinel allocation or lookup scan occurs."
+    },
+    {
+      "area": "Bulk reclaim and callback reentrancy",
+      "result": "PASS",
+      "detail": "Quiet-only reclaim_all detaches the complete ordered chain, leaving domain head and tail null. maintenance and pending are set before unlock. Reentrant allocation/reset/trim/drain cannot reclaim the detached storage. It retains each metadata node until all callbacks finish and reconciliation locks again."
+    },
+    {
+      "area": "Rollback copies and uncertain ownership",
+      "result": "PASS",
+      "detail": "Rollback copies may contain previous/next values but are plain detached values, not linked objects. Only deallocate_backing or drop_claim consumes the local copy; neither reads or mutates previous/next. Backing destructor has no auto-unlink, provider callback or implicit claim removal. Uncertain retain/alias/deallocation paths continue charging and quarantine without replay."
+    },
+    {
+      "area": "Arena first-fit and cached cursor",
+      "result": "PASS",
+      "detail": "Insertion order is preserved. Erase/detach/reset and pending publication keep prior invalidations. End remains a null iterator; successful pending publication invalidates cached end/lower bound before future use. No scan is replaced with weaker size/alignment assumptions."
+    },
+    {
+      "area": "Inherited lazy-table and notification changes",
+      "result": "PASS_BY_SOURCE",
+      "detail": "8628 retains bounded scalar capacity prediction, explicit placement-new Record activation and lock-protected OPEN-notify elision from 9aca. Their earlier proof obligations were rechecked in the same source; this is not inheritance of any 9aca performance or validation result."
+    },
+    {
+      "area": "Independent vector oracle test review",
+      "result": "PASS_BY_SOURCE",
+      "detail": "check_backing_list compares stable node identity and original payload against a separate vector order, both previous/next neighbors, begin/end, empty, front and last. Test covers fresh empty, empty/self whole-splice, eight appends, four head/middle/tail single transfers, endpoint erase, nonempty whole-splice, repeated middle erases through singleton, empty-target transfer and live nodes at destruction. Saved iterator is not read after its node is deleted. No scalar Backing allocation OOM injector is claimed."
+    }
+  ],
+  "primary_references": [
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "use": "Conceptual intrusive links and explicit object lifetime, no imported implementation."
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/auto_unlink_hooks.html",
+      "use": "Avoid destructor unlinking that silently modifies shared list state."
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/erasing_and_disposing.html",
+      "use": "Keep unlinking, metadata disposal and provider resource cleanup explicit."
+    }
+  ],
+  "material_costs_and_limits": [
+    "Backing now contains two pointer links; actual Backing sizeof alone cannot be compared with the former list value without including former external list-node/header allocations.",
+    "Global RangeClaim registry remains std::list and its own allocations/scans remain. This change does not imply whole API zero allocation.",
+    "Fresh one-shot metadata-table growth remains, and capacity hints may amplify a later second-record request to128 slots.",
+    "No source-review claim proves a runtime speedup, allocator usable size, RSS, energy, device behavior or global algorithmic optimality.",
+    "This review starts no compiler, benchmark, test executable or device command. New candidate requires its own complete validation and performance round."
+  ],
+  "test_suite_expected": {
+    "tests": 11,
+    "injected_array_failures": 6,
+    "checks": "DYNAMIC_FROM_EXECUTION_NOT_CLAIMED_HERE"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "scope": "Immutable count reports keep their original internal basenames; these aliases map them to the public flat filenames per round. No count values or compressed bytes are changed.",
+  "rounds": {
+    "prototype": {
+      "heap-events.public.json": "prototype-heap-events.json",
+      "heap-counts-full.public.json.gz": "prototype-heap-full.json.gz",
+      "index.json": "prototype-heap-index.json"
+    },
+    "final": {
+      "heap-events.public.json": "final-heap-events.json",
+      "heap-counts-full.public.json.gz": "final-heap-full.json.gz",
+      "index.json": "final-heap-index.json"
+    }
+  }
+}

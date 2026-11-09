@@ -4,9 +4,11 @@
 #include <mgmem/mgmem.h>
 
 #include <atomic>
+#include <cstddef>
 #include <exception>
 #include <memory>
 #include <new>
+#include <type_traits>
 #include <utility>
 
 /* Optional, header-only C++17 ownership adapter. No global allocator replacement.
@@ -267,6 +269,38 @@ public:
         out.handle_ = handle;
         out.bytes_ = bytes;
         return MGMEM_OK;
+    }
+
+    // Synchronous uninitialized workspace, with one WRITE borrow for the body.
+    // The body receives (void *, uint64_t), and returns void or mgmem_status.
+    // It runs only after allocation and borrow succeed. Its status is returned;
+    // its exceptions propagate after the ordinary RAII cleanup below. Cleanup
+    // retains the same fail-stop contract as owned_allocation and borrow.
+    // Pointers must not escape the body or be queued for later asynchronous use.
+    // Arena storage remains retained until explicit reset/trim, as with allocate.
+    template<class Function>
+    mgmem_status with_allocation(uint64_t bytes, uint64_t alignment, Function &&body) const {
+        using result = std::invoke_result_t<Function, void *, uint64_t>;
+        static_assert(std::is_same<result, void>::value ||
+                      std::is_same<result, mgmem_status>::value,
+                      "Workspace body must return void or mgmem_status");
+        owned_allocation allocation;
+        const auto allocated = allocate(bytes, alignment, allocation);
+        if (allocated != MGMEM_OK) return allocated;
+        borrow view;
+        const auto acquired = allocation.acquire_borrow(0, bytes, MGMEM_WRITE, view);
+        if (acquired != MGMEM_OK) return acquired;
+        if constexpr (std::is_same<result, void>::value) {
+            std::forward<Function>(body)(view.write_data(), view.size_bytes());
+            return MGMEM_OK;
+        } else {
+            return std::forward<Function>(body)(view.write_data(), view.size_bytes());
+        }
+    }
+
+    template<class Function>
+    mgmem_status with_allocation(uint64_t bytes, Function &&body) const {
+        return with_allocation(bytes, alignof(std::max_align_t), std::forward<Function>(body));
     }
 
     mgmem_status import_external(const mgmem_external_buffer_v1 &buffer, owned_allocation &out) const noexcept {

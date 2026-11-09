@@ -1,0 +1,57 @@
+{
+  "state": "PASS_INSTALLED_CPP17_SCOPED_API_CONSUMER",
+  "suite": {
+    "suite": "mgmem-cpp-raii",
+    "cases": 8,
+    "status": "PASS"
+  },
+  "installed_include_rows": [
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)",
+    "@WORKSPACE@\\build\\arena-next-20261109\\candidate-install\\include;%(AdditionalIncludeDirectories)"
+  ],
+  "repo_include_used": false,
+  "installed_and_loaded_dll_bytes_equal": true,
+  "source_snapshot_matches_frozen_test": true,
+  "files": {
+    "build/arena-next-20261109/installed-cpp/mgmem_installed_cpp_consumer.vcxproj": {
+      "bytes": 95504,
+      "sha256": "982d7cc5f2f89d2f6e28b7cb32504b174240991d62561e530281f52497b80863"
+    },
+    "build/arena-next-20261109/installed-cpp/Testing/Temporary/LastTest.log": {
+      "bytes": 942,
+      "sha256": "1b2544bbcff6934600b9a27fb266955578ba33974a83d4d8c9bb47ff5f76325a"
+    },
+    "build/arena-next-20261109/installed-cpp-source/CMakeLists.txt": {
+      "bytes": 1029,
+      "sha256": "46922d262dfb811a880c178a3397dc6d4203fac692cfbcc4307ed146600f4c32"
+    },
+    "build/arena-next-20261109/installed-cpp-source/cpp_consumer.cpp": {
+      "bytes": 13091,
+      "sha256": "ae4115e4c8a122188f0a9d5f74278d22302a49e2c3cc91f5ae3a926e1432641f"
+    },
+    "build/arena-next-20261109/installed-cpp/Release/mgmem_installed_cpp_consumer.exe": {
+      "bytes": 43008,
+      "sha256": "d76cb8bcfc2b4b501cc86e2a18324dce0e313b0edd6ea9caadb96ef6a7158875"
+    },
+    "build/arena-next-20261109/candidate-install/include/mgmem/memory.hpp": {
+      "bytes": 17510,
+      "sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16"
+    },
+    "build/arena-next-20261109/candidate-install/bin/mgmem.dll": {
+      "bytes": 40448,
+      "sha256": "6f582cff47a0f6d10d07864dfa400bb2be9c0d9f7926996513254c72e0a9d3b4"
+    },
+    "build/arena-next-20261109/verify_installed_cpp.py": {
+      "bytes": 2356,
+      "sha256": "04495fa6101def8dafb7846ce233081377321323a73408ceb920ddb2f2ea84aa"
+    }
+  },
+  "device_executed": false,
+  "performance_qualified": false
+}

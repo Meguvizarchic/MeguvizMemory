@@ -1,0 +1,28 @@
+{
+  "state": "PASS_PUBLIC_HEAP_DELIVERY_FINAL",
+  "count_receipt_state": "PASS_REAL_ARRAY_AND_NODE_COUNTS_AND_LAYOUT",
+  "candidate_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "baseline_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "count_only_processes": 52,
+  "layout_processes": 4,
+  "files": {
+    "heap-events.public.json": {
+      "bytes": 1564952,
+      "sha256": "1c36d5ac0047723e5a359ed052760167289311cbf8ab1606a9f234e94d3b2390"
+    },
+    "heap-counts-full.public.json.gz": {
+      "bytes": 75883,
+      "sha256": "952645c76a17d61795bc1f3bc2d285b9ee73443e01936b3de1d67e9cf71d920c"
+    },
+    "index.json": {
+      "bytes": 693,
+      "sha256": "6fe4a61294c4fa1016998b0ce99cc1311865c1875983259bbac01c4cb034753e"
+    },
+    "scope-decisions.public.json": {
+      "bytes": 1063,
+      "sha256": "6711ebce27225dbd4a3561b32ce40e86a2c892f978f0a354ef48c0f8341ee52d"
+    }
+  },
+  "private_receipt_sha256": "935246c3bdd1aac9d550626ed19732f2bde995d1db64f6ffa95855c98309bc16",
+  "private_summary_sha256": "e42e6e844fd971f72828f9dbbb14708bba5cf215aab7703a35481923f320f1d9"
+}

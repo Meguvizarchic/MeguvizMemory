@@ -201,6 +201,74 @@ void test_empty_and_invalid_wrappers() {
     CHECK(domain.reset() == MGMEM_OK && domain.trim() == MGMEM_OK);
     CHECK(mgmem::domain::create(options(MGMEM_SYSTEM), domain) == MGMEM_INVALID_ARGUMENT);
 }
+
+void test_scoped_allocation(uint32_t mode) {
+    mgmem::domain domain;
+    unsigned calls = 0;
+    auto body = [&](void *data, uint64_t bytes) {
+        ++calls;
+        CHECK(data && bytes == 64);
+        CHECK((reinterpret_cast<uintptr_t>(data) & (alignof(std::max_align_t) - 1)) == 0);
+        std::memset(data, 0x7b, static_cast<size_t>(bytes));
+        mgmem_snapshot_v1 state{};
+        CHECK(domain.snapshot(state) == MGMEM_OK);
+        CHECK(state.active_allocations == 1 && state.active_leases == 1 && state.live_bytes == bytes);
+        CHECK(domain.reset() == (mode == MGMEM_ARENA ? MGMEM_BUSY : MGMEM_UNSUPPORTED));
+    };
+    CHECK(domain.with_allocation(64, body) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    auto config = options(mode);
+    config.budget_bytes = 1024;
+    CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
+    CHECK(domain.with_allocation(64, body) == MGMEM_OK && calls == 1);
+    mgmem_snapshot_v1 state{};
+    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
+    CHECK(domain.with_allocation(0, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
+    CHECK(domain.with_allocation(64, 3, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
+    CHECK(domain.with_allocation(2048, body) == MGMEM_OUT_OF_BUDGET && calls == 1);
+    CHECK(domain.with_allocation(64, 64, [&](void *data, uint64_t bytes) -> mgmem_status {
+        ++calls;
+        CHECK(data && bytes == 64 && (reinterpret_cast<uintptr_t>(data) & 63) == 0);
+        return MGMEM_BUSY;
+    }) == MGMEM_BUSY && calls == 2);
+    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
+
+    struct CallbackError {} marker;
+    bool caught = false;
+    try {
+        (void)domain.with_allocation(32, [&](void *data, uint64_t bytes) {
+            CHECK(data && bytes == 32);
+            throw &marker;
+        });
+    } catch (CallbackError *error) {
+        caught = error == &marker;
+    }
+    CHECK(caught);
+    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
+    CHECK(domain.with_allocation(32, [&](void *outer, uint64_t) -> mgmem_status {
+        return domain.with_allocation(32, [&](void *inner, uint64_t bytes) {
+            CHECK(inner != outer && bytes == 32);
+            CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 2 && state.active_leases == 2);
+        });
+    }) == MGMEM_OK);
+    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
+    if (mode == MGMEM_ARENA) CHECK(domain.reset() == MGMEM_OK);
+    CHECK(domain.begin_close() == MGMEM_OK);
+    CHECK(domain.with_allocation(64, body) == MGMEM_IS_CLOSED && calls == 2);
+}
+
+void test_scoped_allocation_keeps_domain_alive() {
+    Provider provider;
+    auto table = provider.table();
+    mgmem::domain domain;
+    CHECK(mgmem::domain::create(options(MGMEM_SYSTEM, &table), domain) == MGMEM_OK);
+    CHECK(domain.with_allocation(128, 64, [&](void *data, uint64_t bytes) {
+        // The scoped owner/borrow hold the native domain through callback return.
+        domain = mgmem::domain{};
+        CHECK(!domain && provider.released == 0 && provider.deallocated == 0);
+        std::memset(data, 0x5c, static_cast<size_t>(bytes));
+    }) == MGMEM_OK);
+    CHECK(provider.allocated == 1 && provider.deallocated == 1 && provider.released == 1);
+}
 } // namespace
 
 static_assert(!std::is_copy_constructible<mgmem::domain>::value, "domain must be move-only");
@@ -218,6 +286,9 @@ int main() {
     test_allocation_outlives_domain();
     test_budget_failure_preserves_old_data();
     test_empty_and_invalid_wrappers();
-    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":5,\"status\":\"PASS\"}");
+    test_scoped_allocation(MGMEM_SYSTEM);
+    test_scoped_allocation(MGMEM_ARENA);
+    test_scoped_allocation_keeps_domain_alive();
+    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":8,\"status\":\"PASS\"}");
     return 0;
 }

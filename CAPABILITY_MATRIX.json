@@ -519,5 +519,25 @@
     "known_one_shot_and_tail_costs": "RETAINED_NOT_UNIVERSAL_NO_REGRESSION",
     "android": "ARM64_STATIC_ONLY",
     "performance_qualified": false
+  },
+  "adaptive_metadata_and_intrusive_backing_20261109": {
+    "state": "ADOPTED_INTRUSIVE_BACKING_AND_ADAPTIVE_METADATA_WITH_MEASURED_COSTS",
+    "evidence": "artifacts/adaptive-metadata-20261109/decision.json",
+    "base_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+    "selected_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "prototype_core_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+    "prototype_performance_processes": 0,
+    "new_performance_processes": 832,
+    "new_performance_pairs": 416,
+    "new_performance_groups": 58,
+    "host_core": "48_OF_48",
+    "host_cpp": "12_OF_12",
+    "host_asan": "48_OF_48",
+    "installed_cpp": "1_OF_1_8_CASES",
+    "heap_per_round": "52_ARENA_CASES_4_LAYOUTS",
+    "android": "7_ELF_3_REL_OBJECTS_STATIC_ONLY",
+    "all_reverse_results_retained": true,
+    "one_shot_and_shared_workflow_costs": "RECORDED_NOT_UNIVERSAL_NO_REGRESSION",
+    "performance_qualified": false
   }
 }

@@ -59,6 +59,9 @@ void assert_quarantine(mgmem::domain &domain, uint64_t expected_bytes) {
     CHECK(imports.poisoned == 1 && imports.external_backing_bytes == expected_bytes);
     mgmem::owned_allocation denied;
     CHECK(domain.allocate(1, 1, denied) == MGMEM_PROVIDER_ERROR && !denied);
+    unsigned scoped_calls = 0;
+    CHECK(domain.with_allocation(1, [&](void *, uint64_t) { ++scoped_calls; }) == MGMEM_PROVIDER_ERROR);
+    CHECK(scoped_calls == 0);
     CHECK(domain.set_budget(1) == MGMEM_PROVIDER_ERROR);
     CHECK(domain.begin_close() == MGMEM_OK);
     CHECK(domain.collect() == MGMEM_PROVIDER_ERROR);

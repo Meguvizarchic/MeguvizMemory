@@ -17,6 +17,7 @@ std::atomic<size_t> array_allocations{0};
 std::atomic<size_t> array_deallocations{0};
 std::atomic<size_t> live_arrays{0};
 std::atomic<size_t> failures{0};
+std::atomic<size_t> last_array_bytes{0};
 }
 
 // This executable owns its one-shot array-allocation failure seam. Scalar
@@ -24,6 +25,7 @@ std::atomic<size_t> failures{0};
 void *operator new[](std::size_t bytes) {
     using namespace lease_table_test_heap;
     array_attempts.fetch_add(1, std::memory_order_relaxed);
+    last_array_bytes.store(bytes, std::memory_order_relaxed);
     if (fail_next_array.exchange(false, std::memory_order_relaxed)) {
         failures.fetch_add(1, std::memory_order_relaxed);
         throw std::bad_alloc();
@@ -468,6 +470,199 @@ void test_c_api_owner_growth_oom_keeps_arena_cursor() {
     TABLE_CHECK(mgmem_domain_destroy_v1(domain) == MGMEM_OK);
     TABLE_CHECK(lease_table_test_heap::live_arrays.load() == original_live);
 }
+
+void check_prediction_record(const Lease &actual, const Lease &expected) {
+    TABLE_CHECK(actual.allocation == expected.allocation && actual.writer == expected.writer);
+}
+
+void check_prediction_record(const Allocation &actual, const Allocation &expected) {
+    TABLE_CHECK(actual.backing == expected.backing && actual.offset == expected.offset &&
+                actual.bytes == expected.bytes && actual.readers == expected.readers &&
+                actual.writer == expected.writer && actual.owner == expected.owner &&
+                actual.pending == expected.pending);
+}
+
+Allocation prediction_owner_value(uint64_t id) {
+    static Backing origin{};
+    return Allocation{&origin, id * 17, id + 31, id % 11,
+                      (id & 1) != 0, (id & 2) != 0, (id & 4) != 0};
+}
+
+template<class Table, class Record>
+void check_capacity_prediction(Record (*make_value)(uint64_t)) {
+    using namespace lease_table_test_heap;
+    Table table;
+    const auto original_live = live_arrays.load();
+    const auto slot_bytes = sizeof(*table.find(1));
+    const auto before_warm = array_attempts.load();
+    for (uint64_t index = 0; index < 64; ++index)
+        table.insert_fresh(100 + index, make_value(100 + index));
+    TABLE_CHECK(array_attempts.load() > before_warm + 1);
+    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
+    for (uint64_t index = 0; index < 64; ++index) {
+        const auto id = 100 + (index * 17) % 64;
+        auto *slot = table.find(id);
+        TABLE_CHECK(slot != nullptr);
+        check_prediction_record(slot->value, make_value(id));
+        table.erase_found(slot);
+    }
+    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
+
+    const auto before_inline = array_attempts.load();
+    table.insert_fresh(1000, make_value(1000));
+    TABLE_CHECK(table.size() == 1 && array_attempts.load() == before_inline);
+    TABLE_CHECK(live_arrays.load() == original_live);
+    const auto before_failure = failures.load();
+    fail_next_array.store(true);
+    bool threw = false;
+    try { table.insert_fresh(1001, make_value(1001)); }
+    catch (const std::bad_alloc &) { threw = true; }
+    TABLE_CHECK(threw && !fail_next_array.load() && failures.load() == before_failure + 1);
+    TABLE_CHECK(table.size() == 1 && table.find(1001) == nullptr);
+    TABLE_CHECK(live_arrays.load() == original_live);
+    auto *inline_slot = table.find(1000);
+    TABLE_CHECK(inline_slot != nullptr);
+    check_prediction_record(inline_slot->value, make_value(1000));
+
+    const auto before_predicted = array_attempts.load();
+    for (uint64_t index = 1; index < 64; ++index)
+        table.insert_fresh(1001 + index, make_value(1001 + index));
+    TABLE_CHECK(table.size() == 64 && array_attempts.load() == before_predicted + 1);
+    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
+    TABLE_CHECK(live_arrays.load() == original_live + 1);
+    table.erase(1000);
+    for (uint64_t index = 1; index < 64; ++index) {
+        const auto id = 1001 + index;
+        auto *slot = table.find(id);
+        TABLE_CHECK(slot != nullptr);
+        check_prediction_record(slot->value, make_value(id));
+        table.erase_found(slot);
+    }
+    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
+
+    table.release_storage();
+    const auto before_reset_growth = array_attempts.load();
+    table.insert_fresh(2000, make_value(2000));
+    table.insert_fresh(2001, make_value(2001));
+    TABLE_CHECK(array_attempts.load() == before_reset_growth + 1);
+    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 4);
+    table.erase(2001);
+    table.erase(2000);
+    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
+
+    // A larger historical phase must not dictate an unbounded later request.
+    for (uint64_t index = 0; index < 200; ++index)
+        table.insert_fresh(3000 + index, make_value(3000 + index));
+    TABLE_CHECK(last_array_bytes.load() > slot_bytes * 128);
+    for (uint64_t index = 0; index < 200; ++index) table.erase(3000 + index);
+    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
+    const auto before_bounded = array_attempts.load();
+    table.insert_fresh(4000, make_value(4000));
+    TABLE_CHECK(array_attempts.load() == before_bounded);
+    table.insert_fresh(4001, make_value(4001));
+    TABLE_CHECK(array_attempts.load() == before_bounded + 1);
+    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
+    auto *first_bounded = table.find(4000);
+    auto *second_bounded = table.find(4001);
+    TABLE_CHECK(first_bounded != nullptr && second_bounded != nullptr);
+    check_prediction_record(first_bounded->value, make_value(4000));
+    check_prediction_record(second_bounded->value, make_value(4001));
+    table.erase(4000);
+    table.erase(4001);
+    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
+}
+
+void test_lease_capacity_prediction_lifecycle() {
+    check_capacity_prediction<LeaseTable>(lease_value);
+}
+
+void test_owner_capacity_prediction_lifecycle() {
+    check_capacity_prediction<AllocationTable>(prediction_owner_value);
+}
+
+void check_backing_list(BackingList &list, const std::vector<Backing *> &expected) {
+    TABLE_CHECK(list.empty() == expected.empty());
+    TABLE_CHECK((list.begin() == list.end()) == expected.empty());
+    auto actual = list.begin();
+    for (size_t index = 0; index < expected.size(); ++index) {
+        TABLE_CHECK(actual != list.end());
+        TABLE_CHECK(&*actual == expected[index]);
+        TABLE_CHECK(actual->previous == (index ? expected[index - 1] : nullptr));
+        TABLE_CHECK(actual->next == (index + 1 < expected.size() ? expected[index + 1] : nullptr));
+        TABLE_CHECK(actual->bytes == 1000 + actual->used);
+        ++actual;
+    }
+    TABLE_CHECK(actual == list.end());
+    TABLE_CHECK(list.last().node == (expected.empty() ? nullptr : expected.back()));
+    if (!expected.empty()) TABLE_CHECK(&list.front() == expected.front());
+}
+
+void test_backing_list_identity_splice_and_erase() {
+    TABLE_CHECK(sizeof(BackingList) == 2 * sizeof(Backing *));
+    TABLE_CHECK(sizeof(BackingList::iterator) == sizeof(Backing *));
+    BackingList left, right;
+    std::vector<Backing *> first, second;
+    check_backing_list(left, first);
+    check_backing_list(right, second);
+    left.splice_all(right);
+    left.splice_all(left);
+    check_backing_list(left, first);
+    for (uint64_t index = 0; index < 8; ++index) {
+        left.emplace_back(Backing{nullptr, 1000 + index, 16, index});
+        first.push_back(left.last().node);
+        check_backing_list(left, first);
+    }
+    const auto stable = left.begin();
+    const std::array<size_t, 4> transfer{{3, 0, 7, 4}};
+    for (const auto value : transfer) {
+        const auto selected = std::find_if(first.begin(), first.end(), [&](Backing *node) {
+            return node->used == value;
+        });
+        TABLE_CHECK(selected != first.end());
+        Backing *node = *selected;
+        right.splice_one(left, node);
+        first.erase(selected);
+        second.push_back(node);
+        check_backing_list(left, first);
+        check_backing_list(right, second);
+        TABLE_CHECK(stable->used == 0 && stable->bytes == 1000);
+    }
+    right.erase(right.begin());
+    second.erase(second.begin());
+    right.erase(right.last());
+    second.pop_back();
+    check_backing_list(right, second);
+    left.splice_all(right);
+    first.insert(first.end(), second.begin(), second.end());
+    second.clear();
+    check_backing_list(left, first);
+    check_backing_list(right, second);
+    // The original first node kept its identity through detachment and rejoin.
+    TABLE_CHECK(stable->used == 0 && stable->bytes == 1000);
+    while (!first.empty()) {
+        const auto index = first.size() / 2;
+        left.erase(BackingList::iterator{first[index]});
+        first.erase(first.begin() + static_cast<std::ptrdiff_t>(index));
+        check_backing_list(left, first);
+    }
+    // Exercise empty-target whole-list transfer, a one-node unlink, then leave
+    // owned nodes for the container destructor and sanitizer leak checks.
+    right.emplace_back(Backing{nullptr, 1009, 16, 9});
+    second.push_back(right.last().node);
+    left.splice_all(right);
+    first = second;
+    second.clear();
+    check_backing_list(left, first);
+    check_backing_list(right, second);
+    right.splice_one(left, first.front());
+    second = first;
+    first.clear();
+    check_backing_list(left, first);
+    check_backing_list(right, second);
+    left.emplace_back(Backing{nullptr, 1010, 16, 10});
+    first.push_back(left.last().node);
+    check_backing_list(left, first);
+}
 }
 
 int main() {
@@ -481,14 +676,19 @@ int main() {
         {"seeded_oracle_and_large_id_gaps", test_seeded_oracle_and_large_id_gaps},
         {"c_api_borrow_growth_oom_contract", test_c_api_borrow_growth_oom_contract},
         {"owner_table_record_relocation_oracle", test_owner_table_record_relocation_oracle},
-        {"c_api_owner_growth_oom_keeps_arena_cursor", test_c_api_owner_growth_oom_keeps_arena_cursor}
+        {"c_api_owner_growth_oom_keeps_arena_cursor", test_c_api_owner_growth_oom_keeps_arena_cursor},
+        {"lease_capacity_prediction_lifecycle", test_lease_capacity_prediction_lifecycle},
+        {"owner_capacity_prediction_lifecycle", test_owner_capacity_prediction_lifecycle},
+        {"backing_list_identity_splice_and_erase", test_backing_list_identity_splice_and_erase}
     };
     for (const auto &test : tests) {
         test.run();
         TABLE_CHECK(lease_table_test_heap::live_arrays.load() == original_live);
         std::printf("PASS %s\n", test.name);
     }
-    TABLE_CHECK(lease_table_test_heap::failures.load() - original_failures == 4);
-    std::printf("{\"suite\":\"mgmem-lease-table\",\"tests\":8,\"checks\":%llu,\"injected_array_failures\":4,\"status\":\"PASS\"}\n", table_checks);
+    const auto injected_failures = lease_table_test_heap::failures.load() - original_failures;
+    TABLE_CHECK(injected_failures == 6);
+    std::printf("{\"suite\":\"mgmem-lease-table\",\"tests\":%zu,\"checks\":%llu,\"injected_array_failures\":%zu,\"status\":\"PASS\"}\n",
+                sizeof(tests) / sizeof(tests[0]), table_checks, injected_failures);
     return 0;
 }

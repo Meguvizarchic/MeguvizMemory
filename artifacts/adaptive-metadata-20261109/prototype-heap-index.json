@@ -1,0 +1,21 @@
+{
+  "state": "PASS_PUBLIC_COUNT_REPORT_HASHES_AND_LOSSLESS_COMPRESSION",
+  "files": {
+    "heap-counts-full.public.json.gz": {
+      "bytes": 77071,
+      "sha256": "af7fc0cfcbc056e574b13628893bc1792ab597e644bb3281816bdacf78da7dfc",
+      "uncompressed_sha256": "671443c22a21a927287252b1295b0cf8355c9fc9f575afa569b6093b3c319616"
+    },
+    "heap-events.public.json": {
+      "bytes": 1565946,
+      "sha256": "8baeb7ee5f4ff7f302221307708ce47558a3cbe4c716c76d8b1941c57c03efd6"
+    }
+  },
+  "count_cases": 52,
+  "layouts": 4,
+  "original_raw_count_logs_preserved_locally": true,
+  "private_path_fields_redacted": [
+    "runtime_module"
+  ],
+  "private_argv_copied": false
+}

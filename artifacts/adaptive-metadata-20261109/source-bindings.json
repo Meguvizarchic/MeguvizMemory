@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "baseline_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "prototype_core_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "final_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "production_files": {
+    "src/mgmem.cpp": {
+      "baseline_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+      "candidate_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+      "candidate_bytes": 50179
+    },
+    "include/mgmem/memory.hpp": {
+      "baseline_sha256": "d155905c05754bd54be2402681d444e98f53bdc99b504999092de837af8383b7",
+      "candidate_sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+      "candidate_bytes": 17510
+    },
+    "tests/core_tests.cpp": {
+      "baseline_sha256": "09cf842b9bc8485f673b1b13bcf63cdb8846bb3fb43843f2d1576acfc14be5fd",
+      "candidate_sha256": "f02d9d077638548aca08bbccb65b0d4f79fc9179477f7eb16968a0f9951ec27f",
+      "candidate_bytes": 58530
+    },
+    "tests/lease_table_tests.cpp": {
+      "baseline_sha256": "f62aac19583d337fc92dd5b3a95529210b71d2035bf97c707e8701516ba67c2f",
+      "candidate_sha256": "ea93ed8c4aa1ebbb2356654d29bacc7ad625b1522c30ff467eae1ffbceff9f0d",
+      "candidate_bytes": 32127
+    },
+    "tests/cpp_consumer.cpp": {
+      "baseline_sha256": "672e2deae248d5478af030cf623d0f4e72a3d11bf85f665b5de4155a8913c265",
+      "candidate_sha256": "ae4115e4c8a122188f0a9d5f74278d22302a49e2c3cc91f5ae3a926e1432641f",
+      "candidate_bytes": 13091
+    },
+    "tests/cpp_checked_import_tests.cpp": {
+      "baseline_sha256": "5a7dfc69ed6c93d4ee140f925712ff68c7d0453926284ca9654b83fe9ef528aa",
+      "candidate_sha256": "c300feeb90aa7d28beff3a3391da49c678be93d6a0804f967e8aade44f6dfb3c",
+      "candidate_bytes": 12527
+    },
+    "tests/cpp_checked_fake_tests.cpp": {
+      "baseline_sha256": "5717f311646da975a14a3fa119d696561a13684f034faa24c9e95f26560e47dd",
+      "candidate_sha256": "22dad2e9eddcdb14c9fe91db1291e554b6643419c6f7492e51b14b8c991595e5",
+      "candidate_bytes": 6810
+    }
+  },
+  "patch_application": "git apply --unidiff-zero <patch> against baseline; public ABI header mgmem.h unchanged",
+  "performance_results_in_this_static_publication": false
+}

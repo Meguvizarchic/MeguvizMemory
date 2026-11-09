@@ -1,0 +1,187 @@
+{
+  "state": "PASS_ADAPTIVE_TABLE_HOST_CONTRACTS_AND_ASAN",
+  "core_source_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "steps": [
+    {
+      "name": "core-configure",
+      "exit_code": 0,
+      "log_sha256": "c5b2b7c6d23984a3f1403c967d3d5e490bde174c85a3c39849703845fd98edfa"
+    },
+    {
+      "name": "core-build",
+      "exit_code": 0,
+      "log_sha256": "48481667afca7afcdcefe4ab06b85c69a1ee9ab64ac448270522ecffbc77bb93"
+    },
+    {
+      "name": "core-ctest",
+      "exit_code": 0,
+      "log_sha256": "691836ae485e9a07f06df510a5a5ac927f6d791d23da424db73eb5584242c885"
+    },
+    {
+      "name": "cpp-configure",
+      "exit_code": 0,
+      "log_sha256": "2c4a1f979a6c6fa52438790c8259102c6a7f243a4c3ddf03734dee24b9b64016"
+    },
+    {
+      "name": "cpp-build",
+      "exit_code": 0,
+      "log_sha256": "37b16880cc19e7e1535229137cb7baef6b2f057629e0bb1ffe9fcabd24a18949"
+    },
+    {
+      "name": "cpp-ctest",
+      "exit_code": 0,
+      "log_sha256": "5a9ab28a0d536b2ec5a9dea86f6ad338d2674d953f81d5cc251670f69fbaf9db"
+    },
+    {
+      "name": "asan-configure",
+      "exit_code": 0,
+      "log_sha256": "bdad6babe58d0663d545de3889429d732b93c10214688669943adcbcb5a8aaff"
+    },
+    {
+      "name": "asan-build",
+      "exit_code": 0,
+      "log_sha256": "1c3d7969112842c815cf34a72136690056642aa9ffad9265aacda56c76a17a50"
+    },
+    {
+      "name": "asan-ctest",
+      "exit_code": 0,
+      "log_sha256": "be7ee18ae198b42a234b90d8c9cd6bdac79fbbdc04ff1a8b20b2611cf25a2740"
+    },
+    {
+      "name": "install",
+      "exit_code": 0,
+      "log_sha256": "d803a546c53a667748bc37b69f8c8aa601189d878f97b9f386f24ec0c6b7a7e8"
+    },
+    {
+      "name": "installed-cpp-configure",
+      "exit_code": 0,
+      "log_sha256": "36cd4fb805d7234e8d44c06546cb8a6fc9c7e2c474c7b48de9d7eef2e26cfea9"
+    },
+    {
+      "name": "installed-cpp-build",
+      "exit_code": 0,
+      "log_sha256": "a87e68e3def110b1a9274ea38d60b8b233cd9a853d7d66666ee0128f5ca07358"
+    },
+    {
+      "name": "installed-cpp-ctest",
+      "exit_code": 0,
+      "log_sha256": "1a452b4f78e4a1d90231184c8a2281ed69c301a9e5a8c2e6cb7c5522d1c4d1ba"
+    },
+    {
+      "name": "cost-configure",
+      "exit_code": 0,
+      "log_sha256": "91fefbb1c60aa96a40c78652319e14c3fa030713964da18b803fda68401ed796"
+    },
+    {
+      "name": "cost-build",
+      "exit_code": 0,
+      "log_sha256": "25a4707a649aaa92a2d278f2980c49fce2e8a80d69e16df3df134e8c470a11c3"
+    },
+    {
+      "name": "arena-configure",
+      "exit_code": 0,
+      "log_sha256": "d2d07c290b63b11b566097bd8e1adea69c91a0fe08d5185b3cb2acd33b54a6c1"
+    },
+    {
+      "name": "arena-build",
+      "exit_code": 0,
+      "log_sha256": "bb98f29ef077ca060d49f6ca65ec531c572063e048f53616a681c32017d169aa"
+    },
+    {
+      "name": "claim-configure",
+      "exit_code": 0,
+      "log_sha256": "a6d98c90f51108c21c3a1e402ca5cbb3f41dc509e54b8c4e49ed3a655aa0d52e"
+    },
+    {
+      "name": "claim-build",
+      "exit_code": 0,
+      "log_sha256": "0ba8773bc234233e797e214d6ef2fce353e02a405a0c517b768a222ab2712efc"
+    },
+    {
+      "name": "baseline-public-lease-contract",
+      "exit_code": 0,
+      "log_sha256": "debd433cef51b25fe3876b22dab4f2f51809e31c37ccd06b42a82e934cac8b05"
+    },
+    {
+      "name": "aa-cost-functional",
+      "exit_code": 0,
+      "log_sha256": "271f20755026975f09adc30cc75e0af0e86eae7d325f481799325829fc53f48b"
+    }
+  ],
+  "performance_qualified": false,
+  "plan_sha256": "049f368c67816f4a6235157222451f7600b0ca520683e26dca697955a5c0888d",
+  "base_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "installed_cpp_consumer": {
+    "source_sha256": "ae4115e4c8a122188f0a9d5f74278d22302a49e2c3cc91f5ae3a926e1432641f",
+    "installed_header_sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+    "installed_dll_sha256": "6f582cff47a0f6d10d07864dfa400bb2be9c0d9f7926996513254c72e0a9d3b4",
+    "consumer_sha256": "d76cb8bcfc2b4b501cc86e2a18324dce0e313b0edd6ea9caadb96ef6a7158875",
+    "repo_include_used": false
+  },
+  "source_sha256": {
+    "CMakeLists.txt": "cf03918f508b27307992078e7b3487766f10c1c0cc64a8d7bd4054038ed0eb34",
+    "adapters/android/native/borrow_jni.cpp": "f0546b93a1d8ea8ff47cd127a23e3af70e932e1f5e7985c1741b2e73888ff396",
+    "adapters/android/native/pressure.cpp": "ffe7656989d336c9097044700b72cd330c7731af9535a4947285f611229d632a",
+    "adapters/android/native/pressure_jni.cpp": "4a8ae0f83bd9284184236312b367dda2b4d34c5a14cbe7f569aa2d2ba8a402cf",
+    "adapters/android/native/workspace_jni.cpp": "6daeb1e3e896d6aeb9f023e410d9ba359b6c758b13da63fec9f8f651ec01ec7e",
+    "bench/arena_lookup.cpp": "d58770eb6c943d45a9077364c8a208ee7719ead4d58990ad3975c443871c6a17",
+    "bench/arena_lookup/CMakeLists.txt": "180880b51e9249564940adac9aed4f2e1398b3a39bdcc848d11e79c3a1e0685d",
+    "bench/arena_small_cost.cpp": "e8d60728266cbeecc71d77db79359055b1c8ecb106a001a82787dfe1c77db16c",
+    "bench/arena_small_cost/CMakeLists.txt": "27c2ac5269be6d12b7b2d1a55c61ace69ca310aa35a97389feab24d54823a231",
+    "bench/claim_release.cpp": "7b72cf63ae4f59bd7476e94acfbe653df26f2f9bf2fcd6390506dd55c8b4b13f",
+    "bench/claim_release/CMakeLists.txt": "bc9434212ff81341f739b9c038aff3c7b69b05d7441f59d8ee536000b46ae9ae",
+    "cmake/MeguvizMemoryConfig.cmake.in": "3d3e0e088cd8d28ef6d6c2dc9919d39c893e01011dd3a40fdb94b1d43d7cadd8",
+    "include/mgmem/android_borrow_jni.h": "bf07306528fe52786f7ce8b45496446973452a2e5210b789ca14dff0e5195f34",
+    "include/mgmem/android_pressure_jni.h": "645c3414e2b70416964d426735cd54f6a88e7fceb55fa69bbc39c1dd45ecce5f",
+    "include/mgmem/memory.hpp": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+    "include/mgmem/mgmem.h": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+    "include/mgmem/pressure.h": "04160af3e749c90ca38670d5ffd37da6910db72b109774b1898ffa197aa55bea",
+    "src/mgmem.cpp": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+    "tests/android_borrow/CMakeLists.txt": "194161e613788790cd2ce705b298c5832acbbb33720dc86d8398f59849fcbbc2",
+    "tests/android_borrow/borrow_fixture.cpp": "4d11c7d5b4b948b02ea9ff23e9dccc07a9b4076ffe14a6460487a251cc00d1c0",
+    "tests/android_borrow/host_stub/CMakeLists.txt": "77a06e2604999049421e267d09e925e415fbb754394e4a827dfdc69622ac8f9c",
+    "tests/android_borrow/host_stub/stub.cpp": "441d823c5a144dd2bb1e11ddfdbb28b6cdfc7a87bc348ea96d82e300eb02d310",
+    "tests/android_managed/host_stub/CMakeLists.txt": "b48b65866b19e6fde25a870579f1b3d0e321e7cdb27a2bf435c595124692d6b2",
+    "tests/android_managed_stability/host_stub/CMakeLists.txt": "6a8b563ede9d1783e9c117bac1858167d24cb740d37b424515b483053c395af2",
+    "tests/android_native_pressure_device/host_stub/CMakeLists.txt": "1fc009193754e7f3b6ad2ce77c9c564035ac40f3ef15bf2fcdd01df0b43eb5cf",
+    "tests/android_pressure_close/CMakeLists.txt": "f3a2322c428ae9320edaebb044c5befa83958526c44cde636e1a8dec57bb7c06",
+    "tests/android_pressure_close/fake_pressure_jni.cpp": "893d8fbbe3325cff0ac9df05b47b680bf7856aea5c48e149ae8affb76e2225d5",
+    "tests/borrow_host/CMakeLists.txt": "e5ff999cd249d006b377bafc0d7983e3f50406a3eb96b1a90047e1beef213be8",
+    "tests/borrow_jni_host_tests.cpp": "3c5b5fdf30d6f01f9318e7f1635c7f474b00157f22f4beb85989d60516d202ab",
+    "tests/borrow_jni_java_fixture.cpp": "762888f7a52f513c938935850707296bbd9c6d40b16d2ed27c872a353016e64d",
+    "tests/c_consumer.c": "65269f393b8c86d3305ffc940c8cb92c04d74077cf7997e0cf4fcde12594a789",
+    "tests/checked_import_c.c": "ef1fd2d14b55ce5d9bb64eb8ec0837b212c358d31b2896e22880630588ca9139",
+    "tests/checked_import_tests.cpp": "14c66608c7a7feef71b28c5ff547c5ad43f55ede78a0056dcee5cf13908e9ef5",
+    "tests/compat/abi10/include/mgmem/mgmem.h": "b312057abb1203396a4d197e18362d851010598554cad509142cae8e20748dbf",
+    "tests/compat/abi10_consumer.c": "3d961f2b74693ae0bd6378d7439e3958fbacd936726a7c969ec97373ef735863",
+    "tests/core_tests.cpp": "f02d9d077638548aca08bbccb65b0d4f79fc9179477f7eb16968a0f9951ec27f",
+    "tests/cpp_checked/CMakeLists.txt": "68b2ff1d33d3fb1483456dc7f548e1b9359dc434a63c25caf243b41aa6b21053",
+    "tests/cpp_checked_fake_tests.cpp": "22dad2e9eddcdb14c9fe91db1291e554b6643419c6f7492e51b14b8c991595e5",
+    "tests/cpp_checked_import_tests.cpp": "c300feeb90aa7d28beff3a3391da49c678be93d6a0804f967e8aade44f6dfb3c",
+    "tests/cpp_consumer.cpp": "ae4115e4c8a122188f0a9d5f74278d22302a49e2c3cc91f5ae3a926e1432641f",
+    "tests/import_tests.cpp": "50de086cef9cb154960f450e0932057348377e97730befc65655e2bae9b95ba4",
+    "tests/jni_lock_tests.cpp": "5e9c4e337f1c67621dd60877d0528d39084bd5e6303bad0c31ba43aa1b0f52fb",
+    "tests/lease_table_tests.cpp": "2a8192bff04c6c978054bb46f132f0b17a34d4d6ca5af15ab77d6b5066ef4e0a",
+    "tests/managed_host/CMakeLists.txt": "5cd01f9a1c62993c4c8626c790fb543108581bddcb9eb318804fa854552065c4",
+    "tests/managed_host/borrow_release_wrap.cpp": "0590d1b76f7a2117b28abd1cd9bca2dc490771622fe5d94164f8d866553c620f",
+    "tests/managed_host/borrow_test_wrapped.cpp": "a8fc20cc80fa0c6f281bea85082ae92966df5f085a311414bb75df9ddd79c873",
+    "tests/managed_host/workspace_test_wrapped.cpp": "407e5f95d87abbaf3f584db2031099e810ee6108f8f74fa5f632f8babdd9dd0e",
+    "tests/managed_pressure_v2.cpp": "330939c8da5b1b66669729cbb0d6a805a692c8dc77f1f0ba13a16ebc545d80ff",
+    "tests/pressure_attach_race/CMakeLists.txt": "2980aa8540d44316dcbc70a3745f64f1d9050784af0e51f4d43fa4d74439f5e1",
+    "tests/pressure_attach_race/pressure_attach_race.cpp": "8116e4d4653fbac295b6e89ddd19f4b37ed4e3a055c804ea5b3dd06fbb83a7f4",
+    "tests/pressure_attach_race/pressure_wrapped.cpp": "13a14b755779551b134acd49852a0eb2f64e451910ba94b9e1110ece75d17d4c",
+    "tests/pressure_real_jvm/CMakeLists.txt": "605e06dc471288ad8185338118b3288d718ff243a6b72ea18419666ada7e480f",
+    "tests/pressure_tests.cpp": "f937d8bcfa6d79d16bd1e01944bf7b8be6ab7f059bd3164ebbb68ba16e5cfd10",
+    "tests/runtime_tests.cpp": "1015c04209dd610da9f9f0f6a61fda718fa95c8115eadd75d792ca53f5251e1d",
+    "third_party_notices/README.md": "14398a48c99f662ecc22644f8f7516b2ee6c51931e743c97b2eed6e53e8ede0d",
+    "third_party_notices/llvm-NOTICE.txt": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+    "third_party_notices/splitmix64-NOTICE.txt": "51a9ddd2e6d49b6cbbd7fad9cf4fbb679305ba1287bce99eb9a3b5a482237f80",
+    "tools/build_android_candidate.py": "c6b37dd408c2730fce361ce2f7a080862404ebaee4f01f995292d0edc15d2fe8",
+    "tools/package_feature_preview.py": "609b90c07f6d9903d859818968cc2e04c6812a3adf5fee8e99a6c42046e04040",
+    "tools/run_arena_lookup_pairs.py": "ffda2ce626925a8b0eb226eaf4baa3ad4fe7a8d01c027e0d1e3c9b23f9db38b9",
+    "tools/run_arena_small_cost.py": "399c1204d07f96952fa241c7b7073767e195197ab4278e4cc9766eefed77b346",
+    "tools/run_arena_small_cost_pairs.py": "28d73ae327c3a03c45511c7e6753eb7dcf6d36bb24f3494cee3755f388092198",
+    "tools/run_claim_release_pairs.py": "7dc10748db77cc42a7c5269e760e387c3dba325791c4c1d51af1c460a4c62b8d",
+    "tools/source_lock.py": "744a90c739b7918991616ab5a02c4eec06b4cd5c88deb54e55b09476ee755df7"
+  }
+}

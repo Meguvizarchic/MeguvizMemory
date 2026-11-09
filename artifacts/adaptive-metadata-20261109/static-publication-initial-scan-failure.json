@@ -1,0 +1,10 @@
+{
+  "state": "FAILED_PREINDEX_SCAN_OF_COMPRESSED_BYTES_FALSE_POSITIVE",
+  "native_runs": 0,
+  "source_files_modified": false,
+  "initial_publisher_sha256": "86721fa00b72d7f84713c9b1dc30ddf31bba41ac1e317bd1f59309c48b294023",
+  "category": "windows_drive_absolute pattern over compressed ZIP bytes",
+  "payload_members_already_scanned": true,
+  "sensitive_text_output": false,
+  "correction": "Scan actual ZIP member and gzip decompressed payloads; do not interpret compressed binary bytes as textual path evidence. Preserve byte-identical previously written partial files."
+}

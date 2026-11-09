@@ -1,0 +1,85 @@
+{
+  "private_receipt_sha256": "13fa3f726bfebaee1f608a5a41d21a0c43133d80454dc24ed23224c1352dbf38",
+  "report": {
+    "state": "PASS_INSTALLED_CPP17_SCOPED_API_CONSUMER",
+    "suite": {
+      "suite": "mgmem-cpp-raii",
+      "cases": 8,
+      "status": "PASS"
+    },
+    "installed_include_rows": [
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      },
+      {
+        "private_text_redacted": true,
+        "utf8_sha256": "6a6b358d7d3876120f66afea8aa85ee6e2377e0d462aca36925b403c06f893ef"
+      }
+    ],
+    "repo_include_used": false,
+    "installed_and_loaded_dll_bytes_equal": true,
+    "source_snapshot_matches_frozen_test": true,
+    "files": {
+      "build/arena-next-20261109/intrusive/installed-cpp/mgmem_installed_cpp_consumer.vcxproj": {
+        "bytes": 96374,
+        "sha256": "330add4f715d90b22c4f1946b6a05319ee3e15d04d655030dab653d0415a6439"
+      },
+      "build/arena-next-20261109/intrusive/installed-cpp/Testing/Temporary/LastTest.log": {
+        "bytes": 962,
+        "sha256": "bd89740f539852943228a92f55d354a408b7b98f07b73293ed56597101085b62"
+      },
+      "build/arena-next-20261109/intrusive/installed-cpp-source/CMakeLists.txt": {
+        "bytes": 1029,
+        "sha256": "46922d262dfb811a880c178a3397dc6d4203fac692cfbcc4307ed146600f4c32"
+      },
+      "build/arena-next-20261109/intrusive/installed-cpp-source/cpp_consumer.cpp": {
+        "bytes": 13091,
+        "sha256": "ae4115e4c8a122188f0a9d5f74278d22302a49e2c3cc91f5ae3a926e1432641f"
+      },
+      "build/arena-next-20261109/intrusive/installed-cpp/Release/mgmem_installed_cpp_consumer.exe": {
+        "bytes": 43008,
+        "sha256": "e7f75c18568b384cc206dd0fe5df636b3aeaaa228058a88850b143d891cfda8d"
+      },
+      "build/arena-next-20261109/intrusive/candidate-install/include/mgmem/memory.hpp": {
+        "bytes": 17510,
+        "sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16"
+      },
+      "build/arena-next-20261109/intrusive/candidate-install/bin/mgmem.dll": {
+        "bytes": 39424,
+        "sha256": "2b104f9200209b67c1719ab40660b273e0e05942647e805b043cac201adfd286"
+      },
+      "build/arena-next-20261109/intrusive/verify_installed_cpp.py": {
+        "bytes": 2397,
+        "sha256": "d14dadeaf493303a5e4c8b23e1fd1660b04ddc8c6a1246e152641318421b8ac9"
+      }
+    },
+    "device_executed": false,
+    "performance_qualified": false
+  },
+  "scope": "Installed include lines are retained locally and hashed here; boolean assertions and artifact identities are preserved."
+}

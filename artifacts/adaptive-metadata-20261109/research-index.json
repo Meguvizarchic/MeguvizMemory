@@ -1,0 +1,2655 @@
+{
+  "schema_version": 1,
+  "state": "COMPLETE_EXA_MULTISTREAM_RESEARCH_INDEX",
+  "research_date": "2026-11-09",
+  "provider": "Exa MCP",
+  "search_calls": 25,
+  "requested_results": 250,
+  "actual_returned_results": 250,
+  "unique_search_urls": 221,
+  "counts_by_workstream": {
+    "root": {
+      "calls": 5,
+      "requested_results": 50,
+      "returned_results": 50
+    },
+    "metadata": {
+      "calls": 10,
+      "requested_results": 100,
+      "returned_results": 100
+    },
+    "api": {
+      "calls": 4,
+      "requested_results": 40,
+      "returned_results": 40
+    },
+    "cost": {
+      "calls": 4,
+      "requested_results": 40,
+      "returned_results": 40
+    },
+    "intrusive": {
+      "calls": 2,
+      "requested_results": 20,
+      "returned_results": 20
+    }
+  },
+  "inputs": [
+    {
+      "workstream": "root",
+      "input": "research-root.raw.json",
+      "sha256": "0b026261cac2bede7e0a740bb3a291c586c9d22714fed9b77e2dfbedf7499899"
+    },
+    {
+      "workstream": "root",
+      "input": "research-root.extra.json",
+      "sha256": "f48d78f80ec54501394e2d3b1b9615c5615dcbe56cad3d2341c10b41be3dedd5"
+    },
+    {
+      "workstream": "metadata",
+      "input": "research-metadata.raw.json",
+      "sha256": "cd6bc16400a3b71dd4f2e242c2718f3918120d695ded2aecff23f4acdc78f29b"
+    },
+    {
+      "workstream": "metadata",
+      "input": "research-metadata.additional.raw.json",
+      "sha256": "72be34b1d10877005d11321e25ac6411f538e874087a464741ffa45268835114"
+    },
+    {
+      "workstream": "api",
+      "input": "research-api/raw.json",
+      "sha256": "6aabc4fc3d9d89a915534988eceaeb5d1a8a62179a164e42c939d5089da2c6d2"
+    },
+    {
+      "workstream": "cost",
+      "input": "research-cost/searches.raw.json",
+      "sha256": "92b8bf7c398f024c8c743e88621bb3eaf6a559a9f5d50d32f494b367a73bf6cb"
+    },
+    {
+      "workstream": "cost",
+      "input": "research-cost/sharded-allocators.raw.json",
+      "sha256": "ed8f08d54ac3188a9beb3b3e8e32cef557ce17e81bb711c8f693d29985cf94fd"
+    },
+    {
+      "workstream": "intrusive",
+      "input": "intrusive/research/raw.json",
+      "sha256": "a19f771b605d219d56f176a17ac90ae3bf53d7d406fccdf0740d8826c937abfa"
+    }
+  ],
+  "selected_primary_sources": [
+    {
+      "url": "https://abseil.io/about/design/swisstables",
+      "quality": "Original Abseil container design",
+      "project_relevance": "Grouped fingerprints considered; do not by themselves remove complete-array growth.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://github.com/facebook/folly/blob/main/folly/container/F14.md",
+      "quality": "Original Folly implementation design",
+      "project_relevance": "Separate logical clear from memory release; project instead predicts capacity without retaining empty arrays.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://go.dev/blog/swisstable",
+      "quality": "Original Go runtime maintainers",
+      "project_relevance": "Bound each table growth with extendible hashing; scale and bookkeeping differ from tiny batches.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://docs.kernel.org/core-api/xarray.html",
+      "quality": "Linux kernel API documentation",
+      "project_relevance": "Direct integer mapping without full-array copying; sparse high IDs and page costs require scrutiny.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://docs.rs/slotmap/latest/slotmap/",
+      "quality": "Original SlotMap crate documentation",
+      "project_relevance": "Generation/index identifiers and retention constraints do not directly match existing monotonic IDs.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://arxiv.org/html/1504.06804v9",
+      "quality": "Original author research exposition",
+      "project_relevance": "Multiply-shift has explicit random-family assumptions; cheaper hashing alone is not a universal optimum.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://dl.acm.org/doi/10.1145/2716317",
+      "quality": "Original published research",
+      "project_relevance": "Counterexamples constrain low-independence linear-probing claims.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0593r6.html",
+      "quality": "WG21 original proposal",
+      "project_relevance": "Explicit placement new avoids relying on later union-copy lifetime wording in C++17.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://timsong-cpp.github.io/cppwp/n4659/class.union",
+      "quality": "C++17 working draft wording mirror",
+      "project_relevance": "Review explicit activation of lazy union payloads and inactive-member access.",
+      "present_in_search_results": false
+    },
+    {
+      "url": "https://timsong-cpp.github.io/cppwp/n4659/class.copy",
+      "quality": "C++17 working draft wording mirror",
+      "project_relevance": "Review old union-copy object representation wording.",
+      "present_in_search_results": false
+    },
+    {
+      "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2019/06/mimalloc-tr-v1.pdf",
+      "quality": "Original Microsoft Research allocator report",
+      "project_relevance": "Sharding and temporal locality studied; replacing the process allocator is outside this internal optimization.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/snmalloc/master/snmalloc.pdf",
+      "quality": "Original allocator authors paper",
+      "project_relevance": "Cross-thread free batching studied; no new allocator dependency or thread-local ownership restriction introduced.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://google.github.io/tcmalloc/design.html",
+      "quality": "Original TCMalloc architecture documentation",
+      "project_relevance": "Frontend batching informs fixed-cost analysis; unchanged public ownership and budget paths remain necessary.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://chromium.googlesource.com/v8/v8/+show/7b26e81087ec88c287d9a4812f969d412f32774e/docs/heap/zone-allocator.md",
+      "quality": "Original V8 design documentation",
+      "project_relevance": "Phase-oriented storage informs lifecycle separation; leases and uncertain callbacks still require explicit tracking.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/foreign/Arena.html",
+      "quality": "Official Java API specification",
+      "project_relevance": "Scope cleanup and shared versus confined ownership inform ergonomic wrapper contracts.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://github.com/swiftlang/swift-evolution/blob/main/proposals/0322-temporary-buffers.md",
+      "quality": "Original Swift evolution proposal",
+      "project_relevance": "Callback-scoped temporary allocation informs one-line lifetime-safe usage.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0052r10.pdf",
+      "quality": "Original WG21 scope-guard proposal",
+      "project_relevance": "RAII cleanup must hold through normal completion and exceptions.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://github.com/ziglang/zig/blob/master/lib/std/heap/arena_allocator.zig",
+      "quality": "Original Zig runtime implementation",
+      "project_relevance": "Arena reset and capacity-release separation considered; project retains no empty metadata arrays.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://arxiv.org/html/1705.00997v1",
+      "quality": "Original dynamic space-efficient hashing research",
+      "project_relevance": "Incremental growth considered; amortized and peak costs still need project-specific measurement.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Intrusive links replace external node bookkeeping; actual object lifetime remains explicitly owned.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/list.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Two links per node and a two-pointer empty container suffice for the required operations.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/safe_hook.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Clear link state explicitly on removal; validate linkage invariants through targeted tests.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/auto_unlink_hooks.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Automatic destructor unlinking can mutate unsynchronized containers; project avoids this behavior.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/erasing_and_disposing.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Separate unlinking from object disposal and provider/resource cleanup.",
+      "present_in_search_results": true
+    },
+    {
+      "url": "https://www.boost.org/latest/doc/html/intrusive/thread_safety.html",
+      "quality": "Original Boost.Intrusive author documentation",
+      "project_relevance": "Link mutation must remain serialized by the existing domain mutex.",
+      "present_in_search_results": true
+    }
+  ],
+  "search_index": [
+    {
+      "id": "root-1",
+      "workstream": "root",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "root-2",
+      "workstream": "root",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "root-3",
+      "workstream": "root",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "root-4",
+      "workstream": "root",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "root-5",
+      "workstream": "root",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-1",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-2",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-3",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-4",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-5",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-6",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-7",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-8",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-9",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "metadata-10",
+      "workstream": "metadata",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "api-1",
+      "workstream": "api",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "api-2",
+      "workstream": "api",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "api-3",
+      "workstream": "api",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "api-4",
+      "workstream": "api",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "cost-1",
+      "workstream": "cost",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "cost-2",
+      "workstream": "cost",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "cost-3",
+      "workstream": "cost",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "cost-4",
+      "workstream": "cost",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "intrusive-1",
+      "workstream": "intrusive",
+      "requested_results": 10,
+      "returned_results": 10
+    },
+    {
+      "id": "intrusive-2",
+      "workstream": "intrusive",
+      "requested_results": 10,
+      "returned_results": 10
+    }
+  ],
+  "sources": [
+    {
+      "title": "Mimalloc: Free List Sharding in ActionMicrosoft Technical Report MSR-TR-2019-18, June 2019.",
+      "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2019/06/mimalloc-tr-v1.pdf",
+      "search_calls": [
+        "root-1",
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "root",
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "snmalloc: A Message Passing Allocator",
+      "url": "https://raw.githubusercontent.com/microsoft/snmalloc/master/snmalloc.pdf",
+      "search_calls": [
+        "root-1",
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "root",
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "microsoft/snmalloc",
+      "url": "https://github.com/microsoft/snmalloc/",
+      "search_calls": [
+        "root-1",
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "root",
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "snmalloc/docs/release/0.7 at main · microsoft/snmalloc · GitHub",
+      "url": "https://github.com/microsoft/snmalloc/tree/main/docs/release/0.7",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "mimalloc: A new, high-performance, scalable memory allocator for the modern era - Microsoft Research",
+      "url": "https://www.microsoft.com/en-us/research/blog/mimalloc-a-high-performance-scalable-memory-allocator-for-the-modern-era/",
+      "search_calls": [
+        "root-1",
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "root",
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "Benchmarking and mimalloc",
+      "url": "https://github.com/microsoft/snmalloc/issues/67",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "BatchIt: Optimizing Message-Passing Allocators for Producer-Consumer Workloads: An Intellectual Abstract - Microsoft Research",
+      "url": "https://www.microsoft.com/en-us/research/publication/batchit-optimizing-message-passing-allocators-for-producer-consumer-workloads-an-intellectual-abstract/",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "mi-malloc: mi-malloc",
+      "url": "https://microsoft.github.io/mimalloc/",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Mimalloc: Free List Sharding in Action - Microsoft Research",
+      "url": "https://www.microsoft.com/en-us/research/publication/mimalloc-free-list-sharding-in-action/",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "COVER PAGE TEMPLATE",
+      "url": "https://jsjtxietian.space/Assets/A_Tour_of_Mimalloc.pdf",
+      "search_calls": [
+        "root-1"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "abseil / Swiss Tables Design Notes",
+      "url": "https://abseil.io/about/design/swisstables",
+      "search_calls": [
+        "root-2",
+        "metadata-2",
+        "cost-2"
+      ],
+      "workstreams": [
+        "root",
+        "metadata",
+        "cost"
+      ]
+    },
+    {
+      "title": "Data Structures :: Boost.Unordered",
+      "url": "https://www.boost.org/doc/libs/latest/libs/unordered/doc/html/unordered/structures.html",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "include/boost/unordered/detail/foa/core.hpp",
+      "url": "https://github.com/boostorg/unordered/blob/develop/include/boost/unordered/detail/foa/core.hpp",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "include/boost/unordered/detail/foa.hpp at 5327fec080ac1e2acc87baacfebcb45424ec0629 · boostorg/unordered",
+      "url": "https://github.com/boostorg/unordered/blob/5327fec080ac1e2acc87baacfebcb45424ec0629/include/boost/unordered/detail/foa.hpp",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "The Index Structures of Fast C++ Hash Maps",
+      "url": "https://martin.ankerl.com/2026/09/09/hash-map-index-structures/",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Bannalia: trivial notes on themes diverse: Inside boost::unordered_flat_map",
+      "url": "http://bannalia.blogspot.com/2022/11/inside-boostunorderedflatmap.html",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "abseil / Abseil Containers",
+      "url": "https://abseil.io/docs/cpp/guides/container",
+      "search_calls": [
+        "root-2",
+        "metadata-2",
+        "cost-2"
+      ],
+      "workstreams": [
+        "root",
+        "metadata",
+        "cost"
+      ]
+    },
+    {
+      "title": "Untitled :: Boost.Unordered",
+      "url": "https://www.boost.org/doc/libs/latest/libs/unordered/doc/html/unordered/reference/unordered_flat_map.html",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "absl/container/flat_hash_map.h",
+      "url": "https://github.com/abseil/abseil-cpp/blob/master/absl/container/flat_hash_map.h",
+      "search_calls": [
+        "root-2",
+        "cost-2"
+      ],
+      "workstreams": [
+        "root",
+        "cost"
+      ]
+    },
+    {
+      "title": "More than a rehash",
+      "url": "https://raw.githubusercontent.com/joaquintides/usingstdcpp2023/main/More%20than%20a%20rehash.pdf",
+      "search_calls": [
+        "root-2"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Reconsidering “Reconsidering Custom Memory Allocation”",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/3814942.3816132",
+      "search_calls": [
+        "root-3",
+        "cost-1"
+      ],
+      "workstreams": [
+        "root",
+        "cost"
+      ]
+    },
+    {
+      "title": "The Scoped Allocator Model (Rev 1)",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2008/n2523.pdf",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Memory 9%) simplewrite) decrement) references) *x)",
+      "url": "https://theory.stanford.edu/~aiken/publications/papers/pldi98a.pdf",
+      "search_calls": [
+        "root-3",
+        "cost-1"
+      ],
+      "workstreams": [
+        "root",
+        "cost"
+      ]
+    },
+    {
+      "title": "lib/std/heap/arena_allocator.zig",
+      "url": "https://github.com/ziglang/zig/blob/master/lib/std/heap/arena_allocator.zig",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Safe Manual Memory Management in Cyclone",
+      "url": "https://www.cs.umd.edu/~mwh/papers/cyc-mm-scp.pdf",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "scoped_arena - Rust",
+      "url": "https://docs.rs/scoped-arena/latest/scoped_arena/",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Region-based Memory Allocation in Forth",
+      "url": "http://euroforth.org/ef14/papers/ertl.pdf",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "arena - Cryo",
+      "url": "https://cryolang.org/docs/stdlib/alloc/arena",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "stdlib/docs/arena.md",
+      "url": "https://github.com/hemlang/hemlock/blob/main/stdlib/docs/arena.md",
+      "search_calls": [
+        "root-3"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "runtime/src/iree/hal/memory/arena.h",
+      "url": "https://github.com/iree-org/iree/blob/main/runtime/src/iree/hal/memory/arena.h",
+      "search_calls": [
+        "root-3",
+        "cost-1"
+      ],
+      "workstreams": [
+        "root",
+        "cost"
+      ]
+    },
+    {
+      "title": "tcmalloc/tcmalloc.cc at master · google/tcmalloc",
+      "url": "https://github.com/google/tcmalloc/blob/master/tcmalloc/tcmalloc.cc",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "std::condition_variable - Concurrency Ninja",
+      "url": "https://p0w.github.io/concurrency-ninja/ch04-condition-variable.html",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "TCMalloc : Thread-Caching Malloc | tcmalloc",
+      "url": "https://google.github.io/tcmalloc/design.html",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Condition Variables, Latches, and Barriers | C++",
+      "url": "https://cpp.wyattau.com/concurrency/1_threading_and_synchronization/4_condition_variables/",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Coordination Primitives · C++ Concurrency and Parallelism",
+      "url": "https://patterncatalyst.github.io/cpp-concurrency-and-parallelism/docs/07-coordination-primitives/",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "condition_variable and Wait Semantics | Modern C++ Tutorial",
+      "url": "https://awesome-embedded-learning-studio.github.io/Tutorial_AwesomeModernCPP/en/vol5-concurrency/ch02-mutex-condition-sync/03-condition-variable",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "absl/synchronization/internal/pthread_waiter.cc",
+      "url": "https://github.com/abseil/abseil-cpp/blob/b6c18169/absl/synchronization/internal/pthread_waiter.cc",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Implementation",
+      "url": "https://classpages.cselabs.umn.edu/Spring-2021/csci5103/tools/installs/gcc-4.8.3+os161-2.1/libstdc++-v3/doc/html/manual/mt_allocator_impl.html",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "P1135R3 The C++20 Synchronization Library",
+      "url": "https://open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1135r3.html",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "cpp11/condition-variables.md",
+      "url": "https://github.com/cflaviu/avant-garde-cpp/blob/main/cpp11/condition-variables.md",
+      "search_calls": [
+        "root-4"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Dynamic Space Efficient Hashing",
+      "url": "https://arxiv.org/html/1705.00997v1",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Zombie Hashing: Reanimating Tombstones in a Graveyard",
+      "url": "https://users.cs.utah.edu/~jeffp/papers/zombieht.pdf",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Concurrent Hash Tables: Fast and General(?)!",
+      "url": "https://arxiv.org/html/1601.04017v2",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "Dynamic hash tables",
+      "url": "https://dl.acm.org/doi/pdf/10.1145/42404.42410?download=true",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "[2006.00819] DHash: Enabling Dynamic and Efficient Hash Tables",
+      "url": "https://ar5iv.labs.arxiv.org/html/2006.00819",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "{ barnat,xrockai,xstill,xweiser1}",
+      "url": "https://anna.fi.muni.cz/pub/pdf/BRSW15HS.pdf",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "N/A",
+      "url": "https://arxiv.org/pdf/2503.13628",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "N/A",
+      "url": "https://theory.stanford.edu/~vteague/STOC01.pdf",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "An STL Hash Table Implementation With Gradual Resizing",
+      "url": "https://stepanovpapers.com/butler.hpl.hp/stl/dmhash/HASHIMP2.PDF",
+      "search_calls": [
+        "root-5",
+        "metadata-3"
+      ],
+      "workstreams": [
+        "root",
+        "metadata"
+      ]
+    },
+    {
+      "title": "The Parallel Hashmap (Gregory Popovitch)",
+      "url": "https://greg7mdp.github.io/parallel-hashmap/",
+      "search_calls": [
+        "root-5"
+      ],
+      "workstreams": [
+        "root"
+      ]
+    },
+    {
+      "title": "slot_map Container in C++",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2017/p0661r0.pdf",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "slotmap - Rust",
+      "url": "https://docs.rs/slotmap/latest/slotmap/",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "hop.rs - source",
+      "url": "https://docs.rs/slotmap/latest/src/slotmap/hop.rs.html",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Slotmap: The budget allocator you probably should use ::",
+      "url": "https://electrp.com/posts/slotmap/",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "arena.rs - source",
+      "url": "https://docs.rs/bitarena/latest/src/bitarena/arena.rs.html",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "raxon::core::arena - Rust",
+      "url": "https://docs.rs/raxon/latest/raxon/core/arena/index.html",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "src/lib.rs at master · orlp/slotmap",
+      "url": "https://github.com/orlp/slotmap/blob/master/src/lib.rs",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "lib.rs - source",
+      "url": "https://docs.rs/genmap/latest/src/genmap/lib.rs.html",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "orlp/slotmap",
+      "url": "https://github.com/orlp/slotmap/",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "heap.rs - source",
+      "url": "https://docs.rs/kataan/latest/src/kataan/heap.rs.html",
+      "search_calls": [
+        "metadata-1"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "folly/container/F14.md at main · facebook/folly",
+      "url": "https://github.com/facebook/folly/blob/main/folly/container/F14.md",
+      "search_calls": [
+        "metadata-2",
+        "metadata-7",
+        "cost-2"
+      ],
+      "workstreams": [
+        "metadata",
+        "cost"
+      ]
+    },
+    {
+      "title": "DESIGN.md",
+      "url": "https://github.com/google/cwisstable/blob/main/DESIGN.md",
+      "search_calls": [
+        "metadata-2"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "abseil / Swiss Tables and <code>absl::Hash</code>",
+      "url": "https://abseil.io/blog/20180927-swisstables",
+      "search_calls": [
+        "metadata-2"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "absl/container/internal/raw_hash_set.cc",
+      "url": "https://github.com/abseil/abseil-cpp/blob/889ddc99/absl/container/internal/raw_hash_set.cc",
+      "search_calls": [
+        "metadata-2"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "folly/container/detail/F14Table.h at master · facebook/folly",
+      "url": "https://github.com/facebook/folly/blob/master/folly/container/detail/F14Table.h",
+      "search_calls": [
+        "metadata-2"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Faster Go maps with Swiss Tables - The Go Programming Language",
+      "url": "https://go.dev/blog/swisstable",
+      "search_calls": [
+        "metadata-2",
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "folly/folly/container/F14Map.h at main · facebook/folly · GitHub",
+      "url": "https://github.com/facebook/folly/blob/main/folly/container/F14Map.h",
+      "search_calls": [
+        "metadata-2",
+        "cost-2"
+      ],
+      "workstreams": [
+        "metadata",
+        "cost"
+      ]
+    },
+    {
+      "title": "Abseil's Open Source Hashtables: 2 Years In - Matt Kulukundis - CppCon 2019",
+      "url": "https://www.youtube.com/watch?v=JZE3_0qvrMg",
+      "search_calls": [
+        "metadata-2"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Write-Optimized Dynamic Hashing for Persistent Memory",
+      "url": "https://www.usenix.org/system/files/fast19-nam.pdf",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Extendible hashing—a fast access method for dynamic files",
+      "url": "https://doi.org/10.1145/320083.320092",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Concurrent Hash Tables: Fast and General(?)!",
+      "url": "https://arxiv.org/html/1601.04017",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Performance comparison of extendible hashing and linear hashing techniques | ACM SIGSMALL/PC Notes",
+      "url": "https://dl.acm.org/doi/10.1145/122045.122048",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Dash: Scalable Hashing on Persistent Memory",
+      "url": "https://vldb.org/pvldb/vol13/p1147-lu.pdf",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Linear hashing with separators—a dynamic hashing scheme achieving one-access",
+      "url": "https://doi.org/10.1145/44498.44500",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Dynamic Hash Tables",
+      "url": "https://www.csd.uoc.gr/~hy460/pdf/Dynamic%20Hash%20Tables.pdf",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Write-Optimized and High-Performance Hashing Index ...",
+      "url": "https://www.usenix.org/system/files/osdi18-zuo.pdf",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "An extendable data structure for incremental stable perfect hashing | Proceedings of the 54th Annual ACM SIGACT Symposium on Theory of Computing",
+      "url": "https://dl.acm.org/doi/10.1145/3519935.3520070",
+      "search_calls": [
+        "metadata-3"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "XArray — The Linux Kernel  documentation",
+      "url": "https://docs.kernel.org/core-api/xarray.html",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "ID Allocation — The Linux Kernel  documentation",
+      "url": "https://docs.kernel.org/core-api/idr.html",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Generic radix trees/sparse arrays",
+      "url": "https://docs.kernel.org/core-api/generic-radix-tree.html",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "lib/idr.c",
+      "url": "https://github.com/torvalds/linux/blob/master/lib/idr.c",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "include/linux/radix-tree.h",
+      "url": "https://github.com/torvalds/linux/blob/master/include/linux/radix-tree.h",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "The XArray data structure",
+      "url": "https://lwn.net/Articles/745073/",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Convert DRM to XArray [LWN.net]",
+      "url": "https://lwn.net/Articles/780701/",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "core/java/android/util/SparseArray.java - platform/frameworks/base - Git at Google",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/8bf977d/core/java/android/util/SparseArray.java",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "lib.rs - source",
+      "url": "https://docs.rs/xsparseset/latest/src/xsparseset/lib.rs.html",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "src/esengine/ecs/SparseSet.hpp",
+      "url": "https://github.com/esengine/estella/blob/master/src/esengine/ecs/SparseSet.hpp",
+      "search_calls": [
+        "metadata-4"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "- The Go Programming Language",
+      "url": "https://go.dev/src/internal/runtime/maps/map.go",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "- The Go Programming Language",
+      "url": "https://go.dev/src/internal/runtime/maps/group.go",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "5.4 Swiss Table and the Go 1.24 Implementation | Go: Under the Hood",
+      "url": "https://golang.design/under-the-hood/en/part2lang/ch05data/swisstable/",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "How Go’s Built-in Map Works with Swiss Tables",
+      "url": "https://victoriametrics.com/blog/go-swiss-table-map/",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "src/internal/runtime/maps/table.go at 081aa64e610b175e295159c2117f25ecf49953ed · golang/go",
+      "url": "https://github.com/golang/go/blob/081aa64e610b175e295159c2117f25ecf49953ed/src/internal/runtime/maps/table.go",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "- The Go Programming Language",
+      "url": "https://go.dev/src/runtime/map.go",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Source: table.go in package internal/runtime/maps",
+      "url": "https://ref.gotd.dev/src/internal/runtime/maps/table.go.html",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Swiss Table の実装に Deep Dive ! | Go Conference 2025",
+      "url": "https://gocon.jp/2025/en/talks/959006/",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Go map 底层实现原理全解析 | ᕕ( ᐛ )ᕗ Jimyag's Blog",
+      "url": "https://jimyag.com/posts/golang-map-internals/",
+      "search_calls": [
+        "metadata-5"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "On the Effective Use Of Memory Allocators",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0213r0.pdf",
+      "search_calls": [
+        "metadata-6",
+        "cost-1"
+      ],
+      "workstreams": [
+        "metadata",
+        "cost"
+      ]
+    },
+    {
+      "title": "Unleashing the Power of Allocator-Aware Software Infrastructure",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2020/p2126r0.pdf",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[containers]",
+      "url": "https://eel.is/c++draft/containers",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Introduction of std::hive to the standard library",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2022/p0447r19.html",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Support for static and SBO vectors by",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2667r0.pdf",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "void* allocate(size_t positive_number_of_bytes) throw(bad_alloc); void deallocate(void *non_null_pointer, size_t size_of_first_arg);",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/1996/N1001.pdf",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Improving STL Allocators",
+      "url": "https://wg21.link/n2045",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Introduction of std::colony to the standard library",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2020/p0447r11.html",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Policies for Using Allocators in Library Classes",
+      "url": "https://www.open-std.org/JTC1/SC22/WG21/docs/papers/2024/p3002r1.html",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Memory",
+      "url": "https://classpages.cselabs.umn.edu/Spring-2021/csci5103/tools/installs/gcc-4.8.3+os161-2.1/libstdc++-v3/doc/html/manual/memory.html",
+      "search_calls": [
+        "metadata-6"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "folly/hash/Hash.h at main · facebook/folly",
+      "url": "https://github.com/facebook/folly/blob/main/folly/hash/Hash.h",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "hashtable_benchmarks.cc at main · google/hashtable-benchmarks",
+      "url": "https://github.com/google/hashtable-benchmarks/blob/main/hashtable_benchmarks.cc",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "hashmap - CTL C Container Template library | ctl",
+      "url": "https://rurban.github.io/ctl/hashmap.html",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Hash Functions and Utilities | facebook/folly | DeepWiki",
+      "url": "https://deepwiki.com/facebook/folly/4.2-hash-functions-and-utilities",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Objects/dictobject.c",
+      "url": "https://github.com/python/cpython/blob/2.7/Objects/dictobject.c",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "F14 Hash Tables | facebook/folly | DeepWiki",
+      "url": "https://deepwiki.com/facebook/folly/4.1-f14-hash-tables",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "velox/exec/HashTable.cpp",
+      "url": "https://github.com/facebookincubator/velox/blob/main/velox/exec/HashTable.cpp",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "stdlib_hash_32bit and stdlib_hash_64bit — Fortran-lang stdlib",
+      "url": "https://stdlib.fortran-lang.org/specs/stdlib_hash_procedures.html",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "map.rs - source",
+      "url": "https://doc.rust-lang.org/stable/src/std/collections/hash/map.rs.html",
+      "search_calls": [
+        "metadata-7"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "High Speed Hashing for Integers and Strings",
+      "url": "https://arxiv.org/html/1504.06804v9",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Fast and Powerful Hashing using Tabulation",
+      "url": "https://arxiv.org/html/1505.01523v5",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Multiplicative hashing · Algorithm",
+      "url": "https://algorithm.tamnd.com/multiplicative-hashing/",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "On the  k -Independence Required by Linear Probing and Minwise Independence",
+      "url": "https://dl.acm.org/doi/10.1145/2716317",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Hash function",
+      "url": "https://en.wikipedia.org/wiki/Hash_function",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Hash Functions for Table Indexing: Mixing, Avalanche, and Universal Families — MerceMay",
+      "url": "https://mercemay.com/articles/data-structures/hash-tables/table-hash-function-construction/",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Integer Hash Function",
+      "url": "https://web.archive.org/web/20060507103516/www.cris.com/~Ttwang/tech/inthash.htm",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "2 Universal Hashing",
+      "url": "https://people.eecs.berkeley.edu/%7Edaw/teaching/cs170-s03/Notes/lecture9.pdf",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[1706.02783] Linear Hashing is Awesome",
+      "url": "https://ar5iv.labs.arxiv.org/html/1706.02783",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "This is an Open Access article distributed under the terms of the Creative Commons Attribution License",
+      "url": "https://academic.oup.com/comjnl/article-pdf/57/11/1624/1144736/bxt070.pdf",
+      "search_calls": [
+        "metadata-8"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.union]",
+      "url": "http://www.eel.is/c++draft/class.union",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.copy]",
+      "url": "https://timsong-cpp.github.io/cppwp/std17/class.copy",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.union.anon]",
+      "url": "https://eel.is/c%2B%2Bdraft/class.union.anon",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Union declaration - cppreference.com",
+      "url": "https://en.cppreference.com/cpp/language/union",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.union.general]",
+      "url": "http://eel.is/c++draft/class.union.general",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Why is the defaulted default constructor deleted for a union or union-like class?",
+      "url": "https://stackoverflow.com/questions/65404305/why-is-the-defaulted-default-constructor-deleted-for-a-union-or-union-like-class",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[basic.life]",
+      "url": "https://timsong-cpp.github.io/cppwp/n4950/basic.life",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class]",
+      "url": "https://www.eel.is/c++draft/class",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Conditionally Trivial Special Member Functions",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2019/p0848r1.html",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "class",
+      "url": "https://open-std.org/jtc1/sc22/open/n2356/class.html",
+      "search_calls": [
+        "metadata-9"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "P0593R6 Implicit creation of objects for low-level object manipulation",
+      "url": "https://open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0593r6.html",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "P0593R6 Implicit creation of objects for low-level object manipulation · f6c2987 · cplusplus/draft",
+      "url": "https://github.com/cplusplus/draft/commit/f6c2987ffa70ee1efc9bee65fed06d891b3d6a5d",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Object - cppreference.com",
+      "url": "https://www.cppreference.com/cpp/language/object",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.copy.ctor]",
+      "url": "https://www.eel.is/c++draft/class.copy.ctor",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "P0593R5: Implicit creation of objects for low-level object manipulation",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0593r5.html",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "[class.copy.ctor] p15 Only the corresponding active object can be created and copied from the source",
+      "url": "https://github.com/cplusplus/draft/issues/5193",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Lifetime - cppreference.com",
+      "url": "https://cppreference.com/cpp/language/lifetime",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "P0593R4: Implicit creation of objects for low-level object manipulation",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0593r4.html",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "P0593R3 Implicit creation of objects for low-level object manipulation",
+      "url": "https://open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0593r3.html",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Copy constructors",
+      "url": "https://en.cppreference.com/cpp/language/copy_constructor",
+      "search_calls": [
+        "metadata-10"
+      ],
+      "workstreams": [
+        "metadata"
+      ]
+    },
+    {
+      "title": "Arena (Java SE 26 & JDK 26)",
+      "url": "https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/foreign/Arena.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "session_arenas",
+      "url": "https://cr.openjdk.org/~mcimadamore/panama/session_arenas.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Memory Segments and Arenas",
+      "url": "https://docs.oracle.com/en/java/javase/26/core/memory-segments-and-arenas.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Doubling down on arenas in the Foreign Function & Memory API",
+      "url": "https://cr.openjdk.org/~mcimadamore/panama/scoped_arenas.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "doc/panama_memaccess.md",
+      "url": "https://github.com/openjdk/panama-foreign/blob/foreign-memaccess%2Babi/doc/panama_memaccess.md",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "SegmentAllocator (Java SE 26 & JDK 26)",
+      "url": "https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/foreign/SegmentAllocator.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Foreign Function and Memory API",
+      "url": "https://docs.oracle.com/en/java/javase/20/core/foreign-function-and-memory-api.html",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Loading...",
+      "url": "https://bugs.openjdk.org/browse/JDK-8295045",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "JEP 442: Foreign Function & Memory API (Third Preview)",
+      "url": "https://openjdk.org/jeps/442",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Managing Native Memory in Java (FFM API): Arenas, Malloc & Custom Memory Pools | David Vlijmincx",
+      "url": "https://davidvlijmincx.com/posts/java-native-memory-allocation-ffm-api/",
+      "search_calls": [
+        "api-1"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "p0052r10 - Generic Scope Guard and RAII Wrapper for the Standard Library",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0052r10.pdf",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Language Support For Scoped Allocators",
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2685r0.html",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "libcxx/include/memory",
+      "url": "https://github.com/llvm/llvm-project/blob/main/libcxx/include/memory",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "A Proposal to Add additional RAII Wrappers to the Standard Library",
+      "url": "https://www.open-std.org/JTC1/sc22/WG21/docs/papers/2013/n3677.html",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "LLVM: lib/Support/Allocator.cpp Source File",
+      "url": "https://llvm.org/docs/doxygen/Allocator_8cpp_source.html",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "C++ named requirements: Allocator - cppreference.com",
+      "url": "https://en.cppreference.com/cpp/named_req/Allocator",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Docs/ExceptionSafety.md",
+      "url": "https://github.com/cvet/fonline/blob/2c39c2c7/Docs/ExceptionSafety.md",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Policies for Using Allocators in Library Classes",
+      "url": "https://www.open-std.org/JTC1/sc22/WG21/docs/papers/2024/p3002r1.html",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "include/scoped_allocator - llvm-project/libcxx - Git at Google",
+      "url": "https://llvm.googlesource.com/llvm-project/libcxx/+/af0d948fe7762e783ede374b4c60ce237616737a/include/scoped_allocator",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Allocator-aware library wrappers for dynamic allocation",
+      "url": "https://open-std.org/JTC1/SC22/WG21/docs/papers/2018/p0211r2.html",
+      "search_calls": [
+        "api-2"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Reconsidering “Reconsidering Custom Memory Allocation”",
+      "url": "https://arxiv.org/html/2605.17119v1",
+      "search_calls": [
+        "api-3"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "BatchIt: Optimizing Message-Passing Allocators for Producer-Consumer Workloads: An Intellectual Abstract",
+      "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2024/05/preprint_batchit.pdf",
+      "search_calls": [
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "mjansson/rpmalloc",
+      "url": "https://github.com/mjansson/rpmalloc?tab=readme-ov-file",
+      "search_calls": [
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "A Non-blocking Buddy System for Scalable Memory Allocation on Multi-core Machines",
+      "url": "https://doi.org/10.1109/cluster.2018.00034",
+      "search_calls": [
+        "api-3"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "mi-malloc: mi-malloc",
+      "url": "https://microsoft.github.io/mimalloc/index.html",
+      "search_calls": [
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "BENCHMARKS.md",
+      "url": "https://github.com/mjansson/rpmalloc/blob/develop/BENCHMARKS.md",
+      "search_calls": [
+        "api-3",
+        "cost-4"
+      ],
+      "workstreams": [
+        "api",
+        "cost"
+      ]
+    },
+    {
+      "title": "proposals/0322-temporary-buffers.md",
+      "url": "https://github.com/swiftlang/swift-evolution/blob/main/proposals/0322-temporary-buffers.md",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "withUnsafeTemporaryAllocation(of:capacity:_:) — Apple Developer Docs",
+      "url": "https://apple-docs.everest.mt/docs/swift/withunsafetemporaryallocation(of:capacity:_:)/",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "proposals/0524-span-temporary-allocation.md",
+      "url": "https://github.com/swiftlang/swift-evolution/blob/main/proposals/0524-span-temporary-allocation.md",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "Unsafe Swift - WWDC20 - Videos - Apple Developer",
+      "url": "https://developer.apple.com/videos/play/wwdc2020/10648/?time=536",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "SE-0322: Temporary Uninitialized Buffers",
+      "url": "https://forums.swift.org/t/se-0322-temporary-uninitialized-buffers/51848/54",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "[Accepted with Modifications] SE-0322: Temporary Uninitialized Buffers",
+      "url": "https://forums.swift.org/t/accepted-with-modifications-se-0322-temporary-uninitialized-buffers/52532",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "withUnsafeTemporaryAllocation(byteCount:alignment:_:) — Apple Developer Docs",
+      "url": "https://apple-docs.everest.mt/docs/swift/withunsafetemporaryallocation(bytecount:alignment:_:)/",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "userdocs/diagnostics/temporary-pointers.md",
+      "url": "https://github.com/apple/swift/blob/master/userdocs/diagnostics/temporary-pointers.md",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "proposals/0524-span-temporary-allocation.md",
+      "url": "https://github.com/apple/swift-evolution/blob/main/proposals/0524-span-temporary-allocation.md",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "stdlib/public/core/LifetimeManager.swift",
+      "url": "https://github.com/apple/swift/blob/main/stdlib/public/core/LifetimeManager.swift",
+      "search_calls": [
+        "api-4"
+      ],
+      "workstreams": [
+        "api"
+      ]
+    },
+    {
+      "title": "docs/heap/zone-allocator.md - v8/v8 - Git at Google",
+      "url": "https://chromium.googlesource.com/v8/v8/+show/7b26e81087ec88c287d9a4812f969d412f32774e/docs/heap/zone-allocator.md",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "A Retrospective on Region-Based Memory Management",
+      "url": "https://elsman.com/pdf/retro.pdf",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Composing High-Performance Memory Allocators",
+      "url": "https://people.cs.umass.edu/~emery/pubs/berger-pldi2001.pdf",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Composing High-Performance Memory Allocators",
+      "url": "https://people.cs.umass.edu/~emery/publications/berger-pldi2001.pdf",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Reconsidering Custom Memory Allocation",
+      "url": "https://people.cs.umass.edu/~emery/pubs/berger-oopsla2002.pdf",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "yaroslavaristov/arena-allocator",
+      "url": "https://github.com/yaroslavaristov/arena-allocator",
+      "search_calls": [
+        "cost-1"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "[container.requirements]",
+      "url": "https://eel.is/c++draft/container.requirements",
+      "search_calls": [
+        "cost-2"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "folly/container/test/F14MapTest.cpp",
+      "url": "https://github.com/facebook/folly/blob/master/folly/container/test/F14MapTest.cpp",
+      "search_calls": [
+        "cost-2"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "libcxx/include/__hash_table",
+      "url": "https://github.com/llvm/llvm-project/blob/main/libcxx/include/__hash_table",
+      "search_calls": [
+        "cost-2"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "folly/concurrency/detail/ConcurrentHashMap-detail.h",
+      "url": "https://github.com/facebook/folly/blob/master/folly/concurrency/detail/ConcurrentHashMap-detail.h",
+      "search_calls": [
+        "cost-2"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "folly/docs/AtomicHashMap.md",
+      "url": "https://github.com/facebook/folly/blob/main/folly/docs/AtomicHashMap.md",
+      "search_calls": [
+        "cost-2"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "README.md at master · tremwil/closure-ffi",
+      "url": "https://github.com/tremwil/closure-ffi/blob/master/README.md",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "gardell/scoped-callback",
+      "url": "https://github.com/gardell/scoped-callback",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "std.mutex | Zynx Programming Language",
+      "url": "https://zynx-lang.org/std/mutex",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "scope.rs - source",
+      "url": "https://docs.rs/ulua-rt/latest/src/ulua_rt/scope.rs.html",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Scope in scoped_callback - Rust",
+      "url": "https://docs.rs/scoped-callback/latest/scoped_callback/struct.Scope.html",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Rust Once, Run Everywhere | Rust Blog",
+      "url": "https://blog.rust-lang.org/2015/04/24/Rust-Once-Run-Everywhere/",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Creating a Pool of Callbacks from Rust to C++ with Proc Macros | plog",
+      "url": "https://petelevasseur.com/articles/016-rust-cpp-proc-macro.html",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Semantic FFI Bindings in Rust - Reactivating the Borrow Checker | Abstraction Haven",
+      "url": "https://blog.schichler.dev/posts/Semantic-FFI-Bindings-in-Rust-Reactivating-the-Borrow-Checker/",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "The Racket Foreign Interface",
+      "url": "https://plt.cs.northwestern.edu/snapshots/2026-11-01-437a2611fb/pdf-doc/foreign.pdf",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "UniFFI Async Overview - The UniFFI user guide",
+      "url": "https://mozilla.github.io/uniffi-rs/latest/internals/async-overview.html",
+      "search_calls": [
+        "cost-3"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "snmalloc: A Message Passing Allocator",
+      "url": "https://alex.shamis.au/files/snmalloc-A-Message-Passing-Allocator.pdf",
+      "search_calls": [
+        "cost-4"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "microsoft/mimalloc",
+      "url": "https://github.com/microsoft/mimalloc?tab=readme-ov-file",
+      "search_calls": [
+        "cost-4"
+      ],
+      "workstreams": [
+        "cost"
+      ]
+    },
+    {
+      "title": "Erasing and disposing values from Boost.Intrusive containers",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/erasing_and_disposing.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Safe hooks",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/safe_hook.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Auto-unlink hooks",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/auto_unlink_hooks.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Intrusive doubly linked list: list",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/list.html",
+      "search_calls": [
+        "intrusive-1",
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Thread safety guarantees",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/thread_safety.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Intrusive and non-intrusive containers",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "search_calls": [
+        "intrusive-1",
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Class template list_member_hook",
+      "url": "https://www.boost.org/latest/doc/html/doxygen/classboost_1_1intrusive_1_1list__member__hook.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Intrusive singly linked list: slist",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/slist.html",
+      "search_calls": [
+        "intrusive-1",
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "How to use Boost.Intrusive",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/usage.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Presenting Boost.Intrusive containers",
+      "url": "https://www.boost.org/doc/libs/develop/doc/html/intrusive/presenting_containers.html",
+      "search_calls": [
+        "intrusive-1"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Performance",
+      "url": "https://www.boost.org/latest/doc/html/intrusive/performance.html",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Intrusive and non-intrusive containers - 1.41.0",
+      "url": "https://original.boost.org/doc/libs/1_41_0/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Presenting Boost.Intrusive containers",
+      "url": "https://www.boost.org/doc/libs/latest/doc/html/intrusive/presenting_containers.html",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "include/boost/intrusive/list.hpp at f44b0102b4ee9acf7b0304b3f5b27dde02297202 · boostorg/intrusive",
+      "url": "https://github.com/boostorg/intrusive/blob/f44b0102b4ee9acf7b0304b3f5b27dde02297202/include/boost/intrusive/list.hpp",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "When to use?",
+      "url": "https://www.boost.org/doc/libs/latest/doc/html/intrusive/usage_when.html",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "Boost.Intrusive",
+      "url": "http://www.virtualroadside.com/stuff/intrusive.pdf",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    },
+    {
+      "title": "[Intrusive] - Boost - lists.boost.org",
+      "url": "https://lists.boost.org/archives/list/boost@lists.boost.org/thread/WMND3KIXQXCALNSFL5GX7GG2IVAPDTTJ/",
+      "search_calls": [
+        "intrusive-2"
+      ],
+      "workstreams": [
+        "intrusive"
+      ]
+    }
+  ],
+  "limits": [
+    "Requested and returned results count repeated results across searches; unique URLs are separately deduplicated.",
+    "Search similarity is discovery, not validation. Primary design documents and exact project source govern adoption.",
+    "No copyrighted page body or highlights are included in this public index; original raw receipts are preserved locally.",
+    "No external implementation was vendored and no new production dependency was introduced by this research.",
+    "This survey cannot establish a globally optimal algorithm, target-device runtime performance, RSS or energy."
+  ]
+}

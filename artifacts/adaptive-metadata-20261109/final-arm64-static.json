@@ -1,0 +1,172 @@
+{
+  "state": "PASS_ARM64_CROSS_COMPILE_ONLY",
+  "base_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "performance_qualified": false,
+  "device_executed": false,
+  "sdk_published": false,
+  "artifacts": {
+    "core": {
+      "bytes": 580696,
+      "sha256": "e810451752a371e7596b42548891351dfc3223754911d2dc2c89e1ddadb30542",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": false,
+      "rpath": false
+    },
+    "mgmem_claim_release": {
+      "bytes": 420384,
+      "sha256": "980165e6ecc4fc3a724d2503ec675f5265db8fa340871d28dc035b41cc60bf24",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_lookup": {
+      "bytes": 410960,
+      "sha256": "00651298c428e0af34f9db8300b24de7327a1d2b57df88107a608c7052a3b18b",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_small_cost": {
+      "bytes": 417736,
+      "sha256": "caacf7f09606dbb7f2a2ff074de3317dc44a1cd857cbd0194c7e832709d3ec35",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_core_tests": {
+      "bytes": 150896,
+      "sha256": "d13169cab03bf0d2966e19a77e1a997cf5b5872408eab887d0f26f19868071d2",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_cpp_consumer": {
+      "bytes": 71112,
+      "sha256": "557186143344c8136a8976f760e0a9bc28e86b7acac9c48f212cf736ec9c7ef5",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_lease_table_tests": {
+      "bytes": 415024,
+      "sha256": "cb97db881305a945e4f1de25202f90e5764c9c25ca50dcb10ae1ce6cb63bcd78",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": true,
+      "rpath": false
+    }
+  },
+  "cpp_api_compile_only_objects": {
+    "cpp_consumer.cpp": {
+      "bytes": 407672,
+      "sha256": "f5f06b52ca89fef5b6ea6fbfe2f419ce1240ea51293681dfc783be521c784f31",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    },
+    "cpp_checked_import_tests.cpp": {
+      "bytes": 561656,
+      "sha256": "68294e011f08f48c9706116b4098921add0329c1718a47892c5d9c6240397872",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    },
+    "cpp_checked_fake_tests.cpp": {
+      "bytes": 170640,
+      "sha256": "01ada48ceece0d52a1d72bbac8558e22cc6644d6a873730e8c5fe60db17e19c6",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    }
+  },
+  "core_flags_match_previous_android_profile": true,
+  "limits": [
+    "No target executable was run; no ADB, device, APK, SDK archive or publication.",
+    "Only the frozen adaptive table candidate was built; C++ API objects were compiled, never linked or run. No old runtime is a performance baseline.",
+    "ELF 16KiB LOAD alignment is static evidence, not an Android loader/device result.",
+    "Source closure and selected tool hashes are recorded; the full NDK sysroot is not exhaustively hashed."
+  ],
+  "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "private_manifest_sha256": "4af60a4f177c3797cacd0a81117d16f24f23008ccf9bf9090928f953fd536a6a"
+}

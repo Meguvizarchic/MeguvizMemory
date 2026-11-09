@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-09",
+  "state": "ADOPTED_INTRUSIVE_BACKING_AND_ADAPTIVE_METADATA_WITH_MEASURED_COSTS",
+  "performance_qualified": false,
+  "base_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "baseline_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "selected_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "prototype_core_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "prototype_performance_processes": 0,
+  "performance": {
+    "processes": 832,
+    "pairs": 416,
+    "groups": 58,
+    "plan_sha256": "f5c3c20e8a983c17c11a628e92ed18cc5461b828e7377ea1c9ac20072c0cdac9",
+    "full_report": "performance-full.json.gz",
+    "summary": "performance-summary.json",
+    "advice": "adoption-advice.json",
+    "previous_round_data_pooled_or_inherited": false
+  },
+  "adopted_changes": [
+    "Bounded numeric capacity prediction releases empty arrays and preserves first-record inline storage.",
+    "Explicit C++17 construction avoids initializing empty payload records.",
+    "Private intrusive BackingList eliminates dynamic empty and detached list heads and linear backing removal.",
+    "OPEN notification elision preserves the only drain waiter predicate and closing/poison notification.",
+    "Optional one-line synchronous C++ with_allocation reuses ordinary owner and WRITE borrow RAII."
+  ],
+  "research": {
+    "provider": "Exa MCP",
+    "search_calls": 25,
+    "requested_results": 250,
+    "returned_results": 250,
+    "unique_urls": 221,
+    "index": "research-index.json"
+  },
+  "adoption_scope": "Engineering selection for repeated small workloads and backing retirement; not a universal no-regression or globally optimal algorithm claim.",
+  "qualification": {
+    "host_core": "48_OF_48",
+    "host_cpp": "12_OF_12",
+    "host_asan": "48_OF_48",
+    "installed_cpp": "1_OF_1_8_CASES",
+    "direct_table": "11_TESTS_4239358_CHECKS_6_ARRAY_OOM",
+    "metadata_relocation": "1_TEST_1482_CHECKS",
+    "heap_per_round": "52_ARENA_CASES_4_LAYOUTS",
+    "android": "7_ELF_3_REL_OBJECTS_CROSS_COMPILE_STATIC_ONLY",
+    "target_executions": 0,
+    "new_android_sdk_aar_apk": false,
+    "new_production_dependency": false,
+    "public_c_abi_changed": false,
+    "bil_changed": false
+  },
+  "counterevidence": [
+    "All 58 groups and 1246 metrics include per-pair ratios/deltas, null ratios and first/last halves.",
+    "Some once/worker and cold worker complete-wall results regress materially; scheduling causality is not established.",
+    "Legacy fixed four-thread and single mixed P50, and System32 forward complete workflow have recorded costs.",
+    "First-batch combined array peaks remain 5376/10752 bytes for held32/64.",
+    "A historical batch can cause the next two-record workload to request 128 slots.",
+    "Backing is 96 bytes including intrusive links; compare with the baseline actual 96-byte list node, not its 80-byte value alone.",
+    "Array request counts and host layouts are not RSS, energy or Android performance."
+  ],
+  "previous_evidence_preserved": [
+    "../handle-table-20261109/decision.json",
+    "../arena-small-20261109/decision.json",
+    "../arena-mixed-20261109/decision.json",
+    "../claim-release-20261109/decision.json"
+  ],
+  "patch_application": "git apply --unidiff-zero final-production.patch against e92e777.",
+  "files": {
+    "adoption-advice.json": {
+      "bytes": 1612176,
+      "sha256": "cbfe732ac4f82e58cbf1c89b84d3cb51c11f9b3bf8ac0bfdf9de6c5dc37307d1"
+    },
+    "diagnostic-sources.json": {
+      "bytes": 10427,
+      "sha256": "f6db7c8705cc9b20c42a186a6089ecc4366171eb5a697f7623edc72b9d19416b"
+    },
+    "final-arm64-static.json": {
+      "bytes": 4436,
+      "sha256": "77904b26770dd2d30a4f3cd85f2263da95037fe8d98e0e6cbfa45b970a2603e0"
+    },
+    "final-delivery-index.public.json": {
+      "bytes": 1151,
+      "sha256": "8a76d88e58ae8ba3192c9122c56f16ae4153719e9a90c5bc68bba6ee7455f8de"
+    },
+    "final-diagnostic-sources.zip": {
+      "bytes": 57438,
+      "sha256": "4b0218d204a7d15191205a1f59210c76182691093b08f5eae5c626aaec1f5c5d"
+    },
+    "final-heap-events.json": {
+      "bytes": 1564952,
+      "sha256": "1c36d5ac0047723e5a359ed052760167289311cbf8ab1606a9f234e94d3b2390"
+    },
+    "final-heap-full.json.gz": {
+      "bytes": 75883,
+      "sha256": "952645c76a17d61795bc1f3bc2d285b9ee73443e01936b3de1d67e9cf71d920c"
+    },
+    "final-heap-index.json": {
+      "bytes": 693,
+      "sha256": "6fe4a61294c4fa1016998b0ce99cc1311865c1875983259bbac01c4cb034753e"
+    },
+    "final-heap-validation.json": {
+      "bytes": 13994,
+      "sha256": "e353122cc004312a6f89d7620d773acd1b79a47e52b1b9fcbf9c7603cf3b8b2b"
+    },
+    "final-host-validation.json": {
+      "bytes": 11492,
+      "sha256": "760a0eee486a2bfe9702a294985d9811853cd008fb24375ee6aeb38f513cb16b"
+    },
+    "final-installed-cpp-readback.json": {
+      "bytes": 3468,
+      "sha256": "4779e2f7e652947e0aedb40eb17782d6e6746fd4c57bd08533ea7a752e111f5e"
+    },
+    "final-production.patch": {
+      "bytes": 26818,
+      "sha256": "4410a71a5fbcbc9716cb00fc9fe8484a5a60585ad5255bcf5827de611978ccdf"
+    },
+    "final-scope-decisions.public.json": {
+      "bytes": 1048,
+      "sha256": "6ee68b7f4501a1b7a1117cdd5ef62e663c2bb3a963365de45fe58d3ab8e79bfe"
+    },
+    "final-source-review.json": {
+      "bytes": 7137,
+      "sha256": "ca2e87145b6660cdecd9cfe37050bd8d89b02b22a114d9b3509271cd2d3acf85"
+    },
+    "heap-public-file-map.json": {
+      "bytes": 636,
+      "sha256": "b5f60aa47baa6b4a97adc21c35ee9d0c65e0a731208e64288ac2c4c3c4f954ac"
+    },
+    "performance-full.json.gz": {
+      "bytes": 630912,
+      "sha256": "dda00f85643592007bf15dd05b11dc66e0975ad57ed27d5c678fec9516898bd0",
+      "uncompressed_bytes": 9365200,
+      "uncompressed_sha256": "c89ba054fdaa1428147c9d14c4bdba19da9cebbf61cc7893fccb307176f68c76"
+    },
+    "performance-summary.json": {
+      "bytes": 2904431,
+      "sha256": "33fe8c01d46ebcc2e7b8bcb64fe1cc091ded7fd2cd007228bee2f49bff769069"
+    },
+    "prototype-arm64-static.json": {
+      "bytes": 4355,
+      "sha256": "046d530f1975ce3395fa16dd5fb95bc65fc2b60d78346a2967e9d374cbe3401a"
+    },
+    "prototype-core.cpp": {
+      "bytes": 47733,
+      "sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a"
+    },
+    "prototype-core.patch": {
+      "bytes": 4858,
+      "sha256": "46975e6b5371a7ac47cd4179fa7c329ec3957f96b440752e20f557bc2d087dd0"
+    },
+    "prototype-diagnostic-sources.zip": {
+      "bytes": 56124,
+      "sha256": "d2bb25a02549d5121cbb7ef6b9e457406538b1908a52db546a989880604e5833"
+    },
+    "prototype-heap-events.json": {
+      "bytes": 1565946,
+      "sha256": "8baeb7ee5f4ff7f302221307708ce47558a3cbe4c716c76d8b1941c57c03efd6"
+    },
+    "prototype-heap-full.json.gz": {
+      "bytes": 77071,
+      "sha256": "af7fc0cfcbc056e574b13628893bc1792ab597e644bb3281816bdacf78da7dfc"
+    },
+    "prototype-heap-index.json": {
+      "bytes": 693,
+      "sha256": "29cf7104439f6afb00d9b7867208cace03326b3bb3ea67df5bf343ddbe7fa833"
+    },
+    "prototype-heap-validation.json": {
+      "bytes": 14004,
+      "sha256": "801b74143c63399b8c79cc31fadf2a32cdee725ca6b412d0a1c7e1d8f016fe41"
+    },
+    "prototype-host-validation.json": {
+      "bytes": 11036,
+      "sha256": "26c34d9b787fb6a9c2e2817748b6384e5ed3349e796c050a348c05d0afccf679"
+    },
+    "prototype-installed-cpp-readback.json": {
+      "bytes": 2734,
+      "sha256": "94e670819a5e229427fffab3e317107522ee1c17011a7f8d82e5018e66ab946f"
+    },
+    "prototype-prebuild-generator-failure.json": {
+      "bytes": 455,
+      "sha256": "cd53c387a721fa27734c5fbadeed9554b1d90ede3a49b801c734a6f5c4742747"
+    },
+    "prototype-source-review.json": {
+      "bytes": 4911,
+      "sha256": "8aa9b083c217baa98930303c7190ff5a794ca6bb274b6ee72e318bf27176e086"
+    },
+    "research-index.json": {
+      "bytes": 71351,
+      "sha256": "a59c8535b3760a2a07c42361467a2f972965f195a87b1c371af2feb764e48871"
+    },
+    "source-bindings.json": {
+      "bytes": 2387,
+      "sha256": "c05b441b8b6d03f39d2c7a66af3b6669598c4b7271e30074fcc10b01a7b52a86"
+    },
+    "static-index.json": {
+      "bytes": 8616,
+      "sha256": "c669dcc1126609fa6faa929e9b5fdcc42e9cdf9e89b648c1d9125d50ea7cac49"
+    },
+    "static-publication-initial-scan-failure.json": {
+      "bytes": 575,
+      "sha256": "33116f0fbcec8e2ec81dcc8f5f54251bb820f8b4f0b41a5726adb4a130c2a5c6"
+    },
+    "static-redaction-index.json": {
+      "bytes": 2312,
+      "sha256": "8079713cc72f5da5acb9b9df46bded989969941aa8b4d6f98ad5ea67d484f976"
+    },
+    "STATIC_README.md": {
+      "bytes": 2177,
+      "sha256": "1db94d4487354075f0b6fdd0ab9dc15c6655bd3573d8faa52d3be605ef5743d2"
+    }
+  }
+}

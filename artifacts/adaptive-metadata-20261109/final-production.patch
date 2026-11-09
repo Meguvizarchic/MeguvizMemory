@@ -1,0 +1,601 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -103,0 +104,83 @@
++    // Private metadata links only. Rollback copies never consume these links;
++    // destruction never unlinks or drops an uncertain registry claim.
++    Backing *previous = nullptr;
++    Backing *next = nullptr;
++};
++
++// The runtime needs stable backing addresses and allocation-free detachment,
++// but no general list interface. Empty and temporary lists own no heap storage.
++class BackingList {
++    Backing *head_ = nullptr;
++    Backing *tail_ = nullptr;
++
++    void append(Backing *node) noexcept {
++        node->previous = tail_;
++        node->next = nullptr;
++        if (tail_) tail_->next = node;
++        else head_ = node;
++        tail_ = node;
++    }
++
++    void unlink(Backing *node) noexcept {
++        if (node->previous) node->previous->next = node->next;
++        else head_ = node->next;
++        if (node->next) node->next->previous = node->previous;
++        else tail_ = node->previous;
++        node->previous = nullptr;
++        node->next = nullptr;
++    }
++
++public:
++    struct iterator {
++        Backing *node = nullptr;
++        Backing &operator*() const noexcept { return *node; }
++        Backing *operator->() const noexcept { return node; }
++        iterator &operator++() noexcept { node = node->next; return *this; }
++        bool operator==(iterator other) const noexcept { return node == other.node; }
++        bool operator!=(iterator other) const noexcept { return node != other.node; }
++    };
++
++    BackingList() = default;
++    BackingList(const BackingList &) = delete;
++    BackingList &operator=(const BackingList &) = delete;
++    ~BackingList() noexcept {
++        while (head_) {
++            Backing *node = head_;
++            head_ = node->next;
++            delete node;
++        }
++    }
++
++    bool empty() const noexcept { return head_ == nullptr; }
++    iterator begin() noexcept { return {head_}; }
++    iterator end() noexcept { return {}; }
++    iterator last() noexcept { return {tail_}; }
++    Backing &front() noexcept { return *head_; }
++
++    void emplace_back(Backing value) {
++        // No existing links change until allocation and construction succeed.
++        append(new Backing(value));
++    }
++
++    void erase(iterator position) noexcept {
++        Backing *node = position.node;
++        unlink(node);
++        delete node;
++    }
++
++    // Only members of source are passed here, under the owning domain lock.
++    void splice_one(BackingList &source, Backing *node) noexcept {
++        source.unlink(node);
++        append(node);
++    }
++
++    void splice_all(BackingList &source) noexcept {
++        if (&source == this || source.empty()) return;
++        if (tail_) {
++            tail_->next = source.head_;
++            source.head_->previous = tail_;
++        } else head_ = source.head_;
++        tail_ = source.tail_;
++        source.head_ = nullptr;
++        source.tail_ = nullptr;
++    }
+@@ -126,0 +210,2 @@
++    static_assert(std::is_nothrow_copy_constructible<Record>::value,
++                  "Private handle records must construct without throwing");
+@@ -128,2 +213,10 @@
+-        u64 id = 0;
+-        Record value{};
++        u64 id;
++        // Empty slots have no payload. Explicit construction starts its lifetime
++        // in C++17 as well; never inspect value while id is 0.
++        union { Record value; };
++        Slot() noexcept : id(0) {}
++        Slot(u64 key, Record record) noexcept : id(key), value(record) {}
++        void store(u64 key, const Record &record) noexcept {
++            ::new (static_cast<void *>(&value)) Record(record);
++            id = key;
++        }
+@@ -132,0 +226,2 @@
++    // With no array, this is only a bounded prediction for the next batch.
++    // The first record still uses single_; quiet reclamation forgets the hint.
+@@ -147 +242 @@
+-        slots[position] = value;
++        slots[position].store(value.id, value.value);
+@@ -153,2 +248,2 @@
+-        if (capacity_ && capacity_ > maximum / 2) throw std::bad_alloc();
+-        const size_t next = capacity_ ? capacity_ * 2 : 4;
++        if (slots_ && capacity_ > maximum / 2) throw std::bad_alloc();
++        const size_t next = slots_ ? capacity_ * 2 : std::max(capacity_, size_t{4});
+@@ -157 +252 @@
+-        if (!capacity_) place(fresh.get(), next, single_);
++        if (!slots_) place(fresh.get(), next, single_);
+@@ -174,2 +269,2 @@
+-        if (!capacity_ && !size_) {
+-            single_ = {id, value};
++        if (!slots_ && !size_) {
++            single_.store(id, value);
+@@ -179 +274 @@
+-        if (!capacity_ || size_ >= capacity_ - capacity_ / 4) grow();
++        if (!slots_ || size_ >= capacity_ - capacity_ / 4) grow();
+@@ -186 +281 @@
+-        if (!capacity_) return single_.id == id && id ? &single_ : nullptr;
++        if (!slots_) return single_.id == id && id ? &single_ : nullptr;
+@@ -198 +293 @@
+-        if (!capacity_) {
++        if (!slots_) {
+@@ -205 +300,8 @@
+-        if (--size_ == 0) { release_storage(); return; }
++        if (--size_ == 0) {
++            slots_.reset();
++            // Learn short phases without retaining heap storage or reserving
++            // an unbounded historical peak for a later two-record workload.
++            capacity_ = std::min(capacity_, size_t{128});
++            single_.id = 0;
++            return;
++        }
+@@ -212 +314 @@
+-                slots_[hole] = slots_[current];
++                slots_[hole].store(slots_[current].id, slots_[current].value);
+@@ -350 +452 @@
+-    std::list<Backing> backing;
++    BackingList backing;
+@@ -356 +458 @@
+-    std::list<Backing>::iterator arena_search;
++    BackingList::iterator arena_search;
+@@ -361,0 +464,7 @@
++// The only condition-variable wait is drain(), which rejects OPEN under the
++// same mutex. Closing/poison publication still notifies while holding that lock;
++// ordinary OPEN operations cannot have a drain waiter to wake.
++void notify_drain(mgmem_domain &domain) noexcept {
++    if (domain.state != MGMEM_OPEN) domain.changed.notify_all();
++}
++
+@@ -457 +566 @@
+-    std::list<Backing> detached;
++    BackingList detached;
+@@ -459,10 +568 @@
+-    for (auto it = domain.backing.begin(); it != domain.backing.end(); ++it) {
+-        if (&*it == backing) {
+-            detached.splice(detached.end(), domain.backing, it);
+-            break;
+-        }
+-    }
+-    if (detached.empty()) {
+-        domain.provider_poisoned = true;
+-        return MGMEM_PROVIDER_ERROR;
+-    }
++    detached.splice_one(domain.backing, backing);
+@@ -482 +582 @@
+-    domain.changed.notify_all();
++    notify_drain(domain);
+@@ -493 +593 @@
+-    std::list<Backing> detached;
++    BackingList detached;
+@@ -495 +595 @@
+-    detached.splice(detached.end(), domain.backing);
++    detached.splice_all(domain.backing);
+@@ -517 +617 @@
+-    domain.changed.notify_all();
++    notify_drain(domain);
+@@ -642 +742 @@
+-        // map insertion removes the placeholder and never reserves any budget.
++        // table insertion removes the placeholder and never reserves any budget.
+@@ -644 +744 @@
+-        auto backing_it = std::prev(domain->backing.end());
++        auto backing_it = domain->backing.last();
+@@ -690 +790 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -711 +811 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -753 +853 @@
+-        auto backing_it = std::prev(domain->backing.end());
++        auto backing_it = domain->backing.last();
+@@ -797 +897 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -821 +921 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -867 +967 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -889 +989 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -943 +1043 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -947 +1047 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -983 +1083 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+--- a/include/mgmem/memory.hpp
++++ b/include/mgmem/memory.hpp
+@@ -6,0 +7 @@
++#include <cstddef>
+@@ -9,0 +11 @@
++#include <type_traits>
+@@ -271,0 +274,32 @@
++    // Synchronous uninitialized workspace, with one WRITE borrow for the body.
++    // The body receives (void *, uint64_t), and returns void or mgmem_status.
++    // It runs only after allocation and borrow succeed. Its status is returned;
++    // its exceptions propagate after the ordinary RAII cleanup below. Cleanup
++    // retains the same fail-stop contract as owned_allocation and borrow.
++    // Pointers must not escape the body or be queued for later asynchronous use.
++    // Arena storage remains retained until explicit reset/trim, as with allocate.
++    template<class Function>
++    mgmem_status with_allocation(uint64_t bytes, uint64_t alignment, Function &&body) const {
++        using result = std::invoke_result_t<Function, void *, uint64_t>;
++        static_assert(std::is_same<result, void>::value ||
++                      std::is_same<result, mgmem_status>::value,
++                      "Workspace body must return void or mgmem_status");
++        owned_allocation allocation;
++        const auto allocated = allocate(bytes, alignment, allocation);
++        if (allocated != MGMEM_OK) return allocated;
++        borrow view;
++        const auto acquired = allocation.acquire_borrow(0, bytes, MGMEM_WRITE, view);
++        if (acquired != MGMEM_OK) return acquired;
++        if constexpr (std::is_same<result, void>::value) {
++            std::forward<Function>(body)(view.write_data(), view.size_bytes());
++            return MGMEM_OK;
++        } else {
++            return std::forward<Function>(body)(view.write_data(), view.size_bytes());
++        }
++    }
++
++    template<class Function>
++    mgmem_status with_allocation(uint64_t bytes, Function &&body) const {
++        return with_allocation(bytes, alignof(std::max_align_t), std::forward<Function>(body));
++    }
++
+--- a/tests/core_tests.cpp
++++ b/tests/core_tests.cpp
+@@ -452,2 +452,4 @@
+-    for (size_t remaining = views.size(); remaining != 0; --remaining) {
+-        const auto index = remaining - 1;
++    // Reclaim interior, tail and head nodes after both handle tables moved while
++    // the first provider callback was pending. Each return must pair exactly.
++    for (size_t released = 0; released < views.size(); ++released) {
++        const auto index = (released * 5 + 7) % views.size();
+@@ -456,0 +459,6 @@
++        CHECK(mgmem_borrow_release_v1(domain, views[index].lease) == MGMEM_STALE_HANDLE);
++        const auto remaining = views.size() - released - 1;
++        const auto after_release = snapshot(domain);
++        CHECK(after_release.active_allocations == remaining && after_release.active_leases == remaining);
++        CHECK(after_release.backing_bytes == remaining * 32 && after_release.retiring_bytes == remaining * 32);
++        CHECK(provider.deallocation_calls == released + 2);
+--- a/tests/lease_table_tests.cpp
++++ b/tests/lease_table_tests.cpp
+@@ -19,0 +20 @@
++std::atomic<size_t> last_array_bytes{0};
+@@ -26,0 +28 @@
++    last_array_bytes.store(bytes, std::memory_order_relaxed);
+@@ -470,0 +473,193 @@
++
++void check_prediction_record(const Lease &actual, const Lease &expected) {
++    TABLE_CHECK(actual.allocation == expected.allocation && actual.writer == expected.writer);
++}
++
++void check_prediction_record(const Allocation &actual, const Allocation &expected) {
++    TABLE_CHECK(actual.backing == expected.backing && actual.offset == expected.offset &&
++                actual.bytes == expected.bytes && actual.readers == expected.readers &&
++                actual.writer == expected.writer && actual.owner == expected.owner &&
++                actual.pending == expected.pending);
++}
++
++Allocation prediction_owner_value(uint64_t id) {
++    static Backing origin{};
++    return Allocation{&origin, id * 17, id + 31, id % 11,
++                      (id & 1) != 0, (id & 2) != 0, (id & 4) != 0};
++}
++
++template<class Table, class Record>
++void check_capacity_prediction(Record (*make_value)(uint64_t)) {
++    using namespace lease_table_test_heap;
++    Table table;
++    const auto original_live = live_arrays.load();
++    const auto slot_bytes = sizeof(*table.find(1));
++    const auto before_warm = array_attempts.load();
++    for (uint64_t index = 0; index < 64; ++index)
++        table.insert_fresh(100 + index, make_value(100 + index));
++    TABLE_CHECK(array_attempts.load() > before_warm + 1);
++    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
++    for (uint64_t index = 0; index < 64; ++index) {
++        const auto id = 100 + (index * 17) % 64;
++        auto *slot = table.find(id);
++        TABLE_CHECK(slot != nullptr);
++        check_prediction_record(slot->value, make_value(id));
++        table.erase_found(slot);
++    }
++    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
++
++    const auto before_inline = array_attempts.load();
++    table.insert_fresh(1000, make_value(1000));
++    TABLE_CHECK(table.size() == 1 && array_attempts.load() == before_inline);
++    TABLE_CHECK(live_arrays.load() == original_live);
++    const auto before_failure = failures.load();
++    fail_next_array.store(true);
++    bool threw = false;
++    try { table.insert_fresh(1001, make_value(1001)); }
++    catch (const std::bad_alloc &) { threw = true; }
++    TABLE_CHECK(threw && !fail_next_array.load() && failures.load() == before_failure + 1);
++    TABLE_CHECK(table.size() == 1 && table.find(1001) == nullptr);
++    TABLE_CHECK(live_arrays.load() == original_live);
++    auto *inline_slot = table.find(1000);
++    TABLE_CHECK(inline_slot != nullptr);
++    check_prediction_record(inline_slot->value, make_value(1000));
++
++    const auto before_predicted = array_attempts.load();
++    for (uint64_t index = 1; index < 64; ++index)
++        table.insert_fresh(1001 + index, make_value(1001 + index));
++    TABLE_CHECK(table.size() == 64 && array_attempts.load() == before_predicted + 1);
++    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
++    TABLE_CHECK(live_arrays.load() == original_live + 1);
++    table.erase(1000);
++    for (uint64_t index = 1; index < 64; ++index) {
++        const auto id = 1001 + index;
++        auto *slot = table.find(id);
++        TABLE_CHECK(slot != nullptr);
++        check_prediction_record(slot->value, make_value(id));
++        table.erase_found(slot);
++    }
++    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
++
++    table.release_storage();
++    const auto before_reset_growth = array_attempts.load();
++    table.insert_fresh(2000, make_value(2000));
++    table.insert_fresh(2001, make_value(2001));
++    TABLE_CHECK(array_attempts.load() == before_reset_growth + 1);
++    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 4);
++    table.erase(2001);
++    table.erase(2000);
++    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
++
++    // A larger historical phase must not dictate an unbounded later request.
++    for (uint64_t index = 0; index < 200; ++index)
++        table.insert_fresh(3000 + index, make_value(3000 + index));
++    TABLE_CHECK(last_array_bytes.load() > slot_bytes * 128);
++    for (uint64_t index = 0; index < 200; ++index) table.erase(3000 + index);
++    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
++    const auto before_bounded = array_attempts.load();
++    table.insert_fresh(4000, make_value(4000));
++    TABLE_CHECK(array_attempts.load() == before_bounded);
++    table.insert_fresh(4001, make_value(4001));
++    TABLE_CHECK(array_attempts.load() == before_bounded + 1);
++    TABLE_CHECK(last_array_bytes.load() == slot_bytes * 128);
++    auto *first_bounded = table.find(4000);
++    auto *second_bounded = table.find(4001);
++    TABLE_CHECK(first_bounded != nullptr && second_bounded != nullptr);
++    check_prediction_record(first_bounded->value, make_value(4000));
++    check_prediction_record(second_bounded->value, make_value(4001));
++    table.erase(4000);
++    table.erase(4001);
++    TABLE_CHECK(table.empty() && live_arrays.load() == original_live);
++}
++
++void test_lease_capacity_prediction_lifecycle() {
++    check_capacity_prediction<LeaseTable>(lease_value);
++}
++
++void test_owner_capacity_prediction_lifecycle() {
++    check_capacity_prediction<AllocationTable>(prediction_owner_value);
++}
++
++void check_backing_list(BackingList &list, const std::vector<Backing *> &expected) {
++    TABLE_CHECK(list.empty() == expected.empty());
++    TABLE_CHECK((list.begin() == list.end()) == expected.empty());
++    auto actual = list.begin();
++    for (size_t index = 0; index < expected.size(); ++index) {
++        TABLE_CHECK(actual != list.end());
++        TABLE_CHECK(&*actual == expected[index]);
++        TABLE_CHECK(actual->previous == (index ? expected[index - 1] : nullptr));
++        TABLE_CHECK(actual->next == (index + 1 < expected.size() ? expected[index + 1] : nullptr));
++        TABLE_CHECK(actual->bytes == 1000 + actual->used);
++        ++actual;
++    }
++    TABLE_CHECK(actual == list.end());
++    TABLE_CHECK(list.last().node == (expected.empty() ? nullptr : expected.back()));
++    if (!expected.empty()) TABLE_CHECK(&list.front() == expected.front());
++}
++
++void test_backing_list_identity_splice_and_erase() {
++    TABLE_CHECK(sizeof(BackingList) == 2 * sizeof(Backing *));
++    TABLE_CHECK(sizeof(BackingList::iterator) == sizeof(Backing *));
++    BackingList left, right;
++    std::vector<Backing *> first, second;
++    check_backing_list(left, first);
++    check_backing_list(right, second);
++    left.splice_all(right);
++    left.splice_all(left);
++    check_backing_list(left, first);
++    for (uint64_t index = 0; index < 8; ++index) {
++        left.emplace_back(Backing{nullptr, 1000 + index, 16, index});
++        first.push_back(left.last().node);
++        check_backing_list(left, first);
++    }
++    const auto stable = left.begin();
++    const std::array<size_t, 4> transfer{{3, 0, 7, 4}};
++    for (const auto value : transfer) {
++        const auto selected = std::find_if(first.begin(), first.end(), [&](Backing *node) {
++            return node->used == value;
++        });
++        TABLE_CHECK(selected != first.end());
++        Backing *node = *selected;
++        right.splice_one(left, node);
++        first.erase(selected);
++        second.push_back(node);
++        check_backing_list(left, first);
++        check_backing_list(right, second);
++        TABLE_CHECK(stable->used == 0 && stable->bytes == 1000);
++    }
++    right.erase(right.begin());
++    second.erase(second.begin());
++    right.erase(right.last());
++    second.pop_back();
++    check_backing_list(right, second);
++    left.splice_all(right);
++    first.insert(first.end(), second.begin(), second.end());
++    second.clear();
++    check_backing_list(left, first);
++    check_backing_list(right, second);
++    // The original first node kept its identity through detachment and rejoin.
++    TABLE_CHECK(stable->used == 0 && stable->bytes == 1000);
++    while (!first.empty()) {
++        const auto index = first.size() / 2;
++        left.erase(BackingList::iterator{first[index]});
++        first.erase(first.begin() + static_cast<std::ptrdiff_t>(index));
++        check_backing_list(left, first);
++    }
++    // Exercise empty-target whole-list transfer, a one-node unlink, then leave
++    // owned nodes for the container destructor and sanitizer leak checks.
++    right.emplace_back(Backing{nullptr, 1009, 16, 9});
++    second.push_back(right.last().node);
++    left.splice_all(right);
++    first = second;
++    second.clear();
++    check_backing_list(left, first);
++    check_backing_list(right, second);
++    right.splice_one(left, first.front());
++    second = first;
++    first.clear();
++    check_backing_list(left, first);
++    check_backing_list(right, second);
++    left.emplace_back(Backing{nullptr, 1010, 16, 10});
++    first.push_back(left.last().node);
++    check_backing_list(left, first);
++}
+@@ -484 +679,4 @@
+-        {"c_api_owner_growth_oom_keeps_arena_cursor", test_c_api_owner_growth_oom_keeps_arena_cursor}
++        {"c_api_owner_growth_oom_keeps_arena_cursor", test_c_api_owner_growth_oom_keeps_arena_cursor},
++        {"lease_capacity_prediction_lifecycle", test_lease_capacity_prediction_lifecycle},
++        {"owner_capacity_prediction_lifecycle", test_owner_capacity_prediction_lifecycle},
++        {"backing_list_identity_splice_and_erase", test_backing_list_identity_splice_and_erase}
+@@ -491,2 +689,4 @@
+-    TABLE_CHECK(lease_table_test_heap::failures.load() - original_failures == 4);
+-    std::printf("{\"suite\":\"mgmem-lease-table\",\"tests\":8,\"checks\":%llu,\"injected_array_failures\":4,\"status\":\"PASS\"}\n", table_checks);
++    const auto injected_failures = lease_table_test_heap::failures.load() - original_failures;
++    TABLE_CHECK(injected_failures == 6);
++    std::printf("{\"suite\":\"mgmem-lease-table\",\"tests\":%zu,\"checks\":%llu,\"injected_array_failures\":%zu,\"status\":\"PASS\"}\n",
++                sizeof(tests) / sizeof(tests[0]), table_checks, injected_failures);
+--- a/tests/cpp_consumer.cpp
++++ b/tests/cpp_consumer.cpp
+@@ -203,0 +204,68 @@
++
++void test_scoped_allocation(uint32_t mode) {
++    mgmem::domain domain;
++    unsigned calls = 0;
++    auto body = [&](void *data, uint64_t bytes) {
++        ++calls;
++        CHECK(data && bytes == 64);
++        CHECK((reinterpret_cast<uintptr_t>(data) & (alignof(std::max_align_t) - 1)) == 0);
++        std::memset(data, 0x7b, static_cast<size_t>(bytes));
++        mgmem_snapshot_v1 state{};
++        CHECK(domain.snapshot(state) == MGMEM_OK);
++        CHECK(state.active_allocations == 1 && state.active_leases == 1 && state.live_bytes == bytes);
++        CHECK(domain.reset() == (mode == MGMEM_ARENA ? MGMEM_BUSY : MGMEM_UNSUPPORTED));
++    };
++    CHECK(domain.with_allocation(64, body) == MGMEM_INVALID_ARGUMENT && calls == 0);
++    auto config = options(mode);
++    config.budget_bytes = 1024;
++    CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
++    CHECK(domain.with_allocation(64, body) == MGMEM_OK && calls == 1);
++    mgmem_snapshot_v1 state{};
++    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
++    CHECK(domain.with_allocation(0, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
++    CHECK(domain.with_allocation(64, 3, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
++    CHECK(domain.with_allocation(2048, body) == MGMEM_OUT_OF_BUDGET && calls == 1);
++    CHECK(domain.with_allocation(64, 64, [&](void *data, uint64_t bytes) -> mgmem_status {
++        ++calls;
++        CHECK(data && bytes == 64 && (reinterpret_cast<uintptr_t>(data) & 63) == 0);
++        return MGMEM_BUSY;
++    }) == MGMEM_BUSY && calls == 2);
++    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
++
++    struct CallbackError {} marker;
++    bool caught = false;
++    try {
++        (void)domain.with_allocation(32, [&](void *data, uint64_t bytes) {
++            CHECK(data && bytes == 32);
++            throw &marker;
++        });
++    } catch (CallbackError *error) {
++        caught = error == &marker;
++    }
++    CHECK(caught);
++    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
++    CHECK(domain.with_allocation(32, [&](void *outer, uint64_t) -> mgmem_status {
++        return domain.with_allocation(32, [&](void *inner, uint64_t bytes) {
++            CHECK(inner != outer && bytes == 32);
++            CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 2 && state.active_leases == 2);
++        });
++    }) == MGMEM_OK);
++    CHECK(domain.snapshot(state) == MGMEM_OK && state.active_allocations == 0 && state.active_leases == 0);
++    if (mode == MGMEM_ARENA) CHECK(domain.reset() == MGMEM_OK);
++    CHECK(domain.begin_close() == MGMEM_OK);
++    CHECK(domain.with_allocation(64, body) == MGMEM_IS_CLOSED && calls == 2);
++}
++
++void test_scoped_allocation_keeps_domain_alive() {
++    Provider provider;
++    auto table = provider.table();
++    mgmem::domain domain;
++    CHECK(mgmem::domain::create(options(MGMEM_SYSTEM, &table), domain) == MGMEM_OK);
++    CHECK(domain.with_allocation(128, 64, [&](void *data, uint64_t bytes) {
++        // The scoped owner/borrow hold the native domain through callback return.
++        domain = mgmem::domain{};
++        CHECK(!domain && provider.released == 0 && provider.deallocated == 0);
++        std::memset(data, 0x5c, static_cast<size_t>(bytes));
++    }) == MGMEM_OK);
++    CHECK(provider.allocated == 1 && provider.deallocated == 1 && provider.released == 1);
++}
+@@ -221 +289,4 @@
+-    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":5,\"status\":\"PASS\"}");
++    test_scoped_allocation(MGMEM_SYSTEM);
++    test_scoped_allocation(MGMEM_ARENA);
++    test_scoped_allocation_keeps_domain_alive();
++    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":8,\"status\":\"PASS\"}");
+--- a/tests/cpp_checked_import_tests.cpp
++++ b/tests/cpp_checked_import_tests.cpp
+@@ -61,0 +62,3 @@
++    unsigned scoped_calls = 0;
++    CHECK(domain.with_allocation(1, [&](void *, uint64_t) { ++scoped_calls; }) == MGMEM_PROVIDER_ERROR);
++    CHECK(scoped_calls == 0);
+--- a/tests/cpp_checked_fake_tests.cpp
++++ b/tests/cpp_checked_fake_tests.cpp
+@@ -14,0 +15 @@
++mgmem_status allocate_result = MGMEM_OK, acquire_result = MGMEM_OK;
+@@ -24,0 +26,5 @@
++}
++mgmem_status mgmem_allocate_v1(mgmem_domain *, uint64_t, uint64_t, mgmem_handle_v1 *out) {
++    *out = {};
++    if (allocate_result != MGMEM_OK) return allocate_result;
++    owner_live = true; *out = {1, 1, 1}; return MGMEM_OK;
+@@ -40,0 +47,2 @@
++    *out = {};
++    if (acquire_result != MGMEM_OK) return acquire_result;
+@@ -117,0 +126,16 @@
++    {
++        mgmem::domain domain;
++        CHECK(mgmem::domain::create(options, domain) == MGMEM_OK);
++        unsigned body_calls = 0;
++        auto body = [&](void *, uint64_t) { ++body_calls; };
++        const auto prior_owners = owner_calls, prior_leases = lease_calls;
++        allocate_result = MGMEM_OUT_OF_MEMORY;
++        CHECK(domain.with_allocation(sizeof(data), body) == MGMEM_OUT_OF_MEMORY && body_calls == 0);
++        CHECK(owner_calls == prior_owners && lease_calls == prior_leases && !owner_live && !lease_live);
++        allocate_result = MGMEM_OK;
++        acquire_result = MGMEM_OUT_OF_MEMORY;
++        CHECK(domain.with_allocation(sizeof(data), body) == MGMEM_OUT_OF_MEMORY && body_calls == 0);
++        CHECK(owner_calls == prior_owners + 1 && lease_calls == prior_leases && !owner_live && !lease_live);
++        acquire_result = MGMEM_OK;
++    }
++    CHECK(destroy_calls == 2 && allocated == nullptr);

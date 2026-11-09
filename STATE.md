@@ -2,7 +2,21 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
-## 紧凑句柄表与稳定登记引用（2026-11-09）
+## 自适应元数据与侵入式 Backing 链（2026-11-09）
+
+已从e92e777/890e1109基线采用8628ce7f核心：有限数值容量预测、空槽延迟构造、
+无动态空head的私有Backing链、OPEN通知省略；C++新增一行with_allocation，同步RAII。
+Exa25次检索250返回/221去重URL；9aca原型源码/验证/计数及失败补证均保留，未计时。
+最终832进程/416对/58组独立raw重算，重复16组完整wall P50比0.7903–0.8999，
+15组8/8改善；System单域reverse/shuffled为0.4987–0.6611且各4/4改善。
+部分once/worker有明显反向，legacy fixed四线程/single mixed及System32forward也有代价，
+全部保留，不称普遍无回归。单chunk backing元数据3次288B→1次96B，domain仍544B；
+首次held32/64 combined数组峰值仍5376/10752B，不称RSS收益。两轮各52Arena计数+4布局。
+核心/JNI48/48、C++12/12、ASan48/48、安装版C++1/1（8case）、容器11项4239358检查6OOM、
+pending重定位1482检查通过。7个arm64 ELF+3个C++REL仅交叉编译/静态通过，无目标执行。
+[实现、增量结果与反向](docs/ADAPTIVE_METADATA_OPTIMIZATION.md) · [完整证据](artifacts/adaptive-metadata-20261109/decision.json)。
+
+## 历史紧凑句柄表与稳定登记引用（e92e777，2026-11-09）
 
 已采用owner/lease共用的单内联记录+平坦表，以及紧凑全局claim节点引用；基线a1bf94c/C8，
 选定核心890e1109…，不改变公开ABI/ID/权限/预算与不确定回调隔离合同。

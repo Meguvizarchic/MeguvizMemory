@@ -101,6 +101,89 @@ struct Backing {
     void *external_context = nullptr;
     void (*external_release)(void *) = nullptr;
     mgmem_status (*external_release_checked)(void *) = nullptr;
+    // Private metadata links only. Rollback copies never consume these links;
+    // destruction never unlinks or drops an uncertain registry claim.
+    Backing *previous = nullptr;
+    Backing *next = nullptr;
+};
+
+// The runtime needs stable backing addresses and allocation-free detachment,
+// but no general list interface. Empty and temporary lists own no heap storage.
+class BackingList {
+    Backing *head_ = nullptr;
+    Backing *tail_ = nullptr;
+
+    void append(Backing *node) noexcept {
+        node->previous = tail_;
+        node->next = nullptr;
+        if (tail_) tail_->next = node;
+        else head_ = node;
+        tail_ = node;
+    }
+
+    void unlink(Backing *node) noexcept {
+        if (node->previous) node->previous->next = node->next;
+        else head_ = node->next;
+        if (node->next) node->next->previous = node->previous;
+        else tail_ = node->previous;
+        node->previous = nullptr;
+        node->next = nullptr;
+    }
+
+public:
+    struct iterator {
+        Backing *node = nullptr;
+        Backing &operator*() const noexcept { return *node; }
+        Backing *operator->() const noexcept { return node; }
+        iterator &operator++() noexcept { node = node->next; return *this; }
+        bool operator==(iterator other) const noexcept { return node == other.node; }
+        bool operator!=(iterator other) const noexcept { return node != other.node; }
+    };
+
+    BackingList() = default;
+    BackingList(const BackingList &) = delete;
+    BackingList &operator=(const BackingList &) = delete;
+    ~BackingList() noexcept {
+        while (head_) {
+            Backing *node = head_;
+            head_ = node->next;
+            delete node;
+        }
+    }
+
+    bool empty() const noexcept { return head_ == nullptr; }
+    iterator begin() noexcept { return {head_}; }
+    iterator end() noexcept { return {}; }
+    iterator last() noexcept { return {tail_}; }
+    Backing &front() noexcept { return *head_; }
+
+    void emplace_back(Backing value) {
+        // No existing links change until allocation and construction succeed.
+        append(new Backing(value));
+    }
+
+    void erase(iterator position) noexcept {
+        Backing *node = position.node;
+        unlink(node);
+        delete node;
+    }
+
+    // Only members of source are passed here, under the owning domain lock.
+    void splice_one(BackingList &source, Backing *node) noexcept {
+        source.unlink(node);
+        append(node);
+    }
+
+    void splice_all(BackingList &source) noexcept {
+        if (&source == this || source.empty()) return;
+        if (tail_) {
+            tail_->next = source.head_;
+            source.head_->previous = tail_;
+        } else head_ = source.head_;
+        tail_ = source.tail_;
+        source.head_ = nullptr;
+        source.tail_ = nullptr;
+    }
 };
 
 struct Allocation {
@@ -124,12 +207,24 @@ template<class Record>
 class HandleTable {
     static_assert(std::is_trivially_copyable<Record>::value,
                   "Private handle records must move without throwing");
+    static_assert(std::is_nothrow_copy_constructible<Record>::value,
+                  "Private handle records must construct without throwing");
     struct Slot {
-        u64 id = 0;
-        Record value{};
+        u64 id;
+        // Empty slots have no payload. Explicit construction starts its lifetime
+        // in C++17 as well; never inspect value while id is 0.
+        union { Record value; };
+        Slot() noexcept : id(0) {}
+        Slot(u64 key, Record record) noexcept : id(key), value(record) {}
+        void store(u64 key, const Record &record) noexcept {
+            ::new (static_cast<void *>(&value)) Record(record);
+            id = key;
+        }
     };
     Slot single_{};
     std::unique_ptr<Slot[]> slots_;
+    // With no array, this is only a bounded prediction for the next batch.
+    // The first record still uses single_; quiet reclamation forgets the hint.
     size_t capacity_ = 0;
     size_t size_ = 0;
 
@@ -144,17 +239,17 @@ class HandleTable {
         const size_t mask = capacity - 1;
         size_t position = index(value.id, mask);
         while (slots[position].id) position = (position + 1) & mask;
-        slots[position] = value;
+        slots[position].store(value.id, value.value);
         return &slots[position];
     }
 
     void grow() {
         const size_t maximum = std::numeric_limits<size_t>::max() / sizeof(Slot);
-        if (capacity_ && capacity_ > maximum / 2) throw std::bad_alloc();
-        const size_t next = capacity_ ? capacity_ * 2 : 4;
+        if (slots_ && capacity_ > maximum / 2) throw std::bad_alloc();
+        const size_t next = slots_ ? capacity_ * 2 : std::max(capacity_, size_t{4});
         if (next > maximum) throw std::bad_alloc();
         auto fresh = std::make_unique<Slot[]>(next);
-        if (!capacity_) place(fresh.get(), next, single_);
+        if (!slots_) place(fresh.get(), next, single_);
         else for (size_t i = 0; i < capacity_; ++i)
             if (slots_[i].id) place(fresh.get(), next, slots_[i]);
         slots_.swap(fresh);
@@ -171,19 +266,19 @@ public:
 
     // The caller takes a fresh nonzero ID under the domain lock before insertion.
     Record &insert_fresh(u64 id, Record value) {
-        if (!capacity_ && !size_) {
-            single_ = {id, value};
+        if (!slots_ && !size_) {
+            single_.store(id, value);
             size_ = 1;
             return single_.value;
         }
-        if (!capacity_ || size_ >= capacity_ - capacity_ / 4) grow();
+        if (!slots_ || size_ >= capacity_ - capacity_ / 4) grow();
         auto *slot = place(slots_.get(), capacity_, Slot{id, value});
         ++size_;
         return slot->value;
     }
 
     Slot *find(u64 id) noexcept {
-        if (!capacity_) return single_.id == id && id ? &single_ : nullptr;
+        if (!slots_) return single_.id == id && id ? &single_ : nullptr;
         const size_t mask = capacity_ - 1;
         size_t position = index(id, mask);
         while (slots_[position].id) {
@@ -195,21 +290,28 @@ public:
 
     // A location returned under the same lock remains valid until this erase.
     void erase_found(Slot *slot) noexcept {
-        if (!capacity_) {
+        if (!slots_) {
             single_.id = 0;
             size_ = 0;
             return;
         }
         const size_t mask = capacity_ - 1;
         size_t hole = static_cast<size_t>(slot - slots_.get());
-        if (--size_ == 0) { release_storage(); return; }
+        if (--size_ == 0) {
+            slots_.reset();
+            // Learn short phases without retaining heap storage or reserving
+            // an unbounded historical peak for a later two-record workload.
+            capacity_ = std::min(capacity_, size_t{128});
+            single_.id = 0;
+            return;
+        }
         for (size_t current = (hole + 1) & mask; slots_[current].id;
                 current = (current + 1) & mask) {
             const size_t home = index(slots_[current].id, mask);
             // Move only when the hole lies on this entry's probe path. Keep
             // scanning past at-home entries: later entries may still cross it.
             if (((hole - home) & mask) < ((current - home) & mask)) {
-                slots_[hole] = slots_[current];
+                slots_[hole].store(slots_[current].id, slots_[current].value);
                 hole = current;
             }
         }
@@ -347,18 +449,25 @@ struct mgmem_domain {
     u64 pending_import_bytes = 0;
     u64 import_count = 0;
     mgmem_provider_v1 provider{};
-    std::list<Backing> backing;
+    BackingList backing;
     // A first-fit lower bound for requests with no smaller size or alignment.
     // Earlier blocks cannot regain space until reset or a pending publication.
     bool arena_search_valid = false;
     u64 arena_search_bytes = 0;
     u64 arena_search_alignment = 0;
-    std::list<Backing>::iterator arena_search;
+    BackingList::iterator arena_search;
     AllocationTable allocations;
     LeaseTable leases;
 };
 
 namespace {
+// The only condition-variable wait is drain(), which rejects OPEN under the
+// same mutex. Closing/poison publication still notifies while holding that lock;
+// ordinary OPEN operations cannot have a drain waiter to wake.
+void notify_drain(mgmem_domain &domain) noexcept {
+    if (domain.state != MGMEM_OPEN) domain.changed.notify_all();
+}
+
 void invalidate_arena_search(mgmem_domain &domain) noexcept {
     domain.arena_search_valid = false;
 }
@@ -454,18 +563,9 @@ void commit_allocation(mgmem_domain &domain, Allocation &allocation, u64 bytes) 
 // it charged until the callback finishes so another request cannot evade budget.
 mgmem_status reclaim_standalone(mgmem_domain &domain, Backing *backing,
                                 std::unique_lock<std::mutex> &lock) noexcept {
-    std::list<Backing> detached;
+    BackingList detached;
     invalidate_arena_search(domain);
-    for (auto it = domain.backing.begin(); it != domain.backing.end(); ++it) {
-        if (&*it == backing) {
-            detached.splice(detached.end(), domain.backing, it);
-            break;
-        }
-    }
-    if (detached.empty()) {
-        domain.provider_poisoned = true;
-        return MGMEM_PROVIDER_ERROR;
-    }
+    detached.splice_one(domain.backing, backing);
     ++domain.pending;
     lock.unlock();
     const bool success = deallocate_backing(domain, detached.front());
@@ -479,7 +579,7 @@ mgmem_status reclaim_standalone(mgmem_domain &domain, Backing *backing,
     }
     else domain.provider_poisoned = true;
     --domain.pending;
-    domain.changed.notify_all();
+    notify_drain(domain);
     return success ? MGMEM_OK : MGMEM_PROVIDER_ERROR;
 }
 
@@ -490,9 +590,9 @@ mgmem_status reclaim_all(mgmem_domain &domain, std::unique_lock<std::mutex> &loc
     if (domain.provider_poisoned) return MGMEM_PROVIDER_ERROR;
     domain.allocations.release_storage();
     domain.leases.release_storage();
-    std::list<Backing> detached;
+    BackingList detached;
     invalidate_arena_search(domain);
-    detached.splice(detached.end(), domain.backing);
+    detached.splice_all(domain.backing);
     domain.maintenance = true;
     ++domain.pending;
     lock.unlock();
@@ -514,7 +614,7 @@ mgmem_status reclaim_all(mgmem_domain &domain, std::unique_lock<std::mutex> &loc
     domain.maintenance = false;
     domain.provider_poisoned = !success;
     if (success && closing) domain.state = MGMEM_CLOSED;
-    domain.changed.notify_all();
+    notify_drain(domain);
     return success ? MGMEM_OK : MGMEM_PROVIDER_ERROR;
 }
 } // namespace
@@ -639,9 +739,9 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         if (domain->pending == max_u64) return MGMEM_OVERFLOW;
 
         // Allocate metadata before accepting the provider operation. A throwing
-        // map insertion removes the placeholder and never reserves any budget.
+        // table insertion removes the placeholder and never reserves any budget.
         domain->backing.emplace_back(Backing{nullptr, capacity, alignment, 0, true});
-        auto backing_it = std::prev(domain->backing.end());
+        auto backing_it = domain->backing.last();
         try {
             domain->allocations.insert_fresh(id,
                 Allocation{&*backing_it, 0, bytes, 0, false, false, true});
@@ -687,7 +787,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
             auto &allocation = domain->allocations.find(id)->value;
             commit_allocation(*domain, allocation, bytes);
             *out = {domain->id, id, runtime_origin()};
-            domain->changed.notify_all();
+            notify_drain(*domain);
             return MGMEM_OK;
         }
         // Failure or close raced with admission. Reservation stays charged and
@@ -708,7 +808,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
             domain->backing_bytes += capacity;
             status = MGMEM_PROVIDER_ERROR;
         }
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return status;
     });
 }
@@ -750,7 +850,7 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
         domain->backing.emplace_back(Backing{const_cast<void *>(input.data), input.capacity_bytes,
             input.alignment, input.capacity_bytes, true, false, {}, true, input.access, input.context, input.release,
             release_checked});
-        auto backing_it = std::prev(domain->backing.end());
+        auto backing_it = domain->backing.last();
         try {
             domain->allocations.insert_fresh(id,
                 Allocation{&*backing_it, 0, input.capacity_bytes, 0, false, false, true});
@@ -794,7 +894,7 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
             --domain->pending;
             commit_allocation(*domain, domain->allocations.find(id)->value, input.capacity_bytes);
             *out = {domain->id, id, runtime_origin()};
-            domain->changed.notify_all();
+            notify_drain(*domain);
             return MGMEM_OK;
         }
         Backing failed = *backing_it;
@@ -818,7 +918,7 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
             ++domain->external_count;
             status = MGMEM_PROVIDER_ERROR;
         }
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return status;
     });
 }
@@ -864,7 +964,7 @@ mgmem_status mgmem_domain_set_budget_v1(mgmem_domain *domain, u64 bytes) {
         if (domain->state != MGMEM_OPEN) return MGMEM_IS_CLOSED;
         if (domain->provider_poisoned) return MGMEM_PROVIDER_ERROR;
         domain->budget = bytes;
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return MGMEM_OK;
     });
 }
@@ -886,7 +986,7 @@ mgmem_status mgmem_release_v1(mgmem_domain *domain, mgmem_handle_v1 handle) {
         }
         Backing *backing = allocation.backing;
         domain->allocations.erase_found(found);
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return domain->mode == MGMEM_SYSTEM || backing->external
             ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
     });
@@ -940,11 +1040,11 @@ mgmem_status mgmem_borrow_release_v1(mgmem_domain *domain, mgmem_handle_v1 handl
             Backing *backing = allocation.backing;
             domain->retiring_bytes -= allocation.bytes;
             domain->allocations.erase_found(found);
-            domain->changed.notify_all();
+            notify_drain(*domain);
             return domain->mode == MGMEM_SYSTEM || backing->external
                 ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
         }
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return MGMEM_OK;
     });
 }
@@ -980,7 +1080,7 @@ mgmem_status mgmem_domain_begin_close_v1(mgmem_domain *domain) {
     return guarded([&]() -> mgmem_status {
         std::lock_guard<std::mutex> lock(domain->mutex);
         if (domain->state == MGMEM_OPEN) domain->state = MGMEM_CLOSING;
-        domain->changed.notify_all();
+        notify_drain(*domain);
         return MGMEM_OK;
     });
 }

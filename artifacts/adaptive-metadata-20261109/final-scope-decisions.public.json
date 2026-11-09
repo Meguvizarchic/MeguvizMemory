@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "state": "PROPOSED_EXTRA_SYSTEM_COUNT_SCOPE_NOT_ADOPTED_BEFORE_FINAL_FREEZE",
+  "proposal": "52 Arena count cases plus8 System fixtures were discussed before final generation",
+  "final_scope_reason": "Final parent instruction explicitly requested52 count cases and4 layouts; final new generator and immutable build plan contain only those52 Arena cases",
+  "proposed_system_fixture_implementation_created": false,
+  "proposed_system_fixture_native_runs": 0,
+  "removed_frozen_or_observed_cases": 0,
+  "excluded_or_retried_successful_cases": 0,
+  "actual_count_only_cases": 52,
+  "actual_layout_cases": 4,
+  "frozen_build_plan_sha256": "b75a6e804db89858d8c3a8c778fb0856797a80c8281c8350252f5626e999e253",
+  "candidate_core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "scope_boundary": "No new System heap-count conclusion; System behavior is covered separately by correctness tests and the mandatory832-process performance matrix System12groups. Those are distinct kinds of evidence."
+}

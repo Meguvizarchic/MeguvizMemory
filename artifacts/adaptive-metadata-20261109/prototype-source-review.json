@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_INDEPENDENT_CORE_SOURCE_REVIEW",
+  "base_commit": "e92e7777796ebcc02c0de4c4dbb5949e3fa8d6b5",
+  "baseline_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "candidate_core_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "reviewed_files": [
+    "src/mgmem.cpp",
+    "tests/lease_table_tests.cpp"
+  ],
+  "blockers": [],
+  "checks": [
+    {
+      "area": "C++17 lazy payload lifetime",
+      "result": "PASS",
+      "evidence": "Slot default construction initializes only id. Slot::store explicitly placement-constructs Record and publishes id afterwards. place, inline insert and backshift use store; empty slots are read only through id. Trivial-copyable plus nothrow-copy construction guard payload relocation."
+    },
+    {
+      "area": "OOM atomicity and bounded prediction",
+      "result": "PASS",
+      "evidence": "No-array and array representations branch on slots_, not predicted capacity_. Fresh allocation and all nonthrowing stores precede swap. Failure leaves original array or inline record, size and fields intact. Empty erasure frees storage and retains only min(previous capacity,128); release_storage clears this scalar hint."
+    },
+    {
+      "area": "Monotonic identity and stale handles",
+      "result": "PASS",
+      "evidence": "Shared take_id remains monotonic, zero is sentinel and max IDs fail closed. Slots retain exact IDs; payload relocation changes neither public IDs nor stable backing addresses. Lease stores allocation ID, never a cross-table record pointer."
+    },
+    {
+      "area": "Provider/import unlock windows",
+      "result": "PASS",
+      "evidence": "Pending Allocation and stable list Backing exist before callback unlock. After relock publication re-finds Allocation by ID. Callback failure copies Backing locally, removes owner record and original node, and invokes only deallocation/claim functions that do not use the copied self-node iterator."
+    },
+    {
+      "area": "Stable Backing self-node references",
+      "result": "PASS",
+      "evidence": "Both and only backing insertion sites assign node immediately, before record insertion or publication. release callers obtain Backing from a valid nonpending record under domain mutex. std::list splice preserves node identity. No rollback local copy is passed to reclaim_standalone; duplicate/stale handles cannot recover an erased record."
+    },
+    {
+      "area": "Unknown outcome quarantine",
+      "result": "PASS",
+      "evidence": "Uncertain retain never calls release; aliasing provider result never deallocates old storage; poisoned callbacks retain claims and accounting without retry. Backing destructor does not implicitly remove uncertain claim. Existing conservative paths remain."
+    },
+    {
+      "area": "Drain notification elision",
+      "result": "PASS",
+      "evidence": "Only condition variable wait is drain under the same mutex after OPEN rejection. State is one-way OPEN to CLOSING to CLOSED. All helper calls occur with mutex held; closing and poison publication still notify. An OPEN operation cannot race a registered drain waiter, and a later waiter observes predicate/state under lock."
+    },
+    {
+      "area": "First-fit compatibility",
+      "result": "PASS",
+      "evidence": "Arena lower-bound request condition is unchanged. New metadata growth completes before cursor/accounting commit. Pending block publication invalidates Arena search; reset remains quiet-only and invalidates search."
+    }
+  ],
+  "new_test_contracts": [
+    "Owner and lease batch64 zero-live-array transition; predicted next batch uses one successful allocation; inline record still allocates zero arrays.",
+    "Prediction-triggered OOM preserves existing full record, size and live-array count; failed ID remains absent.",
+    "Explicit release_storage restores four-slot first growth; historical batch200 cannot request more than128 predicted slots for next two records."
+  ],
+  "material_costs": [
+    "Backing gains one private list iterator; actual platform sizeof and allocation counts must be reported from measurement.",
+    "A historical larger batch can increase the next second-record request to128 slots despite no retained empty heap.",
+    "Fresh one-shot first growth sequence remains; scalar prediction helps only later live-set phases.",
+    "The notification optimization removes notify calls while OPEN; whether these calls reach the OS is runtime implementation dependent."
+  ],
+  "limits": [
+    "Read-only source review, not a proof of all executions. Host/ASan/CI and target-device evidence remain distinct.",
+    "This agent authored the new capacity-prediction tests but did not author or mutate the production implementation.",
+    "No compilation, performance sampling, device operation or source mutation is performed by this review."
+  ]
+}

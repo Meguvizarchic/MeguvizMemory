@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "state": "PASS_RECURSIVE_PATH_SCAN_AND_EXPLICIT_COPY_CLASSIFICATION",
+  "substitutions": [
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    },
+    {
+      "file": "prototype-installed-cpp-readback.json",
+      "placeholder": "@WORKSPACE@",
+      "original_utf8_sha256": "57fa3fb0817339124d38459510fe1587045cd6275d601803602f2f954382c552",
+      "original_utf8_bytes": 24
+    }
+  ],
+  "private_reverse_mapping_published": false,
+  "policy": "Known local roots and any remaining absolute drive path are replaced with placeholders; local private reverse map permits restoration of exact original bytes, verified by original SHA. No gzip is described as lossless relative to unredacted private bytes."
+}

@@ -1,0 +1,11 @@
+{
+  "state": "FAILED_PREBUILD_SOURCE_TRANSFORMATION_ASSERTION",
+  "native_processes": 0,
+  "production_modified": false,
+  "generator_sha256": "14d329fe729a4cf242e61c5fa0ea6a20e4317c9cc1958f5585dabb0527f7618e",
+  "needle": "std::list<Backing>",
+  "expected_baseline": 3,
+  "actual_baseline": 4,
+  "cause": "arena_search also stores a Backing iterator",
+  "partial_files": "byte-identical only reuse allowed before complete manifest; no native sampling"
+}

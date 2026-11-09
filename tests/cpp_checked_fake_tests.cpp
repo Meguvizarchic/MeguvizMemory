@@ -12,6 +12,7 @@ namespace {
 mgmem_domain *allocated = nullptr;
 mgmem_status owner_result = MGMEM_OK, lease_result = MGMEM_OK;
 mgmem_status import_result = MGMEM_OK, snapshot_result = MGMEM_OK;
+mgmem_status allocate_result = MGMEM_OK, acquire_result = MGMEM_OK;
 uint64_t pending_import_bytes = 0;
 unsigned owner_calls = 0, lease_calls = 0, destroy_calls = 0;
 bool owner_live = false, lease_live = false;
@@ -22,6 +23,11 @@ extern "C" {
 uint64_t mgmem_capabilities_v1() { return MGMEM_CAP_CHECKED_EXTERNAL_RELEASE; }
 mgmem_status mgmem_domain_create_v1(const mgmem_domain_options_v1 *, mgmem_domain **out) {
     allocated = new mgmem_domain{}; *out = allocated; return MGMEM_OK;
+}
+mgmem_status mgmem_allocate_v1(mgmem_domain *, uint64_t, uint64_t, mgmem_handle_v1 *out) {
+    *out = {};
+    if (allocate_result != MGMEM_OK) return allocate_result;
+    owner_live = true; *out = {1, 1, 1}; return MGMEM_OK;
 }
 mgmem_status mgmem_import_external_checked_v1(mgmem_domain *, const mgmem_external_buffer_checked_v1 *, mgmem_handle_v1 *out) {
     if (import_result != MGMEM_OK) { *out = {}; return import_result; }
@@ -38,6 +44,8 @@ mgmem_status mgmem_release_v1(mgmem_domain *, mgmem_handle_v1) {
 }
 mgmem_status mgmem_borrow_acquire_v1(mgmem_domain *, mgmem_handle_v1, uint64_t, uint64_t,
                                       uint32_t, mgmem_borrow_v1 *out) {
+    *out = {};
+    if (acquire_result != MGMEM_OK) return acquire_result;
     lease_live = true; *out = {{1, 2, 1}, data, sizeof(data)}; return MGMEM_OK;
 }
 mgmem_status mgmem_borrow_release_v1(mgmem_domain *, mgmem_handle_v1) {
@@ -115,6 +123,22 @@ int main() {
         CHECK(destroy_calls == 1 && allocated != nullptr);
         delete allocated; allocated = nullptr;
     }
+    {
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create(options, domain) == MGMEM_OK);
+        unsigned body_calls = 0;
+        auto body = [&](void *, uint64_t) { ++body_calls; };
+        const auto prior_owners = owner_calls, prior_leases = lease_calls;
+        allocate_result = MGMEM_OUT_OF_MEMORY;
+        CHECK(domain.with_allocation(sizeof(data), body) == MGMEM_OUT_OF_MEMORY && body_calls == 0);
+        CHECK(owner_calls == prior_owners && lease_calls == prior_leases && !owner_live && !lease_live);
+        allocate_result = MGMEM_OK;
+        acquire_result = MGMEM_OUT_OF_MEMORY;
+        CHECK(domain.with_allocation(sizeof(data), body) == MGMEM_OUT_OF_MEMORY && body_calls == 0);
+        CHECK(owner_calls == prior_owners + 1 && lease_calls == prior_leases && !owner_live && !lease_live);
+        acquire_result = MGMEM_OK;
+    }
+    CHECK(destroy_calls == 2 && allocated == nullptr);
     std::puts("{\"suite\":\"cpp-checked-fake-unconsumed\",\"status\":\"PASS\"}");
     return 0;
 }

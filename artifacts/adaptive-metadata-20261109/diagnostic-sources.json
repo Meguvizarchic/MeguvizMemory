@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "rounds": {
+    "prototype": {
+      "archive": "prototype-diagnostic-sources.zip",
+      "input_manifest_sha256": "eb30f47499ba18ff20af68488a717f314564fbd8324b2507dde8a723cefd8669",
+      "scope": "Exact source bytes unless explicitly marked reversible path placeholder sanitized; not performance binaries or SDK",
+      "files": {
+        "array_tracking.hpp": {
+          "original_bytes": 5021,
+          "original_sha256": "12954beb6f1a642500bc1b8640720f4c41519fbc1e897c0c80011fd3a10c4669",
+          "public_bytes": 5021,
+          "public_sha256": "12954beb6f1a642500bc1b8640720f4c41519fbc1e897c0c80011fd3a10c4669",
+          "copy_kind": "EXACT"
+        },
+        "CMakeLists.txt": {
+          "original_bytes": 3452,
+          "original_sha256": "58b2bed7648b9f6b982a38d07f7882874962e3caefb0ec170a5ce73d34c19632",
+          "public_bytes": 3452,
+          "public_sha256": "58b2bed7648b9f6b982a38d07f7882874962e3caefb0ec170a5ce73d34c19632",
+          "copy_kind": "EXACT"
+        },
+        "core.baseline.counted.cpp": {
+          "original_bytes": 48042,
+          "original_sha256": "f882d2233b0645b0d485c03b99558b2a1bb290fa5ce76ad71fbdc4b3afa18829",
+          "public_bytes": 48042,
+          "public_sha256": "f882d2233b0645b0d485c03b99558b2a1bb290fa5ce76ad71fbdc4b3afa18829",
+          "copy_kind": "EXACT"
+        },
+        "core.baseline.cpp": {
+          "original_bytes": 46388,
+          "original_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+          "public_bytes": 46388,
+          "public_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+          "copy_kind": "EXACT"
+        },
+        "core.candidate.cpp": {
+          "original_bytes": 47733,
+          "original_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+          "public_bytes": 47733,
+          "public_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+          "copy_kind": "EXACT"
+        },
+        "core.counted.cpp": {
+          "original_bytes": 49385,
+          "original_sha256": "4154670f331be2b2decef9bca102aef2a96d8c498614e5951b44de86a168c5a4",
+          "public_bytes": 49385,
+          "public_sha256": "4154670f331be2b2decef9bca102aef2a96d8c498614e5951b44de86a168c5a4",
+          "copy_kind": "EXACT"
+        },
+        "counting_allocator.hpp": {
+          "original_bytes": 4655,
+          "original_sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2",
+          "public_bytes": 4655,
+          "public_sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2",
+          "copy_kind": "EXACT"
+        },
+        "driver.cpp": {
+          "original_bytes": 18454,
+          "original_sha256": "7aa201e193bbd181d94e107b09f4febb8d2ce97ebf0bcb2a6341cd72e2e0d753",
+          "public_bytes": 18454,
+          "public_sha256": "7aa201e193bbd181d94e107b09f4febb8d2ce97ebf0bcb2a6341cd72e2e0d753",
+          "copy_kind": "EXACT"
+        },
+        "include/mgmem/mgmem.h": {
+          "original_bytes": 12427,
+          "original_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+          "public_bytes": 12427,
+          "public_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+          "copy_kind": "EXACT"
+        },
+        "layout.baseline.cpp": {
+          "original_bytes": 1113,
+          "original_sha256": "9eeb64a3b996a7b413508b0033e8957721a70e6f36c754f78ee57998a36a8e4e",
+          "public_bytes": 1113,
+          "public_sha256": "9eeb64a3b996a7b413508b0033e8957721a70e6f36c754f78ee57998a36a8e4e",
+          "copy_kind": "EXACT"
+        },
+        "layout.baseline_counted.cpp": {
+          "original_bytes": 1121,
+          "original_sha256": "02039d24fb040f38636756c9c302f84acb60a228d5d5adfc90e0a5ad43e9165f",
+          "public_bytes": 1121,
+          "public_sha256": "02039d24fb040f38636756c9c302f84acb60a228d5d5adfc90e0a5ad43e9165f",
+          "copy_kind": "EXACT"
+        },
+        "layout.candidate.cpp": {
+          "original_bytes": 1126,
+          "original_sha256": "0071727b917b9d2e205bd93fa3bd4dced7b544d2ba5d6fb3180849d07f5b2a03",
+          "public_bytes": 1126,
+          "public_sha256": "0071727b917b9d2e205bd93fa3bd4dced7b544d2ba5d6fb3180849d07f5b2a03",
+          "copy_kind": "EXACT"
+        },
+        "layout.candidate_counted.cpp": {
+          "original_bytes": 1124,
+          "original_sha256": "3f0462d6ca9eb929b6723b376fde1ec98bab8e3985273e332fb24dc6d6e24ed8",
+          "public_bytes": 1124,
+          "public_sha256": "3f0462d6ca9eb929b6723b376fde1ec98bab8e3985273e332fb24dc6d6e24ed8",
+          "copy_kind": "EXACT"
+        },
+        "probe_api.h": {
+          "original_bytes": 1998,
+          "original_sha256": "102d73b6765078f0e10810581a7783142b21eb20747cd172509a2d04782cd69d",
+          "public_bytes": 1998,
+          "public_sha256": "102d73b6765078f0e10810581a7783142b21eb20747cd172509a2d04782cd69d",
+          "copy_kind": "EXACT"
+        }
+      }
+    },
+    "final": {
+      "archive": "final-diagnostic-sources.zip",
+      "input_manifest_sha256": "17348c8a06bed286c937dd7d41b72565725a17b83d88a7e51ab866128ab70f41",
+      "scope": "Exact source bytes unless explicitly marked reversible path placeholder sanitized; not performance binaries or SDK",
+      "files": {
+        "array_tracking.hpp": {
+          "original_bytes": 5021,
+          "original_sha256": "12954beb6f1a642500bc1b8640720f4c41519fbc1e897c0c80011fd3a10c4669",
+          "public_bytes": 5021,
+          "public_sha256": "12954beb6f1a642500bc1b8640720f4c41519fbc1e897c0c80011fd3a10c4669",
+          "copy_kind": "EXACT"
+        },
+        "CMakeLists.txt": {
+          "original_bytes": 3448,
+          "original_sha256": "3483d94d727d84888beed969e09c6cbb7f181496d6e3db38efaabb896a6d225b",
+          "public_bytes": 3448,
+          "public_sha256": "3483d94d727d84888beed969e09c6cbb7f181496d6e3db38efaabb896a6d225b",
+          "copy_kind": "EXACT"
+        },
+        "core.baseline.counted.cpp": {
+          "original_bytes": 48042,
+          "original_sha256": "f882d2233b0645b0d485c03b99558b2a1bb290fa5ce76ad71fbdc4b3afa18829",
+          "public_bytes": 48042,
+          "public_sha256": "f882d2233b0645b0d485c03b99558b2a1bb290fa5ce76ad71fbdc4b3afa18829",
+          "copy_kind": "EXACT"
+        },
+        "core.baseline.cpp": {
+          "original_bytes": 46388,
+          "original_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+          "public_bytes": 46388,
+          "public_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+          "copy_kind": "EXACT"
+        },
+        "core.candidate.cpp": {
+          "original_bytes": 50179,
+          "original_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+          "public_bytes": 50179,
+          "public_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+          "copy_kind": "EXACT"
+        },
+        "core.counted.cpp": {
+          "original_bytes": 51805,
+          "original_sha256": "978b5f9b419af259a9e069eb8badf0bbbec3617d27c0a1500ea38aa7d98dd710",
+          "public_bytes": 51805,
+          "public_sha256": "978b5f9b419af259a9e069eb8badf0bbbec3617d27c0a1500ea38aa7d98dd710",
+          "copy_kind": "EXACT"
+        },
+        "counting_allocator.hpp": {
+          "original_bytes": 5366,
+          "original_sha256": "57b3e8898d4e6f513843c8c1e182135d667531e1150f18f23275d70288c3d6c3",
+          "public_bytes": 5366,
+          "public_sha256": "57b3e8898d4e6f513843c8c1e182135d667531e1150f18f23275d70288c3d6c3",
+          "copy_kind": "EXACT"
+        },
+        "driver.cpp": {
+          "original_bytes": 18464,
+          "original_sha256": "afac21cae4753a81dd6b49404cb72bf09f8716c8d9845732a30ee736c8e8b95c",
+          "public_bytes": 18464,
+          "public_sha256": "afac21cae4753a81dd6b49404cb72bf09f8716c8d9845732a30ee736c8e8b95c",
+          "copy_kind": "EXACT"
+        },
+        "include/mgmem/mgmem.h": {
+          "original_bytes": 12427,
+          "original_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+          "public_bytes": 12427,
+          "public_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+          "copy_kind": "EXACT"
+        },
+        "layout.baseline.cpp": {
+          "original_bytes": 1113,
+          "original_sha256": "9eeb64a3b996a7b413508b0033e8957721a70e6f36c754f78ee57998a36a8e4e",
+          "public_bytes": 1113,
+          "public_sha256": "9eeb64a3b996a7b413508b0033e8957721a70e6f36c754f78ee57998a36a8e4e",
+          "copy_kind": "EXACT"
+        },
+        "layout.baseline_counted.cpp": {
+          "original_bytes": 1121,
+          "original_sha256": "02039d24fb040f38636756c9c302f84acb60a228d5d5adfc90e0a5ad43e9165f",
+          "public_bytes": 1121,
+          "public_sha256": "02039d24fb040f38636756c9c302f84acb60a228d5d5adfc90e0a5ad43e9165f",
+          "copy_kind": "EXACT"
+        },
+        "layout.candidate.cpp": {
+          "original_bytes": 1121,
+          "original_sha256": "a11e1689bebc3114af7ce2f99caa4c5ce0e2f68acefbcdb5944f601ff2a1f346",
+          "public_bytes": 1121,
+          "public_sha256": "a11e1689bebc3114af7ce2f99caa4c5ce0e2f68acefbcdb5944f601ff2a1f346",
+          "copy_kind": "EXACT"
+        },
+        "layout.candidate_counted.cpp": {
+          "original_bytes": 1119,
+          "original_sha256": "169a1a379547639f0079bc19efb2c663e171715dbcd3850f6492158de63fd0fa",
+          "public_bytes": 1119,
+          "public_sha256": "169a1a379547639f0079bc19efb2c663e171715dbcd3850f6492158de63fd0fa",
+          "copy_kind": "EXACT"
+        },
+        "probe_api.h": {
+          "original_bytes": 1998,
+          "original_sha256": "102d73b6765078f0e10810581a7783142b21eb20747cd172509a2d04782cd69d",
+          "public_bytes": 1998,
+          "public_sha256": "102d73b6765078f0e10810581a7783142b21eb20747cd172509a2d04782cd69d",
+          "copy_kind": "EXACT"
+        }
+      }
+    }
+  },
+  "excluded": [
+    "bin directories",
+    "pycache",
+    "generated binaries",
+    "Python generators/controllers",
+    "raw private argv"
+  ],
+  "placeholder_policy": "Public files are byte exact only when copy_kind=EXACT. Any sanitized file lists distinct original/public SHA and reversible placeholders. Private reverse mapping is preserved locally, never published."
+}

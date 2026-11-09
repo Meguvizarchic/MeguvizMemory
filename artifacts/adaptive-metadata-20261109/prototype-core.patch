@@ -1,0 +1,123 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -103,0 +104,3 @@
++    // Established immediately on insertion. list splice preserves this identity;
++    // rollback copies are detached values and never use it to reclaim a node.
++    std::list<Backing>::iterator node{};
+@@ -126,0 +130,2 @@
++    static_assert(std::is_nothrow_copy_constructible<Record>::value,
++                  "Private handle records must construct without throwing");
+@@ -128,2 +133,10 @@
+-        u64 id = 0;
+-        Record value{};
++        u64 id;
++        // Empty slots have no payload. Explicit construction starts its lifetime
++        // in C++17 as well; never inspect value while id is 0.
++        union { Record value; };
++        Slot() noexcept : id(0) {}
++        Slot(u64 key, Record record) noexcept : id(key), value(record) {}
++        void store(u64 key, const Record &record) noexcept {
++            ::new (static_cast<void *>(&value)) Record(record);
++            id = key;
++        }
+@@ -132,0 +146,2 @@
++    // With no array, this is only a bounded prediction for the next batch.
++    // The first record still uses single_; quiet reclamation forgets the hint.
+@@ -147 +162 @@
+-        slots[position] = value;
++        slots[position].store(value.id, value.value);
+@@ -153,2 +168,2 @@
+-        if (capacity_ && capacity_ > maximum / 2) throw std::bad_alloc();
+-        const size_t next = capacity_ ? capacity_ * 2 : 4;
++        if (slots_ && capacity_ > maximum / 2) throw std::bad_alloc();
++        const size_t next = slots_ ? capacity_ * 2 : std::max(capacity_, size_t{4});
+@@ -157 +172 @@
+-        if (!capacity_) place(fresh.get(), next, single_);
++        if (!slots_) place(fresh.get(), next, single_);
+@@ -174,2 +189,2 @@
+-        if (!capacity_ && !size_) {
+-            single_ = {id, value};
++        if (!slots_ && !size_) {
++            single_.store(id, value);
+@@ -179 +194 @@
+-        if (!capacity_ || size_ >= capacity_ - capacity_ / 4) grow();
++        if (!slots_ || size_ >= capacity_ - capacity_ / 4) grow();
+@@ -186 +201 @@
+-        if (!capacity_) return single_.id == id && id ? &single_ : nullptr;
++        if (!slots_) return single_.id == id && id ? &single_ : nullptr;
+@@ -198 +213 @@
+-        if (!capacity_) {
++        if (!slots_) {
+@@ -205 +220,8 @@
+-        if (--size_ == 0) { release_storage(); return; }
++        if (--size_ == 0) {
++            slots_.reset();
++            // Learn short phases without retaining heap storage or reserving
++            // an unbounded historical peak for a later two-record workload.
++            capacity_ = std::min(capacity_, size_t{128});
++            single_.id = 0;
++            return;
++        }
+@@ -212 +234 @@
+-                slots_[hole] = slots_[current];
++                slots_[hole].store(slots_[current].id, slots_[current].value);
+@@ -361,0 +384,7 @@
++// The only condition-variable wait is drain(), which rejects OPEN under the
++// same mutex. Closing/poison publication still notifies while holding that lock;
++// ordinary OPEN operations cannot have a drain waiter to wake.
++void notify_drain(mgmem_domain &domain) noexcept {
++    if (domain.state != MGMEM_OPEN) domain.changed.notify_all();
++}
++
+@@ -459,10 +488 @@
+-    for (auto it = domain.backing.begin(); it != domain.backing.end(); ++it) {
+-        if (&*it == backing) {
+-            detached.splice(detached.end(), domain.backing, it);
+-            break;
+-        }
+-    }
+-    if (detached.empty()) {
+-        domain.provider_poisoned = true;
+-        return MGMEM_PROVIDER_ERROR;
+-    }
++    detached.splice(detached.end(), domain.backing, backing->node);
+@@ -482 +502 @@
+-    domain.changed.notify_all();
++    notify_drain(domain);
+@@ -517 +537 @@
+-    domain.changed.notify_all();
++    notify_drain(domain);
+@@ -642 +662 @@
+-        // map insertion removes the placeholder and never reserves any budget.
++        // table insertion removes the placeholder and never reserves any budget.
+@@ -644,0 +665 @@
++        backing_it->node = backing_it;
+@@ -690 +711 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -711 +732 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -753,0 +775 @@
++        backing_it->node = backing_it;
+@@ -797 +819 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -821 +843 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -867 +889 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -889 +911 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -943 +965 @@
+-            domain->changed.notify_all();
++            notify_drain(*domain);
+@@ -947 +969 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);
+@@ -983 +1005 @@
+-        domain->changed.notify_all();
++        notify_drain(*domain);

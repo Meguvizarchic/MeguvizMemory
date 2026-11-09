@@ -449,11 +449,19 @@ void test_pending_owner_metadata_relocation() {
     CHECK(mgmem_borrow_release_v1(domain, late_view.lease) == MGMEM_OK);
     CHECK(mgmem_domain_begin_close_v1(domain) == MGMEM_OK);
     CHECK(mgmem_domain_collect_v1(domain) == MGMEM_BUSY);
-    for (size_t remaining = views.size(); remaining != 0; --remaining) {
-        const auto index = remaining - 1;
+    // Reclaim interior, tail and head nodes after both handle tables moved while
+    // the first provider callback was pending. Each return must pair exactly.
+    for (size_t released = 0; released < views.size(); ++released) {
+        const auto index = (released * 5 + 7) % views.size();
         for (unsigned byte = 0; byte < 32; ++byte)
             CHECK(static_cast<unsigned char *>(views[index].data)[byte] == index + byte + 1);
         CHECK(mgmem_borrow_release_v1(domain, views[index].lease) == MGMEM_OK);
+        CHECK(mgmem_borrow_release_v1(domain, views[index].lease) == MGMEM_STALE_HANDLE);
+        const auto remaining = views.size() - released - 1;
+        const auto after_release = snapshot(domain);
+        CHECK(after_release.active_allocations == remaining && after_release.active_leases == remaining);
+        CHECK(after_release.backing_bytes == remaining * 32 && after_release.retiring_bytes == remaining * 32);
+        CHECK(provider.deallocation_calls == released + 2);
     }
     state = snapshot(domain);
     CHECK(state.state == MGMEM_CLOSING && state.active_allocations == 0 && state.active_leases == 0);

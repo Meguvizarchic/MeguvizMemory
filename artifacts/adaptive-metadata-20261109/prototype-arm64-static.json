@@ -1,0 +1,170 @@
+{
+  "prototype_core_sha256": "9aca4b74fad75c004032816365acf8293fba72a733ea4ab7f481f0db6b30ae5a",
+  "original_state": "FAILED_ARM64_CROSS_COMPILE",
+  "original_reason": "ValueError:invalid_tool_step",
+  "original_manifest_sha256": "0c2a7bdbaeb02b0180f117c08961247e4195515613783ae178fbdc18b1c7eaea",
+  "completion_state": "PASS_ARM64_STATIC_COMPLETION_OF_PRESERVED_BUILD",
+  "completion_manifest_sha256": "fcc9676bd8c3733f135dd729ea328638e0fdef0b845d31101dc624188f5d66c7",
+  "original_failed_attempt_preserved": true,
+  "rebuilds": 0,
+  "new_strip_operations": 0,
+  "artifacts": {
+    "core": {
+      "bytes": 581808,
+      "sha256": "0111741c6815f57027e66456f06dc2d4de75d007f3772cd5b3a982cc6808bcbf",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": false,
+      "rpath": false
+    },
+    "mgmem_claim_release": {
+      "bytes": 420384,
+      "sha256": "612388f0564b9fc3f5b49c932ac288d95e5909ee555c69e88b19325a25a6b96f",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_lookup": {
+      "bytes": 410960,
+      "sha256": "c1121a60531e67880143535b9c5672bf214ccca0d7bcfc6c1b7c34e77ee33989",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_small_cost": {
+      "bytes": 417736,
+      "sha256": "5862166a82917df77c16e480213ca77d4cb3cd722602f1c665d1dcfb1ab5e4c5",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_core_tests": {
+      "bytes": 150896,
+      "sha256": "4014aa6a6cbd48bcdd19472e5b6885f4ebc450dce352115066dcda68373dd98d",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_cpp_consumer": {
+      "bytes": 71112,
+      "sha256": "b4f3d2f3f3b04c6d49999dc2e8bbd7cfa3516b7edd43eff40f338be5ebd981bd",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_lease_table_tests": {
+      "bytes": 410208,
+      "sha256": "dac6d8f76ddfeead0d933c56b11768cf932aa114d716e4602a2f0176a52791a6",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": true,
+      "rpath": false
+    }
+  },
+  "cpp_api_compile_only_objects": {
+    "cpp_consumer.cpp": {
+      "bytes": 407392,
+      "sha256": "5c9cc4a114faad9ccad4a569f41936f96016a52b9a20ff40107d2505b1a7436f",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    },
+    "cpp_checked_import_tests.cpp": {
+      "bytes": 561048,
+      "sha256": "11fba5e266eae3f72749d9de01411a9c9cbcf0e900b85f6d7ffda3c263bec71a",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    },
+    "cpp_checked_fake_tests.cpp": {
+      "bytes": 170600,
+      "sha256": "a8eab8cd1b39f5690a8e2a42c0f4f697a423ae8ecd1bb10d1ad6770c81e6316d",
+      "compiled_only": true,
+      "linked": false,
+      "executed": false
+    }
+  },
+  "device_executed": false,
+  "performance_qualified": false,
+  "note": "Original extra object-read label was rejected after successful native builds. Separate read-only static completion retained; no target execution or prototype performance run."
+}

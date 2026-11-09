@@ -19,7 +19,16 @@ source.copyTo(destination, 0, 0, byteCount);
 
 关闭 domain 会停止新准入；已有 lease 延续到任务完成。请在合适的清理线程完成原有关闭确认，详见[托管域合同](ANDROID_MANAGED_DOMAIN.md)与[借用合同](ANDROID_NATIVE_BORROW.md)。Java/JNI 使用同批制品；旧 JNI 缺少 nativeTransfer 时不支持新方法。
 
-## 当前 mixed 优化与小负载限制
+## 当前自适应元数据与作用域调用
+
+从e92e777继续采用有限容量数值预测、空槽延迟构造、无heap head的私有Backing链与
+OPEN通知省略。重复16组完整wall P50比0.7903–0.8999；System单域reverse/shuffled
+比0.4987–0.6611。部分一次性worker、legacy与多域forward仍有反向，首次数组峰值
+不变，完整保存。C++可用 `domain.with_allocation(bytes, callback)` 同步一行使用，
+自动归还owner/WRITE lease；异步仍显式持有lease。
+[当前实现与全部取舍](ADAPTIVE_METADATA_OPTIMIZATION.md)。
+
+## 历史 mixed 优化与小负载限制（e92e777）
 
 当前已采用两表内联/平坦存储与稳定登记节点引用的组合。以 `a1bf94c` 为基线，
 组合轮 tiny fixed/mixed workflow P50 比0.8452/0.8886，各8/8改善；System

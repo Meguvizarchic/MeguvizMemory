@@ -88,6 +88,14 @@ Windows 运行消费者前将 `install/host/bin` 加入当前进程 PATH；Unix 
 
 `allocate` 返回 owner handle；访问前获取读/写 lease。读 lease 可共享，写 lease 排斥其他 lease。owner release 后已有 lease 保活 backing，最后一次访问结束再归还 lease。异步任务必须先取得 lease 再入队。
 
+使用 `<mgmem/memory.hpp>`，在已创建的 `mgmem::domain memory` 上，C++17 同步临时工作区可写成一行：
+
+```cpp
+auto status = memory.with_allocation(4096, [](void *data, uint64_t bytes) { process_bytes(data, bytes); });
+```
+
+默认对齐为 `alignof(std::max_align_t)`，也可用 `with_allocation(bytes, alignment, callback)` 显式指定。指针仅在同步回调内有效；回调异常原样传播，owner 与 WRITE lease 由 RAII 清理。Arena 仍需显式 reset 才能复用已释放空间。实现与实测见[自适应元数据优化](docs/ADAPTIVE_METADATA_OPTIMIZATION.md)。
+
 ```text
 OPEN → begin_close → CLOSING
   → 完成并 release 全部 owner/lease
