@@ -1,0 +1,72 @@
+{
+  "state": "EXACT_DUMPBIN_FUNCTION_BODY_EXCERPTS",
+  "archive": "function-bodies.zip",
+  "members": {
+    "acquire-borrow.asm.txt": {
+      "bytes": 3382,
+      "sha256": "e538e762b05aa7fefeacfe502c09138807836ef20d4c9360db54f16743f2d07b",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-read-sub.asm.txt": {
+      "bytes": 36526,
+      "sha256": "8473215339bf5844e1e120485f4593faa5af4b5408cd7d268c0a8e0131b51a8f",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-read-whole.asm.txt": {
+      "bytes": 36666,
+      "sha256": "e024cb7ae0444e13869834d195af29517646f3f20d36cbc7cdc15a952a5d847b",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-write-sub.asm.txt": {
+      "bytes": 36811,
+      "sha256": "019f436960acee89c29c4daf89a8cf502c1cb31b93288a4122706f113245844c",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-write-whole.asm.txt": {
+      "bytes": 36869,
+      "sha256": "af7588d9f9f0ab64a2bf7833b4d3f7700ebe6e3a61975e683e796bb5c337817d",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-read-sub.asm.txt": {
+      "bytes": 45689,
+      "sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-read-whole.asm.txt": {
+      "bytes": 45755,
+      "sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-write-sub.asm.txt": {
+      "bytes": 45684,
+      "sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-write-whole.asm.txt": {
+      "bytes": 45550,
+      "sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "with-borrow-0.asm.txt": {
+      "bytes": 10124,
+      "sha256": "76fd9e2d15fff7d887225d72938ba9ee04d7ab0531c480f569f0fd73bbc8e196",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "with-borrow-1.asm.txt": {
+      "bytes": 10089,
+      "sha256": "63ce3a14c55e69bf67d9cff9bbff5c5de2379f0a0ecaeae9d496fb5b48bb3ac1",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "with-borrow-2.asm.txt": {
+      "bytes": 9471,
+      "sha256": "27498964f71cb0c080c59000e30c9b4dae3b2a1df4c119e0ff83c63a051a4710",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "with-borrow-3.asm.txt": {
+      "bytes": 9438,
+      "sha256": "8c1e54a1ae683fa8bbc646f41fae770eae48c5adb34b8825893a514b6268b93b",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    }
+  },
+  "original_report_evidence_basenames_are_zip_members": true
+}

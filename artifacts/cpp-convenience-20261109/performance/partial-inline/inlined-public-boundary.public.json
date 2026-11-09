@@ -1,0 +1,253 @@
+{
+  "state": "CONFIRMED_COST_BOUNDARY_MIGRATED_TO_PUBLIC_READ_WRITE_WRAPPERS",
+  "header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+  "all_four_helper_loops_call_public_wrapper": true,
+  "hot_calls": [
+    {
+      "execute": "helper-read-sub.asm",
+      "remaining_public_wrapper_calls": [
+        "000000000000081D: call        ??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "file_sha256": "ee6827a666eb2af598ac5f365e0b9d9eb6f759b3eaac7db22746b759cf88944c"
+    },
+    {
+      "execute": "helper-read-whole.asm",
+      "remaining_public_wrapper_calls": [
+        "0000000000000817: call        ??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "file_sha256": "7b6aa21b06fc5f17fd8fde7223a9d18bda8bb5a7d9c7909ada4e8f4cfd350758"
+    },
+    {
+      "execute": "helper-write-sub.asm",
+      "remaining_public_wrapper_calls": [
+        "0000000000000840: call        ??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "file_sha256": "d259a925492b9c827bf3906157b95d724ed4d4f9faf925898d0f708e4c40cdf3"
+    },
+    {
+      "execute": "helper-write-whole.asm",
+      "remaining_public_wrapper_calls": [
+        "0000000000000831: call        ??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "file_sha256": "c24ff6706245f54ced33c7aaac4ae71c281789c958eac2b338a8a9351dcc888d"
+    }
+  ],
+  "public_wrapper_bodies": [
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_read<class `struct probe::Row __cdecl probe::execute<1,2,1>(struct probe::Options const &)'::`8'::<lambda_1> &>(unsigned __int64,unsigned __int64,class `struct probe::Row __cdecl probe::execute<1,2,1>(struct probe::Options const &)'::`8'::<lambda_1> &)const ):",
+      "prologue": [
+        "  0000000000000000: push        rbp",
+        "  0000000000000002: push        rbx",
+        "  0000000000000003: push        rsi",
+        "  0000000000000004: push        rdi",
+        "  0000000000000005: push        r12",
+        "  0000000000000007: push        r13",
+        "  0000000000000009: push        r14",
+        "  000000000000000B: push        r15",
+        "  000000000000000D: lea         rbp,[rsp-1Fh]",
+        "  0000000000000012: sub         rsp,0F8h",
+        "  0000000000000019: movaps      xmmword ptr [rsp+0E0h],xmm6",
+        "  0000000000000021: mov         rax,qword ptr [__security_cookie]",
+        "  0000000000000028: xor         rax,rsp",
+        "  000000000000002B: mov         qword ptr [rbp-9],rax",
+        "  000000000000002F: mov         qword ptr [rbp-39h],r9",
+        "  0000000000000033: mov         r12,rcx",
+        "  0000000000000036: xorps       xmm1,xmm1"
+      ],
+      "calls": [
+        "00000000000000C7: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000117: call        qword ptr [rax]",
+        "000000000000012B: call        qword ptr [rax+8]",
+        "00000000000001C7: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000224: call        qword ptr [rax]",
+        "0000000000000238: call        qword ptr [rax+8]",
+        "0000000000000252: call        qword ptr [__imp_terminate]",
+        "000000000000026B: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000002A3: call        qword ptr [rax]",
+        "00000000000002B7: call        qword ptr [rax+8]",
+        "00000000000002ED: call        qword ptr [rax]",
+        "0000000000000303: call        qword ptr [rax+8]",
+        "0000000000000331: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000359: call        qword ptr [rax]",
+        "000000000000036D: call        qword ptr [rax+8]",
+        "0000000000000372: call        qword ptr [__imp_terminate]",
+        "0000000000000394: call        qword ptr [rax]",
+        "00000000000003A6: call        qword ptr [rdx+8]",
+        "00000000000003B3: call        __security_check_cookie",
+        "00000000000003E0: call        ??0runtime_error@std@@QEAA@PEBD@Z",
+        "00000000000003F1: call        _CxxThrowException"
+      ],
+      "evidence_file": "public-borrow-body-0.asm.txt",
+      "evidence_sha256": "6163c7c37eab98ef8f11a0ebdba7d141ac661ef42ea65f6a1220f99fbab52cd2"
+    },
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_read<class `struct probe::Row __cdecl probe::execute<1,2,0>(struct probe::Options const &)'::`8'::<lambda_1> &>(class `struct probe::Row __cdecl probe::execute<1,2,0>(struct probe::Options const &)'::`8'::<lambda_1> &)const ):",
+      "prologue": [
+        "  0000000000000000: mov         r8,qword ptr [rcx+28h]",
+        "  0000000000000004: mov         r9,rdx",
+        "  0000000000000007: xor         edx,edx",
+        "  0000000000000009: jmp         ??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+        ""
+      ],
+      "calls": [],
+      "evidence_file": "public-borrow-body-1.asm.txt",
+      "evidence_sha256": "f96a88e1bf227dcf39a6910266935a1944f9600e3d0a47ac63b9e8d6e7dbd912"
+    },
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_read<class `struct probe::Row __cdecl probe::execute<1,2,0>(struct probe::Options const &)'::`8'::<lambda_1> &>(unsigned __int64,unsigned __int64,class `struct probe::Row __cdecl probe::execute<1,2,0>(struct probe::Options const &)'::`8'::<lambda_1> &)const ):",
+      "prologue": [
+        "  0000000000000000: push        rbp",
+        "  0000000000000002: push        rbx",
+        "  0000000000000003: push        rsi",
+        "  0000000000000004: push        rdi",
+        "  0000000000000005: push        r12",
+        "  0000000000000007: push        r13",
+        "  0000000000000009: push        r14",
+        "  000000000000000B: push        r15",
+        "  000000000000000D: lea         rbp,[rsp-1Fh]",
+        "  0000000000000012: sub         rsp,0F8h",
+        "  0000000000000019: movaps      xmmword ptr [rsp+0E0h],xmm6",
+        "  0000000000000021: mov         rax,qword ptr [__security_cookie]",
+        "  0000000000000028: xor         rax,rsp",
+        "  000000000000002B: mov         qword ptr [rbp-9],rax",
+        "  000000000000002F: mov         qword ptr [rbp-39h],r9",
+        "  0000000000000033: mov         r12,rcx",
+        "  0000000000000036: xorps       xmm1,xmm1"
+      ],
+      "calls": [
+        "00000000000000C7: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000117: call        qword ptr [rax]",
+        "000000000000012B: call        qword ptr [rax+8]",
+        "00000000000001C7: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000224: call        qword ptr [rax]",
+        "0000000000000238: call        qword ptr [rax+8]",
+        "0000000000000252: call        qword ptr [__imp_terminate]",
+        "000000000000026B: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000002A3: call        qword ptr [rax]",
+        "00000000000002B7: call        qword ptr [rax+8]",
+        "00000000000002ED: call        qword ptr [rax]",
+        "0000000000000303: call        qword ptr [rax+8]",
+        "0000000000000331: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000359: call        qword ptr [rax]",
+        "000000000000036D: call        qword ptr [rax+8]",
+        "0000000000000372: call        qword ptr [__imp_terminate]",
+        "0000000000000394: call        qword ptr [rax]",
+        "00000000000003A6: call        qword ptr [rdx+8]",
+        "00000000000003B3: call        __security_check_cookie",
+        "00000000000003E0: call        ??0runtime_error@std@@QEAA@PEBD@Z",
+        "00000000000003F1: call        _CxxThrowException"
+      ],
+      "evidence_file": "public-borrow-body-2.asm.txt",
+      "evidence_sha256": "c53e69953baf3f7cd298abb3fa7496b8df63ed569d406d4761f9a5165d8ac817"
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_write<class `struct probe::Row __cdecl probe::execute<1,3,1>(struct probe::Options const &)'::`8'::<lambda_2> &>(unsigned __int64,unsigned __int64,class `struct probe::Row __cdecl probe::execute<1,3,1>(struct probe::Options const &)'::`8'::<lambda_2> &)const ):",
+      "prologue": [
+        "  0000000000000000: push        rbp",
+        "  0000000000000002: push        rbx",
+        "  0000000000000003: push        rsi",
+        "  0000000000000004: push        rdi",
+        "  0000000000000005: push        r12",
+        "  0000000000000007: push        r13",
+        "  0000000000000009: push        r14",
+        "  000000000000000B: push        r15",
+        "  000000000000000D: lea         rbp,[rsp-1Fh]",
+        "  0000000000000012: sub         rsp,0E8h",
+        "  0000000000000019: movaps      xmmword ptr [rsp+0D0h],xmm6",
+        "  0000000000000021: mov         rax,qword ptr [__security_cookie]",
+        "  0000000000000028: xor         rax,rsp",
+        "  000000000000002B: mov         qword ptr [rbp-1],rax",
+        "  000000000000002F: mov         qword ptr [rsp+30h],r9",
+        "  0000000000000034: mov         r12,rcx",
+        "  0000000000000037: xorps       xmm1,xmm1"
+      ],
+      "calls": [
+        "00000000000000CA: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "000000000000011A: call        qword ptr [rax]",
+        "000000000000012E: call        qword ptr [rax+8]",
+        "0000000000000167: call        ??R<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@1@AEBUOptions@1@@Z@QEBAIPEAX_K@Z",
+        "00000000000001A1: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000001FA: call        qword ptr [rax]",
+        "000000000000020E: call        qword ptr [rax+8]",
+        "0000000000000228: call        qword ptr [__imp_terminate]",
+        "0000000000000241: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000279: call        qword ptr [rax]",
+        "000000000000028D: call        qword ptr [rax+8]",
+        "00000000000002C3: call        qword ptr [rax]",
+        "00000000000002D9: call        qword ptr [rax+8]",
+        "0000000000000307: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "000000000000032F: call        qword ptr [rax]",
+        "0000000000000343: call        qword ptr [rax+8]",
+        "0000000000000348: call        qword ptr [__imp_terminate]",
+        "000000000000036A: call        qword ptr [rax]",
+        "000000000000037C: call        qword ptr [rdx+8]",
+        "0000000000000389: call        __security_check_cookie"
+      ],
+      "evidence_file": "public-borrow-body-3.asm.txt",
+      "evidence_sha256": "f0106342c23eb6c0189d81e331469b8908614bc24ab5f7cc93045e792a4bbeb7"
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_write<class `struct probe::Row __cdecl probe::execute<1,3,0>(struct probe::Options const &)'::`8'::<lambda_2> &>(class `struct probe::Row __cdecl probe::execute<1,3,0>(struct probe::Options const &)'::`8'::<lambda_2> &)const ):",
+      "prologue": [
+        "  0000000000000000: mov         r8,qword ptr [rcx+28h]",
+        "  0000000000000004: mov         r9,rdx",
+        "  0000000000000007: xor         edx,edx",
+        "  0000000000000009: jmp         ??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+        ""
+      ],
+      "calls": [],
+      "evidence_file": "public-borrow-body-4.asm.txt",
+      "evidence_sha256": "edf95cad7acbfa2063c7ea573285bcae87e19074b76ea890473210ba60f9d518"
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z (public: unsigned int __cdecl mgmem::owned_allocation::with_write<class `struct probe::Row __cdecl probe::execute<1,3,0>(struct probe::Options const &)'::`8'::<lambda_2> &>(unsigned __int64,unsigned __int64,class `struct probe::Row __cdecl probe::execute<1,3,0>(struct probe::Options const &)'::`8'::<lambda_2> &)const ):",
+      "prologue": [
+        "  0000000000000000: push        rbp",
+        "  0000000000000002: push        rbx",
+        "  0000000000000003: push        rsi",
+        "  0000000000000004: push        rdi",
+        "  0000000000000005: push        r12",
+        "  0000000000000007: push        r13",
+        "  0000000000000009: push        r14",
+        "  000000000000000B: push        r15",
+        "  000000000000000D: lea         rbp,[rsp-1Fh]",
+        "  0000000000000012: sub         rsp,0E8h",
+        "  0000000000000019: movaps      xmmword ptr [rsp+0D0h],xmm6",
+        "  0000000000000021: mov         rax,qword ptr [__security_cookie]",
+        "  0000000000000028: xor         rax,rsp",
+        "  000000000000002B: mov         qword ptr [rbp-1],rax",
+        "  000000000000002F: mov         qword ptr [rsp+30h],r9",
+        "  0000000000000034: mov         r12,rcx",
+        "  0000000000000037: xorps       xmm1,xmm1"
+      ],
+      "calls": [
+        "00000000000000CA: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "000000000000011A: call        qword ptr [rax]",
+        "000000000000012E: call        qword ptr [rax+8]",
+        "0000000000000167: call        ??R<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@1@AEBUOptions@1@@Z@QEBAIPEAX_K@Z",
+        "00000000000001A1: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000001FA: call        qword ptr [rax]",
+        "000000000000020E: call        qword ptr [rax+8]",
+        "0000000000000228: call        qword ptr [__imp_terminate]",
+        "0000000000000241: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000279: call        qword ptr [rax]",
+        "000000000000028D: call        qword ptr [rax+8]",
+        "00000000000002C3: call        qword ptr [rax]",
+        "00000000000002D9: call        qword ptr [rax+8]",
+        "0000000000000307: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "000000000000032F: call        qword ptr [rax]",
+        "0000000000000343: call        qword ptr [rax+8]",
+        "0000000000000348: call        qword ptr [__imp_terminate]",
+        "000000000000036A: call        qword ptr [rax]",
+        "000000000000037C: call        qword ptr [rdx+8]",
+        "0000000000000389: call        __security_check_cookie"
+      ],
+      "evidence_file": "public-borrow-body-5.asm.txt",
+      "evidence_sha256": "b9a1e53a8212e3f390582500a9d9ab4e3a6b4fab27ace7db1ad019306a6139fe"
+    }
+  ],
+  "limits": [
+    "Earlier report checked only with_borrow/acquire_borrow names and accurately reported those zero; it did not establish all wrapper boundaries were gone.",
+    "This supplement reads the same frozen object and makes no new measurement, code edit or causal performance claim."
+  ]
+}

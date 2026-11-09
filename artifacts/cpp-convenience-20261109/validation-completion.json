@@ -1,0 +1,70 @@
+{
+  "original_private_receipt": {
+    "bytes": 1828,
+    "sha256": "2f11c41213aed4feb742b72b0b533f13be72f6df0d66ca20cc109eb7faa30441"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_FROZEN_HUMAN_CPP_VALIDATION_COMPLETE",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+    "source_count": 64,
+    "frozen_driver_count": 11,
+    "ctest": {
+      "core": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp": {
+        "passed": 15,
+        "total": 15
+      },
+      "asan": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp-asan": {
+        "passed": 15,
+        "total": 15
+      },
+      "installed-cpp": {
+        "passed": 1,
+        "total": 1
+      }
+    },
+    "cpp_raii_cases": 14,
+    "expected_compile_rejections": 2,
+    "all_ordinary_steps_exit_zero": true,
+    "all_negative_steps_rejected": true,
+    "cpp_asan_flags_verified_targets": 3,
+    "android_new_linked_ELF": 1,
+    "android_compiled_REL_TUs": 3,
+    "android_core_rebuilt": false,
+    "reused_core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "target_executions": 0,
+    "performance_processes": 0,
+    "performance_qualified": false,
+    "files": {
+      "validation.py": {
+        "sha256": "9132d6e26909a0c9707d40ff64ab00fcdfad6f485cf435e253019ee5b8c81334",
+        "bytes": 19520
+      },
+      "validation-plan.private.json": {
+        "sha256": "cc7236271482847920b5c42e8aa770c279241d58e71bcb58e491abd1b240189a",
+        "bytes": 16546
+      },
+      "validation.private.json": {
+        "sha256": "e79b3a9b4a2a64085872f18d8a3b29c5a7647471a90fcf3a188ad3a1aaba8c11",
+        "bytes": 5542
+      },
+      "installed-cpp-readback.private.json": {
+        "sha256": "f8f6c2bfb1a904fca3fd46e5a540b701015d6c9cbec95d35fc25becdc9d8f0f5",
+        "bytes": 1747
+      },
+      "android/manifest.private.json": {
+        "sha256": "5475ee5bd5651fe3570c536a906efb94d2b2bb69dcc36a20ec5a071fb0d9eb4e",
+        "bytes": 1880
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "state": "PASS_DIAGNOSTIC_BUILD_NO_NATIVE_EXECUTION",
+  "steps": [
+    {
+      "step": "configure",
+      "exit_code": 0,
+      "log_sha256": "ad360f050a6b5801e94344ac2d22967b527a84ab98d22e691f2622a3cf6cbd95"
+    },
+    {
+      "step": "build",
+      "exit_code": 0,
+      "log_sha256": "e3232c96559e02ffe144efb9054ca20d12f7ac3c70a263698aa956b4abe828f5"
+    }
+  ],
+  "native_timing_run": false,
+  "native_counts_run": false
+}

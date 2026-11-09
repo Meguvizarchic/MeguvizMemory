@@ -1,0 +1,31 @@
+{
+  "state": "EXACT_FUNCTION_EXCERPTS_WITH_ORIGINAL_FULL_DUMPBIN_IDENTITIES",
+  "body_member_count": 8,
+  "function_bodies_zip": {
+    "sha256": "059b09499a6dd55139364ed5a07eec574186cd83075ccaa9563f5bd6afcae7ea",
+    "bytes": 59063
+  },
+  "full_dumpbin_logs_retained_locally": {
+    "symbols.txt": {
+      "bytes": 395337,
+      "sha256": "9a417221c1b225d2e0faa475e44fe16eba7ca02bfc171cbbbda7c12077ff131f",
+      "published": false
+    },
+    "obj-disasm.txt": {
+      "bytes": 1037625,
+      "sha256": "a627e22d438eb59ff7395f273c50b6b6a928531c0f85462b2acd5b8e9a4c2dd1",
+      "published": false
+    },
+    "exe-disasm.txt": {
+      "bytes": 707415,
+      "sha256": "d39e324d256c11fb97859c5bc380496da4f4eba032352faf3d13634cc1aa21cb",
+      "published": false
+    }
+  },
+  "full_dumpbin_text_published": false,
+  "limits": [
+    "Exact body excerpts were checked individually; compressed binary bytes were not used for privacy scanning.",
+    "Full object/executable disassembly and symbols remain local with hashes; library/startup code and private path headers are not duplicated publicly.",
+    "Static call-site counts are not actual successful-operation dynamic call counts."
+  ]
+}

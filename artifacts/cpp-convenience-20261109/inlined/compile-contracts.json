@@ -1,0 +1,33 @@
+{
+  "state": "PASS_POSITIVE_CONTROL_AND_TWO_EXPECTED_COMPILER_REJECTIONS",
+  "positive_control": {
+    "name": "compile-contract-positive",
+    "exit_code": 0,
+    "log_sha256": "c857aa2a277309e0be4291595332932913801921255342561062ec4f492ded2e"
+  },
+  "expected_rejections": [
+    {
+      "name": "compile-contract-read-mutable-rejected",
+      "exit_code": 1,
+      "log_sha256": "734103e6e5be971e6b4a18e2cbc0d5425b226251fe0a8ece7aa0d4dd1297af21",
+      "expected_rejection": "invoke_result"
+    },
+    {
+      "name": "compile-contract-bool-status-rejected",
+      "exit_code": 1,
+      "log_sha256": "f1b6bebfdcdefbd9cbe6800f46466dc1c318f0eb47161aeeeecfeb43598ea601",
+      "expected_rejection": "static_assert|static assertion"
+    }
+  ],
+  "ordinary_steps_exit_zero": 30,
+  "expected_nonzero_steps": 2,
+  "ordinary_validation_failures": 0,
+  "scope": [
+    "READ body cannot require mutable void*.",
+    "Scoped body cannot return bool as a status.",
+    "const void* READ and explicit mgmem_status WRITE compile in the positive control."
+  ],
+  "original_logs_retained_locally": true,
+  "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab"
+}

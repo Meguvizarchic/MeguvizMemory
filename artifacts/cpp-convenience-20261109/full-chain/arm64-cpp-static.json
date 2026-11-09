@@ -1,0 +1,75 @@
+{
+  "original_private_receipt": {
+    "bytes": 1880,
+    "sha256": "5f48ec903e3e06448b5688c0029b51903a39230a0c7a5c14c4427da7f38ce821"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_NEW_CPP_API_ARM64_STATIC_WITH_EXPLICIT_REUSED_CORE",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+    "artifacts": {
+      "consumer": {
+        "bytes": 93144,
+        "sha256": "2ed71ee761fc9a63536a0de0da2829fe41082435eb83101007425fe532a7ccc4",
+        "class": 2,
+        "machine": 183,
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "needed": [
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libmgmem.so"
+        ],
+        "rpath": false
+      },
+      "reused-core": {
+        "bytes": 580696,
+        "sha256": "e810451752a371e7596b42548891351dfc3223754911d2dc2c89e1ddadb30542",
+        "class": 2,
+        "machine": 183,
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "needed": [
+          "libc.so",
+          "libdl.so",
+          "libm.so"
+        ],
+        "rpath": false
+      }
+    },
+    "compile_only_objects": {
+      "cpp_consumer.cpp": {
+        "bytes": 676592,
+        "sha256": "79f60707986be35f49a88d70af1f0b7f47c5f2451842573386e7f7294b3b057b",
+        "compiled_only": true,
+        "executed": false
+      },
+      "cpp_checked_import_tests.cpp": {
+        "bytes": 696856,
+        "sha256": "16a7db19eec69e970427723b1a1f3c1823e18cea5fb605951108a79d82596e7b",
+        "compiled_only": true,
+        "executed": false
+      },
+      "cpp_checked_fake_tests.cpp": {
+        "bytes": 221568,
+        "sha256": "5eeab77dafc51804666ccfb2f5278c1e0d7cf7ee56f8e7a39e7f2da87b2cf10f",
+        "compiled_only": true,
+        "executed": false
+      }
+    },
+    "reused_core": true,
+    "old_core_manifest_sha256": "4af60a4f177c3797cacd0a81117d16f24f23008ccf9bf9090928f953fd536a6a",
+    "device_executed": false,
+    "target_executions": 0,
+    "sdk_published": false,
+    "performance_qualified": false
+  }
+}

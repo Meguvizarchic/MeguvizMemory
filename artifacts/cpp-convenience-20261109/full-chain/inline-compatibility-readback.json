@@ -1,0 +1,33 @@
+{
+  "original_private_receipt": {
+    "bytes": 1177,
+    "sha256": "09cd011a07fe1e685fdc98d7e1581ad8676be7ae80a218ff29d8c8f86bcae6ea"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_RELEASE_DEBUG_STRICT_INLINE_COMPATIBILITY_READBACK",
+    "header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+    "configurations": {
+      "Release": {
+        "warning_level": "Level4",
+        "warnings_as_errors": true,
+        "optimization": "MaxSpeed",
+        "warning_4714_suppressed": false,
+        "project_sha256": "f9ebf0164036ccc8d45fcd48d2a644ade90b064ed75cbda0371ff82edf025a4f",
+        "cache_sha256": "f89cc690d10efcdb15d9ddc7ae06dfee0c0a3cdfc74e5061178e6b572e0b979d",
+        "build_log_sha256": "b96468a930ea2ffcb2356480ab91caf61f0eccc253e22df0dbd2793f69a59b4b"
+      },
+      "Debug": {
+        "warning_level": "Level4",
+        "warnings_as_errors": true,
+        "optimization": "Disabled",
+        "warning_4714_suppressed": false,
+        "project_sha256": "8a94e686914084541bcabf647af40b70a9d220300438c3d6869bbd9b18ff0e5c",
+        "cache_sha256": "676116209db841baeea692e2983a72c8274f0a5e9517e10a39cd94488574c0e4",
+        "build_log_sha256": "72d39b6ee637f3d6fbe08bf8eb6c571dee0d79ca568b429ad48e7d448aeaf5e6"
+      }
+    },
+    "source_sha256": "9335c05fc5cb9401cec13812937ec17f8275498ab5a65116b6b57194c67c9629",
+    "native_executions": 0
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "original_private_receipt": {
+    "bytes": 5542,
+    "sha256": "e79b3a9b4a2a64085872f18d8a3b29c5a7647471a90fcf3a188ad3a1aaba8c11"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_HUMAN_CPP_HOST_ASAN_INSTALLED_AND_ARM64_STATIC",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+    "plan_sha256": "cc7236271482847920b5c42e8aa770c279241d58e71bcb58e491abd1b240189a",
+    "steps": [
+      {
+        "name": "core-configure",
+        "exit_code": 0,
+        "log_sha256": "a0823a0641bb911c8648b0235d03de875e83bf6be17052baf0ba0151715a0b53"
+      },
+      {
+        "name": "core-build",
+        "exit_code": 0,
+        "log_sha256": "358cffd6ddbf8428613345d8821d7037f3a553e78f764856896a12350435508f"
+      },
+      {
+        "name": "core-ctest",
+        "exit_code": 0,
+        "log_sha256": "76d8c6c14d86c0fab8d7c22f2d8e99de19f0ea6954058866dcb4ae35a9b49bab"
+      },
+      {
+        "name": "cpp-configure",
+        "exit_code": 0,
+        "log_sha256": "226d1c2431caf78cc8c0e8420bde2746c5794392d05c640aee27fae401237d26"
+      },
+      {
+        "name": "cpp-build",
+        "exit_code": 0,
+        "log_sha256": "edea5661fd3c3023b625045755606bdccf9051f05cd96f1af184a4fc62bd5645"
+      },
+      {
+        "name": "cpp-ctest",
+        "exit_code": 0,
+        "log_sha256": "c13adfc200168a9b6bb1c9053ed82aec4f06e9d76d5a51aa20b6496440660adb"
+      },
+      {
+        "name": "asan-configure",
+        "exit_code": 0,
+        "log_sha256": "1946758b3cf7101b2d30d466dee40a419e891fa90c970046bced2cce70ef8f8d"
+      },
+      {
+        "name": "asan-build",
+        "exit_code": 0,
+        "log_sha256": "1f0d784ca974d7a792397d50673bac77f8dad4d55fa6fe27325a19e7e7755170"
+      },
+      {
+        "name": "asan-ctest",
+        "exit_code": 0,
+        "log_sha256": "bf2a56f5c462a44679b76c050420f2b027683b3a17ff0d081f589ab63f78d090"
+      },
+      {
+        "name": "cpp-asan-configure",
+        "exit_code": 0,
+        "log_sha256": "4ad70d7f3a4b9ff63732b0bf871ebefeb3bca121f89c159979f555745deadf64"
+      },
+      {
+        "name": "cpp-asan-build",
+        "exit_code": 0,
+        "log_sha256": "06c415ee9c7485db7b267336c3d785cc4e7e3749c6efd0c9390ac0cdbc489717"
+      },
+      {
+        "name": "cpp-asan-ctest",
+        "exit_code": 0,
+        "log_sha256": "f5d12e556a53e4aae001100b68feaff150983d8bbab7229abf9836518feb3b6c"
+      },
+      {
+        "name": "install",
+        "exit_code": 0,
+        "log_sha256": "407a3c8ebd6004e11775f51fff58269e57b9625b45848206cc5d54b6c45c549a"
+      },
+      {
+        "name": "installed-cpp-configure",
+        "exit_code": 0,
+        "log_sha256": "aa33034ec695a7ea3d354939b6ab8cf7f8dd7388290b7b555ca5b222a0092d5f"
+      },
+      {
+        "name": "installed-cpp-build",
+        "exit_code": 0,
+        "log_sha256": "07109d6091562fd764d8c68113fc6761c693e2540122f716078824547c6e3016"
+      },
+      {
+        "name": "installed-cpp-ctest",
+        "exit_code": 0,
+        "log_sha256": "a0182bf79de4a876a5b391a22c47fe0903d7e18d1472058557a0dcccf7405e6d"
+      },
+      {
+        "name": "compile-contract-configure",
+        "exit_code": 0,
+        "log_sha256": "58553d2cde53efdb6240ec431f0e293b089a64a642045930cf348038b1c184ec"
+      },
+      {
+        "name": "compile-contract-positive",
+        "exit_code": 0,
+        "log_sha256": "fb705985c4c76f5b5013bd57b1b166fe1488a02b7558f7671faac391990d4ac3"
+      },
+      {
+        "name": "compile-contract-read-mutable-rejected",
+        "exit_code": 1,
+        "log_sha256": "863451e558e4acbd593c0beb16dff20e55c8f7220e29e3490da31f0085b31635",
+        "expected_rejection": "invoke_result"
+      },
+      {
+        "name": "compile-contract-bool-status-rejected",
+        "exit_code": 1,
+        "log_sha256": "ded18a347bac5083bbb0aa92d36e4b4559f65c1de9c2c69df0650ccdfac3db40",
+        "expected_rejection": "static_assert|static assertion"
+      },
+      {
+        "name": "android-configure",
+        "exit_code": 0,
+        "log_sha256": "dab11326bd084d40092b3051695cba3979e01ed04ef39dae41d836f869e679dd"
+      },
+      {
+        "name": "android-build",
+        "exit_code": 0,
+        "log_sha256": "57775e025fa729b572f0ded345744e6843f50e738b65fedbf4ca5c01e878bac1"
+      },
+      {
+        "name": "android-consumer-strip",
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "android-cpp_consumer-cpp-object",
+        "exit_code": 0,
+        "log_sha256": "5cd82514e12f094ad0cc96ead06a940e575df6c238deb9d2f9a7ed5bd6ae1f6b"
+      },
+      {
+        "name": "android-cpp_checked_import_tests-cpp-object",
+        "exit_code": 0,
+        "log_sha256": "e636b045753dfa7b3690de8ce1ac756d49b0c801a06af31c58c8b73c528d6311"
+      },
+      {
+        "name": "android-cpp_checked_fake_tests-cpp-object",
+        "exit_code": 0,
+        "log_sha256": "2f421e99d125b5cfbcf040ddf1eb7fba473c041fd481136570e5129644f776fa"
+      },
+      {
+        "name": "android-consumer-elf",
+        "exit_code": 0,
+        "log_sha256": "ac57d3816132151e8e76ff42d64b90cfc739f2d6baba9faf0e2082eda2e1ddcd"
+      },
+      {
+        "name": "android-reused-core-elf",
+        "exit_code": 0,
+        "log_sha256": "7b51ffc8c0f9c0b770e6823fff82f837a5830cb07b1c5625f59629fdfcc0c02a"
+      }
+    ],
+    "ctest": {
+      "core": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp": {
+        "passed": 15,
+        "total": 15
+      },
+      "asan": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp-asan": {
+        "passed": 15,
+        "total": 15
+      },
+      "installed-cpp": {
+        "passed": 1,
+        "total": 1
+      }
+    },
+    "device_executed": false,
+    "performance_qualified": false,
+    "installed_readback_sha256": "f8f6c2bfb1a904fca3fd46e5a540b701015d6c9cbec95d35fc25becdc9d8f0f5",
+    "android_manifest_sha256": "5475ee5bd5651fe3570c536a906efb94d2b2bb69dcc36a20ec5a071fb0d9eb4e",
+    "expected_compile_rejections": 2
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "state": "SAFE_REQUIRED_PERFORMANCE_AND_FUNCTION_BODY_EVIDENCE_PUBLISHED",
+  "supplementary_full_dumpbin_json_scan_attempt": "ASSERTION_STOPPED_BEFORE_ANY_FULL_DUMPBIN_PUBLIC_FILE_WAS_WRITTEN",
+  "full_dumpbin_text_publication": "OMITTED_BY_ROOT_SCOPE_DECISION_ORIGINALS_AND_HASHES_RETAINED_LOCALLY",
+  "unscanned_full_dumpbin_public_files": 0,
+  "source_or_native_measurement_changed": false,
+  "timing_processes_omitted": 0,
+  "count_processes_omitted": 0
+}

@@ -1,0 +1,66 @@
+{
+  "original_private_receipt": {
+    "bytes": 1843,
+    "sha256": "1606ec6d2d9a150840d6d67ae3baf6981a660d74962febdf2e89411bdb72aea2"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_INSTALLED_CPP_HEADER_AND_LOADED_DLL",
+    "repo_include_used": false,
+    "installed_include_rows": [
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      },
+      {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "5cad16902eb0ab02c10dfbd46d0d1457618ce41fa4a4fcf0c7384a3c0857dcbf"
+      }
+    ],
+    "installed_header": {
+      "bytes": 21578,
+      "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44"
+    },
+    "installed_dll": {
+      "bytes": 39424,
+      "sha256": "5b713f5b851ac720558df61d3d3de42ba82e8da7263ecc3a2e365b04f9882e46"
+    },
+    "loaded_dll": {
+      "bytes": 39424,
+      "sha256": "5b713f5b851ac720558df61d3d3de42ba82e8da7263ecc3a2e365b04f9882e46"
+    },
+    "consumer": {
+      "bytes": 75264,
+      "sha256": "cdfac18b7a1a6d90c5d1eedc0d771cd65ea0e51aad4c98ccbbe702faee2e43bc"
+    },
+    "source": {
+      "bytes": 21746,
+      "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c"
+    },
+    "performance_qualified": false
+  }
+}

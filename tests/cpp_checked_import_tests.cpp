@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <initializer_list>
 #include <mutex>
 #include <thread>
 
@@ -264,6 +265,87 @@ void arena_failure() {
     CHECK(view.release() == MGMEM_PROVIDER_ERROR && !view && origin.releases == 1);
     assert_quarantine(domain, 64);
 }
+
+void scoped_normal() {
+    for (const auto mode : {MGMEM_SYSTEM, MGMEM_ARENA}) {
+        Origin origin;
+        auto config = options(); config.mode = mode; config.arena_chunk_bytes = 128;
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
+        mgmem::owned_allocation owner;
+        auto input = origin.descriptor(1021 + mode);
+        CHECK((mode == MGMEM_ARENA ? domain.import_external_arena_checked(input, owner) :
+               domain.import_external_checked(input, owner)) == MGMEM_OK);
+        unsigned calls = 0;
+        CHECK(owner.with_write([&](void *, uint64_t) { ++calls; }) == MGMEM_UNSUPPORTED);
+        CHECK(calls == 0);
+        CHECK(owner.with_read(4, 16, [&](const void *data, uint64_t length) -> mgmem_status {
+            ++calls;
+            CHECK(data == origin.bytes + 4 && length == 16);
+            return MGMEM_BUSY;
+        }) == MGMEM_BUSY && calls == 1);
+        struct CallbackError {} marker;
+        bool caught = false;
+        try {
+            (void)owner.with_read([&](const void *, uint64_t) { throw &marker; });
+        } catch (CallbackError *error) { caught = error == &marker; }
+        CHECK(caught && origin.releases == 0);
+        mgmem_snapshot_v1 state{};
+        CHECK(domain.snapshot(state) == MGMEM_OK && state.active_leases == 0);
+        CHECK(owner.with_read([&](const void *data, uint64_t length) {
+            CHECK(owner.release() == MGMEM_OK && !owner);
+            CHECK(data == origin.bytes && length == sizeof(origin.bytes) && origin.releases == 0);
+        }) == MGMEM_OK);
+        CHECK(origin.releases == 1 && !domain.quarantined());
+        CHECK(domain.snapshot(state) == MGMEM_OK && state.active_leases == 0 && state.active_allocations == 0);
+        CHECK(domain.begin_close() == MGMEM_OK && domain.collect() == MGMEM_OK && domain.drain(0) == MGMEM_OK);
+    }
+}
+
+void scoped_failure() {
+    // These origins outlive the deliberately quarantined native domains.
+    static Origin origins[6];
+    for (unsigned scenario = 0; scenario < 6; ++scenario) {
+        auto &origin = origins[scenario];
+        origin.release_status = MGMEM_BUSY;
+        const auto mode = scenario < 3 ? MGMEM_SYSTEM : MGMEM_ARENA;
+        auto config = options(); config.mode = mode; config.arena_chunk_bytes = 128;
+        {
+            mgmem::domain domain;
+            CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
+            mgmem::owned_allocation owner;
+            auto input = origin.descriptor(1030 + scenario);
+            if (scenario % 3 == 1) input.access = MGMEM_WRITE;
+            CHECK((mode == MGMEM_ARENA ? domain.import_external_arena_checked(input, owner) :
+                   domain.import_external_checked(input, owner)) == MGMEM_OK);
+            if (scenario % 3 == 0) {
+                CHECK(owner.with_read([&](const void *, uint64_t) -> mgmem_status {
+                    CHECK(owner.release() == MGMEM_OK && origin.releases == 0);
+                    return MGMEM_TIMEOUT;
+                }) == MGMEM_PROVIDER_ERROR); // Final cleanup error wins over body status.
+            } else if (scenario % 3 == 1) {
+                CHECK(owner.with_write([&](void *data, uint64_t length) {
+                    CHECK(owner.release() == MGMEM_OK && origin.releases == 0);
+                    std::memset(data, 0x4d, static_cast<size_t>(length));
+                }) == MGMEM_PROVIDER_ERROR);
+            } else {
+                struct CallbackError {} marker;
+                bool caught = false;
+                try {
+                    (void)owner.with_read([&](const void *, uint64_t) {
+                        CHECK(owner.release() == MGMEM_OK && origin.releases == 0);
+                        throw &marker;
+                    });
+                } catch (CallbackError *error) { caught = error == &marker; }
+                CHECK(caught); // Exception remains observable; cleanup quarantines.
+            }
+            CHECK(!owner && origin.releases == 1);
+            CHECK(owner.release() == MGMEM_OK && origin.releases == 1);
+            assert_quarantine(domain, 64);
+        }
+        CHECK(origin.releases == 1); // Neither the local borrow nor domain retries.
+    }
+}
 }
 
 int main(int argc, char **argv) {
@@ -278,11 +360,14 @@ int main(int argc, char **argv) {
     else if (!std::strcmp(argv[1], "concurrent")) concurrent_releases();
     else if (!std::strcmp(argv[1], "arena-normal")) arena_normal();
     else if (!std::strcmp(argv[1], "arena-failure")) arena_failure();
+    else if (!std::strcmp(argv[1], "scoped-normal")) scoped_normal();
+    else if (!std::strcmp(argv[1], "scoped-failure")) scoped_failure();
     else return 2;
     std::printf("{\"suite\":\"cpp-checked-import\",\"case\":\"%s\",\"status\":\"PASS\"}\n", argv[1]);
     std::fflush(stdout);
     // Uncertain resources intentionally remain quarantined; an isolated
     // process exits without claiming successful release or leak freedom.
-    if (std::strcmp(argv[1], "normal") && std::strcmp(argv[1], "arena-normal")) std::_Exit(0);
+    if (std::strcmp(argv[1], "normal") && std::strcmp(argv[1], "arena-normal") &&
+        std::strcmp(argv[1], "scoped-normal")) std::_Exit(0);
     return 0;
 }

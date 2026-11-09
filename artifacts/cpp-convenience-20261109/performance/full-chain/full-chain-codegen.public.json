@@ -1,0 +1,791 @@
+{
+  "state": "READ_ONLY_FULL_HOT_CALL_BOUNDARY_AND_CODE_SIZE_INSPECTION",
+  "header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+  "probe_source_sha256": "8516b16f7f06eeda22e9bc085cee9fcca82834418edd11f2c2d1bd74facabf25",
+  "object_sha256": "fca23f0da5c567af5cdb115aa1c48a13bafc5a37c76cbd2c6e7575f18bcaaeaa",
+  "executable_sha256": "7a62549f0a16b144e2e216ecc5728cf69e721735ca511f43be1a23be75f64259",
+  "script_sha256": "5f9cdd2c61564c377583dd5e3123c957ee791ed11d3430c0314518515ecf5d78",
+  "tool_sha256": "1125ebb2e75c7f2601da6754bb44fe5f55a9233d2dad9afe1852930267b23d05",
+  "all_hot_regions_resolved": true,
+  "all_four_public_and_private_borrow_wrapper_boundaries_gone": true,
+  "paths": [
+    {
+      "name": "helper-read-sub",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008AA: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008F3: call        qword ptr [rax]",
+        "0000000000000908: call        qword ptr [rax+8]",
+        "00000000000009A9: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A06: call        qword ptr [rax]",
+        "0000000000000A1D: call        qword ptr [rax+8]",
+        "0000000000000A53: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A7D: call        qword ptr [rax]",
+        "0000000000000A92: call        qword ptr [rax+8]",
+        "0000000000000AB5: call        qword ptr [rax]",
+        "0000000000000AC9: call        qword ptr [rax+8]",
+        "0000000000000B04: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B31: call        qword ptr [rax]",
+        "0000000000000B46: call        qword ptr [rax+8]",
+        "0000000000000B67: call        qword ptr [rax]",
+        "0000000000000B7B: call        qword ptr [rax+8]",
+        "0000000000000BB2: call        qword ptr [__imp_terminate]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008AA: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009A9: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A53: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B04: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008F3: call        qword ptr [rax]",
+        "0000000000000908: call        qword ptr [rax+8]",
+        "0000000000000A06: call        qword ptr [rax]",
+        "0000000000000A1D: call        qword ptr [rax+8]",
+        "0000000000000A7D: call        qword ptr [rax]",
+        "0000000000000A92: call        qword ptr [rax+8]",
+        "0000000000000AB5: call        qword ptr [rax]",
+        "0000000000000AC9: call        qword ptr [rax+8]",
+        "0000000000000B31: call        qword ptr [rax]",
+        "0000000000000B46: call        qword ptr [rax+8]",
+        "0000000000000B67: call        qword ptr [rax]",
+        "0000000000000B7B: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "helper-read-sub.asm.txt",
+      "evidence_sha256": "e5375d8c44d68da1c49e8133b0940dfa0fa29514fb7ea68939561ef6cb8ae8ae"
+    },
+    {
+      "name": "helper-read-whole",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008A7: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008F0: call        qword ptr [rax]",
+        "0000000000000905: call        qword ptr [rax+8]",
+        "000000000000099A: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000009F7: call        qword ptr [rax]",
+        "0000000000000A0E: call        qword ptr [rax+8]",
+        "0000000000000A44: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A6E: call        qword ptr [rax]",
+        "0000000000000A83: call        qword ptr [rax+8]",
+        "0000000000000AA6: call        qword ptr [rax]",
+        "0000000000000ABA: call        qword ptr [rax+8]",
+        "0000000000000AF5: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B22: call        qword ptr [rax]",
+        "0000000000000B37: call        qword ptr [rax+8]",
+        "0000000000000B58: call        qword ptr [rax]",
+        "0000000000000B6C: call        qword ptr [rax+8]",
+        "0000000000000BA3: call        qword ptr [__imp_terminate]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008A7: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "000000000000099A: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A44: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000AF5: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008F0: call        qword ptr [rax]",
+        "0000000000000905: call        qword ptr [rax+8]",
+        "00000000000009F7: call        qword ptr [rax]",
+        "0000000000000A0E: call        qword ptr [rax+8]",
+        "0000000000000A6E: call        qword ptr [rax]",
+        "0000000000000A83: call        qword ptr [rax+8]",
+        "0000000000000AA6: call        qword ptr [rax]",
+        "0000000000000ABA: call        qword ptr [rax+8]",
+        "0000000000000B22: call        qword ptr [rax]",
+        "0000000000000B37: call        qword ptr [rax+8]",
+        "0000000000000B58: call        qword ptr [rax]",
+        "0000000000000B6C: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "helper-read-whole.asm.txt",
+      "evidence_sha256": "bf2c8374db5d67f59498ce045ffcfed63e162f34226a7b3e1bff2f394b91c64e"
+    },
+    {
+      "name": "helper-write-sub",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008C0: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "000000000000090A: call        qword ptr [rax]",
+        "000000000000091F: call        qword ptr [rax+8]",
+        "00000000000009EA: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A45: call        qword ptr [rax]",
+        "0000000000000A5B: call        qword ptr [rax+8]",
+        "0000000000000A91: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000ABB: call        qword ptr [rax]",
+        "0000000000000AD0: call        qword ptr [rax+8]",
+        "0000000000000AF3: call        qword ptr [rax]",
+        "0000000000000B07: call        qword ptr [rax+8]",
+        "0000000000000B46: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B73: call        qword ptr [rax]",
+        "0000000000000B88: call        qword ptr [rax+8]",
+        "0000000000000BA9: call        qword ptr [rax]",
+        "0000000000000BBD: call        qword ptr [rax+8]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008C0: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009EA: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A91: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B46: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "000000000000090A: call        qword ptr [rax]",
+        "000000000000091F: call        qword ptr [rax+8]",
+        "0000000000000A45: call        qword ptr [rax]",
+        "0000000000000A5B: call        qword ptr [rax+8]",
+        "0000000000000ABB: call        qword ptr [rax]",
+        "0000000000000AD0: call        qword ptr [rax+8]",
+        "0000000000000AF3: call        qword ptr [rax]",
+        "0000000000000B07: call        qword ptr [rax+8]",
+        "0000000000000B73: call        qword ptr [rax]",
+        "0000000000000B88: call        qword ptr [rax+8]",
+        "0000000000000BA9: call        qword ptr [rax]",
+        "0000000000000BBD: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "helper-write-sub.asm.txt",
+      "evidence_sha256": "3b2e5525d74faaa65c3d7a4e0f53a374780e9f26cd10b7bcec945d1135f35796"
+    },
+    {
+      "name": "helper-write-whole",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008BD: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000907: call        qword ptr [rax]",
+        "000000000000091C: call        qword ptr [rax+8]",
+        "00000000000009EA: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A45: call        qword ptr [rax]",
+        "0000000000000A5B: call        qword ptr [rax+8]",
+        "0000000000000A91: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000ABB: call        qword ptr [rax]",
+        "0000000000000AD0: call        qword ptr [rax+8]",
+        "0000000000000AF3: call        qword ptr [rax]",
+        "0000000000000B07: call        qword ptr [rax+8]",
+        "0000000000000B46: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B73: call        qword ptr [rax]",
+        "0000000000000B88: call        qword ptr [rax+8]",
+        "0000000000000BA9: call        qword ptr [rax]",
+        "0000000000000BBD: call        qword ptr [rax+8]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008BD: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009EA: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A91: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000B46: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "0000000000000907: call        qword ptr [rax]",
+        "000000000000091C: call        qword ptr [rax+8]",
+        "0000000000000A45: call        qword ptr [rax]",
+        "0000000000000A5B: call        qword ptr [rax+8]",
+        "0000000000000ABB: call        qword ptr [rax]",
+        "0000000000000AD0: call        qword ptr [rax+8]",
+        "0000000000000AF3: call        qword ptr [rax]",
+        "0000000000000B07: call        qword ptr [rax+8]",
+        "0000000000000B73: call        qword ptr [rax]",
+        "0000000000000B88: call        qword ptr [rax+8]",
+        "0000000000000BA9: call        qword ptr [rax]",
+        "0000000000000BBD: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "helper-write-whole.asm.txt",
+      "evidence_sha256": "99cdc388955d114f788d1a2399fec3dafd2b6003e35c4793cf03db59b4c06112"
+    },
+    {
+      "name": "manual-read-sub",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008A6: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008E9: call        qword ptr [rax]",
+        "00000000000008FE: call        qword ptr [rax+8]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A13: call        qword ptr [rax]",
+        "0000000000000A2B: call        qword ptr [rax+8]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A88: call        qword ptr [rax]",
+        "0000000000000A9D: call        qword ptr [rax+8]",
+        "0000000000000AC1: call        qword ptr [rax]",
+        "0000000000000AD6: call        qword ptr [rax+8]",
+        "0000000000000B0E: call        qword ptr [__imp_terminate]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008A6: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008E9: call        qword ptr [rax]",
+        "00000000000008FE: call        qword ptr [rax+8]",
+        "0000000000000A13: call        qword ptr [rax]",
+        "0000000000000A2B: call        qword ptr [rax+8]",
+        "0000000000000A88: call        qword ptr [rax]",
+        "0000000000000A9D: call        qword ptr [rax+8]",
+        "0000000000000AC1: call        qword ptr [rax]",
+        "0000000000000AD6: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "manual-read-sub.asm.txt",
+      "evidence_sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210"
+    },
+    {
+      "name": "manual-read-whole",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008A3: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008E6: call        qword ptr [rax]",
+        "00000000000008FB: call        qword ptr [rax+8]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A13: call        qword ptr [rax]",
+        "0000000000000A2B: call        qword ptr [rax+8]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A88: call        qword ptr [rax]",
+        "0000000000000A9D: call        qword ptr [rax+8]",
+        "0000000000000AC1: call        qword ptr [rax]",
+        "0000000000000AD6: call        qword ptr [rax+8]",
+        "0000000000000B0E: call        qword ptr [__imp_terminate]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008A3: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008E6: call        qword ptr [rax]",
+        "00000000000008FB: call        qword ptr [rax+8]",
+        "0000000000000A13: call        qword ptr [rax]",
+        "0000000000000A2B: call        qword ptr [rax+8]",
+        "0000000000000A88: call        qword ptr [rax]",
+        "0000000000000A9D: call        qword ptr [rax+8]",
+        "0000000000000AC1: call        qword ptr [rax]",
+        "0000000000000AD6: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "manual-read-whole.asm.txt",
+      "evidence_sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f"
+    },
+    {
+      "name": "manual-write-sub",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008A8: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008EA: call        qword ptr [rax]",
+        "00000000000008FF: call        qword ptr [rax+8]",
+        "00000000000009C3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A3D: call        qword ptr [rax]",
+        "0000000000000A53: call        qword ptr [rax+8]",
+        "0000000000000A86: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000AB0: call        qword ptr [rax]",
+        "0000000000000AC5: call        qword ptr [rax+8]",
+        "0000000000000AE9: call        qword ptr [rax]",
+        "0000000000000AFE: call        qword ptr [rax+8]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008A8: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009C3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A86: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008EA: call        qword ptr [rax]",
+        "00000000000008FF: call        qword ptr [rax+8]",
+        "0000000000000A3D: call        qword ptr [rax]",
+        "0000000000000A53: call        qword ptr [rax+8]",
+        "0000000000000AB0: call        qword ptr [rax]",
+        "0000000000000AC5: call        qword ptr [rax+8]",
+        "0000000000000AE9: call        qword ptr [rax]",
+        "0000000000000AFE: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "manual-write-sub.asm.txt",
+      "evidence_sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0"
+    },
+    {
+      "name": "manual-write-whole",
+      "hot_region_resolved": true,
+      "steady_clock_now_call_count": 4,
+      "all_hot_static_call_sites": [
+        "00000000000008A5: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000008E7: call        qword ptr [rax]",
+        "00000000000008FC: call        qword ptr [rax+8]",
+        "00000000000009B3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A2D: call        qword ptr [rax]",
+        "0000000000000A43: call        qword ptr [rax+8]",
+        "0000000000000A76: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000AA0: call        qword ptr [rax]",
+        "0000000000000AB5: call        qword ptr [rax+8]",
+        "0000000000000AD9: call        qword ptr [rax]",
+        "0000000000000AEE: call        qword ptr [rax+8]"
+      ],
+      "remaining_read_write_borrow_acquire_wrapper_calls": [],
+      "callback_lambda_call_sites": [],
+      "shared_ptr_cpp_call_sites": [],
+      "direct_cpp_call_sites": [],
+      "native_import_call_sites": [
+        "00000000000008A5: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009B3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A76: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "indirect_potential_cleanup_calls": [
+        "00000000000008E7: call        qword ptr [rax]",
+        "00000000000008FC: call        qword ptr [rax+8]",
+        "0000000000000A2D: call        qword ptr [rax]",
+        "0000000000000A43: call        qword ptr [rax+8]",
+        "0000000000000AA0: call        qword ptr [rax]",
+        "0000000000000AB5: call        qword ptr [rax+8]",
+        "0000000000000AD9: call        qword ptr [rax]",
+        "0000000000000AEE: call        qword ptr [rax+8]"
+      ],
+      "evidence_file": "manual-write-whole.asm.txt",
+      "evidence_sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385"
+    }
+  ],
+  "pe": {
+    "file_bytes": 77312,
+    "text": [
+      {
+        "section": ".text",
+        "virtual_bytes": 62456,
+        "raw_bytes": 62464,
+        "rva_start": 4096,
+        "rva_end_exclusive": 66552
+      }
+    ]
+  },
+  "functions": [
+    {
+      "symbol": "?acquire_borrow@owned_allocation@mgmem@@QEBAI_K0IAEAVborrow@2@@Z",
+      "section": 360,
+      "comdat_code_bytes": 244
+    },
+    {
+      "symbol": "??$execute@$00$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 111,
+      "comdat_code_bytes": 2106
+    },
+    {
+      "symbol": "??$execute@$00$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 89,
+      "comdat_code_bytes": 2193
+    },
+    {
+      "symbol": "??$execute@$00$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 91,
+      "comdat_code_bytes": 4674
+    },
+    {
+      "symbol": "??$execute@$00$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 96,
+      "comdat_code_bytes": 4659
+    },
+    {
+      "symbol": "??$execute@$00$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 101,
+      "comdat_code_bytes": 4648
+    },
+    {
+      "symbol": "??$execute@$00$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 106,
+      "comdat_code_bytes": 4648
+    },
+    {
+      "symbol": "??$execute@$0A@$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 135,
+      "comdat_code_bytes": 2070
+    },
+    {
+      "symbol": "??$execute@$0A@$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 113,
+      "comdat_code_bytes": 2175
+    },
+    {
+      "symbol": "??$execute@$0A@$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 115,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 120,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 125,
+      "comdat_code_bytes": 4488
+    },
+    {
+      "symbol": "??$execute@$0A@$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 130,
+      "comdat_code_bytes": 4472
+    },
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 179,
+      "comdat_code_bytes": 1015
+    },
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 181,
+      "comdat_code_bytes": 1022
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 185,
+      "comdat_code_bytes": 938
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 187,
+      "comdat_code_bytes": 938
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 175,
+      "comdat_code_bytes": 851
+    },
+    {
+      "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 183,
+      "comdat_code_bytes": 1015
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 171,
+      "comdat_code_bytes": 780
+    },
+    {
+      "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 189,
+      "comdat_code_bytes": 938
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 177,
+      "comdat_code_bytes": 851
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 173,
+      "comdat_code_bytes": 780
+    }
+  ],
+  "previous_artifacts": {
+    "initial": {
+      "object_sha256": "cd46fc7a59d854f60f87dabe6e17ceebbadf30757cb5e3671d71ee61fdbfd499",
+      "executable_sha256": "53f5a1d6fc5ae70cdaebe5e444b62abcf065ce122124702ebc7c081c9c01285b",
+      "pe": {
+        "file_bytes": 76800,
+        "text": [
+          {
+            "section": ".text",
+            "virtual_bytes": 61800,
+            "raw_bytes": 61952,
+            "rva_start": 4096,
+            "rva_end_exclusive": 65896
+          }
+        ]
+      },
+      "functions": [
+        {
+          "symbol": "?acquire_borrow@owned_allocation@mgmem@@QEBAI_K0IAEAVborrow@2@@Z",
+          "section": 350,
+          "comdat_code_bytes": 244
+        },
+        {
+          "symbol": "??$execute@$00$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 107,
+          "comdat_code_bytes": 2106
+        },
+        {
+          "symbol": "??$execute@$00$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 89,
+          "comdat_code_bytes": 2193
+        },
+        {
+          "symbol": "??$execute@$00$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 91,
+          "comdat_code_bytes": 3693
+        },
+        {
+          "symbol": "??$execute@$00$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 95,
+          "comdat_code_bytes": 3699
+        },
+        {
+          "symbol": "??$execute@$00$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 99,
+          "comdat_code_bytes": 3738
+        },
+        {
+          "symbol": "??$execute@$00$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 103,
+          "comdat_code_bytes": 3733
+        },
+        {
+          "symbol": "??$execute@$0A@$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 131,
+          "comdat_code_bytes": 2070
+        },
+        {
+          "symbol": "??$execute@$0A@$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 109,
+          "comdat_code_bytes": 2175
+        },
+        {
+          "symbol": "??$execute@$0A@$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 111,
+          "comdat_code_bytes": 4546
+        },
+        {
+          "symbol": "??$execute@$0A@$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 116,
+          "comdat_code_bytes": 4546
+        },
+        {
+          "symbol": "??$execute@$0A@$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 121,
+          "comdat_code_bytes": 4488
+        },
+        {
+          "symbol": "??$execute@$0A@$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 126,
+          "comdat_code_bytes": 4472
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 175,
+          "comdat_code_bytes": 5
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 176,
+          "comdat_code_bytes": 14
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 178,
+          "comdat_code_bytes": 5
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 179,
+          "comdat_code_bytes": 14
+        },
+        {
+          "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 171,
+          "comdat_code_bytes": 622
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 177,
+          "comdat_code_bytes": 5
+        },
+        {
+          "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 167,
+          "comdat_code_bytes": 678
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 180,
+          "comdat_code_bytes": 5
+        },
+        {
+          "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 173,
+          "comdat_code_bytes": 622
+        },
+        {
+          "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 169,
+          "comdat_code_bytes": 678
+        }
+      ]
+    },
+    "private-inline-only": {
+      "object_sha256": "23490358e720926d62488a829c52868c72f2e7b895da9947cc7cf299a53e0ea7",
+      "executable_sha256": "f9132a9f52a73e01cdbe7a5609f44e0e03cfc1a2981cafd0a7752d416a8dd4d2",
+      "pe": {
+        "file_bytes": 78336,
+        "text": [
+          {
+            "section": ".text",
+            "virtual_bytes": 63000,
+            "raw_bytes": 63488,
+            "rva_start": 4096,
+            "rva_end_exclusive": 67096
+          }
+        ]
+      },
+      "functions": [
+        {
+          "symbol": "?acquire_borrow@owned_allocation@mgmem@@QEBAI_K0IAEAVborrow@2@@Z",
+          "section": 354,
+          "comdat_code_bytes": 244
+        },
+        {
+          "symbol": "??$execute@$00$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 107,
+          "comdat_code_bytes": 2106
+        },
+        {
+          "symbol": "??$execute@$00$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 89,
+          "comdat_code_bytes": 2193
+        },
+        {
+          "symbol": "??$execute@$00$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 91,
+          "comdat_code_bytes": 3693
+        },
+        {
+          "symbol": "??$execute@$00$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 95,
+          "comdat_code_bytes": 3699
+        },
+        {
+          "symbol": "??$execute@$00$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 99,
+          "comdat_code_bytes": 3738
+        },
+        {
+          "symbol": "??$execute@$00$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 103,
+          "comdat_code_bytes": 3733
+        },
+        {
+          "symbol": "??$execute@$0A@$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 131,
+          "comdat_code_bytes": 2070
+        },
+        {
+          "symbol": "??$execute@$0A@$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 109,
+          "comdat_code_bytes": 2175
+        },
+        {
+          "symbol": "??$execute@$0A@$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 111,
+          "comdat_code_bytes": 4546
+        },
+        {
+          "symbol": "??$execute@$0A@$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 116,
+          "comdat_code_bytes": 4546
+        },
+        {
+          "symbol": "??$execute@$0A@$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 121,
+          "comdat_code_bytes": 4488
+        },
+        {
+          "symbol": "??$execute@$0A@$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+          "section": 126,
+          "comdat_code_bytes": 4472
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 175,
+          "comdat_code_bytes": 1015
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 177,
+          "comdat_code_bytes": 14
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 180,
+          "comdat_code_bytes": 938
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAIAEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 182,
+          "comdat_code_bytes": 14
+        },
+        {
+          "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 171,
+          "comdat_code_bytes": 851
+        },
+        {
+          "symbol": "??$with_read@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 178,
+          "comdat_code_bytes": 1015
+        },
+        {
+          "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 167,
+          "comdat_code_bytes": 780
+        },
+        {
+          "symbol": "??$with_write@AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@QEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 183,
+          "comdat_code_bytes": 938
+        },
+        {
+          "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 173,
+          "comdat_code_bytes": 851
+        },
+        {
+          "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+          "section": 169,
+          "comdat_code_bytes": 780
+        }
+      ]
+    }
+  },
+  "operations": [
+    {
+      "label": "symbols",
+      "exit_code": 0,
+      "output_sha256": "9a417221c1b225d2e0faa475e44fe16eba7ca02bfc171cbbbda7c12077ff131f"
+    },
+    {
+      "label": "obj-disasm",
+      "exit_code": 0,
+      "output_sha256": "a627e22d438eb59ff7395f273c50b6b6a928531c0f85462b2acd5b8e9a4c2dd1"
+    },
+    {
+      "label": "exe-disasm",
+      "exit_code": 0,
+      "output_sha256": "d39e324d256c11fb97859c5bc380496da4f4eba032352faf3d13634cc1aa21cb"
+    }
+  ],
+  "new_timing_processes": 0,
+  "limits": [
+    "Hot bounds are between the second/third of four execute steady_clock::now call sites; unresolved functions are explicitly marked.",
+    "All call entries are static sites. Cold error, termination and last-reference branches may not execute in a successful operation; do not equate site count to dynamic call count.",
+    "Native dynamic counts are established by the separate count-only fixture.",
+    "COFF lengths exclude associated exception metadata and separate funclets. PE text includes linked compiler/library code.",
+    "Code shape and size do not independently establish timing causality or generalize to other compilers."
+  ]
+}

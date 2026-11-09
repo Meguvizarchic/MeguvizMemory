@@ -1,0 +1,74 @@
+{
+  "archive": "frozen-sources.zip",
+  "sources": {
+    "baseline/include/mgmem/memory.hpp": {
+      "bytes": 17510,
+      "sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/include/mgmem/memory.hpp": {
+      "bytes": 21578,
+      "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/src/mgmem.cpp": {
+      "bytes": 50179,
+      "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/tests/cpp_checked/CMakeLists.txt": {
+      "bytes": 2901,
+      "sha256": "2ed79c8a474194c7f8c83e35763c1d6194b0dc4d817d6e67db1186ba62cc56ed",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/tests/cpp_checked_fake_tests.cpp": {
+      "bytes": 9557,
+      "sha256": "6e4422222f1e4020a33362ec12b2f7e7d41b07165f55c621916d61140a13b9e8",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/tests/cpp_checked_import_tests.cpp": {
+      "bytes": 16953,
+      "sha256": "5861d98c82ef293f742a8bc4f8ba8304aadb32763f011fd5cd05eb708b547577",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "candidate/tests/cpp_consumer.cpp": {
+      "bytes": 21746,
+      "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "compile-contract/CMakeLists.txt": {
+      "bytes": 482,
+      "sha256": "e5de3c56f1f1eb19d8d85f3972165a8a3e4b01cd4dc44421e36b7302c72a9732",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "compile-contract/bool_status_rejected.cpp": {
+      "bytes": 142,
+      "sha256": "fcaeafe30463ac1dcc6ad5081fed964ab97f963e2f715e68849fbdeb787e9f46",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "compile-contract/compatibility.cpp": {
+      "bytes": 1790,
+      "sha256": "9335c05fc5cb9401cec13812937ec17f8275498ab5a65116b6b57194c67c9629",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "compile-contract/positive.cpp": {
+      "bytes": 217,
+      "sha256": "f41860a9074a555e83822acf9c42bbac7053c713a5ff2a7ce4631c1a287f0e7c",
+      "kind": "EXACT_FROZEN_SOURCE"
+    },
+    "compile-contract/read_mutable_rejected.cpp": {
+      "bytes": 127,
+      "sha256": "cdfacd5b9e0ebb67a08e6cbad878f0acda29ba823b7234a89d98fb9235e89d5a",
+      "kind": "EXACT_FROZEN_SOURCE"
+    }
+  },
+  "source_member_count": 13,
+  "all_source_members_exact": true,
+  "performance_probe_sources_copied": false,
+  "scope": "Frozen baseline/candidate headers, unchanged core and convenience tests; not a shipping SDK."
+}

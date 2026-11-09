@@ -1,0 +1,47 @@
+{
+  "state": "EXACT_DUMPBIN_FUNCTION_BODY_EXCERPTS",
+  "archive": "function-bodies.zip",
+  "members": {
+    "helper-read-sub.asm.txt": {
+      "bytes": 47742,
+      "sha256": "e5375d8c44d68da1c49e8133b0940dfa0fa29514fb7ea68939561ef6cb8ae8ae",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-read-whole.asm.txt": {
+      "bytes": 47657,
+      "sha256": "bf2c8374db5d67f59498ce045ffcfed63e162f34226a7b3e1bff2f394b91c64e",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-write-sub.asm.txt": {
+      "bytes": 47719,
+      "sha256": "3b2e5525d74faaa65c3d7a4e0f53a374780e9f26cd10b7bcec945d1135f35796",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "helper-write-whole.asm.txt": {
+      "bytes": 47761,
+      "sha256": "99cdc388955d114f788d1a2399fec3dafd2b6003e35c4793cf03db59b4c06112",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-read-sub.asm.txt": {
+      "bytes": 45689,
+      "sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-read-whole.asm.txt": {
+      "bytes": 45755,
+      "sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-write-sub.asm.txt": {
+      "bytes": 45684,
+      "sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    },
+    "manual-write-whole.asm.txt": {
+      "bytes": 45550,
+      "sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385",
+      "copy_kind": "EXACT_FUNCTION_BODY_BYTES"
+    }
+  },
+  "original_report_evidence_basenames_are_zip_members": true
+}

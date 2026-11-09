@@ -1,0 +1,40 @@
+{
+  "state": "PRESERVED_FULL_CHAIN_192_TIMING_24_COUNT_AND_COMPLETE_HOT_ASM_EVIDENCE",
+  "header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+  "core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "timing_processes": 192,
+  "timing_pairs": 96,
+  "groups": 12,
+  "count_only_processes": 24,
+  "all_reverse_results_retained": true,
+  "lossless_scope": "gzip decompression equals sanitized canonical JSON, not original path-containing stdout bytes.",
+  "source_zip_members_all_exact": true,
+  "files": {
+    "full-chain-native-full.public.json.gz": {
+      "bytes": 60424,
+      "sha256": "5ca7d69319f3260254906b40dfb8b5ae7214b0f755dde286296b0ee3a3c917a1",
+      "uncompressed_bytes": 4663847,
+      "uncompressed_sha256": "755e87201ed89d1576b4c4c79221d26329f94b2ed7f92c3ace62f7904097fde9"
+    },
+    "full-chain-summary.public.json": {
+      "bytes": 305435,
+      "sha256": "721c8fb4389c537b3049bb5b4511f291d5fd7705e00aacb3107fa829e918e5ac"
+    },
+    "full-chain-codegen.public.json": {
+      "bytes": 37150,
+      "sha256": "6f33250ed60fc52f4b4ccb4bb4454d9a306bf77e3bd7f5603b14b3adca2a0c7e"
+    },
+    "full-chain-frozen-sources.zip": {
+      "bytes": 31473,
+      "sha256": "bbbb28925450ed45cd74de392e1e51cadc126b0925bd25116e4553529ff71a4e"
+    },
+    "full-chain-frozen-sources.json": {
+      "bytes": 959,
+      "sha256": "c6c0f70ed5bc2efd303390b757d39d755fe02745b59883afe31b66e93a70433f"
+    },
+    "full-chain-input-identities.json": {
+      "bytes": 2990,
+      "sha256": "040212a2efb67d68c52a7bc8f77b88c78b72460210e19e9a2d41bb70028e04e4"
+    }
+  }
+}

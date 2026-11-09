@@ -2,6 +2,20 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## C++ 常用调用简化（2026-11-09）
+
+已从7f076e5继续新增create_system/create_arena、默认对齐allocate及整段/子段with_read/write；
+核心8628ce7f和C ABI逐字节不变，选定header2e97483c。READ为const，WRITE排斥，
+checked最后归还失败优先于body状态，异常沿原RAII传播；不引入隐式线程/reset或新依赖。
+前两版4942/d062有稳定双位数P50成本，未采用；三轮各192 timing+24 count独立保留。
+最终owner八组完整wall P50配对比0.97175–1.02113，原生调用/provider/CPP申请/资源逐round等价，
+MSVC完整短借用链的额外直接C++调用消失。SystemwholeREAD和Arena子段WRITE的P95仍
+分别1.12876/1.10359，均6/8慢，前后半和AB/BA也有反向；不称零开销或尾部保证。
+核心/JNI48/48、CPP15/15、ASan48/48、CPPASan15/15、安装版1/1（14case）与两种
+严格Release/Debug W4/WX兼容编译通过，未屏蔽4714；两个错误callback类型预期编译拒绝。
+Android新1consumerELF+3REL只交叉编译/静态，复用原8628核心SO，无目标执行。
+[常用短路径与合同](docs/CPP_CONVENIENCE.md) · [三轮证据与采用决定](artifacts/cpp-convenience-20261109/decision.json)。
+
 ## 自适应元数据与侵入式 Backing 链（2026-11-09）
 
 已从e92e777/890e1109基线采用8628ce7f核心：有限数值容量预测、空槽延迟构造、

@@ -11,6 +11,15 @@
 #include <type_traits>
 #include <utility>
 
+// MSVC can otherwise outline nested borrow paths even under /O2 /Ob2,
+// adding a per-access frame to synchronous views. Other compilers keep ordinary
+// inline semantics, including when a callback recursively acquires a READ view.
+#if defined(_MSC_VER)
+# define MGMEM_CPP_BORROW_INLINE __forceinline
+#else
+# define MGMEM_CPP_BORROW_INLINE inline
+#endif
+
 /* Optional, header-only C++17 ownership adapter. No global allocator replacement.
  * Wrappers are consumer-local C++ objects, not a cross-DSO C++ ABI. The selected
  * native runtime module must remain loaded until every wrapper has been released.
@@ -178,7 +187,7 @@ public:
     explicit operator bool() const noexcept { return static_cast<bool>(state_); }
     uint64_t size_bytes() const noexcept { return bytes_; }
 
-    mgmem_status acquire_borrow(uint64_t offset, uint64_t length, uint32_t access,
+    MGMEM_CPP_BORROW_INLINE mgmem_status acquire_borrow(uint64_t offset, uint64_t length, uint32_t access,
                                 mgmem::borrow &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -191,6 +200,29 @@ public:
         out.access_ = access;
         out.checked_ = checked_;
         return MGMEM_OK;
+    }
+
+    // Synchronous views; pointers must not escape the body. READ supplies const
+    // bytes, WRITE remains exclusive. A final checked release error takes
+    // precedence over the body status; body exceptions use ordinary RAII.
+    template<class Function>
+    MGMEM_CPP_BORROW_INLINE mgmem_status with_read(Function &&body) const {
+        return with_read(0, bytes_, std::forward<Function>(body));
+    }
+
+    template<class Function>
+    MGMEM_CPP_BORROW_INLINE mgmem_status with_read(uint64_t offset, uint64_t length, Function &&body) const {
+        return with_borrow<MGMEM_READ>(offset, length, std::forward<Function>(body));
+    }
+
+    template<class Function>
+    MGMEM_CPP_BORROW_INLINE mgmem_status with_write(Function &&body) const {
+        return with_write(0, bytes_, std::forward<Function>(body));
+    }
+
+    template<class Function>
+    MGMEM_CPP_BORROW_INLINE mgmem_status with_write(uint64_t offset, uint64_t length, Function &&body) const {
+        return with_borrow<MGMEM_WRITE>(offset, length, std::forward<Function>(body));
     }
 
     mgmem_status release() noexcept {
@@ -212,6 +244,30 @@ private:
     mgmem_handle_v1 handle_{};
     uint64_t bytes_ = 0;
     bool checked_ = false;
+
+    template<uint32_t Access, class Function>
+    MGMEM_CPP_BORROW_INLINE mgmem_status with_borrow(uint64_t offset, uint64_t length, Function &&body) const {
+        using pointer = std::conditional_t<Access == MGMEM_READ, const void *, void *>;
+        using result = std::invoke_result_t<Function, pointer, uint64_t>;
+        static_assert(std::is_same<result, void>::value ||
+                      std::is_same<result, mgmem_status>::value,
+                      "Borrow body must return void or mgmem_status");
+        mgmem::borrow view;
+        const auto acquired = acquire_borrow(offset, length, Access, view);
+        if (acquired != MGMEM_OK) return acquired;
+        pointer data;
+        if constexpr (Access == MGMEM_READ) data = view.data();
+        else data = view.write_data();
+        mgmem_status body_status = MGMEM_OK;
+        if constexpr (std::is_same<result, void>::value)
+            std::forward<Function>(body)(data, view.size_bytes());
+        else body_status = std::forward<Function>(body)(data, view.size_bytes());
+        // The body may move/release the owner and domain. Only the local lease
+        // is used from here; it already pins the native domain and payload.
+        const auto released = view.release();
+        if (released != MGMEM_OK && view) detail::require_cleanup(released);
+        return released == MGMEM_OK ? body_status : released;
+    }
 
     void cleanup() noexcept {
         const bool was_checked = checked_;
@@ -259,6 +315,31 @@ public:
         }
     }
 
+    static mgmem_status create_system(uint64_t budget, domain &out,
+                                     const mgmem_provider_v1 *provider = nullptr) noexcept {
+        mgmem_domain_options_v1 options{};
+        options.struct_size = sizeof(options);
+        options.abi_major = MGMEM_ABI_MAJOR;
+        options.abi_minor = MGMEM_ABI_MINOR;
+        options.mode = MGMEM_SYSTEM;
+        options.budget_bytes = budget;
+        options.provider = provider;
+        return create(options, out);
+    }
+
+    static mgmem_status create_arena(uint64_t budget, uint64_t chunk, domain &out,
+                                    const mgmem_provider_v1 *provider = nullptr) noexcept {
+        mgmem_domain_options_v1 options{};
+        options.struct_size = sizeof(options);
+        options.abi_major = MGMEM_ABI_MAJOR;
+        options.abi_minor = MGMEM_ABI_MINOR;
+        options.mode = MGMEM_ARENA;
+        options.budget_bytes = budget;
+        options.arena_chunk_bytes = chunk;
+        options.provider = provider;
+        return create(options, out);
+    }
+
     mgmem_status allocate(uint64_t bytes, uint64_t alignment, owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -269,6 +350,10 @@ public:
         out.handle_ = handle;
         out.bytes_ = bytes;
         return MGMEM_OK;
+    }
+
+    mgmem_status allocate(uint64_t bytes, owned_allocation &out) const noexcept {
+        return allocate(bytes, alignof(std::max_align_t), out);
     }
 
     // Synchronous uninitialized workspace, with one WRITE borrow for the body.
@@ -407,4 +492,5 @@ private:
 };
 
 } // namespace mgmem
+#undef MGMEM_CPP_BORROW_INLINE
 #endif

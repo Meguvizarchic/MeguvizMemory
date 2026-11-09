@@ -1,0 +1,30 @@
+{
+  "state": "EXACT_BYTES_FROZEN_FULL_CHAIN_SOURCES",
+  "files": {
+    "include/mgmem/memory.hpp": {
+      "bytes": 21578,
+      "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44"
+    },
+    "include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "src/mgmem.cpp": {
+      "bytes": 50179,
+      "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586"
+    },
+    "probe/probe.cpp": {
+      "bytes": 22341,
+      "sha256": "8516b16f7f06eeda22e9bc085cee9fcca82834418edd11f2c2d1bd74facabf25"
+    },
+    "probe/CMakeLists.txt": {
+      "bytes": 855,
+      "sha256": "89161363bb789e0346747a99b2c7da177bc193f38a6dffc83d8b73333977ca4d"
+    },
+    "probe/run_pairs.py": {
+      "bytes": 16109,
+      "sha256": "525e14fdba73b5b8dddc5930818d2a10798854962c26341353a2aa4abf94a3fe"
+    }
+  },
+  "archive": "full-chain-frozen-sources.zip"
+}

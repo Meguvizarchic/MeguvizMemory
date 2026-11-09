@@ -1,0 +1,325 @@
+{
+  "state": "INLINED_HEADER_FROZEN_OBJECT_AND_CODE_SIZE_INSPECTION",
+  "initial_header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+  "inlined_header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+  "unchanged_probe_source_sha256": "8516b16f7f06eeda22e9bc085cee9fcca82834418edd11f2c2d1bd74facabf25",
+  "old_object_sha256": "cd46fc7a59d854f60f87dabe6e17ceebbadf30757cb5e3671d71ee61fdbfd499",
+  "new_object_sha256": "23490358e720926d62488a829c52868c72f2e7b895da9947cc7cf299a53e0ea7",
+  "old_executable_sha256": "53f5a1d6fc5ae70cdaebe5e444b62abcf065ce122124702ebc7c081c9c01285b",
+  "new_executable_sha256": "f9132a9f52a73e01cdbe7a5609f44e0e03cfc1a2981cafd0a7752d416a8dd4d2",
+  "old_pe": {
+    "file_bytes": 76800,
+    "text": [
+      {
+        "section": ".text",
+        "virtual_bytes": 61800,
+        "raw_bytes": 61952,
+        "rva_start": 4096,
+        "rva_end_exclusive": 65896
+      }
+    ]
+  },
+  "new_pe": {
+    "file_bytes": 78336,
+    "text": [
+      {
+        "section": ".text",
+        "virtual_bytes": 63000,
+        "raw_bytes": 63488,
+        "rva_start": 4096,
+        "rva_end_exclusive": 67096
+      }
+    ]
+  },
+  "old_comdat_functions": [
+    {
+      "symbol": "?acquire_borrow@owned_allocation@mgmem@@QEBAI_K0IAEAVborrow@2@@Z",
+      "section": 350,
+      "comdat_code_bytes": 244
+    },
+    {
+      "symbol": "??$execute@$00$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 107,
+      "comdat_code_bytes": 2106
+    },
+    {
+      "symbol": "??$execute@$00$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 89,
+      "comdat_code_bytes": 2193
+    },
+    {
+      "symbol": "??$execute@$00$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 91,
+      "comdat_code_bytes": 3693
+    },
+    {
+      "symbol": "??$execute@$00$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 95,
+      "comdat_code_bytes": 3699
+    },
+    {
+      "symbol": "??$execute@$00$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 99,
+      "comdat_code_bytes": 3738
+    },
+    {
+      "symbol": "??$execute@$00$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 103,
+      "comdat_code_bytes": 3733
+    },
+    {
+      "symbol": "??$execute@$0A@$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 131,
+      "comdat_code_bytes": 2070
+    },
+    {
+      "symbol": "??$execute@$0A@$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 109,
+      "comdat_code_bytes": 2175
+    },
+    {
+      "symbol": "??$execute@$0A@$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 111,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 116,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 121,
+      "comdat_code_bytes": 4488
+    },
+    {
+      "symbol": "??$execute@$0A@$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 126,
+      "comdat_code_bytes": 4472
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 171,
+      "comdat_code_bytes": 622
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 167,
+      "comdat_code_bytes": 678
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 173,
+      "comdat_code_bytes": 622
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 169,
+      "comdat_code_bytes": 678
+    }
+  ],
+  "new_comdat_functions": [
+    {
+      "symbol": "?acquire_borrow@owned_allocation@mgmem@@QEBAI_K0IAEAVborrow@2@@Z",
+      "section": 354,
+      "comdat_code_bytes": 244
+    },
+    {
+      "symbol": "??$execute@$00$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 107,
+      "comdat_code_bytes": 2106
+    },
+    {
+      "symbol": "??$execute@$00$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 89,
+      "comdat_code_bytes": 2193
+    },
+    {
+      "symbol": "??$execute@$00$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 91,
+      "comdat_code_bytes": 3693
+    },
+    {
+      "symbol": "??$execute@$00$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 95,
+      "comdat_code_bytes": 3699
+    },
+    {
+      "symbol": "??$execute@$00$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 99,
+      "comdat_code_bytes": 3738
+    },
+    {
+      "symbol": "??$execute@$00$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 103,
+      "comdat_code_bytes": 3733
+    },
+    {
+      "symbol": "??$execute@$0A@$0A@$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 131,
+      "comdat_code_bytes": 2070
+    },
+    {
+      "symbol": "??$execute@$0A@$00$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 109,
+      "comdat_code_bytes": 2175
+    },
+    {
+      "symbol": "??$execute@$0A@$01$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 111,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$01$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 116,
+      "comdat_code_bytes": 4546
+    },
+    {
+      "symbol": "??$execute@$0A@$02$00@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 121,
+      "comdat_code_bytes": 4488
+    },
+    {
+      "symbol": "??$execute@$0A@$02$0A@@probe@@YA?AURow@0@AEBUOptions@0@@Z",
+      "section": 126,
+      "comdat_code_bytes": 4472
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 171,
+      "comdat_code_bytes": 851
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 167,
+      "comdat_code_bytes": 780
+    },
+    {
+      "symbol": "??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 173,
+      "comdat_code_bytes": 851
+    },
+    {
+      "symbol": "??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z",
+      "section": 169,
+      "comdat_code_bytes": 780
+    }
+  ],
+  "execute_borrow_paths": [
+    {
+      "name": "helper-read-sub",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "000000000000047E: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006E2: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "helper-read-sub.asm.txt",
+      "evidence_sha256": "ee6827a666eb2af598ac5f365e0b9d9eb6f759b3eaac7db22746b759cf88944c"
+    },
+    {
+      "name": "helper-read-whole",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "000000000000047B: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006D0: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "helper-read-whole.asm.txt",
+      "evidence_sha256": "7b6aa21b06fc5f17fd8fde7223a9d18bda8bb5a7d9c7909ada4e8f4cfd350758"
+    },
+    {
+      "name": "helper-write-sub",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "000000000000047E: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006E2: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "helper-write-sub.asm.txt",
+      "evidence_sha256": "d259a925492b9c827bf3906157b95d724ed4d4f9faf925898d0f708e4c40cdf3"
+    },
+    {
+      "name": "helper-write-whole",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "000000000000047E: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006E0: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "helper-write-whole.asm.txt",
+      "evidence_sha256": "c24ff6706245f54ced33c7aaac4ae71c281789c958eac2b338a8a9351dcc888d"
+    },
+    {
+      "name": "manual-read-sub",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "0000000000000490: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A6: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-read-sub.asm.txt",
+      "evidence_sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210"
+    },
+    {
+      "name": "manual-read-whole",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "0000000000000490: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A3: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-read-whole.asm.txt",
+      "evidence_sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f"
+    },
+    {
+      "name": "manual-write-sub",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "0000000000000495: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A8: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009C3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A86: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-write-sub.asm.txt",
+      "evidence_sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0"
+    },
+    {
+      "name": "manual-write-whole",
+      "header_or_acquire_cpp_calls": [],
+      "native_borrow_calls": [
+        "0000000000000495: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A5: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009B3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A76: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-write-whole.asm.txt",
+      "evidence_sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385"
+    }
+  ],
+  "operations": [
+    {
+      "label": "symbols",
+      "exit_code": 0,
+      "output_sha256": "f28d87111626c377931add3d971faa0a8288697a05f03e970ed7833771584b61"
+    },
+    {
+      "label": "obj-disasm",
+      "exit_code": 0,
+      "output_sha256": "c55ae593420fe87dfeed71a60bca9035056dadf48bf0ca108bc59518e08e0248"
+    },
+    {
+      "label": "exe-disasm",
+      "exit_code": 0,
+      "output_sha256": "d706c35ec1738754532aba87be86b4cfc8ef78eabff7e24420457a773f04cd68"
+    }
+  ],
+  "limits": [
+    "COFF code byte lengths describe individual text COMDAT sections, excluding separately associated exception metadata or funclets.",
+    "PE .text sizes include linked compiler/library code, not only convenience wrappers.",
+    "Inline code shape and size are evidence for these exact MSVC Release artifacts; timing effects require the separately predeclared matched measurements.",
+    "No original binary/source or old timing record was changed."
+  ]
+}

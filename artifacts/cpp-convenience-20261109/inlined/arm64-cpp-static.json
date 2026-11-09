@@ -1,0 +1,75 @@
+{
+  "original_private_receipt": {
+    "bytes": 1880,
+    "sha256": "91674f200fe06c3d262b6e81d32c926761bd3a94077e02222502a0095bdb62be"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_NEW_CPP_API_ARM64_STATIC_WITH_EXPLICIT_REUSED_CORE",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+    "artifacts": {
+      "consumer": {
+        "bytes": 93144,
+        "sha256": "101c707f8252bfd240bf7290187b2bbc3bfd5784fb0bbdf3d45c54d6171dcf97",
+        "class": 2,
+        "machine": 183,
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "needed": [
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libmgmem.so"
+        ],
+        "rpath": false
+      },
+      "reused-core": {
+        "bytes": 580696,
+        "sha256": "e810451752a371e7596b42548891351dfc3223754911d2dc2c89e1ddadb30542",
+        "class": 2,
+        "machine": 183,
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "needed": [
+          "libc.so",
+          "libdl.so",
+          "libm.so"
+        ],
+        "rpath": false
+      }
+    },
+    "compile_only_objects": {
+      "cpp_consumer.cpp": {
+        "bytes": 676440,
+        "sha256": "7a5f8d917fec1432ce498e11b53edad8102770dcb5cf04d985166dad918c965b",
+        "compiled_only": true,
+        "executed": false
+      },
+      "cpp_checked_import_tests.cpp": {
+        "bytes": 696624,
+        "sha256": "a3e6511d215fd31c8f8f6e3e6df522e1bafc80090ba52122be0bc7155761e62c",
+        "compiled_only": true,
+        "executed": false
+      },
+      "cpp_checked_fake_tests.cpp": {
+        "bytes": 221536,
+        "sha256": "5f9b0d79b7d20d0ef2079a3030f3e23b969695a22b4b63ef4fee319bf4e726c6",
+        "compiled_only": true,
+        "executed": false
+      }
+    },
+    "reused_core": true,
+    "old_core_manifest_sha256": "4af60a4f177c3797cacd0a81117d16f24f23008ccf9bf9090928f953fd536a6a",
+    "device_executed": false,
+    "target_executions": 0,
+    "sdk_published": false,
+    "performance_qualified": false
+  }
+}

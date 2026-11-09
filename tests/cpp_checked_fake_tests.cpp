@@ -2,6 +2,8 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <exception>
 
 #define CHECK(value) do { if (!(value)) { std::fprintf(stderr, "failed line %d: %s\n", __LINE__, #value); std::abort(); } } while (false)
 
@@ -61,10 +63,27 @@ mgmem_status mgmem_domain_destroy_v1(mgmem_domain *domain) {
 }
 }
 
-int main() {
+int main(int argc, char **argv) {
     mgmem_domain_options_v1 options{};
     mgmem_external_buffer_checked_v1 input{};
     input.capacity_bytes = sizeof(data);
+
+    if (argc == 2 && !std::strcmp(argv[1], "--scoped-failstop")) {
+        // An unexpected unconsumed cleanup error must terminate after one call,
+        // without a destructor attempting the same native release again.
+        std::set_terminate([] {
+            const bool once = lease_calls == 1 && owner_calls == 0 && lease_live && owner_live;
+            std::_Exit(once ? 0 : 91);
+        });
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create_system(64, domain) == MGMEM_OK);
+        mgmem::owned_allocation owner;
+        CHECK(domain.allocate(sizeof(data), owner) == MGMEM_OK);
+        lease_result = MGMEM_BUSY;
+        (void)owner.with_read([](const void *, uint64_t) {});
+        return 92;
+    }
+    if (argc != 1) return 2;
 
     {
         mgmem::domain domain;
@@ -139,6 +158,47 @@ int main() {
         acquire_result = MGMEM_OK;
     }
     CHECK(destroy_calls == 2 && allocated == nullptr);
+    import_result = MGMEM_OK;
+    snapshot_result = MGMEM_OK;
+    pending_import_bytes = 0;
+    lease_result = MGMEM_OK;
+    {
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create_system(64, domain) == MGMEM_OK);
+        mgmem::owned_allocation owner;
+        CHECK(domain.allocate(sizeof(data), owner) == MGMEM_OK);
+        acquire_result = MGMEM_OUT_OF_MEMORY;
+        const auto prior = lease_calls;
+        unsigned calls = 0;
+        CHECK(owner.with_read([&](const void *, uint64_t) { ++calls; }) == MGMEM_OUT_OF_MEMORY);
+        CHECK(calls == 0 && lease_calls == prior && owner);
+        acquire_result = MGMEM_OK;
+    }
+    CHECK(destroy_calls == 3 && allocated == nullptr);
+    for (unsigned scenario = 0; scenario < 2; ++scenario) {
+        const auto prior = lease_calls;
+        {
+            mgmem::domain domain;
+            CHECK(mgmem::domain::create(options, domain) == MGMEM_OK);
+            mgmem::owned_allocation owner;
+            CHECK(domain.import_external_checked(input, owner) == MGMEM_OK);
+            lease_result = MGMEM_PROVIDER_ERROR; // Fake intentionally did not consume lease.
+            if (scenario == 0) {
+                CHECK(owner.with_read([&](const void *, uint64_t) {
+                    CHECK(owner.release() == MGMEM_OK);
+                }) == MGMEM_PROVIDER_ERROR);
+            } else {
+                CHECK(owner.with_write([&](void *, uint64_t) -> mgmem_status {
+                    CHECK(owner.release() == MGMEM_OK);
+                    return MGMEM_TIMEOUT;
+                }) == MGMEM_PROVIDER_ERROR);
+            }
+            CHECK(!owner && domain.quarantined() && lease_calls == prior + 1 && lease_live);
+        }
+        CHECK(destroy_calls == 3 && allocated != nullptr && lease_calls == prior + 1);
+        // Fake-only metadata has no foreign callback. The wrapper never retries.
+        delete allocated; allocated = nullptr; lease_live = false;
+    }
     std::puts("{\"suite\":\"cpp-checked-fake-unconsumed\",\"status\":\"PASS\"}");
     return 0;
 }

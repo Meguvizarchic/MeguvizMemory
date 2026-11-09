@@ -1,0 +1,107 @@
+{
+  "original_private_receipt": {
+    "bytes": 2960,
+    "sha256": "8649bced32172d0a9ac455cdfab05a50fb5393ff6f85c865d4e0702c5464eb54"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "PASS_FROZEN_MSVC_INLINE_HUMAN_CPP_VALIDATION_COMPLETE",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+    "source_count": 64,
+    "frozen_driver_count": 12,
+    "ctest": {
+      "core": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp": {
+        "passed": 15,
+        "total": 15
+      },
+      "asan": {
+        "passed": 48,
+        "total": 48
+      },
+      "cpp-asan": {
+        "passed": 15,
+        "total": 15
+      },
+      "installed-cpp": {
+        "passed": 1,
+        "total": 1
+      }
+    },
+    "cpp_raii_cases": 14,
+    "expected_compile_rejections": 2,
+    "all_ordinary_steps_exit_zero": true,
+    "ordinary_steps": 30,
+    "all_negative_steps_rejected": true,
+    "inline_compatibility": [
+      "Release_O2_W4_WX",
+      "Debug_Od_W4_WX"
+    ],
+    "warning_4714_suppressed": false,
+    "warnings_as_errors_lowered": false,
+    "inline_compatibility_readback_sha256": "a7e06b7d964b66a7a15cc17b3941506ca8b87de91193509bec9f7acbe8089ce3",
+    "ordinary_build_warning_review": {
+      "core-build.log": {
+        "warning_C4714_count": 0
+      },
+      "cpp-build.log": {
+        "warning_C4714_count": 0
+      },
+      "asan-build.log": {
+        "warning_C4714_count": 0
+      },
+      "cpp-asan-build.log": {
+        "warning_C4714_count": 0
+      },
+      "installed-cpp-build.log": {
+        "warning_C4714_count": 0
+      }
+    },
+    "cpp_asan_flags_verified_targets": 3,
+    "android_new_linked_ELF": 1,
+    "android_compiled_REL_TUs": 3,
+    "android_core_rebuilt": false,
+    "reused_core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "target_executions": 0,
+    "performance_processes": 0,
+    "performance_qualified": false,
+    "files": {
+      "validation.py": {
+        "sha256": "2d20f987a2dc2995c1fc92c49320c9b72335c7bd005a7d55cbf1513d5f6a0e76",
+        "bytes": 23262
+      },
+      "validation-plan.private.json": {
+        "sha256": "dc8b8058071a3da3d17869f7da8ec96d0cb995ed9435b096dedeacb2811afc39",
+        "bytes": 17242
+      },
+      "validation.private.json": {
+        "sha256": "3edac1ccc9eeaf24230504a5fbd11f765cdd7c946966a8fd7528c92f5c80e85b",
+        "bytes": 6410
+      },
+      "installed-cpp-readback.private.json": {
+        "sha256": "d4eaceae061f927fe464095e7181fe66905c3a026dc0c9b9b1108c6d200291cd",
+        "bytes": 1819
+      },
+      "android/manifest.private.json": {
+        "sha256": "91674f200fe06c3d262b6e81d32c926761bd3a94077e02222502a0095bdb62be",
+        "bytes": 1880
+      },
+      "inline-compatibility-readback.private.json": {
+        "sha256": "a7e06b7d964b66a7a15cc17b3941506ca8b87de91193509bec9f7acbe8089ce3",
+        "bytes": 1177
+      },
+      "preparation-failure.private.json": {
+        "sha256": "acc5b4978db166ba6c3d693c97213383162247c953b6dfd101add52d357ac209",
+        "bytes": 359
+      },
+      "preparation-failure-02.private.json": {
+        "sha256": "7132f06c683b418542bdba61afb673606d4b1a0d4c267fa6d570363eaf4b69bc",
+        "bytes": 288
+      }
+    }
+  }
+}

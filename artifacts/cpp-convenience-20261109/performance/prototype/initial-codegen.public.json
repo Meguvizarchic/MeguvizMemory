@@ -1,0 +1,212 @@
+{
+  "state": "CONFIRMED_MSVC_RELEASE_OUT_OF_LINE_BORROW_BOUNDARIES",
+  "header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+  "probe_source_sha256": "8516b16f7f06eeda22e9bc085cee9fcca82834418edd11f2c2d1bd74facabf25",
+  "frozen_object_sha256": "cd46fc7a59d854f60f87dabe6e17ceebbadf30757cb5e3671d71ee61fdbfd499",
+  "frozen_exe_sha256": "53f5a1d6fc5ae70cdaebe5e444b62abcf065ce122124702ebc7c081c9c01285b",
+  "release_optimization": "MSVC MaxSpeed /O2; AnySuitable /Ob2; not Debug",
+  "helper_hot_paths": [
+    {
+      "name": "helper-read-sub",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,380h"
+      ],
+      "calls": [
+        "000000000000081D: call        ??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "evidence_file": "helper-read-sub.asm.txt",
+      "evidence_sha256": "8473215339bf5844e1e120485f4593faa5af4b5408cd7d268c0a8e0131b51a8f"
+    },
+    {
+      "name": "helper-read-whole",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,380h"
+      ],
+      "calls": [
+        "0000000000000817: call        ??$with_borrow@$0A@AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_1>@?7???$execute@$00$01$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "evidence_file": "helper-read-whole.asm.txt",
+      "evidence_sha256": "e024cb7ae0444e13869834d195af29517646f3f20d36cbc7cdc15a952a5d847b"
+    },
+    {
+      "name": "helper-write-sub",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,380h"
+      ],
+      "calls": [
+        "0000000000000840: call        ??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$00@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "evidence_file": "helper-write-sub.asm.txt",
+      "evidence_sha256": "019f436960acee89c29c4daf89a8cf502c1cb31b93288a4122706f113245844c"
+    },
+    {
+      "name": "helper-write-whole",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,390h"
+      ],
+      "calls": [
+        "0000000000000831: call        ??$with_borrow@$00AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@2@AEBUOptions@2@@Z@@owned_allocation@mgmem@@AEBAI_K0AEAV<lambda_2>@?7???$execute@$00$02$0A@@probe@@YA?AURow@3@AEBUOptions@3@@Z@@Z"
+      ],
+      "evidence_file": "helper-write-whole.asm.txt",
+      "evidence_sha256": "af7588d9f9f0ab64a2bf7833b4d3f7700ebe6e3a61975e683e796bb5c337817d"
+    }
+  ],
+  "manual_hot_paths": [
+    {
+      "name": "manual-read-sub",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,3D0h"
+      ],
+      "calls": [
+        "0000000000000490: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A6: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-read-sub.asm.txt",
+      "evidence_sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210"
+    },
+    {
+      "name": "manual-read-whole",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,3D0h"
+      ],
+      "calls": [
+        "0000000000000490: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A3: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "0000000000000992: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A5E: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-read-whole.asm.txt",
+      "evidence_sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f"
+    },
+    {
+      "name": "manual-write-sub",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,340h"
+      ],
+      "calls": [
+        "0000000000000495: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A8: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009C3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A86: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-write-sub.asm.txt",
+      "evidence_sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0"
+    },
+    {
+      "name": "manual-write-whole",
+      "execute_stack_reservation": [
+        "000000000000000E: sub         rsp,340h"
+      ],
+      "calls": [
+        "0000000000000495: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000006EF: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "00000000000008A5: call        qword ptr [__imp_mgmem_borrow_acquire_v1]",
+        "00000000000009B3: call        qword ptr [__imp_mgmem_borrow_release_v1]",
+        "0000000000000A76: call        qword ptr [__imp_mgmem_borrow_release_v1]"
+      ],
+      "evidence_file": "manual-write-whole.asm.txt",
+      "evidence_sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385"
+    }
+  ],
+  "limits": [
+    "Object disassembly proves actual calls/stack frames in this compiler build, not a direct isolated timing-causality experiment.",
+    "Whole execute stack sizes are per round and must not be counted as per-operation overhead.",
+    "Cold/scoped functions use both manual_scoped and with_allocation out-of-line; read/write manual body was in execute and helper body was in with_borrow.",
+    "No new timing or compilation performed for this audit; original frozen binaries and source unchanged."
+  ],
+  "with_borrow_frame": {
+    "saved_nonvolatile_integer_registers": [
+      "rbp",
+      "rbx",
+      "rsi",
+      "rdi",
+      "r12",
+      "r13",
+      "r14",
+      "r15"
+    ],
+    "stack_sub_bytes": 184,
+    "saved_vector_register": "xmm6",
+    "additional_call_at_offset_0x52": "owned_allocation::acquire_borrow",
+    "body_count": 4
+  },
+  "evidence": {
+    "call-boundaries.private.json": {
+      "bytes": 16373,
+      "sha256": "f3f4e5e352c5b18bd2962efdc7cc887349367ccdd3b30e143835e608c579c9e2"
+    },
+    "exe-disasm.txt": {
+      "bytes": 706108,
+      "sha256": "43ab667a576dbb21ef56c4550ef56060c0e7d626f622962b865f34a847ae66a8"
+    },
+    "helper-read-sub.asm.txt": {
+      "bytes": 36526,
+      "sha256": "8473215339bf5844e1e120485f4593faa5af4b5408cd7d268c0a8e0131b51a8f"
+    },
+    "helper-read-whole.asm.txt": {
+      "bytes": 36666,
+      "sha256": "e024cb7ae0444e13869834d195af29517646f3f20d36cbc7cdc15a952a5d847b"
+    },
+    "helper-write-sub.asm.txt": {
+      "bytes": 36811,
+      "sha256": "019f436960acee89c29c4daf89a8cf502c1cb31b93288a4122706f113245844c"
+    },
+    "helper-write-whole.asm.txt": {
+      "bytes": 36869,
+      "sha256": "af7588d9f9f0ab64a2bf7833b4d3f7700ebe6e3a61975e683e796bb5c337817d"
+    },
+    "identity.private.json": {
+      "bytes": 1038,
+      "sha256": "a463c60c591afb28ca6ab337f904973f119e05a3def19ed6b2a78ee7b75bf778"
+    },
+    "manual-read-sub.asm.txt": {
+      "bytes": 45689,
+      "sha256": "fb18823cb62e37d84b221afd7c13dc4d1fbc78ebee9f8c1467f101d842c0c210"
+    },
+    "manual-read-whole.asm.txt": {
+      "bytes": 45755,
+      "sha256": "06680be6c92ab1777ce9e78fbd8f464be05af98d63e503503e9c4104484b791f"
+    },
+    "manual-write-sub.asm.txt": {
+      "bytes": 45684,
+      "sha256": "89567d483ceb6e1f2de4abacdb8d32444dc2240da063db7d3e6d228f303f0af0"
+    },
+    "manual-write-whole.asm.txt": {
+      "bytes": 45550,
+      "sha256": "6cfc935454104a94c6fae33a4ff4555c5d9513c48f1ca41e7329e4c3a6a1c385"
+    },
+    "obj-disasm.txt": {
+      "bytes": 899757,
+      "sha256": "bbd0cd3a682c6c98259e4d2c61ee7869e448a6695b685cfe629312db0ed3cb0d"
+    },
+    "relevant-symbols.txt": {
+      "bytes": 60662,
+      "sha256": "6e9bc775b4e61acf4fb08f5e25cec0d89d68fc8460813bee271cf9678690230b"
+    },
+    "symbols.txt": {
+      "bytes": 375316,
+      "sha256": "ddc2024e005b9da57a088978c71436bd90d91387382c0db552a0efdce6a9945c"
+    },
+    "with-borrow-0.asm.txt": {
+      "bytes": 10124,
+      "sha256": "76fd9e2d15fff7d887225d72938ba9ee04d7ab0531c480f569f0fd73bbc8e196"
+    },
+    "with-borrow-1.asm.txt": {
+      "bytes": 10089,
+      "sha256": "63ce3a14c55e69bf67d9cff9bbff5c5de2379f0a0ecaeae9d496fb5b48bb3ac1"
+    },
+    "with-borrow-2.asm.txt": {
+      "bytes": 9471,
+      "sha256": "27498964f71cb0c080c59000e30c9b4dae3b2a1df4c119e0ff83c63a051a4710"
+    },
+    "with-borrow-3.asm.txt": {
+      "bytes": 9438,
+      "sha256": "8c1e54a1ae683fa8bbc646f41fae770eae48c5adb34b8825893a514b6268b93b"
+    }
+  }
+}

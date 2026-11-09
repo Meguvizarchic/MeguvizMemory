@@ -1,0 +1,66 @@
+{
+  "state": "ORIGINAL_FROZEN_FULL_CHAIN_IDENTITIES",
+  "original_plan_sha256": "a73dfc6981f1cc00692dc6a40adb99e9f074ee468a50f6326de9e476370f8a48",
+  "files": {
+    "include/mgmem/memory.hpp": {
+      "bytes": 21578,
+      "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44"
+    },
+    "src/mgmem.cpp": {
+      "bytes": 50179,
+      "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586"
+    },
+    "build/human-api-20261109/probe/probe.cpp": {
+      "bytes": 22341,
+      "sha256": "8516b16f7f06eeda22e9bc085cee9fcca82834418edd11f2c2d1bd74facabf25"
+    },
+    "include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "build/human-api-20261109/probe/CMakeLists.txt": {
+      "bytes": 855,
+      "sha256": "89161363bb789e0346747a99b2c7da177bc193f38a6dffc83d8b73333977ca4d"
+    },
+    "build/human-api-20261109/probe/run_pairs.py": {
+      "bytes": 16109,
+      "sha256": "525e14fdba73b5b8dddc5930818d2a10798854962c26341353a2aa4abf94a3fe"
+    },
+    "build/human-api-20261109/full-chain/probe-build/Release/mgmem_human_api_timing.exe": {
+      "bytes": 77312,
+      "sha256": "7a62549f0a16b144e2e216ecc5728cf69e721735ca511f43be1a23be75f64259"
+    },
+    "build/human-api-20261109/full-chain/probe-build/Release/mgmem_human_api_counts.exe": {
+      "bytes": 82432,
+      "sha256": "e593e1b6e097d64933e9e582e3a4f10e056650b45e7f3b62014ed7da0b240352"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/bin/mgmem.dll": {
+      "bytes": 39424,
+      "sha256": "5b713f5b851ac720558df61d3d3de42ba82e8da7263ecc3a2e365b04f9882e46"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/include/mgmem/memory.hpp": {
+      "bytes": 21578,
+      "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/lib/cmake/MeguvizMemory/MeguvizMemoryConfig.cmake": {
+      "bytes": 13673,
+      "sha256": "774e899b4c0de57dbcfd5b522bb9b6ec7de33a64ecc847f59f26403692dc9017"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/lib/cmake/MeguvizMemory/MeguvizMemoryConfigVersion.cmake": {
+      "bytes": 2827,
+      "sha256": "963ddaa83f39fff8321354592f7327cceed0e2aa5af9df901b42c45d56e7293f"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/lib/cmake/MeguvizMemory/MeguvizMemoryTargets-release.cmake": {
+      "bytes": 1466,
+      "sha256": "effc77d628085d14cb33c9daff7de6337d992160f802989dd792c3b9c1ac1a2d"
+    },
+    "build/human-api-20261109/full-chain/candidate-install/lib/cmake/MeguvizMemory/MeguvizMemoryTargets.cmake": {
+      "bytes": 4712,
+      "sha256": "fbe527d7c605567dbcc07168e425c50c3f3b82fbd94dd88f873e79c03b050643"
+    }
+  }
+}

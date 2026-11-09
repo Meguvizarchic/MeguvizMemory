@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "state": "PASS_FROZEN_STATIC_CPP_CONVENIENCE_PUBLICATION",
+  "base_commit": "7f076e59be25a88860b44d47aefe7a3803f4f80c",
+  "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "baseline_header_sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+  "candidate_header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+  "source_member_count": 13,
+  "ordinary_tool_steps_passed": 30,
+  "expected_compile_rejections": 2,
+  "ordinary_validation_failures": 0,
+  "performance_results_included": false,
+  "strict_inline_compatibility_configurations": [
+    "Release_O2_W4_WX",
+    "Debug_Od_W4_WX"
+  ],
+  "warning_4714_suppressed": false,
+  "pre_native_preparation_errors_preserved": 0,
+  "probe_source_copied": false,
+  "android_new_ELF": 1,
+  "android_REL_TUs": 3,
+  "android_core_rebuilt": false,
+  "target_executions": 0,
+  "publication_script_sha256": "ed235aea01b1925036853bdbf98a0bb1d75fb9b8937838888034ed6752cf982f",
+  "files": {
+    "source-freeze.json": {
+      "bytes": 2229,
+      "sha256": "10054d1f48f7257e57f29ae4dc1111736ca7196c327a5c37c956a74c879bf556"
+    },
+    "validation-plan.json": {
+      "bytes": 18126,
+      "sha256": "0ff678201d8c939cbffd1171a7c85382ebe26c531072ea191ae4e8d4164cd2b7"
+    },
+    "host-validation.json": {
+      "bytes": 7098,
+      "sha256": "84891bfbed1b7a45451e8bb53e5c57b1eb57a1fa1d6c6d5ab45a04ca2a09a84d"
+    },
+    "validation-completion.json": {
+      "bytes": 3163,
+      "sha256": "c5ddee4392b56650b2d39ea50fba804f43a0c32f27e28508f236e26cf0c4edcc"
+    },
+    "installed-cpp-readback.json": {
+      "bytes": 2331,
+      "sha256": "ec1c2d19e7c41b0a38851e81222cf3e624a42748aa8faf51ed10e2ee6946e83e"
+    },
+    "arm64-cpp-static.json": {
+      "bytes": 2298,
+      "sha256": "96221d63e5c6a6482b3b094d1827a9b3c8097ca1d63e7117f3b411c2a2197624"
+    },
+    "inline-compatibility-readback.json": {
+      "bytes": 1511,
+      "sha256": "48b9aab1c68fa185c2c93388ef0c19ba9bf2b22e99ecc66e54adaba8b52063a6"
+    },
+    "pre-native-preparation-history.json": {
+      "bytes": 232,
+      "sha256": "b7be35f1242ae73a6fd96806c1048d8f130a7e9ea2003220dab7695ada14db9a"
+    },
+    "compile-contracts.json": {
+      "bytes": 1271,
+      "sha256": "8eb957296b18931b20385261723e22cd82ef849d88c188f9116118f659a7820b"
+    },
+    "production.patch": {
+      "bytes": 23596,
+      "sha256": "4b364ae19cfae8dc3376f8e61535cd6f5be5bd3f5d2288f0fa06c2fcfee55f76"
+    },
+    "frozen-sources.zip": {
+      "bytes": 37195,
+      "sha256": "39634284924df1f9caf07a97899470c3e8373c85c3b3f470efadfb8f03d0cb93"
+    },
+    "frozen-sources.json": {
+      "bytes": 2788,
+      "sha256": "ea3b556e180855884beaaf5e3be288ef77a8a6d102e2db0448c51446c77f22e0"
+    },
+    "source-bindings.json": {
+      "bytes": 1228,
+      "sha256": "d9e8a25cb547d25762f3f356c27a31467159f4dd486783d1cebcb51316d59562"
+    },
+    "STATIC_README.md": {
+      "bytes": 2418,
+      "sha256": "dc6a0bf238af8033cfcbb79bbd53ea4cc45ffc705e1e0fad61d1e7918fe2fb8d"
+    },
+    "static-redactions.json": {
+      "bytes": 4916,
+      "sha256": "3948de5b7be5751fa22ebea22d3814ebd51db9299c3569b267bbc09acfb309f8"
+    }
+  },
+  "scan": {
+    "scope": "Ordinary UTF-8 reports, actual ZIP members and decompressed gzip if present; never compressed bytes.",
+    "text_items_scanned": 28,
+    "private_match_count": 0
+  }
+}

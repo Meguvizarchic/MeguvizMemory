@@ -269,6 +269,160 @@ void test_scoped_allocation_keeps_domain_alive() {
     }) == MGMEM_OK);
     CHECK(provider.allocated == 1 && provider.deallocated == 1 && provider.released == 1);
 }
+
+void test_convenient_creators(uint32_t mode) {
+    Provider provider;
+    auto table = provider.table();
+    {
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create_system(0, domain, &table) == MGMEM_INVALID_ARGUMENT && !domain);
+        CHECK(mgmem::domain::create_arena(128, 0, domain, &table) == MGMEM_INVALID_ARGUMENT && !domain);
+        auto invalid_provider = table;
+        invalid_provider.required_flags = 1;
+        CHECK(mgmem::domain::create_system(128, domain, &invalid_provider) == MGMEM_UNSUPPORTED && !domain);
+        CHECK(provider.retained == 0 && provider.released == 0);
+        const auto created = mode == MGMEM_SYSTEM
+            ? mgmem::domain::create_system(128, domain, &table)
+            : mgmem::domain::create_arena(128, 128, domain, &table);
+        CHECK(created == MGMEM_OK && domain && provider.retained == 1);
+        mgmem_snapshot_v1 initial{};
+        CHECK(domain.snapshot(initial) == MGMEM_OK && initial.budget_bytes == 128);
+        CHECK(initial.state == MGMEM_OPEN && initial.active_allocations == 0 && initial.active_leases == 0);
+        CHECK(domain.reset() == (mode == MGMEM_ARENA ? MGMEM_OK : MGMEM_UNSUPPORTED));
+        CHECK(mgmem::domain::create_system(256, domain, &table) == MGMEM_INVALID_ARGUMENT);
+        CHECK(mgmem::domain::create_arena(256, 256, domain, &table) == MGMEM_INVALID_ARGUMENT);
+        mgmem_snapshot_v1 unchanged{};
+        CHECK(domain.snapshot(unchanged) == MGMEM_OK);
+        CHECK(unchanged.domain_id == initial.domain_id && unchanged.budget_bytes == 128 && provider.retained == 1);
+        mgmem::owned_allocation owner;
+        CHECK(domain.allocate(32, owner) == MGMEM_OK && owner.size_bytes() == 32);
+        CHECK(provider.alignment == alignof(std::max_align_t));
+        CHECK(provider.bytes == (mode == MGMEM_ARENA ? 128u : 32u));
+        CHECK(domain.allocate(16, owner) == MGMEM_INVALID_ARGUMENT && owner.size_bytes() == 32);
+        mgmem::owned_allocation rejected;
+        CHECK(domain.allocate(129, rejected) == MGMEM_OUT_OF_BUDGET && !rejected);
+        CHECK(owner.with_write([](void *data, uint64_t bytes) {
+            CHECK(data && bytes == 32);
+            CHECK(reinterpret_cast<uintptr_t>(data) % alignof(std::max_align_t) == 0);
+            std::memset(data, 0xa3, static_cast<size_t>(bytes));
+        }) == MGMEM_OK);
+    }
+    CHECK(provider.retained == 1 && provider.released == 1 && provider.allocated == 1 && provider.deallocated == 1);
+}
+
+void test_scoped_borrow(uint32_t mode) {
+    mgmem::domain domain;
+    CHECK((mode == MGMEM_SYSTEM ? mgmem::domain::create_system(512, domain)
+        : mgmem::domain::create_arena(512, 256, domain)) == MGMEM_OK);
+    mgmem::owned_allocation owner;
+    unsigned calls = 0;
+    auto rejected_read = [&](const void *, uint64_t) { ++calls; };
+    auto rejected_write = [&](void *, uint64_t) { ++calls; };
+    CHECK(owner.with_read(rejected_read) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    CHECK(owner.with_write(rejected_write) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    CHECK(domain.allocate(128, owner) == MGMEM_OK);
+    CHECK(owner.with_write([](void *data, uint64_t bytes) {
+        static_assert(std::is_same<decltype(data), void *>::value, "WRITE pointer must be mutable");
+        CHECK(data && bytes == 128);
+        auto *out = static_cast<unsigned char *>(data);
+        for (unsigned i = 0; i < 128; ++i) out[i] = static_cast<unsigned char>(i);
+    }) == MGMEM_OK);
+    CHECK(owner.with_write(16, 32, [&](void *data, uint64_t bytes) -> mgmem_status {
+        CHECK(bytes == 32);
+        std::memset(data, 0x88, static_cast<size_t>(bytes));
+        CHECK(owner.with_read(rejected_read) == MGMEM_BUSY && calls == 0);
+        CHECK(owner.with_write(rejected_write) == MGMEM_BUSY && calls == 0);
+        return MGMEM_BUSY;
+    }) == MGMEM_BUSY);
+    CHECK(owner.with_read([&](const void *data, uint64_t bytes) -> mgmem_status {
+        static_assert(std::is_same<decltype(data), const void *>::value, "READ pointer must be const");
+        CHECK(data && bytes == 128);
+        const auto *in = static_cast<const unsigned char *>(data);
+        for (unsigned i = 0; i < 128; ++i)
+            CHECK(in[i] == (i >= 16 && i < 48 ? 0x88 : i));
+        CHECK(owner.with_read(16, 32, [&](const void *part, uint64_t length) {
+            CHECK(part == in + 16 && length == 32);
+            mgmem_snapshot_v1 state{};
+            CHECK(domain.snapshot(state) == MGMEM_OK && state.active_leases == 2 && state.active_allocations == 1);
+        }) == MGMEM_OK);
+        CHECK(owner.with_write(rejected_write) == MGMEM_BUSY && calls == 0);
+        return MGMEM_OUT_OF_BUDGET;
+    }) == MGMEM_OUT_OF_BUDGET);
+    CHECK(owner.with_read(128, 1, rejected_read) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    CHECK(owner.with_read(UINT64_MAX, 1, rejected_read) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    CHECK(owner.with_write(0, 0, rejected_write) == MGMEM_INVALID_ARGUMENT && calls == 0);
+    struct BodyError {} marker;
+    unsigned caught = 0;
+    auto throws = [&](auto *, uint64_t) { throw &marker; };
+    for (unsigned direction = 0; direction < 2; ++direction) {
+        try {
+            if (direction != 0) (void)owner.with_write(throws);
+            else (void)owner.with_read(throws);
+        } catch (BodyError *error) {
+            CHECK(error == &marker);
+            ++caught;
+        }
+        mgmem_snapshot_v1 state{};
+        CHECK(domain.snapshot(state) == MGMEM_OK && state.active_leases == 0 && state.active_allocations == 1);
+    }
+    CHECK(caught == 2);
+    struct MoveOnlyRead {
+        unsigned *calls;
+        explicit MoveOnlyRead(unsigned &value) : calls(&value) {}
+        MoveOnlyRead(const MoveOnlyRead &) = delete;
+        MoveOnlyRead(MoveOnlyRead &&) = default;
+        void operator()(const void *data, uint64_t bytes) && {
+            CHECK(data && bytes == 128);
+            ++*calls;
+        }
+    };
+    CHECK(owner.with_read(MoveOnlyRead{calls}) == MGMEM_OK && calls == 1);
+    CHECK(domain.begin_close() == MGMEM_OK);
+    CHECK(owner.with_read(rejected_read) == MGMEM_IS_CLOSED && calls == 1);
+    CHECK(owner.with_write(rejected_write) == MGMEM_IS_CLOSED && calls == 1);
+}
+
+void test_scoped_borrow_keeps_domain_alive(uint32_t mode) {
+    for (unsigned action = 0; action < 3; ++action) {
+        Provider provider;
+        auto table = provider.table();
+        mgmem::domain domain;
+        CHECK((mode == MGMEM_SYSTEM ? mgmem::domain::create_system(128, domain, &table)
+            : mgmem::domain::create_arena(128, 128, domain, &table)) == MGMEM_OK);
+        mgmem::owned_allocation owner, moved;
+        CHECK(domain.allocate(128, owner) == MGMEM_OK);
+        CHECK(owner.with_write([](void *data, uint64_t bytes) {
+            CHECK(bytes == 128);
+            std::memset(data, 0x5e, static_cast<size_t>(bytes));
+        }) == MGMEM_OK);
+        if (action == 0) {
+            CHECK(owner.with_read([&](const void *data, uint64_t bytes) {
+                moved = std::move(owner);
+                domain = mgmem::domain{};
+                CHECK(!owner && !domain && moved && provider.released == 0 && provider.deallocated == 0);
+                for (uint64_t i = 0; i < bytes; ++i)
+                    CHECK(static_cast<const unsigned char *>(data)[i] == 0x5e);
+            }) == MGMEM_OK);
+            CHECK(provider.released == 0 && provider.deallocated == 0);
+            CHECK(moved.release() == MGMEM_OK);
+        } else {
+            CHECK(owner.with_write([&](void *data, uint64_t bytes) -> mgmem_status {
+                if (action == 1) CHECK(owner.release() == MGMEM_OK);
+                else owner = mgmem::owned_allocation{};
+                CHECK(!owner && provider.deallocated == 0);
+                mgmem_snapshot_v1 state{};
+                CHECK(domain.snapshot(state) == MGMEM_OK && state.live_bytes == 0 && state.retiring_bytes == 128);
+                CHECK(state.active_allocations == 1 && state.active_leases == 1);
+                domain = mgmem::domain{};
+                CHECK(provider.released == 0 && provider.deallocated == 0);
+                std::memset(data, 0xa1, static_cast<size_t>(bytes));
+                return MGMEM_BUSY;
+            }) == MGMEM_BUSY);
+        }
+        CHECK(provider.retained == 1 && provider.released == 1 && provider.allocated == 1 && provider.deallocated == 1);
+        CHECK(provider.address == nullptr);
+    }
+}
 } // namespace
 
 static_assert(!std::is_copy_constructible<mgmem::domain>::value, "domain must be move-only");
@@ -289,6 +443,12 @@ int main() {
     test_scoped_allocation(MGMEM_SYSTEM);
     test_scoped_allocation(MGMEM_ARENA);
     test_scoped_allocation_keeps_domain_alive();
-    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":8,\"status\":\"PASS\"}");
+    test_convenient_creators(MGMEM_SYSTEM);
+    test_convenient_creators(MGMEM_ARENA);
+    test_scoped_borrow(MGMEM_SYSTEM);
+    test_scoped_borrow(MGMEM_ARENA);
+    test_scoped_borrow_keeps_domain_alive(MGMEM_SYSTEM);
+    test_scoped_borrow_keeps_domain_alive(MGMEM_ARENA);
+    std::puts("{\"suite\":\"mgmem-cpp-raii\",\"cases\":14,\"status\":\"PASS\"}");
     return 0;
 }

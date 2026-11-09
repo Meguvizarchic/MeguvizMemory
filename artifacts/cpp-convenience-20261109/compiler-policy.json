@@ -1,0 +1,21 @@
+{
+  "scope": "Targeted MSVC borrow-path inline requests; ordinary inline on other compilers.",
+  "public_abi_or_data_members_changed": false,
+  "global_optimization_flags_changed": false,
+  "exception_handling_or_checked_cleanup_weakened": false,
+  "reference": "https://learn.microsoft.com/en-us/cpp/cpp/inline-functions-cpp?view=msvc-170",
+  "limit": "Inline requests are not a guarantee for arbitrary compiler options or callbacks.",
+  "tested": [
+    "MSVC Release O2/W4/WX",
+    "MSVC Debug Od/W4/WX",
+    "NDK29 API27 C++17 compile/link"
+  ],
+  "strict_controls": [
+    "Recursive READ functor",
+    "Callback and caller C++ try/catch",
+    "Runtime function-pointer callback",
+    "Acquire member-function pointer",
+    "No macro leakage"
+  ],
+  "warnings_suppressed": false
+}

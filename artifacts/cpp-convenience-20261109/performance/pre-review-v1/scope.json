@@ -1,0 +1,8 @@
+{
+  "state": "COMPILED_PRE_REVIEW_DIAGNOSTIC_NEVER_EXECUTED",
+  "timing_processes": 0,
+  "count_only_processes": 0,
+  "source_sha256": "e19de87aae4c4602e5ff89ee166d4cd19296b9a5e18569d92607a5da129eeca3",
+  "build_receipt_sha256": "5c8dcabc23631e9dc13263e5898ed1e6985cf859e67395ddb0d914bed9b69918",
+  "reason": "Hot workload/range branch fairness and installed-header binding were strengthened before v2 was frozen. No measured result was replaced or excluded."
+}

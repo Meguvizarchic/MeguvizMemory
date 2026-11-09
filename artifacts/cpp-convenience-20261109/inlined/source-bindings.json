@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "base_commit": "7f076e59be25a88860b44d47aefe7a3803f4f80c",
+  "core_source_unchanged": true,
+  "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+  "baseline_header_sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+  "candidate_header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+  "previous_candidate_header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+  "production_patch_files": [
+    "include/mgmem/memory.hpp",
+    "tests/cpp_consumer.cpp",
+    "tests/cpp_checked_import_tests.cpp",
+    "tests/cpp_checked_fake_tests.cpp",
+    "tests/cpp_checked/CMakeLists.txt"
+  ],
+  "production_patch_context_lines": 0,
+  "production_patch_reverse_application_check": "PASS",
+  "baseline_header_matches_git_show": true,
+  "patch_application": "git apply --unidiff-zero production.patch against commit 7f076e5.",
+  "public_c_abi_changed": false,
+  "new_production_dependency": false,
+  "new_android_core_rebuilt": false,
+  "new_android_consumer_ELF": 1,
+  "new_android_REL_TUs": 3,
+  "android_core_reuse_explicit": true,
+  "target_executions": 0,
+  "performance_qualified": false
+}

@@ -1,0 +1,417 @@
+{
+  "original_private_receipt": {
+    "bytes": 16546,
+    "sha256": "cc7236271482847920b5c42e8aa770c279241d58e71bcb58e491abd1b240189a"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "FROZEN_HUMAN_CPP_VALIDATION_PLAN",
+    "base_commit": "7f076e59be25a88860b44d47aefe7a3803f4f80c",
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "header_sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de",
+    "sources": {
+      "CMakeLists.txt": {
+        "bytes": 13920,
+        "sha256": "cf03918f508b27307992078e7b3487766f10c1c0cc64a8d7bd4054038ed0eb34"
+      },
+      "adapters/android/native/borrow_jni.cpp": {
+        "bytes": 11396,
+        "sha256": "f0546b93a1d8ea8ff47cd127a23e3af70e932e1f5e7985c1741b2e73888ff396"
+      },
+      "adapters/android/native/pressure.cpp": {
+        "bytes": 29352,
+        "sha256": "ffe7656989d336c9097044700b72cd330c7731af9535a4947285f611229d632a"
+      },
+      "adapters/android/native/pressure_jni.cpp": {
+        "bytes": 22708,
+        "sha256": "4a8ae0f83bd9284184236312b367dda2b4d34c5a14cbe7f569aa2d2ba8a402cf"
+      },
+      "adapters/android/native/workspace_jni.cpp": {
+        "bytes": 57439,
+        "sha256": "6daeb1e3e896d6aeb9f023e410d9ba359b6c758b13da63fec9f8f651ec01ec7e"
+      },
+      "bench/arena_lookup.cpp": {
+        "bytes": 19549,
+        "sha256": "d58770eb6c943d45a9077364c8a208ee7719ead4d58990ad3975c443871c6a17"
+      },
+      "bench/arena_lookup/CMakeLists.txt": {
+        "bytes": 564,
+        "sha256": "180880b51e9249564940adac9aed4f2e1398b3a39bdcc848d11e79c3a1e0685d"
+      },
+      "bench/arena_small_cost.cpp": {
+        "bytes": 20817,
+        "sha256": "e8d60728266cbeecc71d77db79359055b1c8ecb106a001a82787dfe1c77db16c"
+      },
+      "bench/arena_small_cost/CMakeLists.txt": {
+        "bytes": 589,
+        "sha256": "27c2ac5269be6d12b7b2d1a55c61ace69ca310aa35a97389feab24d54823a231"
+      },
+      "bench/claim_release.cpp": {
+        "bytes": 16703,
+        "sha256": "7b72cf63ae4f59bd7476e94acfbe653df26f2f9bf2fcd6390506dd55c8b4b13f"
+      },
+      "bench/claim_release/CMakeLists.txt": {
+        "bytes": 569,
+        "sha256": "bc9434212ff81341f739b9c038aff3c7b69b05d7441f59d8ee536000b46ae9ae"
+      },
+      "cmake/MeguvizMemoryConfig.cmake.in": {
+        "bytes": 12486,
+        "sha256": "3d3e0e088cd8d28ef6d6c2dc9919d39c893e01011dd3a40fdb94b1d43d7cadd8"
+      },
+      "include/mgmem/android_borrow_jni.h": {
+        "bytes": 2462,
+        "sha256": "bf07306528fe52786f7ce8b45496446973452a2e5210b789ca14dff0e5195f34"
+      },
+      "include/mgmem/android_pressure_jni.h": {
+        "bytes": 1261,
+        "sha256": "645c3414e2b70416964d426735cd54f6a88e7fceb55fa69bbc39c1dd45ecce5f"
+      },
+      "include/mgmem/memory.hpp": {
+        "bytes": 21047,
+        "sha256": "49421d2a81a1f78178554cfa8ff89dc28c6f098f2ef14b219f9b5d82531191de"
+      },
+      "include/mgmem/mgmem.h": {
+        "bytes": 12427,
+        "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+      },
+      "include/mgmem/pressure.h": {
+        "bytes": 8394,
+        "sha256": "04160af3e749c90ca38670d5ffd37da6910db72b109774b1898ffa197aa55bea"
+      },
+      "src/mgmem.cpp": {
+        "bytes": 50179,
+        "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586"
+      },
+      "tests/android_borrow/CMakeLists.txt": {
+        "bytes": 1562,
+        "sha256": "194161e613788790cd2ce705b298c5832acbbb33720dc86d8398f59849fcbbc2"
+      },
+      "tests/android_borrow/borrow_fixture.cpp": {
+        "bytes": 10345,
+        "sha256": "4d11c7d5b4b948b02ea9ff23e9dccc07a9b4076ffe14a6460487a251cc00d1c0"
+      },
+      "tests/android_borrow/host_stub/CMakeLists.txt": {
+        "bytes": 2413,
+        "sha256": "77a06e2604999049421e267d09e925e415fbb754394e4a827dfdc69622ac8f9c"
+      },
+      "tests/android_borrow/host_stub/stub.cpp": {
+        "bytes": 134,
+        "sha256": "441d823c5a144dd2bb1e11ddfdbb28b6cdfc7a87bc348ea96d82e300eb02d310"
+      },
+      "tests/android_managed/host_stub/CMakeLists.txt": {
+        "bytes": 2682,
+        "sha256": "b48b65866b19e6fde25a870579f1b3d0e321e7cdb27a2bf435c595124692d6b2"
+      },
+      "tests/android_managed_stability/host_stub/CMakeLists.txt": {
+        "bytes": 3460,
+        "sha256": "6a8b563ede9d1783e9c117bac1858167d24cb740d37b424515b483053c395af2"
+      },
+      "tests/android_native_pressure_device/host_stub/CMakeLists.txt": {
+        "bytes": 3059,
+        "sha256": "1fc009193754e7f3b6ad2ce77c9c564035ac40f3ef15bf2fcdd01df0b43eb5cf"
+      },
+      "tests/android_pressure_close/CMakeLists.txt": {
+        "bytes": 1588,
+        "sha256": "f3a2322c428ae9320edaebb044c5befa83958526c44cde636e1a8dec57bb7c06"
+      },
+      "tests/android_pressure_close/fake_pressure_jni.cpp": {
+        "bytes": 804,
+        "sha256": "893d8fbbe3325cff0ac9df05b47b680bf7856aea5c48e149ae8affb76e2225d5"
+      },
+      "tests/borrow_host/CMakeLists.txt": {
+        "bytes": 2533,
+        "sha256": "e5ff999cd249d006b377bafc0d7983e3f50406a3eb96b1a90047e1beef213be8"
+      },
+      "tests/borrow_jni_host_tests.cpp": {
+        "bytes": 18537,
+        "sha256": "3c5b5fdf30d6f01f9318e7f1635c7f474b00157f22f4beb85989d60516d202ab"
+      },
+      "tests/borrow_jni_java_fixture.cpp": {
+        "bytes": 5382,
+        "sha256": "762888f7a52f513c938935850707296bbd9c6d40b16d2ed27c872a353016e64d"
+      },
+      "tests/c_consumer.c": {
+        "bytes": 1456,
+        "sha256": "65269f393b8c86d3305ffc940c8cb92c04d74077cf7997e0cf4fcde12594a789"
+      },
+      "tests/checked_import_c.c": {
+        "bytes": 1863,
+        "sha256": "ef1fd2d14b55ce5d9bb64eb8ec0837b212c358d31b2896e22880630588ca9139"
+      },
+      "tests/checked_import_tests.cpp": {
+        "bytes": 12395,
+        "sha256": "14c66608c7a7feef71b28c5ff547c5ad43f55ede78a0056dcee5cf13908e9ef5"
+      },
+      "tests/compat/abi10/include/mgmem/mgmem.h": {
+        "bytes": 6222,
+        "sha256": "b312057abb1203396a4d197e18362d851010598554cad509142cae8e20748dbf"
+      },
+      "tests/compat/abi10_consumer.c": {
+        "bytes": 418,
+        "sha256": "3d961f2b74693ae0bd6378d7439e3958fbacd936726a7c969ec97373ef735863"
+      },
+      "tests/core_tests.cpp": {
+        "bytes": 58530,
+        "sha256": "f02d9d077638548aca08bbccb65b0d4f79fc9179477f7eb16968a0f9951ec27f"
+      },
+      "tests/cpp_checked/CMakeLists.txt": {
+        "bytes": 2901,
+        "sha256": "2ed79c8a474194c7f8c83e35763c1d6194b0dc4d817d6e67db1186ba62cc56ed"
+      },
+      "tests/cpp_checked_fake_tests.cpp": {
+        "bytes": 9557,
+        "sha256": "6e4422222f1e4020a33362ec12b2f7e7d41b07165f55c621916d61140a13b9e8"
+      },
+      "tests/cpp_checked_import_tests.cpp": {
+        "bytes": 16953,
+        "sha256": "5861d98c82ef293f742a8bc4f8ba8304aadb32763f011fd5cd05eb708b547577"
+      },
+      "tests/cpp_consumer.cpp": {
+        "bytes": 21746,
+        "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c"
+      },
+      "tests/import_tests.cpp": {
+        "bytes": 27605,
+        "sha256": "50de086cef9cb154960f450e0932057348377e97730befc65655e2bae9b95ba4"
+      },
+      "tests/jni_lock_tests.cpp": {
+        "bytes": 31100,
+        "sha256": "5e9c4e337f1c67621dd60877d0528d39084bd5e6303bad0c31ba43aa1b0f52fb"
+      },
+      "tests/lease_table_tests.cpp": {
+        "bytes": 32127,
+        "sha256": "ea93ed8c4aa1ebbb2356654d29bacc7ad625b1522c30ff467eae1ffbceff9f0d"
+      },
+      "tests/managed_host/CMakeLists.txt": {
+        "bytes": 8050,
+        "sha256": "5cd01f9a1c62993c4c8626c790fb543108581bddcb9eb318804fa854552065c4"
+      },
+      "tests/managed_host/borrow_release_wrap.cpp": {
+        "bytes": 7223,
+        "sha256": "0590d1b76f7a2117b28abd1cd9bca2dc490771622fe5d94164f8d866553c620f"
+      },
+      "tests/managed_host/borrow_test_wrapped.cpp": {
+        "bytes": 487,
+        "sha256": "a8fc20cc80fa0c6f281bea85082ae92966df5f085a311414bb75df9ddd79c873"
+      },
+      "tests/managed_host/workspace_test_wrapped.cpp": {
+        "bytes": 564,
+        "sha256": "407e5f95d87abbaf3f584db2031099e810ee6108f8f74fa5f632f8babdd9dd0e"
+      },
+      "tests/managed_pressure_v2.cpp": {
+        "bytes": 14777,
+        "sha256": "330939c8da5b1b66669729cbb0d6a805a692c8dc77f1f0ba13a16ebc545d80ff"
+      },
+      "tests/pressure_attach_race/CMakeLists.txt": {
+        "bytes": 986,
+        "sha256": "2980aa8540d44316dcbc70a3745f64f1d9050784af0e51f4d43fa4d74439f5e1"
+      },
+      "tests/pressure_attach_race/pressure_attach_race.cpp": {
+        "bytes": 12549,
+        "sha256": "8116e4d4653fbac295b6e89ddd19f4b37ed4e3a055c804ea5b3dd06fbb83a7f4"
+      },
+      "tests/pressure_attach_race/pressure_wrapped.cpp": {
+        "bytes": 435,
+        "sha256": "13a14b755779551b134acd49852a0eb2f64e451910ba94b9e1110ece75d17d4c"
+      },
+      "tests/pressure_real_jvm/CMakeLists.txt": {
+        "bytes": 1984,
+        "sha256": "605e06dc471288ad8185338118b3288d718ff243a6b72ea18419666ada7e480f"
+      },
+      "tests/pressure_tests.cpp": {
+        "bytes": 6806,
+        "sha256": "f937d8bcfa6d79d16bd1e01944bf7b8be6ab7f059bd3164ebbb68ba16e5cfd10"
+      },
+      "tests/runtime_tests.cpp": {
+        "bytes": 3830,
+        "sha256": "1015c04209dd610da9f9f0f6a61fda718fa95c8115eadd75d792ca53f5251e1d"
+      },
+      "third_party_notices/README.md": {
+        "bytes": 525,
+        "sha256": "14398a48c99f662ecc22644f8f7516b2ee6c51931e743c97b2eed6e53e8ede0d"
+      },
+      "third_party_notices/llvm-NOTICE.txt": {
+        "bytes": 130424,
+        "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1"
+      },
+      "third_party_notices/splitmix64-NOTICE.txt": {
+        "bytes": 1211,
+        "sha256": "51a9ddd2e6d49b6cbbd7fad9cf4fbb679305ba1287bce99eb9a3b5a482237f80"
+      },
+      "tools/build_android_candidate.py": {
+        "bytes": 57067,
+        "sha256": "c6b37dd408c2730fce361ce2f7a080862404ebaee4f01f995292d0edc15d2fe8"
+      },
+      "tools/package_feature_preview.py": {
+        "bytes": 25380,
+        "sha256": "609b90c07f6d9903d859818968cc2e04c6812a3adf5fee8e99a6c42046e04040"
+      },
+      "tools/run_arena_lookup_pairs.py": {
+        "bytes": 16408,
+        "sha256": "ffda2ce626925a8b0eb226eaf4baa3ad4fe7a8d01c027e0d1e3c9b23f9db38b9"
+      },
+      "tools/run_arena_small_cost.py": {
+        "bytes": 14648,
+        "sha256": "399c1204d07f96952fa241c7b7073767e195197ab4278e4cc9766eefed77b346"
+      },
+      "tools/run_arena_small_cost_pairs.py": {
+        "bytes": 8588,
+        "sha256": "28d73ae327c3a03c45511c7e6753eb7dcf6d36bb24f3494cee3755f388092198"
+      },
+      "tools/run_claim_release_pairs.py": {
+        "bytes": 11989,
+        "sha256": "7dc10748db77cc42a7c5269e760e387c3dba325791c4c1d51af1c460a4c62b8d"
+      },
+      "tools/source_lock.py": {
+        "bytes": 7800,
+        "sha256": "744a90c739b7918991616ab5a02c4eec06b4cd5c88deb54e55b09476ee755df7"
+      }
+    },
+    "drivers": {
+      "android-source/CMakeLists.txt": {
+        "bytes": 944,
+        "sha256": "49f348a9f9c5e77993c08d684bec1d44f3840f65d967e641405234df9d4ddfd1"
+      },
+      "android-source/cpp_checked_fake_tests.cpp": {
+        "bytes": 9557,
+        "sha256": "6e4422222f1e4020a33362ec12b2f7e7d41b07165f55c621916d61140a13b9e8"
+      },
+      "android-source/cpp_checked_import_tests.cpp": {
+        "bytes": 16953,
+        "sha256": "5861d98c82ef293f742a8bc4f8ba8304aadb32763f011fd5cd05eb708b547577"
+      },
+      "android-source/cpp_consumer.cpp": {
+        "bytes": 21746,
+        "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c"
+      },
+      "compile-contract-source/bool_status_rejected.cpp": {
+        "bytes": 142,
+        "sha256": "fcaeafe30463ac1dcc6ad5081fed964ab97f963e2f715e68849fbdeb787e9f46"
+      },
+      "compile-contract-source/CMakeLists.txt": {
+        "bytes": 323,
+        "sha256": "310aad1d57634151d0dbfddbaa727ad6724c31ccd694b1599a262c7940245ba2"
+      },
+      "compile-contract-source/positive.cpp": {
+        "bytes": 217,
+        "sha256": "f41860a9074a555e83822acf9c42bbac7053c713a5ff2a7ce4631c1a287f0e7c"
+      },
+      "compile-contract-source/read_mutable_rejected.cpp": {
+        "bytes": 127,
+        "sha256": "cdfacd5b9e0ebb67a08e6cbad878f0acda29ba823b7234a89d98fb9235e89d5a"
+      },
+      "installed-cpp-source/CMakeLists.txt": {
+        "bytes": 1008,
+        "sha256": "7f73802b828f8f5f170fbee6a2a7ef8ba50877a2c85bccd1ef51816252348ad2"
+      },
+      "installed-cpp-source/cpp_consumer.cpp": {
+        "bytes": 21746,
+        "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c"
+      },
+      "validation.py": {
+        "bytes": 19520,
+        "sha256": "9132d6e26909a0c9707d40ff64ab00fcdfad6f485cf435e253019ee5b8c81334"
+      }
+    },
+    "tools": {
+      "PRIVATE_PATH_KEY_SHA256_e43e20c37866f4e071dc1a9882d3c0bb94e6b79e31d1f803e18b825d085a1c0f": {
+        "bytes": 14392928,
+        "sha256": "87fafbe6507d4b23c38ccaf72a1859219d070acb57ef0160332df10945d2dfac"
+      },
+      "PRIVATE_PATH_KEY_SHA256_689110081ec3ab5c775e813d64095398e074abafb985e353c8db78728039d698": {
+        "bytes": 15454776,
+        "sha256": "9e661dac7ea3c0056a85060d5d07d668bab68fa7f02bcf27ddf2470ec8dbe7ea"
+      },
+      "PRIVATE_PATH_KEY_SHA256_6e727173e9c353a8cda15f2361c6b96edf4e0026d1a300f9e1d4306f74b0c2f6": {
+        "bytes": 3776568,
+        "sha256": "9546466f0feca6d62d7d4ea9b7fbc381f8e302cb7f02f4ce327a39d8577bb293"
+      },
+      "PRIVATE_PATH_KEY_SHA256_2c76a3f91b1486ef0024dac201beebfbbdaa7b90fc213c5bd61638b3c7a93009": {
+        "bytes": 893328,
+        "sha256": "c9327f10974a1fa15f503ffd8b52c2b0b20735aa6c56d41134f77ff96608399b"
+      },
+      "PRIVATE_PATH_KEY_SHA256_6dfe17d2ea3a213330aa4c57c5f5b367c4a56fbd91248270e85006da79fc2d17": {
+        "bytes": 1881952,
+        "sha256": "d7cb4da3bac32d7d3af185be4703f90f7b46c329f35ba095a47b872bf0b92220"
+      },
+      "PRIVATE_PATH_KEY_SHA256_7d2a0c462b9520f5d495f4580bef2d4ef984c46f5409ecf5212d6a7ac8b44880": {
+        "bytes": 126826136,
+        "sha256": "3da8eb6f49b741ab885854665f10d3793822232f133f8c0233a8a4cb32c97dc0"
+      },
+      "PRIVATE_PATH_KEY_SHA256_03849ab84f9df4c538bce43279de67aa4d646c5b25a8a0005c3b8f33f1398af5": {
+        "bytes": 5855896,
+        "sha256": "7f0f97e76a8a53efc79ea52f7ae4d8eda20a7ffd6b62ef0c0f05f16cf60a1799"
+      },
+      "PRIVATE_PATH_KEY_SHA256_c0c4db5d2c69e8d6a35bd6017760cf949fbee016a6dc77c2f2c0ea16ce452cd3": {
+        "bytes": 8379032,
+        "sha256": "b667e1b44e44e43c69d85c89c41e7cec68bfe3d01f3eaca0196b4cf59e005970"
+      },
+      "PRIVATE_PATH_KEY_SHA256_d0feba0ce6d12f5279dbcfea069427b3c7fb68bb4b6e0cbb8f75539e4cbc6e26": {
+        "bytes": 10344,
+        "sha256": "dbad92d9dcfea0d32b7c5e5f82f5072d878ded5d46a5d3f1f581ea108ca7fe89"
+      },
+      "PRIVATE_PATH_KEY_SHA256_0f3443e5d3a74ac4e7c5156e80ef72aef4efca86dbe42806925ea3192e9d9c86": {
+        "bytes": 105696,
+        "sha256": "85b71d8c6ec1905935f74be0c9869aae198d00e98f39df699ec66f9c5a84cecd"
+      }
+    },
+    "reused_inputs": {
+      "build/arena-next-20261109/intrusive/android/bundle/candidate/libmgmem.so": {
+        "bytes": 580696,
+        "sha256": "e810451752a371e7596b42548891351dfc3223754911d2dc2c89e1ddadb30542"
+      },
+      "build/arena-next-20261109/intrusive/android/source/src/mgmem.cpp": {
+        "bytes": 50179,
+        "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586"
+      },
+      "build/arena-next-20261109/intrusive/android/manifest.private.json": {
+        "bytes": 31983,
+        "sha256": "4af60a4f177c3797cacd0a81117d16f24f23008ccf9bf9090928f953fd536a6a"
+      },
+      "build/human-api-20261109/source-freeze.private.json": {
+        "bytes": 1673,
+        "sha256": "858d89718b48f91ab141bfcecfd7737f74513b46bf6ebe3d05f2c09b56c54f07"
+      }
+    },
+    "android": {
+      "llvm_bin": {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "dcfedf63874b54bcac45ae6b7b9f5bd7dbd7b2eeb497c0507f666d42356e82bd"
+      },
+      "ndk": {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "fd75aa2fc541bf3096ccb2f3775d52d2f35c5f49f7e54680e9f6cafc2a19e49c"
+      },
+      "reused_core": {
+        "private_local_text_redacted": true,
+        "utf8_sha256": "3aaa4f8c6eb3edbcebd4a763aba194f505c02e2d3972ac1a52be297f353d373d"
+      },
+      "old_manifest_sha256": "4af60a4f177c3797cacd0a81117d16f24f23008ccf9bf9090928f953fd536a6a",
+      "abi": "arm64-v8a",
+      "platform": "android-27",
+      "stl": "c++_static",
+      "new_elf_count": 1,
+      "compile_only_tus": 3,
+      "rebuild_core": false,
+      "target_executed": false
+    },
+    "expected_ctest": {
+      "core": 48,
+      "cpp": 15,
+      "asan": 48,
+      "cpp-asan": 15,
+      "installed-cpp": 1
+    },
+    "rules": [
+      "Fresh logs and no overwritten attempts.",
+      "No source edits while validation runs.",
+      "All builds/contract checks finish before timing.",
+      "No target binary or device command.",
+      "Negative compile rejection requires positive compile control and intended diagnostic."
+    ],
+    "limits": [
+      "Selected sources/tools and reused core identities are hashed; entire toolchain/sysroot is not exhaustively hashed.",
+      "Address sanitizer supplements contracts; intentional checked quarantine is not a leak-freedom claim."
+    ]
+  }
+}

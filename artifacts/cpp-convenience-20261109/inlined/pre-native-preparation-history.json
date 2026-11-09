@@ -1,0 +1,25 @@
+{
+  "state": "TWO_PRESERVED_PRE_NATIVE_PREPARATION_ERRORS_BEFORE_FROZEN_SUCCESSFUL_VALIDATION",
+  "events": [
+    {
+      "original_private_receipt": {
+        "bytes": 359,
+        "sha256": "acc5b4978db166ba6c3d693c97213383162247c953b6dfd101add52d357ac209"
+      },
+      "reason": "Copied driver expected old root freeze state string; new root source freeze uses distinct state.",
+      "original_driver_sha256": "751de7871ebbc52954cd0ca7d69ae6e524abc301b461b2e105ef4447df11c784",
+      "native_build_processes_started": 0
+    },
+    {
+      "original_private_receipt": {
+        "bytes": 288,
+        "sha256": "7132f06c683b418542bdba61afb673606d4b1a0d4c267fa6d570363eaf4b69bc"
+      },
+      "reason": "Copied directory-depth replacement also changed the unrelated CMake Ninja parent index.",
+      "original_driver_sha256": "8d74b55afa247401ef75f4a43536d968ba20bcf9f872a0e4a225679719e768ba",
+      "native_build_processes_started": 0
+    }
+  ],
+  "ordinary_compile_or_native_failures": 0,
+  "old_drivers_and_original_private_receipts_preserved_locally": true
+}

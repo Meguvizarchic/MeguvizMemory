@@ -1,0 +1,56 @@
+{
+  "original_private_receipt": {
+    "bytes": 1898,
+    "sha256": "52476549533fb09f926c38f6b516f86b9c04a9baedb28694f97a2a548aedcb08"
+  },
+  "redaction": "Local absolute path strings/keys are replaced by their UTF-8 SHA256; original receipts remain locally unchanged.",
+  "report": {
+    "state": "FROZEN_MSVC_INLINE_HUMAN_API_SOURCE",
+    "base_commit": "7f076e59be25a88860b44d47aefe7a3803f4f80c",
+    "core_source_unchanged": true,
+    "core_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "baseline_header_sha256": "98533201ab1ca93417af5356c04644a085aeffb7c0b1e4f5a8924ebd86716f16",
+    "candidate_header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+    "files": {
+      "src/mgmem.cpp": {
+        "bytes": 50179,
+        "sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586"
+      },
+      "include/mgmem/memory.hpp": {
+        "bytes": 21578,
+        "sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44"
+      },
+      "include/mgmem/mgmem.h": {
+        "bytes": 12427,
+        "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+      },
+      "tests/cpp_consumer.cpp": {
+        "bytes": 21746,
+        "sha256": "d6219ae625028e29987b2a08a0ae7bbe79e90995460de32686a248f58df7026c"
+      },
+      "tests/cpp_checked_import_tests.cpp": {
+        "bytes": 16953,
+        "sha256": "5861d98c82ef293f742a8bc4f8ba8304aadb32763f011fd5cd05eb708b547577"
+      },
+      "tests/cpp_checked_fake_tests.cpp": {
+        "bytes": 9557,
+        "sha256": "6e4422222f1e4020a33362ec12b2f7e7d41b07165f55c621916d61140a13b9e8"
+      },
+      "tests/cpp_checked/CMakeLists.txt": {
+        "bytes": 2901,
+        "sha256": "2ed79c8a474194c7f8c83e35763c1d6194b0dc4d817d6e67db1186ba62cc56ed"
+      },
+      "CMakeLists.txt": {
+        "bytes": 13920,
+        "sha256": "cf03918f508b27307992078e7b3487766f10c1c0cc64a8d7bd4054038ed0eb34"
+      }
+    },
+    "performance_qualified": false,
+    "previous_header_sha256": "d062530a5853c2ac0d41848708ae3ea414c6050b21d3b3255fe0071aedf8c7ab",
+    "prior_performance_processes": 192,
+    "prior_performance_processes_separate_rounds": [
+      192,
+      192
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "state": "NO_PRE_NATIVE_PREPARATION_ERRORS_IN_FULL_CHAIN_CANDIDATE",
+  "events": [],
+  "ordinary_compile_or_native_failures": 0,
+  "pre_native_preparation_errors": 0,
+  "previous_candidate_preparation_errors_inherited": false
+}

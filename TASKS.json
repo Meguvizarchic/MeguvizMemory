@@ -1523,5 +1523,34 @@
     "all_reverse_results_retained": true,
     "one_shot_and_shared_workflow_costs": "RECORDED_NOT_UNIVERSAL_NO_REGRESSION",
     "performance_qualified": false
+  },
+  "cpp_convenience_20261109": {
+    "state": "ADOPTED_CPP_CONVENIENCE_WITH_FULL_MSVC_BORROW_PATH_INLINE_POLICY_AND_RECORDED_TAIL_COSTS",
+    "evidence": "artifacts/cpp-convenience-20261109/decision.json",
+    "base_commit": "7f076e59be25a88860b44d47aefe7a3803f4f80c",
+    "selected_header_sha256": "2e97483c56f19f44b9725848d2e5605cfc7af1a161278d35fd3a35bc9e1d0e44",
+    "core_source_changed": false,
+    "public_c_abi_changed": false,
+    "core_source_sha256": "8628ce7f460e371a353e7a2121cfb673cd8f1b75a325e28961055d9bf8242586",
+    "new_production_dependencies": false,
+    "separate_timing_processes": [
+      192,
+      192,
+      192
+    ],
+    "separate_count_processes": [
+      24,
+      24,
+      24
+    ],
+    "host_core_jni": "48_OF_48",
+    "host_cpp": "15_OF_15",
+    "host_asan": "48_OF_48",
+    "host_cpp_asan": "15_OF_15",
+    "installed_cpp": "1_OF_1_14_RAIICASES",
+    "strict_inline_compatibility": "RELEASE_AND_DEBUG_W4_WX",
+    "known_tail_counterevidence_retained": true,
+    "android": "NEW_1_ELF_3_REL_STATIC_REUSED_UNCHANGED_CORE",
+    "performance_qualified": false
   }
 }
