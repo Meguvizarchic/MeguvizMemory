@@ -1,5 +1,7 @@
 # MeguvizMemory
 
+当前开发接续与快路径说明见 [性能路径与接入](docs/PERFORMANCE_PATHS.md)，各项实测范围见 [STATE.md](STATE.md)。
+
 显式 CPU 内存域、System provider、有界 arena 和可验证的所有权/借用合同。当前版本为 **0.2.0 功能工程预览**，核心原生接口使用 `mgmem_*_v1` / ABI 1.1，压力适配另提供可选的 v2 接口。独立于 BIL、Xposed、GPU 后端及 Android UI；不接管进程全局 allocator。
 
 继续开发：新增可选的外部释放状态检查、Java 受控字节 lease，以及独立的 Compute CPU 只读桥；宿主功能检查通过，新增 Android 运行、R8 和性能资格仍待验证。见[开发状态](STATE.md)。
