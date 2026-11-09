@@ -26,6 +26,21 @@ source.copyTo(destination, 0, 0, byteCount);
 
 [Android JNI 指南](https://developer.android.com/ndk/guides/jni-tips)强调减少跨语言传输和封送。现有 read/write 已使用 Region API；新增 copyTo 针对两端已有 Memory lease 的情况消除 Java 中转。当前锁与回调路径继续使用普通 JNI，未套用有额外限制的 CriticalNative。
 
+## 本轮实测与适用范围
+
+比值均为候选/基线的配对中位数，小于1表示本轮观察耗时更低，不能用各侧独立中位数相除替代。
+
+| 宿主负载 | 配对耗时比 | 口径 |
+|---|---:|---|
+| 64 KiB lease 传输，12 对 | 0.32531 | 复用 Java 数组作基线，单个真实宿主 JVM |
+| Arena 同形多块，1 线程 allocation P50 | 0.53379 | workflow P50 比0.84624 |
+| Arena 同形多块，4 线程 allocation P50 | 0.32488 | workflow P50 比0.68045 |
+| Arena 混合多块，1/4线程 allocation P50 | 1.00641 / 0.99436 | 未显示稳定收益 |
+
+首次小容量轮中混合 allocation 比1.64310；独立预声明确认轮增加预热和测量，未稳定复现该退化，但 mixed workflow P50 比仍为1.01767，后半组尾部变慢。全部轮次保留，不承诺无回归。小容量实际为同形2块、混合4块，尚未测真实单块。CPU/频率和其他活动未隔离；这些是合成探索，无产品或 Android 性能资格。
+
+[lease证据](../artifacts/lease-transfer-20261109/host.json) · [Arena全轮次证据](../artifacts/arena-lookup-20261109/host.json)。
+
 ## 下一轮研究队列
 
 1. 对同形、混合和单块请求分别测量，检查共享域线程数与尾延迟，决定游标是否值得保留。

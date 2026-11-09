@@ -1,0 +1,11 @@
+{
+  "state": "PASS_HOST_CI",
+  "code_commit": "c74bc39dbd7455768f0699e9550e3198874c2974",
+  "run_url": "https://github.com/Meguvizarchic/MeguvizMemory/actions/runs/42550832852",
+  "jobs": {
+    "verify (ubuntu-latest)": "success",
+    "verify (windows-latest)": "success"
+  },
+  "scope": "HOST_BUILDS_AND_PROJECT_CONTRACTS_NOT_ANDROID_DEVICE_OR_PRODUCT_PERFORMANCE",
+  "note": "Subsequent evidence and line-ending-only changes are recorded separately; no runtime instruction change is included in that final documentation commit."
+}

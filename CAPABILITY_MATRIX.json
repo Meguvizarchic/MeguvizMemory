@@ -437,6 +437,7 @@
     "host": "CORE_22_PASS_INSTALLED_DEX_7_PASS",
     "performance": "EXPLORATORY_FIXED_MULTIBLOCK_GAIN_MIXED_AND_TAIL_LIMITS_RECORDED",
     "android": "NOT_RUN_FOR_THIS_OPTIMIZATION",
-    "evidence": "artifacts/arena-lookup-20261109/host.json"
+    "evidence": "artifacts/arena-lookup-20261109/host.json",
+    "host_ci": "artifacts/arena-lookup-20261109/ci-c74bc39.json"
   }
 }
