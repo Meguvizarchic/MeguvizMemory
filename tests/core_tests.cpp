@@ -530,6 +530,90 @@ void test_arena_lifetime_and_accounting() {
     CHECK(provider.allocation_calls == 2 && provider.deallocation_calls == 2 && provider.releases == 1);
 }
 
+void test_arena_first_fit_cursor() {
+    Provider provider;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 512, 256);
+    config.provider = &table;
+    auto *domain = create(config);
+    std::vector<mgmem_handle_v1> owners;
+    std::vector<mgmem_borrow_v1> views;
+    const auto take = [&](uint64_t bytes, uint64_t alignment) {
+        const auto owner = allocate(domain, bytes, alignment);
+        const auto view = borrow(domain, owner, bytes, MGMEM_READ);
+        owners.push_back(owner);
+        views.push_back(view);
+        return reinterpret_cast<uintptr_t>(view.data);
+    };
+    const auto first = take(160, 16);
+    const auto second = take(192, 16);
+    CHECK(take(64, 16) == first + 160);
+    CHECK(take(64, 16) == second + 192);
+    // A different shape must revisit the earlier, smaller hole.
+    CHECK(take(16, 16) == first + 224);
+    CHECK(take(16, 8) == first + 240);
+    CHECK(snapshot(domain).provider_allocation_count == 2);
+    for (const auto &view : views) CHECK(mgmem_borrow_release_v1(domain, view.lease) == MGMEM_OK);
+    for (const auto owner : owners) CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    CHECK(mgmem_arena_reset_v1(domain) == MGMEM_OK);
+    owners.clear(); views.clear();
+    CHECK(take(64, 16) == first);
+    CHECK(take(64, 16) == first + 64);
+    for (const auto &view : views) CHECK(mgmem_borrow_release_v1(domain, view.lease) == MGMEM_OK);
+    for (const auto owner : owners) CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    CHECK(mgmem_domain_trim_v1(domain) == MGMEM_OK);
+    CHECK(snapshot(domain).backing_bytes == 0);
+    const auto full = allocate(domain, 256, 16);
+    {
+        std::lock_guard<std::mutex> lock(provider.mutex);
+        provider.fail_next = true;
+    }
+    mgmem_handle_v1 rejected{};
+    CHECK(mgmem_allocate_v1(domain, 64, 16, &rejected) == MGMEM_OUT_OF_MEMORY && rejected.id == 0);
+    const auto after_failure = allocate(domain, 64, 16);
+    CHECK(snapshot(domain).provider_allocation_count == 4);
+    CHECK(mgmem_release_v1(domain, full) == MGMEM_OK);
+    CHECK(mgmem_release_v1(domain, after_failure) == MGMEM_OK);
+    close(domain);
+    CHECK(provider.active.empty() && provider.allocation_calls == 5 && provider.deallocation_calls == 4);
+}
+
+void test_arena_first_fit_pending_publication() {
+    Provider provider;
+    provider.block_next = true;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 1024, 256);
+    config.provider = &table;
+    auto *domain = create(config);
+    mgmem_handle_v1 pending{};
+    mgmem_status pending_status = MGMEM_BUSY;
+    std::thread worker([&] { pending_status = mgmem_allocate_v1(domain, 64, 16, &pending); });
+    provider.wait_for_entry();
+    const auto second = allocate(domain, 64, 16);
+    const auto second_view = borrow(domain, second, 64, MGMEM_READ);
+    const auto third = allocate(domain, 64, 16);
+    const auto fourth = allocate(domain, 64, 16);
+    const auto fourth_view = borrow(domain, fourth, 64, MGMEM_READ);
+    CHECK(reinterpret_cast<uintptr_t>(fourth_view.data) ==
+          reinterpret_cast<uintptr_t>(second_view.data) + 128);
+    provider.unblock();
+    worker.join();
+    CHECK(pending_status == MGMEM_OK);
+    const auto first_view = borrow(domain, pending, 64, MGMEM_READ);
+    const auto after_publish = allocate(domain, 64, 16);
+    const auto after_view = borrow(domain, after_publish, 64, MGMEM_READ);
+    // Publishing the previously skipped first list node invalidates the hint.
+    CHECK(reinterpret_cast<uintptr_t>(after_view.data) ==
+          reinterpret_cast<uintptr_t>(first_view.data) + 64);
+    CHECK(snapshot(domain).provider_allocation_count == 2);
+    for (const auto view : {second_view, fourth_view, first_view, after_view})
+        CHECK(mgmem_borrow_release_v1(domain, view.lease) == MGMEM_OK);
+    for (const auto owner : {pending, second, third, fourth, after_publish})
+        CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    close(domain);
+    CHECK(provider.active.empty() && provider.deallocation_calls == 2);
+}
+
 void test_growth_peak_and_failure_atomicity() {
     auto *domain = create(options(MGMEM_SYSTEM, 192));
     const auto old_allocation = allocate(domain, 64);
@@ -651,7 +735,15 @@ void test_concurrent_stress() {
 struct Test { const char *name; void (*run)(); };
 } // namespace
 
-int main() {
+int main(int argc, char **argv) {
+    if (argc == 2 && std::strcmp(argv[1], "--arena-first-fit") == 0) {
+        test_arena_first_fit_cursor();
+        test_arena_first_fit_pending_publication();
+        std::printf("{\"suite\":\"mgmem-arena-first-fit\",\"tests\":2,\"checks\":%u,\"status\":\"PASS\"}\n",
+                    checks.load());
+        return 0;
+    }
+    if (argc != 1) return 2;
     const Test tests[] = {
         {"abi_and_checked_arithmetic", test_abi_and_arithmetic},
         {"system_budget_layout_and_rollback", test_system_budget_and_layout},

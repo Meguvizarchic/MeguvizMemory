@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.25)
+project(MeguvizMemoryArenaLookup LANGUAGES CXX)
+find_package(MeguvizMemory CONFIG REQUIRED)
+find_package(Threads REQUIRED)
+add_executable(mgmem_arena_lookup ../arena_lookup.cpp)
+target_compile_features(mgmem_arena_lookup PRIVATE cxx_std_17)
+target_link_libraries(mgmem_arena_lookup PRIVATE MeguvizMemory::mgmem Threads::Threads ${CMAKE_DL_LIBS})
+if(MSVC)
+  target_compile_options(mgmem_arena_lookup PRIVATE /W4 /permissive- /utf-8)
+else()
+  target_compile_options(mgmem_arena_lookup PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+

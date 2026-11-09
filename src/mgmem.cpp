@@ -224,11 +224,21 @@ struct mgmem_domain {
     u64 import_count = 0;
     mgmem_provider_v1 provider{};
     std::list<Backing> backing;
+    // A lower bound for first-fit searches of one normalized request shape.
+    // Earlier blocks cannot regain space until reset or a pending publication.
+    bool arena_search_valid = false;
+    u64 arena_search_bytes = 0;
+    u64 arena_search_alignment = 0;
+    std::list<Backing>::iterator arena_search;
     std::map<u64, Allocation> allocations;
     std::map<u64, Lease> leases;
 };
 
 namespace {
+void invalidate_arena_search(mgmem_domain &domain) noexcept {
+    domain.arena_search_valid = false;
+}
+
 mgmem_status allocate_backing(mgmem_domain &domain, u64 bytes, u64 alignment,
                               void **out) noexcept {
     *out = nullptr;
@@ -321,6 +331,7 @@ void commit_allocation(mgmem_domain &domain, Allocation &allocation, u64 bytes) 
 mgmem_status reclaim_standalone(mgmem_domain &domain, Backing *backing,
                                 std::unique_lock<std::mutex> &lock) noexcept {
     std::list<Backing> detached;
+    invalidate_arena_search(domain);
     for (auto it = domain.backing.begin(); it != domain.backing.end(); ++it) {
         if (&*it == backing) {
             detached.splice(detached.end(), domain.backing, it);
@@ -354,6 +365,7 @@ mgmem_status reclaim_all(mgmem_domain &domain, std::unique_lock<std::mutex> &loc
                          bool closing) {
     if (domain.provider_poisoned) return MGMEM_PROVIDER_ERROR;
     std::list<Backing> detached;
+    invalidate_arena_search(domain);
     detached.splice(detached.end(), domain.backing);
     domain.maintenance = true;
     ++domain.pending;
@@ -463,7 +475,11 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         u64 id = 0;
         if (!take_id(*domain, id)) return MGMEM_OVERFLOW;
         if (domain->mode == MGMEM_ARENA) {
-            for (auto &backing : domain->backing) {
+            const bool same_shape = domain->arena_search_valid &&
+                domain->arena_search_bytes == bytes && domain->arena_search_alignment == alignment;
+            auto candidate = same_shape ? domain->arena_search : domain->backing.begin();
+            for (; candidate != domain->backing.end(); ++candidate) {
+                auto &backing = *candidate;
                 if (backing.external || backing.pending || backing.alignment < alignment) continue;
                 u64 offset = 0;
                 if (!round_up(backing.used, alignment, offset) || offset > backing.bytes ||
@@ -472,9 +488,17 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
                     Allocation{&backing, offset, bytes, 0, false, false, false});
                 commit_allocation(*domain, insertion.first->second, bytes);
                 backing.used = offset + bytes;
+                domain->arena_search_valid = true;
+                domain->arena_search_bytes = bytes;
+                domain->arena_search_alignment = alignment;
+                domain->arena_search = candidate;
                 *out = {domain->id, id, runtime_origin()};
                 return MGMEM_OK;
             }
+            domain->arena_search_valid = true;
+            domain->arena_search_bytes = bytes;
+            domain->arena_search_alignment = alignment;
+            domain->arena_search = domain->backing.end();
         }
         if (!counters_fit(*domain, bytes, true)) return MGMEM_OVERFLOW;
         const u64 capacity = domain->mode == MGMEM_ARENA ? std::max(bytes, domain->chunk_bytes) : bytes;
@@ -494,12 +518,14 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
             domain->allocations.emplace(id,
                 Allocation{&*backing_it, 0, bytes, 0, false, false, true});
         } catch (...) {
+            invalidate_arena_search(*domain);
             domain->backing.erase(backing_it);
             throw;
         }
         const auto claim_status = reserve_owned_claim(backing_it->claim);
         if (claim_status != MGMEM_OK) {
             domain->allocations.erase(id);
+            invalidate_arena_search(*domain);
             domain->backing.erase(backing_it);
             return claim_status;
         }
@@ -522,6 +548,8 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         if (claim_status_after_callback != MGMEM_OK) status = claim_status_after_callback;
         backing_it->address = address;
         if (status == MGMEM_OK) {
+            // A previously skipped pending block can precede the cached start.
+            invalidate_arena_search(*domain);
             backing_it->pending = false;
             backing_it->used = bytes;
             domain->reserved_bytes -= capacity;
@@ -538,6 +566,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         // pending keeps the domain/provider alive through rollback deallocation.
         const Backing failed = *backing_it;
         domain->allocations.erase(id);
+        invalidate_arena_search(*domain);
         domain->backing.erase(backing_it);
         lock.unlock();
         // Never deallocate a provider result that aliases a live region: that
@@ -597,10 +626,15 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
         try {
             domain->allocations.emplace(id,
                 Allocation{&*backing_it, 0, input.capacity_bytes, 0, false, false, true});
-        } catch (...) { domain->backing.erase(backing_it); throw; }
+        } catch (...) {
+            invalidate_arena_search(*domain);
+            domain->backing.erase(backing_it);
+            throw;
+        }
         const auto claimed = claim_range(input.data, input.capacity_bytes, input.external_id, backing_it->claim);
         if (claimed != MGMEM_OK) {
             domain->allocations.erase(id);
+            invalidate_arena_search(*domain);
             domain->backing.erase(backing_it);
             return claimed;
         }
@@ -637,6 +671,7 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
         }
         const Backing failed = *backing_it;
         domain->allocations.erase(id);
+        invalidate_arena_search(*domain);
         domain->backing.erase(backing_it);
         lock.unlock();
         // Retain failure is contractually failure-atomic. If it threw, ownership
@@ -795,6 +830,7 @@ mgmem_status mgmem_arena_reset_v1(mgmem_domain *domain) {
         if (domain->provider_poisoned) return MGMEM_PROVIDER_ERROR;
         if (!quiet(*domain)) return MGMEM_BUSY;
         if (domain->generation == max_u64) return MGMEM_OVERFLOW;
+        invalidate_arena_search(*domain);
         for (auto &backing : domain->backing) if (!backing.external) backing.used = 0;
         ++domain->generation;
         return MGMEM_OK;

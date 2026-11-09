@@ -1415,5 +1415,12 @@
     "performance": "SCOPED_SINGLE_HOST_JVM_EXPLORATORY_12_PAIRS",
     "android": "NOT_RUN_FOR_THIS_FEATURE",
     "evidence": "artifacts/lease-transfer-20261109/host.json"
+  },
+  "arena_lookup_20261109": {
+    "implementation": "SAME_SHAPE_FIRST_FIT_CURSOR_NO_PUBLIC_ABI_CHANGE",
+    "host": "CORE_22_PASS_INSTALLED_DEX_7_PASS",
+    "performance": "EXPLORATORY_FIXED_MULTIBLOCK_GAIN_MIXED_AND_TAIL_LIMITS_RECORDED",
+    "android": "NOT_RUN_FOR_THIS_OPTIMIZATION",
+    "evidence": "artifacts/arena-lookup-20261109/host.json"
   }
 }

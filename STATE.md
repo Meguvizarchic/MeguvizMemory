@@ -1,6 +1,10 @@
 # MeguvizMemory 工程状态
 
-最近补充：2026-11-01。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/jichuo1/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
+最近补充：2026-11-01。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
+
+## Arena 查找快路径（2026-11-09）
+
+保持 first-fit 的同形游标已实现，不改变公开 C ABI 或调用方式。核心 22/22、独立模式 177 检查及新运行库安装 DEX 7 用例通过。默认32进程配对中，同形1/4线程 allocation P50 配对比为0.534/0.325，workflow比0.846/0.680；混合请求未见稳定收益。短轮 tiny 混合 allocation 比1.64，独立预声明32进程确认轮未稳定复现该退化，但尾部与时序变化仍在，不能称无回归；全部轮次保留于[证据](artifacts/arena-lookup-20261109/host.json)。这只是本机合成探索，非产品或 Android 资格。[复跑合同](bench/ARENA_LOOKUP.md)。
 
 ## Lease 直接传输（2026-11-09）
 
