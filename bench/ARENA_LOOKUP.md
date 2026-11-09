@@ -61,3 +61,45 @@ scaling, thermal stability or a release qualification. A child failure or
 timeout is incomplete; a failed child may leave uncollected process-local
 resources until process exit and is never counted as normal close success.
 
+
+## Explicit phase-shift counterexample
+
+`--shape phase` selects the separate `arena_lookup_phase_shift_v1` workload.
+The host controller accepts `--shapes fixed mixed phase`; its default remains
+exactly `fixed mixed`. Do not pool phase samples with the original workload.
+The original retained-shape trial compared the production overwrite-cache
+strategy from `d2b6aa3` with the retained-shape candidate. Later claim-reference
+trials use this same workload as a separate countercheck, with the exact
+baseline and candidate source hashes recorded in each frozen plan. The
+pre-cursor `50bd9cd` library is not the baseline for either comparison.
+
+Every phase round prepares its arena before timing: allocate and release
+`ceil((total_B_operations * 64 + 64 * 32) / 4096)` whole 4096-byte chunks,
+reset the arena, then allocate and release 64 A requests of 32 bytes aligned
+to 8. This creates an A-heavy allocation history; whether a library actually records an A hint is policy-dependent. Timed work consists only of B requests
+of 64 bytes aligned to 16, using the same full borrow/write/read/owner-release/
+lease-release path and byte oracle as fixed requests. All worker threads share
+that prepared arena. Preparation and A requests are excluded from the B-phase
+workflow and allocation timings, and are identical on both sides.
+
+The native report records the provider publication count immediately before
+B and after B. Both counts must equal the exact prepared-chunk count, and
+peak backing must equal prepared chunks times 4096. The controller checks
+these fields, so a new provider publication invalidating the cache cannot
+silently weaken the counterexample. This is a counter of successfully
+published backing, not independent observation of every allocator callback.
+Closing still requires zero owners, leases, reservations and backing.
+
+This case deliberately exposes a possible cost of retaining an old shape:
+A can remain selected throughout a long B phase, causing B to repeatedly
+scan earlier full blocks while overwrite-cache can learn B. It is not an
+end-to-end preparation-plus-use speed comparison. A correct implementation
+can be slower, and such observations must remain in the result.
+
+A proposed new host matrix is 4096 B requests per thread, fixed/mixed/phase,
+1 and 4 threads, 2 warmup rounds, 6 measured rounds and 4 balanced pairs
+(48 processes), followed by a separate tiny scope with 128 requests,
+fixed/mixed, one thread, 16 warmup rounds, 64 measured rounds and 4 balanced
+pairs (16 processes). Freeze final executable/library identities before
+running; retain all pairs and any capacity differences. These are new scopes,
+not additions to or replacements for previous observations.

@@ -1,0 +1,47 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -226,6 +226,7 @@
+     std::list<Backing> backing;
+     // A lower bound for first-fit searches of one normalized request shape.
+     // Earlier blocks cannot regain space until reset or a pending publication.
++    // Other shapes scan from the beginning without replacing this hint.
+     bool arena_search_valid = false;
+     u64 arena_search_bytes = 0;
+     u64 arena_search_alignment = 0;
+@@ -477,6 +478,7 @@
+         if (domain->mode == MGMEM_ARENA) {
+             const bool same_shape = domain->arena_search_valid &&
+                 domain->arena_search_bytes == bytes && domain->arena_search_alignment == alignment;
++            const bool publish_search = !domain->arena_search_valid || same_shape;
+             auto candidate = same_shape ? domain->arena_search : domain->backing.begin();
+             for (; candidate != domain->backing.end(); ++candidate) {
+                 auto &backing = *candidate;
+@@ -488,17 +490,21 @@
+                     Allocation{&backing, offset, bytes, 0, false, false, false});
+                 commit_allocation(*domain, insertion.first->second, bytes);
+                 backing.used = offset + bytes;
++                if (publish_search) {
++                    domain->arena_search_valid = true;
++                    domain->arena_search_bytes = bytes;
++                    domain->arena_search_alignment = alignment;
++                    domain->arena_search = candidate;
++                }
++                *out = {domain->id, id, runtime_origin()};
++                return MGMEM_OK;
++            }
++            if (publish_search) {
+                 domain->arena_search_valid = true;
+                 domain->arena_search_bytes = bytes;
+                 domain->arena_search_alignment = alignment;
+-                domain->arena_search = candidate;
+-                *out = {domain->id, id, runtime_origin()};
+-                return MGMEM_OK;
++                domain->arena_search = domain->backing.end();
+             }
+-            domain->arena_search_valid = true;
+-            domain->arena_search_bytes = bytes;
+-            domain->arena_search_alignment = alignment;
+-            domain->arena_search = domain->backing.end();
+         }
+         if (!counters_fit(*domain, bytes, true)) return MGMEM_OVERFLOW;
+         const u64 capacity = domain->mode == MGMEM_ARENA ? std::max(bytes, domain->chunk_bytes) : bytes;

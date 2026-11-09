@@ -50,12 +50,12 @@ source.copyTo(destination, 0, 0, byteCount);
 
 原始本机日志、工具身份和路径留在忽略目录；公开结果引用具体提交和工作负载。论文中的收益数字不作为本库实测数据。
 
-## 下一优化假设：保留已选 shape（尚未实现）
+## 本轮结论：shape 调校否决，稳定登记引用保留实验
 
 Android 本轮 tiny mixed 的 allocation P50 四对均变慢，应优先检查混合路径开销。现有 ARM64 代码生成在成功复用路径保留3条store，写入 valid、bytes、alignment、iterator 四个字段；当前不同shape成功时也会执行。这是现有策略的合法写入，不能仅凭指令数认定其解释了退化。
 
-候选策略是不增加状态，保留一个已选shape游标；异形请求从头first-fit但不覆盖缓存，同形请求推进下界。此前不满足缓存shape的块，其used只增，不会因异形分配重新合格；provider发布/失败、reset/reclaim仍必须全部失效。缓存end也遵守此条件。下一实现应先只隔离这一项变化，保留全部旧轮数据。
+保留已选 shape 的候选已实现并单独验证；阶段变化 A→长串 B 且不触发 provider 的反例出现明显退化，因此否决。随后减少提示写入的候选也未证明总体改善，两个补丁和全部结果均保留，主线缓存策略未改。
 
-必须同时比较阶段变化 A→长串B 且不触发provider的反例：缓存可能长期偏爱已不热的A，使B失去加速。预计收益仍须独立配对验证，不能把此语义审阅记为性能通过。
+后续稳定登记节点引用 v2 虽在逆序／打散释放中降低完整流程耗时，arm64 Arena mixed 四线程 workflow 配对比仍为 1.378，tiny fixed 为 1.420。主线继续保留 token 查找；候选存于实验分支，不引入默认开关。宿主 v1、v2 和 arm64 v2 各 160 进程分别独立审计，不混池；并发 mixed 的峰值 backing 差异也保留，不能将全部代价归因于索引指令。见[采用决定及限制](CLAIM_REFERENCE_EXPERIMENT.md)与[完整证据索引](../artifacts/claim-release-20261109/decision.json)。
 
 方向参考[LLVM BumpPtrAllocator源码](https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/Support/Allocator.h)与[mimalloc原论文](https://www.microsoft.com/en-us/research/wp-content/uploads/2019/06/mimalloc-tr-v1.pdf)的简短快路径与维护组织；没有移植它们不同的释放和预算语义。

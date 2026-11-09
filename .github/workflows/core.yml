@@ -196,6 +196,26 @@ jobs:
         run: python tools/test_android_close_atomic_windows.py --output artifacts/android-close-investigation-20261030/ci-atomic-windows.json
       - name: Install
         run: cmake --install build/core --config Release
+      - name: Configure Arena lookup benchmark
+        run: cmake -S bench/arena_lookup -B build/arena-lookup-ci -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install/host
+      - name: Build Arena lookup benchmark
+        run: cmake --build build/arena-lookup-ci --config Release --parallel 2
+      - name: Arena phase functional pairs (Linux)
+        if: runner.os == 'Linux'
+        run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/mgmem_arena_lookup --baseline-runtime-dir install/host/lib --candidate-runtime-dir install/host/lib --out-dir build/arena-lookup-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed phase --allocations 128 --rounds 2 --warmup 0
+      - name: Arena phase functional pairs (Windows)
+        if: runner.os == 'Windows'
+        run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/Release/mgmem_arena_lookup.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/arena-lookup-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed phase --allocations 128 --rounds 2 --warmup 0
+      - name: Configure claim release benchmark
+        run: cmake -S bench/claim_release -B build/claim-release-ci -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install/host
+      - name: Build claim release benchmark
+        run: cmake --build build/claim-release-ci --config Release --parallel 2
+      - name: Claim release functional pairs (Linux)
+        if: runner.os == 'Linux'
+        run: python tools/run_claim_release_pairs.py --exe build/claim-release-ci/mgmem_claim_release --baseline-runtime-dir install/host/lib --candidate-runtime-dir install/host/lib --out-dir build/claim-release-smoke-ci --pairs 2 --domains 1 --orders forward reverse shuffled --threads 1 --rounds 2 --warmup 0
+      - name: Claim release functional pairs (Windows)
+        if: runner.os == 'Windows'
+        run: python tools/run_claim_release_pairs.py --exe build/claim-release-ci/Release/mgmem_claim_release.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/claim-release-smoke-ci --pairs 2 --domains 1 --orders forward reverse shuffled --threads 1 --rounds 2 --warmup 0
       - name: Verify installed Java image consumer
         run: python consumers/java_image/run_host_ci.py --memory-sdk install/host --out-dir build/java-image-ci
       - name: Configure installed consumer
@@ -263,3 +283,5 @@ jobs:
             artifacts/ci-image-pressure
             build/core/Testing/Temporary/LastTest.log
             build/capture-journal-ci/regression-receipt.json
+            build/arena-lookup-smoke-ci/receipt.json
+            build/claim-release-smoke-ci/receipt.json

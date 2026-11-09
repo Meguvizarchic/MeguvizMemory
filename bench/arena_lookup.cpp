@@ -24,6 +24,7 @@ namespace {
 using Clock = std::chrono::steady_clock;
 using u64 = uint64_t;
 constexpr u64 chunk_bytes = 4096;
+constexpr u64 phase_seed_allocations = 64;
 struct Options {
     std::string shape = "fixed";
     u64 threads = 1, allocations = 4096, batch = 64, rounds = 6, warmup = 2;
@@ -75,10 +76,10 @@ u64 ns(Clock::time_point start, Clock::time_point finish) {
     return static_cast<u64>(std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count());
 }
 u64 size_for(const Options &options, u64 operation) {
-    return options.shape == "fixed" ? 64 : (operation % 4 + 1) * 32;
+    return options.shape == "mixed" ? (operation % 4 + 1) * 32 : 64;
 }
 u64 alignment_for(const Options &options, u64 operation) {
-    return options.shape == "fixed" ? 16 : u64{8} << (operation % 4);
+    return options.shape == "mixed" ? u64{8} << (operation % 4) : 16;
 }
 struct Slot {
     mgmem_handle_v1 owner{};
@@ -96,6 +97,7 @@ struct Worker {
 struct Round {
     u64 workflow_ns = 0, close_ns = 0, checksum = 0, completed = 0, backing_peak = 0, providers = 0;
     std::vector<double> allocation_ns_per_op;
+    u64 providers_before_timed = 0;
 };
 Round run_round(const Options &options) {
     const u64 total = options.allocations * options.threads;
@@ -103,6 +105,28 @@ Round run_round(const Options &options) {
         0, MGMEM_ARENA, 0, total * 512 + chunk_bytes, chunk_bytes, nullptr};
     mgmem_domain *domain = nullptr;
     check(mgmem_domain_create_v1(&config, &domain), "create");
+    u64 providers_before_timed = 0;
+    if (options.shape == "phase") {
+        // Prepare all B storage before timing. A's established shape cache then
+        // has no provider publication during B that could invalidate its bias.
+        const u64 prepared = (total * 64 + phase_seed_allocations * 32 + chunk_bytes - 1) / chunk_bytes;
+        std::vector<mgmem_handle_v1> owners(static_cast<size_t>(prepared));
+        for (auto &owner : owners) check(mgmem_allocate_v1(domain, chunk_bytes, 16, &owner), "phase_prepare");
+        for (auto owner : owners) check(mgmem_release_v1(domain, owner), "phase_prepare_release");
+        check(mgmem_arena_reset_v1(domain), "phase_prepare_reset");
+        for (u64 index = 0; index < phase_seed_allocations; ++index) {
+            mgmem_handle_v1 owner{};
+            check(mgmem_allocate_v1(domain, 32, 8, &owner), "phase_seed_A");
+            check(mgmem_release_v1(domain, owner), "phase_seed_release");
+        }
+        mgmem_snapshot_v1 ready{};
+        check(mgmem_domain_snapshot_v1(domain, &ready, sizeof(ready)), "phase_ready_snapshot");
+        if (ready.active_allocations || ready.active_leases || ready.live_bytes || ready.retiring_bytes ||
+                ready.reserved_bytes || ready.provider_allocation_count != prepared ||
+                ready.backing_bytes != prepared * chunk_bytes)
+            throw std::runtime_error("phase_preparation_mismatch");
+        providers_before_timed = ready.provider_allocation_count;
+    }
     std::vector<Worker> workers;
     workers.reserve(static_cast<size_t>(options.threads));
     for (u64 index = 0; index < options.threads; ++index) {
@@ -201,6 +225,9 @@ Round run_round(const Options &options) {
         throw std::runtime_error("before_close_resources_nonzero");
     result.backing_peak = before.peak_backing_bytes;
     result.providers = before.provider_allocation_count;
+    result.providers_before_timed = providers_before_timed;
+    if (options.shape == "phase" && result.providers != providers_before_timed)
+        throw std::runtime_error("provider_published_during_B_phase");
     const auto closing = Clock::now();
     check(mgmem_domain_begin_close_v1(domain), "begin_close");
     check(mgmem_domain_collect_v1(domain), "collect");
@@ -234,7 +261,7 @@ int main(int argc, char **argv) {
             else if (key == "--warmup") options.warmup = number(value);
             else throw std::runtime_error("unknown_option");
         }
-        if ((options.shape != "fixed" && options.shape != "mixed") || !options.threads ||
+        if ((options.shape != "fixed" && options.shape != "mixed" && options.shape != "phase") || !options.threads ||
                 options.threads > 16 || options.allocations < 128 || options.allocations > 65536 ||
                 options.allocations * options.threads > 262144 || !options.batch || options.batch > 256 ||
                 options.rounds < 2 || options.rounds > 64 || options.warmup > 16 ||
@@ -254,7 +281,8 @@ int main(int argc, char **argv) {
             workflow_samples.push_back(static_cast<double>(result.workflow_ns) / result.completed);
         }
         const u64 operations = options.allocations * options.threads * options.rounds;
-        std::cout << std::setprecision(15) << "{\"schema_version\":1,\"workload\":\"arena_lookup_composite_v1\","
+        std::cout << std::setprecision(15) << "{\"schema_version\":1,\"workload\":"
+            << quote(options.shape == "phase" ? "arena_lookup_phase_shift_v1" : "arena_lookup_composite_v1") << ','
             << "\"success\":true,\"scope\":\"SYNTHETIC_SHARED_DOMAIN_API_NOT_PRODUCT\","
             << "\"runtime_module\":" << quote(module) << ",\"abi\":" << mgmem_abi_version_v1()
             << ",\"shape\":" << quote(options.shape) << ",\"threads\":" << options.threads
@@ -272,15 +300,22 @@ int main(int argc, char **argv) {
             const auto &round = rounds[index];
             std::cout << "{\"workflow_ns\":" << round.workflow_ns << ",\"close_ns\":" << round.close_ns
                 << ",\"completed_operations\":" << round.completed << ",\"checksum\":" << round.checksum
-                << ",\"peak_backing_bytes\":" << round.backing_peak << ",\"provider_allocation_count\":" << round.providers
-                << ",\"allocation_batch_ns_per_op\":[";
+                << ",\"peak_backing_bytes\":" << round.backing_peak << ",\"provider_allocation_count\":" << round.providers;
+            if (options.shape == "phase")
+                std::cout << ",\"provider_allocation_count_before_timed\":" << round.providers_before_timed;
+            std::cout << ",\"allocation_batch_ns_per_op\":[";
             for (size_t sample = 0; sample < round.allocation_ns_per_op.size(); ++sample) {
                 if (sample) std::cout << ',';
                 std::cout << round.allocation_ns_per_op[sample];
             }
             std::cout << "]}";
         }
-        std::cout << "],\"performance_qualified\":false}\n";
+        std::cout << ']';
+        if (options.shape == "phase")
+            std::cout << ",\"phase_seed_allocations\":" << phase_seed_allocations
+                << ",\"phase_seed_bytes\":32,\"phase_seed_alignment\":8,\"timed_phase_bytes\":64,\"timed_phase_alignment\":16"
+                << ",\"phase_prepared_chunks\":" << (options.allocations * options.threads * 64 + phase_seed_allocations * 32 + chunk_bytes - 1) / chunk_bytes;
+        std::cout << ",\"performance_qualified\":false}\n";
         return 0;
     } catch (const std::exception &error) {
         std::cout << "{\"schema_version\":1,\"success\":false,\"error\":" << quote(error.what())

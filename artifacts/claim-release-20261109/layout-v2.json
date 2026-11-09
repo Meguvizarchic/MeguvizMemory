@@ -1,0 +1,42 @@
+{
+  "state": "PASS_RELEASE_HOST_STRUCTURAL_LAYOUT_ONLY",
+  "platform": "WINDOWS_X64_MSVC_19_51_RELEASE",
+  "inputs": {
+    "baseline": {
+      "core_sha256": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a",
+      "header_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "candidate": {
+      "core_sha256": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+      "header_sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    }
+  },
+  "sizes": {
+    "baseline": {
+      "Backing": 80,
+      "RangeClaim": 40,
+      "domain": 456,
+      "list_iterator": 8,
+      "pointer": 8,
+      "iterator_debug_level": 0
+    },
+    "candidate": {
+      "Backing": 80,
+      "RangeClaim": 40,
+      "domain": 456,
+      "list_iterator": 8,
+      "pointer": 8,
+      "iterator_debug_level": 0
+    }
+  },
+  "delta": {
+    "Backing": 0,
+    "RangeClaim": 0,
+    "domain": 0,
+    "list_iterator": 0
+  },
+  "limits": [
+    "sizeof is not malloc usable capacity, allocator rounding, metadata total, RSS or Android layout measurement.",
+    "Only source representation changed; no production diagnostic API was added."
+  ]
+}

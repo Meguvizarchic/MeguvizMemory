@@ -1,0 +1,113 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -86,0 +87,4 @@
++struct RangeClaim { uintptr_t begin; uintptr_t end; u64 external_id; u64 token; bool releasing; };
++
++// Registry references belong to one explicit cleanup path. Destruction never
++// drops an uncertain claim retained by a poisoned domain.
+@@ -93 +97,2 @@
+-    u64 claim = 0;
++    bool claim_active = false;
++    std::list<RangeClaim>::iterator claim_node{};
+@@ -125 +129,0 @@
+-struct RangeClaim { uintptr_t begin; uintptr_t end; u64 external_id; u64 token; bool releasing; };
+@@ -130,2 +134,3 @@
+-mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, u64 &out) noexcept {
+-    out = 0;
++mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &backing) noexcept {
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -145 +150,2 @@
+-        out = token;
++        backing.claim_node = std::prev(range_claims.end());
++        backing.claim_active = true;
+@@ -151,2 +157,3 @@
+-mgmem_status reserve_owned_claim(u64 &out) noexcept {
+-    out = 0;
++mgmem_status reserve_owned_claim(Backing &backing) noexcept {
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -158 +165,2 @@
+-        out = token;
++        backing.claim_node = std::prev(range_claims.end());
++        backing.claim_active = true;
+@@ -164 +172 @@
+-mgmem_status publish_owned_claim(u64 token, void *data, u64 bytes, bool &unsafe_address) noexcept {
++mgmem_status publish_owned_claim(const Backing &backing, void *data, u64 bytes, bool &unsafe_address) noexcept {
+@@ -171 +179,5 @@
+-    auto own = range_claims.end();
++    if (!backing.claim_active) {
++        unsafe_address = true;
++        return MGMEM_PROVIDER_ERROR;
++    }
++    const auto own = backing.claim_node;
+@@ -173,2 +185 @@
+-        if (it->token == token) own = it;
+-        else if (!it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
++        if (it != own && !it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
+@@ -176 +186,0 @@
+-    if (own == range_claims.end()) { unsafe_address = true; return MGMEM_PROVIDER_ERROR; }
+@@ -183,2 +193,2 @@
+-void releasing_claim(u64 token, bool releasing) noexcept {
+-    if (!token) return;
++void releasing_claim(const Backing &backing, bool releasing) noexcept {
++    if (!backing.claim_active) return;
+@@ -186,5 +196,5 @@
+-    for (auto &claim : range_claims) if (claim.token == token) { claim.releasing = releasing; return; }
+-}
+-
+-void drop_claim(u64 token) noexcept {
+-    if (!token) return;
++    backing.claim_node->releasing = releasing;
++}
++
++void drop_claim(Backing &backing) noexcept {
++    if (!backing.claim_active) return;
+@@ -192,3 +202,3 @@
+-    for (auto it = range_claims.begin(); it != range_claims.end(); ++it) {
+-        if (it->token == token) { range_claims.erase(it); return; }
+-    }
++    range_claims.erase(backing.claim_node);
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -263,2 +273,2 @@
+-bool deallocate_backing(mgmem_domain &domain, const Backing &backing) noexcept {
+-    if (!backing.address) { drop_claim(backing.claim); return true; }
++bool deallocate_backing(mgmem_domain &domain, Backing &backing) noexcept {
++    if (!backing.address) { drop_claim(backing); return true; }
+@@ -266 +276 @@
+-        releasing_claim(backing.claim, true);
++        releasing_claim(backing, true);
+@@ -275 +285 @@
+-        catch (...) { releasing_claim(backing.claim, false); return false; }
++        catch (...) { releasing_claim(backing, false); return false; }
+@@ -283 +293 @@
+-            releasing_claim(backing.claim, false);
++            releasing_claim(backing, false);
+@@ -293 +303 @@
+-    drop_claim(backing.claim);
++    drop_claim(backing);
+@@ -376 +386 @@
+-    for (const auto &backing : detached) {
++    for (auto &backing : detached) {
+@@ -525 +535 @@
+-        const auto claim_status = reserve_owned_claim(backing_it->claim);
++        const auto claim_status = reserve_owned_claim(*backing_it);
+@@ -547 +557 @@
+-        const auto claim_status_after_callback = publish_owned_claim(backing_it->claim, address, capacity, unsafe_address);
++        const auto claim_status_after_callback = publish_owned_claim(*backing_it, address, capacity, unsafe_address);
+@@ -567 +577 @@
+-        const Backing failed = *backing_it;
++        Backing failed = *backing_it;
+@@ -623 +633 @@
+-            input.alignment, input.capacity_bytes, true, 0, true, input.access, input.context, input.release,
++            input.alignment, input.capacity_bytes, true, false, {}, true, input.access, input.context, input.release,
+@@ -634 +644 @@
+-        const auto claimed = claim_range(input.data, input.capacity_bytes, input.external_id, backing_it->claim);
++        const auto claimed = claim_range(input.data, input.capacity_bytes, input.external_id, *backing_it);
+@@ -672 +682 @@
+-        const Backing failed = *backing_it;
++        Backing failed = *backing_it;
+@@ -681 +691 @@
+-        else if (reclaimed) drop_claim(failed.claim);
++        else if (reclaimed) drop_claim(failed);

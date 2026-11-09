@@ -1,0 +1,86 @@
+{
+  "state": "PASS_SCOPED_CLAIM_REFERENCE_V2_LIFETIME",
+  "source_sha256": {
+    "src/mgmem.cpp": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+    "tests/core_tests.cpp": "a03e12be000cb982e2a7c99f4771bc4fae625a972df62bf34496ecce8f8d17a7",
+    "CMakeLists.txt": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+    "tests/cpp_checked/CMakeLists.txt": "68b2ff1d33d3fb1483456dc7f548e1b9359dc434a63c25caf243b41aa6b21053",
+    "tests/cpp_checked_import_tests.cpp": "5a7dfc69ed6c93d4ee140f925712ff68c7d0453926284ca9654b83fe9ef528aa"
+  },
+  "validation": {
+    "normal": {
+      "passed": 23,
+      "total": 23,
+      "logs_sha256": {
+        "configure.log": "2b4bf9d32f7009706f49b7d304ee1c7d22d578255ad6c6af2d7a9194c75b05f2",
+        "build.log": "3c2a57f05169f5741bb183bfa974b04cdde6449aa4bda4c3b1ed198bbd0c5da3",
+        "ctest.log": "b0783af1799713bbbd8485b1456549324c72a487574301a6b38e144865118ed7",
+        "Testing/Temporary/LastTest.log": "9da81d05ce3dffa6c3af9ae49391e3cc9aeff8fcbff9d155d1aad9cbb0d3dce3",
+        "CMakeFiles/CMakeConfigureLog.yaml": "28bba87a51820528b83f873efc7e048516a4b5eb498a7a3d0e063d3709118b52"
+      }
+    },
+    "cpp": {
+      "passed": 12,
+      "total": 12,
+      "logs_sha256": {
+        "configure.log": "2c2b06eea2992a93acc483cd1dc9b0ce891954b4d4782c0e253eeaee9f5c30f8",
+        "build.log": "a945b719a6fe7548fbdab85a1464477bf5e0057601ff3a4038376c53506e0c70",
+        "ctest.log": "6f2b16d1079b7e94c7cbcd38d1504b53fe3c6d74b7af9896f116d83545763d49",
+        "Testing/Temporary/LastTest.log": "76f66d791b5091f79d10166738e2e6ab5c007462328be9ab720b3d378c241d59",
+        "CMakeFiles/CMakeConfigureLog.yaml": "6e4e9136640bd5798097581b1ef0cf673371758123f6b08b9c967de66fc78df6"
+      }
+    },
+    "asan": {
+      "passed": 23,
+      "total": 23,
+      "logs_sha256": {
+        "configure.log": "71c380a15ee56da4a119c75d7fe5685121e17969c0f1d7249025357543068adb",
+        "build.log": "87b90d08025ab60be155402e99cbf14f85f3f49ce25ea66ee565f090bfb9cea4",
+        "ctest.log": "b60877bc1ff7109de950552442152119deeb489854d4d1c82aee3196c8958a87",
+        "Testing/Temporary/LastTest.log": "187c00084a90d894cdaee94f0891a740db08fc2dee3dc0689ccff7adc1be1ead",
+        "CMakeFiles/CMakeConfigureLog.yaml": "0bca0f1d5ebd5cbc82ab4ad3acb5dafd735f281a5eef3af77ebfe94fbfed4524"
+      }
+    }
+  },
+  "asan_instrumented_core_other_runtime_and_test": true,
+  "asan_scope": "MSVC_ADDRESS_SANITIZER_NOT_THREAD_SANITIZER_OR_LEAK_PROOF",
+  "candidate_dll_sha256": "1281ab556424b7382e6e634e0ae5ed40c15521b49439270915253ed8ca7cd851",
+  "install_log_sha256": "9a670389ea252c2e617e3b785361d814485bc24a2aa483b1e2ef15dcd92ccc0c",
+  "layout_summary_sha256": "b78f5ceb0d66b8ad31ab000ed1193bfc9455501eda368e7c0c2f0c201f4cfd22",
+  "layout_sizes": {
+    "baseline": {
+      "Backing": 80,
+      "RangeClaim": 40,
+      "domain": 456,
+      "list_iterator": 8,
+      "pointer": 8,
+      "iterator_debug_level": 0
+    },
+    "candidate": {
+      "Backing": 80,
+      "RangeClaim": 40,
+      "domain": 456,
+      "list_iterator": 8,
+      "pointer": 8,
+      "iterator_debug_level": 0
+    }
+  },
+  "audit": {
+    "inactive_reference_never_dereferenced": true,
+    "node_assigned_before_active": true,
+    "drop_consumes_active_and_node": true,
+    "unknown_callback_result_preserves_claim": true,
+    "pending_claim_has_no_legal_prepublication_deletion_path": true,
+    "internal_token_not_public_or_external_authority": true,
+    "no_confirmed_supported_path_uaf_or_double_erase": true
+  },
+  "prior_v1_records": "PRESERVED",
+  "device": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "limits": [
+    "Quarantine cases retain uncertain claims and isolate process exit; not normal zero or leak freedom.",
+    "All concurrency interleavings are not proven; TSan was not run.",
+    "Layout is host struct size, not malloc usable capacity, RSS or Android measurement."
+  ],
+  "record_scope": "HISTORICAL_PRE_DEVICE_HOST_VALIDATION_BOUND_TO_EXPERIMENT_CORE_NOT_CURRENT_MAIN"
+}

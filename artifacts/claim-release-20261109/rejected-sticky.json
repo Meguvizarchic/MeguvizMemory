@@ -1,0 +1,4875 @@
+{
+  "state": "PASS_INDEPENDENT_HOST_ANALYSIS_DESCRIPTIVE_ONLY",
+  "performance_qualified": false,
+  "baseline_commit": "d2b6aa30351dc7f0cee886e6e57559e0c9da90ae",
+  "baseline_core_source_sha256": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a",
+  "candidate_core_source_sha256": "82ea20b3f8406326dd9815b7feeffc5726d6ab98c635a68d63d853f41f8ff414",
+  "plan_sha256": "83337cc44a6856ba366c2756f4780e079b83be8af5a051d5a4db82dc1de4a2cb",
+  "inputs": {
+    "arena_lookup.cpp_0": {
+      "bytes": 17505,
+      "sha256": "24ddde7e9ff0f7158c28e8b5d6e5e1b40df0c092427db6129733d4f270411eef"
+    },
+    "run_arena_lookup_pairs.py_1": {
+      "bytes": 14947,
+      "sha256": "301e1531c6eec396cc8a6417091dfc2aa5569bb8dfc0bea534c41da44ea818ee"
+    },
+    "mgmem_arena_lookup.exe_2": {
+      "bytes": 64000,
+      "sha256": "61d9a787dd3c8847327b354c3e643a89d36f323ea57b75b59533a269e514c101"
+    },
+    "mgmem.dll_3": {
+      "bytes": 40448,
+      "sha256": "a71c88d743546c3354989d80b8d97f9bed8f5c39d52f5024b33ff028d8f8e37a"
+    },
+    "mgmem.dll_4": {
+      "bytes": 40448,
+      "sha256": "8b1fa18673dab42eeb923069a3adfaef89bca9345754d7f4fc9c90b8db48989c"
+    }
+  },
+  "sample_processes": 64,
+  "groups": [
+    {
+      "scope": "main",
+      "shape": "fixed",
+      "threads": 1,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 60.9375,
+          "candidate_process_metric_median": 61.71875,
+          "median_paired_ratio": 0.9878048780487805,
+          "paired_ratio_range": [
+            0.9743589743589743,
+            1.0256410256410255
+          ],
+          "median_paired_delta": -0.78125,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 0.9871794871794872,
+          "last_two_ratio_median": 1.0006253908692933
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 108.59375,
+          "candidate_process_metric_median": 106.25,
+          "median_paired_ratio": 0.9788732394366197,
+          "paired_ratio_range": [
+            0.9354838709677419,
+            1.1944444444444444
+          ],
+          "median_paired_delta": -2.34375,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 0.967741935483871,
+          "last_two_ratio_median": 1.0760954616588418
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 286.68212890625,
+          "candidate_process_metric_median": 293.07861328125,
+          "median_paired_ratio": 1.012122144932492,
+          "paired_ratio_range": [
+            0.9797402173025079,
+            1.0532088081569704
+          ],
+          "median_paired_delta": 3.47900390625,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.012122144932492,
+          "last_two_ratio_median": 1.0164745127297392
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 303.79638671875,
+          "candidate_process_metric_median": 336.5234375,
+          "median_paired_ratio": 1.0341478646620417,
+          "paired_ratio_range": [
+            0.8834139085161771,
+            1.1627126767313682
+          ],
+          "median_paired_delta": 10.36376953125,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 1.0341478646620417,
+          "last_two_ratio_median": 1.0230632926237726
+        },
+        "throughput": {
+          "baseline_process_metric_median": 3404093.841436395,
+          "candidate_process_metric_median": 3357733.4324161652,
+          "median_paired_ratio": 0.9863375898334479,
+          "paired_ratio_range": [
+            0.9660558019071521,
+            1.0039105743656105
+          ],
+          "median_paired_delta": -46360.40902022994,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 0.9970593772786427,
+          "last_two_ratio_median": 0.9742614006911866
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 60.9375,
+              "candidate": 60.9375,
+              "ratio_candidate_over_baseline": 1.0,
+              "delta_candidate_minus_baseline": 0.0
+            },
+            "allocation_p95": {
+              "baseline": 106.25,
+              "candidate": 106.25,
+              "ratio_candidate_over_baseline": 1.0,
+              "delta_candidate_minus_baseline": 0.0
+            },
+            "workflow_p50": {
+              "baseline": 288.427734375,
+              "candidate": 293.359375,
+              "ratio_candidate_over_baseline": 1.0170983578804809,
+              "delta_candidate_minus_baseline": 4.931640625
+            },
+            "workflow_p95": {
+              "baseline": 301.953125,
+              "candidate": 325.0732421875,
+              "ratio_candidate_over_baseline": 1.0765685640362226,
+              "delta_candidate_minus_baseline": 23.1201171875
+            },
+            "throughput": {
+              "baseline": 3442257.86119476,
+              "candidate": 3408551.89248415,
+              "ratio_candidate_over_baseline": 0.9902081801916748,
+              "delta_candidate_minus_baseline": -33705.96871061018
+            }
+          },
+          "baseline_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "candidate_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "baseline_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ],
+          "candidate_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 60.9375,
+              "candidate": 59.375,
+              "ratio_candidate_over_baseline": 0.9743589743589743,
+              "delta_candidate_minus_baseline": -1.5625
+            },
+            "allocation_p95": {
+              "baseline": 96.875,
+              "candidate": 90.625,
+              "ratio_candidate_over_baseline": 0.9354838709677419,
+              "delta_candidate_minus_baseline": -6.25
+            },
+            "workflow_p50": {
+              "baseline": 283.5693359375,
+              "candidate": 285.595703125,
+              "ratio_candidate_over_baseline": 1.0071459319845029,
+              "delta_candidate_minus_baseline": 2.0263671875
+            },
+            "workflow_p95": {
+              "baseline": 289.208984375,
+              "candidate": 286.81640625,
+              "ratio_candidate_over_baseline": 0.9917271652878609,
+              "delta_candidate_minus_baseline": -2.392578125
+            },
+            "throughput": {
+              "baseline": 3519555.47281138,
+              "candidate": 3533318.9562217,
+              "ratio_candidate_over_baseline": 1.0039105743656105,
+              "delta_candidate_minus_baseline": 13763.483410320245
+            }
+          },
+          "baseline_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "candidate_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "baseline_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ],
+          "candidate_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 60.9375,
+              "candidate": 62.5,
+              "ratio_candidate_over_baseline": 1.0256410256410255,
+              "delta_candidate_minus_baseline": 1.5625
+            },
+            "allocation_p95": {
+              "baseline": 112.5,
+              "candidate": 134.375,
+              "ratio_candidate_over_baseline": 1.1944444444444444,
+              "delta_candidate_minus_baseline": 21.875
+            },
+            "workflow_p50": {
+              "baseline": 284.9365234375,
+              "candidate": 300.09765625,
+              "ratio_candidate_over_baseline": 1.0532088081569704,
+              "delta_candidate_minus_baseline": 15.1611328125
+            },
+            "workflow_p95": {
+              "baseline": 393.896484375,
+              "candidate": 347.9736328125,
+              "ratio_candidate_over_baseline": 0.8834139085161771,
+              "delta_candidate_minus_baseline": -45.9228515625
+            },
+            "throughput": {
+              "baseline": 3327646.43756601,
+              "candidate": 3214692.14770631,
+              "ratio_candidate_over_baseline": 0.9660558019071521,
+              "delta_candidate_minus_baseline": -112954.28985970002
+            }
+          },
+          "baseline_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "candidate_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "baseline_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ],
+          "candidate_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 64.0625,
+              "candidate": 62.5,
+              "ratio_candidate_over_baseline": 0.975609756097561,
+              "delta_candidate_minus_baseline": -1.5625
+            },
+            "allocation_p95": {
+              "baseline": 110.9375,
+              "candidate": 106.25,
+              "ratio_candidate_over_baseline": 0.9577464788732394,
+              "delta_candidate_minus_baseline": -4.6875
+            },
+            "workflow_p50": {
+              "baseline": 298.8525390625,
+              "candidate": 292.7978515625,
+              "ratio_candidate_over_baseline": 0.9797402173025079,
+              "delta_candidate_minus_baseline": -6.0546875
+            },
+            "workflow_p95": {
+              "baseline": 305.6396484375,
+              "candidate": 355.37109375,
+              "ratio_candidate_over_baseline": 1.1627126767313682,
+              "delta_candidate_minus_baseline": 49.7314453125
+            },
+            "throughput": {
+              "baseline": 3365929.82167803,
+              "candidate": 3306914.97234818,
+              "ratio_candidate_over_baseline": 0.9824669994752211,
+              "delta_candidate_minus_baseline": -59014.849329849705
+            }
+          },
+          "baseline_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "candidate_backing": [
+            262144,
+            262144,
+            262144,
+            262144,
+            262144,
+            262144
+          ],
+          "baseline_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ],
+          "candidate_providers": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "main",
+      "shape": "fixed",
+      "threads": 4,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 129.6875,
+          "candidate_process_metric_median": 132.03125,
+          "median_paired_ratio": 1.0930743243243244,
+          "paired_ratio_range": [
+            0.9767441860465116,
+            1.4222222222222223
+          ],
+          "median_paired_delta": 10.9375,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.0626964173475801,
+          "last_two_ratio_median": 1.229861111111111
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 1122.65625,
+          "candidate_process_metric_median": 1269.53125,
+          "median_paired_ratio": 1.1759550690657017,
+          "paired_ratio_range": [
+            0.9771754636233951,
+            1.4269293924466337
+          ],
+          "median_paired_delta": 218.75,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.2270516527450561,
+          "last_two_ratio_median": 1.15095584435566
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 475.360107421875,
+          "candidate_process_metric_median": 481.8939208984375,
+          "median_paired_ratio": 1.0487002990130239,
+          "paired_ratio_range": [
+            0.9704042773196137,
+            1.4732231617604061
+          ],
+          "median_paired_delta": 22.20458984375,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.0225637684951783,
+          "last_two_ratio_median": 1.2479502500578552
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 533.58154296875,
+          "candidate_process_metric_median": 536.9232177734375,
+          "median_paired_ratio": 1.0485629506946177,
+          "paired_ratio_range": [
+            0.9450525519502103,
+            1.4636831297499842
+          ],
+          "median_paired_delta": 24.346923828125,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 0.9844559082684485,
+          "last_two_ratio_median": 1.2684748832762662
+        },
+        "throughput": {
+          "baseline_process_metric_median": 2113688.58546914,
+          "candidate_process_metric_median": 2045812.71994653,
+          "median_paired_ratio": 0.9402138163908609,
+          "paired_ratio_range": [
+            0.6814702161449241,
+            1.0248868875956283
+          ],
+          "median_paired_delta": -130320.03542304016,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 0.9769047518274713,
+          "last_two_ratio_median": 0.8164876164336659
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 134.375,
+              "candidate": 131.25,
+              "ratio_candidate_over_baseline": 0.9767441860465116,
+              "delta_candidate_minus_baseline": -3.125
+            },
+            "allocation_p95": {
+              "baseline": 1150,
+              "candidate": 1181.25,
+              "ratio_candidate_over_baseline": 1.0271739130434783,
+              "delta_candidate_minus_baseline": 31.25
+            },
+            "workflow_p50": {
+              "baseline": 484.02099609375,
+              "candidate": 469.696044921875,
+              "ratio_candidate_over_baseline": 0.9704042773196137,
+              "delta_candidate_minus_baseline": -14.324951171875
+            },
+            "workflow_p95": {
+              "baseline": 532.513427734375,
+              "candidate": 503.253173828125,
+              "ratio_candidate_over_baseline": 0.9450525519502103,
+              "delta_candidate_minus_baseline": -29.26025390625
+            },
+            "throughput": {
+              "baseline": 2070495.06618785,
+              "candidate": 2122023.24416737,
+              "ratio_candidate_over_baseline": 1.0248868875956283,
+              "delta_candidate_minus_baseline": 51528.17797951982
+            }
+          },
+          "baseline_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "candidate_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "baseline_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ],
+          "candidate_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 115.625,
+              "candidate": 132.8125,
+              "ratio_candidate_over_baseline": 1.1486486486486487,
+              "delta_candidate_minus_baseline": 17.1875
+            },
+            "allocation_p95": {
+              "baseline": 951.5625,
+              "candidate": 1357.8125,
+              "ratio_candidate_over_baseline": 1.4269293924466337,
+              "delta_candidate_minus_baseline": 406.25
+            },
+            "workflow_p50": {
+              "baseline": 452.679443359375,
+              "candidate": 486.505126953125,
+              "ratio_candidate_over_baseline": 1.074723259670743,
+              "delta_candidate_minus_baseline": 33.82568359375
+            },
+            "workflow_p95": {
+              "baseline": 534.649658203125,
+              "candidate": 547.406005859375,
+              "ratio_candidate_over_baseline": 1.0238592645866869,
+              "delta_candidate_minus_baseline": 12.75634765625
+            },
+            "throughput": {
+              "baseline": 2195383.40598871,
+              "candidate": 2039341.29674424,
+              "ratio_candidate_over_baseline": 0.9289226160593143,
+              "delta_candidate_minus_baseline": -156042.10924447002
+            }
+          },
+          "baseline_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "candidate_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "baseline_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ],
+          "candidate_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 140.625,
+              "candidate": 200,
+              "ratio_candidate_over_baseline": 1.4222222222222223,
+              "delta_candidate_minus_baseline": 59.375
+            },
+            "allocation_p95": {
+              "baseline": 1332.8125,
+              "candidate": 1765.625,
+              "ratio_candidate_over_baseline": 1.3247362250879249,
+              "delta_candidate_minus_baseline": 432.8125
+            },
+            "workflow_p50": {
+              "baseline": 521.868896484375,
+              "candidate": 768.829345703125,
+              "ratio_candidate_over_baseline": 1.4732231617604061,
+              "delta_candidate_minus_baseline": 246.96044921875
+            },
+            "workflow_p95": {
+              "baseline": 576.62353515625,
+              "candidate": 843.994140625,
+              "ratio_candidate_over_baseline": 1.4636831297499842,
+              "delta_candidate_minus_baseline": 267.37060546875
+            },
+            "throughput": {
+              "baseline": 1941439.25300091,
+              "candidate": 1323033.02737477,
+              "ratio_candidate_over_baseline": 0.6814702161449241,
+              "delta_candidate_minus_baseline": -618406.2256261399
+            }
+          },
+          "baseline_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "candidate_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "baseline_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ],
+          "candidate_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 125,
+              "candidate": 129.6875,
+              "ratio_candidate_over_baseline": 1.0375,
+              "delta_candidate_minus_baseline": 4.6875
+            },
+            "allocation_p95": {
+              "baseline": 1095.3125,
+              "candidate": 1070.3125,
+              "ratio_candidate_over_baseline": 0.9771754636233951,
+              "delta_candidate_minus_baseline": -25.0
+            },
+            "workflow_p50": {
+              "baseline": 466.69921875,
+              "candidate": 477.28271484375,
+              "ratio_candidate_over_baseline": 1.0226773383553045,
+              "delta_candidate_minus_baseline": 10.58349609375
+            },
+            "workflow_p95": {
+              "baseline": 490.5029296875,
+              "candidate": 526.4404296875,
+              "ratio_candidate_over_baseline": 1.0732666368025483,
+              "delta_candidate_minus_baseline": 35.9375
+            },
+            "throughput": {
+              "baseline": 2156882.10475043,
+              "candidate": 2052284.14314882,
+              "ratio_candidate_over_baseline": 0.9515050167224076,
+              "delta_candidate_minus_baseline": -104597.9616016103
+            }
+          },
+          "baseline_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "candidate_backing": [
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576,
+            1048576
+          ],
+          "baseline_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ],
+          "candidate_providers": [
+            256,
+            256,
+            256,
+            256,
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "main",
+      "shape": "mixed",
+      "threads": 1,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 134.375,
+          "candidate_process_metric_median": 116.40625,
+          "median_paired_ratio": 0.8722222222222222,
+          "paired_ratio_range": [
+            0.8554216867469879,
+            0.9550561797752809
+          ],
+          "median_paired_delta": -16.40625,
+          "candidate_slower_pairs": 0,
+          "first_two_ratio_median": 0.9219725343320848,
+          "last_two_ratio_median": 0.8554886211512718
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 207.03125,
+          "candidate_process_metric_median": 175.78125,
+          "median_paired_ratio": 0.8664470951278855,
+          "paired_ratio_range": [
+            0.8359375,
+            1.2302158273381294
+          ],
+          "median_paired_delta": -27.34375,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 1.0581973445633737,
+          "last_two_ratio_median": 0.8413264142335766
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 402.7587890625,
+          "candidate_process_metric_median": 388.1103515625,
+          "median_paired_ratio": 0.9854908749675748,
+          "paired_ratio_range": [
+            0.9340735201058505,
+            1.1209182779367954
+          ],
+          "median_paired_delta": -5.7861328125,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 1.0709263918887286,
+          "last_two_ratio_median": 0.9420603821001694
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 438.43994140625,
+          "candidate_process_metric_median": 427.03857421875,
+          "median_paired_ratio": 1.0188458248475902,
+          "paired_ratio_range": [
+            0.926088209858749,
+            1.304263565891473
+          ],
+          "median_paired_delta": 6.4453125,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 1.1841156650838716,
+          "last_two_ratio_median": 0.9499060476388296
+        },
+        "throughput": {
+          "baseline_process_metric_median": 2474735.4765722603,
+          "candidate_process_metric_median": 2551578.35577109,
+          "median_paired_ratio": 1.017818431920527,
+          "paired_ratio_range": [
+            0.902991991046759,
+            1.0554073775854271
+          ],
+          "median_paired_delta": 43293.57315364014,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 0.9434015369907609,
+          "last_two_ratio_median": 1.0536165792458592
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 139.0625,
+              "candidate": 132.8125,
+              "ratio_candidate_over_baseline": 0.9550561797752809,
+              "delta_candidate_minus_baseline": -6.25
+            },
+            "allocation_p95": {
+              "baseline": 217.1875,
+              "candidate": 267.1875,
+              "ratio_candidate_over_baseline": 1.2302158273381294,
+              "delta_candidate_minus_baseline": 50.0
+            },
+            "workflow_p50": {
+              "baseline": 417.9443359375,
+              "candidate": 468.4814453125,
+              "ratio_candidate_over_baseline": 1.1209182779367954,
+              "delta_candidate_minus_baseline": 50.537109375
+            },
+            "workflow_p95": {
+              "baseline": 453.515625,
+              "candidate": 591.50390625,
+              "ratio_candidate_over_baseline": 1.304263565891473,
+              "delta_candidate_minus_baseline": 137.98828125
+            },
+            "throughput": {
+              "baseline": 2379619.85727703,
+              "candidate": 2148777.67285699,
+              "ratio_candidate_over_baseline": 0.902991991046759,
+              "delta_candidate_minus_baseline": -230842.18442004034
+            }
+          },
+          "baseline_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "candidate_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "baseline_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ],
+          "candidate_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 126.5625,
+              "candidate": 112.5,
+              "ratio_candidate_over_baseline": 0.8888888888888888,
+              "delta_candidate_minus_baseline": -14.0625
+            },
+            "allocation_p95": {
+              "baseline": 192.1875,
+              "candidate": 170.3125,
+              "ratio_candidate_over_baseline": 0.8861788617886179,
+              "delta_candidate_minus_baseline": -21.875
+            },
+            "workflow_p50": {
+              "baseline": 372.021484375,
+              "candidate": 379.8095703125,
+              "ratio_candidate_over_baseline": 1.0209345058406616,
+              "delta_candidate_minus_baseline": 7.7880859375
+            },
+            "workflow_p95": {
+              "baseline": 387.7685546875,
+              "candidate": 412.5732421875,
+              "ratio_candidate_over_baseline": 1.0639677642762702,
+              "delta_candidate_minus_baseline": 24.8046875
+            },
+            "throughput": {
+              "baseline": 2672873.20818741,
+              "candidate": 2629602.28549417,
+              "ratio_candidate_over_baseline": 0.9838110829347629,
+              "delta_candidate_minus_baseline": -43270.92269323999
+            }
+          },
+          "baseline_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "candidate_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "baseline_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ],
+          "candidate_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 129.6875,
+              "candidate": 110.9375,
+              "ratio_candidate_over_baseline": 0.8554216867469879,
+              "delta_candidate_minus_baseline": -18.75
+            },
+            "allocation_p95": {
+              "baseline": 200,
+              "candidate": 167.1875,
+              "ratio_candidate_over_baseline": 0.8359375,
+              "delta_candidate_minus_baseline": -32.8125
+            },
+            "workflow_p50": {
+              "baseline": 387.5732421875,
+              "candidate": 368.212890625,
+              "ratio_candidate_over_baseline": 0.9500472440944882,
+              "delta_candidate_minus_baseline": -19.3603515625
+            },
+            "workflow_p95": {
+              "baseline": 423.4619140625,
+              "candidate": 392.1630859375,
+              "ratio_candidate_over_baseline": 0.926088209858749,
+              "delta_candidate_minus_baseline": -31.298828125
+            },
+            "throughput": {
+              "baseline": 2569851.09586749,
+              "candidate": 2703035.63572371,
+              "ratio_candidate_over_baseline": 1.051825780906291,
+              "delta_candidate_minus_baseline": 133184.53985622013
+            }
+          },
+          "baseline_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "candidate_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "baseline_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ],
+          "candidate_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 140.625,
+              "candidate": 120.3125,
+              "ratio_candidate_over_baseline": 0.8555555555555555,
+              "delta_candidate_minus_baseline": -20.3125
+            },
+            "allocation_p95": {
+              "baseline": 214.0625,
+              "candidate": 181.25,
+              "ratio_candidate_over_baseline": 0.8467153284671532,
+              "delta_candidate_minus_baseline": -32.8125
+            },
+            "workflow_p50": {
+              "baseline": 424.3896484375,
+              "candidate": 396.4111328125,
+              "ratio_candidate_over_baseline": 0.9340735201058505,
+              "delta_candidate_minus_baseline": -27.978515625
+            },
+            "workflow_p95": {
+              "baseline": 453.41796875,
+              "candidate": 441.50390625,
+              "ratio_candidate_over_baseline": 0.9737238854189102,
+              "delta_candidate_minus_baseline": -11.9140625
+            },
+            "throughput": {
+              "baseline": 2343696.35704749,
+              "candidate": 2473554.42604801,
+              "ratio_candidate_over_baseline": 1.0554073775854271,
+              "delta_candidate_minus_baseline": 129858.06900052028
+            }
+          },
+          "baseline_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "candidate_backing": [
+            344064,
+            344064,
+            344064,
+            344064,
+            344064,
+            344064
+          ],
+          "baseline_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ],
+          "candidate_providers": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "main",
+      "shape": "mixed",
+      "threads": 4,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 449.21875,
+          "candidate_process_metric_median": 395.3125,
+          "median_paired_ratio": 0.8721147328489374,
+          "paired_ratio_range": [
+            0.8159722222222222,
+            0.9464285714285714
+          ],
+          "median_paired_delta": -57.8125,
+          "candidate_slower_pairs": 0,
+          "first_two_ratio_median": 0.829588898567557,
+          "last_two_ratio_median": 0.9237262311067771
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 1376.5625,
+          "candidate_process_metric_median": 1503.125,
+          "median_paired_ratio": 1.0767501179523473,
+          "paired_ratio_range": [
+            0.9899777282850779,
+            1.1741176470588235
+          ],
+          "median_paired_delta": 108.59375,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.0308684937721686,
+          "last_two_ratio_median": 1.1279293118521294
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 766.5618896484375,
+          "candidate_process_metric_median": 743.8140869140625,
+          "median_paired_ratio": 0.9544105880704263,
+          "paired_ratio_range": [
+            0.8812485258275021,
+            1.0392060084071633
+          ],
+          "median_paired_delta": -35.3729248046875,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 0.9140389423011557,
+          "last_two_ratio_median": 1.0005989128866033
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 797.052001953125,
+          "candidate_process_metric_median": 775.5035400390625,
+          "median_paired_ratio": 0.9729016630077502,
+          "paired_ratio_range": [
+            0.9391691162674338,
+            1.0250317757009346
+          ],
+          "median_paired_delta": -21.5484619140625,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 0.9460053051109327,
+          "last_two_ratio_median": 1.0089968038810015
+        },
+        "throughput": {
+          "baseline_process_metric_median": 1321420.5490645901,
+          "candidate_process_metric_median": 1365287.4954039152,
+          "median_paired_ratio": 1.0401365175141444,
+          "paired_ratio_range": [
+            0.9719932990345489,
+            1.1033639063131455
+          ],
+          "median_paired_delta": 53240.94535020506,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 1.0796040830225482,
+          "last_two_ratio_median": 0.9982110371654433
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 450,
+              "candidate": 367.1875,
+              "ratio_candidate_over_baseline": 0.8159722222222222,
+              "delta_candidate_minus_baseline": -82.8125
+            },
+            "allocation_p95": {
+              "baseline": 1403.125,
+              "candidate": 1389.0625,
+              "ratio_candidate_over_baseline": 0.9899777282850779,
+              "delta_candidate_minus_baseline": -14.0625
+            },
+            "workflow_p50": {
+              "baseline": 776.30615234375,
+              "candidate": 684.11865234375,
+              "ratio_candidate_over_baseline": 0.8812485258275021,
+              "delta_candidate_minus_baseline": -92.1875
+            },
+            "workflow_p95": {
+              "baseline": 794.54345703125,
+              "candidate": 757.073974609375,
+              "ratio_candidate_over_baseline": 0.9528414939544316,
+              "delta_candidate_minus_baseline": -37.469482421875
+            },
+            "throughput": {
+              "baseline": 1304546.88414423,
+              "candidate": 1439389.94605802,
+              "ratio_candidate_over_baseline": 1.1033639063131455,
+              "delta_candidate_minus_baseline": 134843.06191378995
+            }
+          },
+          "baseline_backing": [
+            1339392,
+            1331200,
+            1335296,
+            1335296,
+            1335296,
+            1335296
+          ],
+          "candidate_backing": [
+            1331200,
+            1327104,
+            1343488,
+            1327104,
+            1331200,
+            1339392
+          ],
+          "baseline_providers": [
+            327,
+            325,
+            326,
+            326,
+            326,
+            326
+          ],
+          "candidate_providers": [
+            325,
+            324,
+            328,
+            324,
+            325,
+            327
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 448.4375,
+              "candidate": 378.125,
+              "ratio_candidate_over_baseline": 0.8432055749128919,
+              "delta_candidate_minus_baseline": -70.3125
+            },
+            "allocation_p95": {
+              "baseline": 1350,
+              "candidate": 1446.875,
+              "ratio_candidate_over_baseline": 1.0717592592592593,
+              "delta_candidate_minus_baseline": 96.875
+            },
+            "workflow_p50": {
+              "baseline": 756.817626953125,
+              "candidate": 716.5771484375,
+              "ratio_candidate_over_baseline": 0.9468293587748091,
+              "delta_candidate_minus_baseline": -40.240478515625
+            },
+            "workflow_p95": {
+              "baseline": 780.712890625,
+              "candidate": 733.221435546875,
+              "ratio_candidate_over_baseline": 0.9391691162674338,
+              "delta_candidate_minus_baseline": -47.491455078125
+            },
+            "throughput": {
+              "baseline": 1354140.9819671,
+              "candidate": 1429761.98267775,
+              "ratio_candidate_over_baseline": 1.055844259731951,
+              "delta_candidate_minus_baseline": 75621.00071065011
+            }
+          },
+          "baseline_backing": [
+            1335296,
+            1331200,
+            1339392,
+            1335296,
+            1335296,
+            1335296
+          ],
+          "candidate_backing": [
+            1343488,
+            1335296,
+            1347584,
+            1343488,
+            1335296,
+            1331200
+          ],
+          "baseline_providers": [
+            326,
+            325,
+            327,
+            326,
+            326,
+            326
+          ],
+          "candidate_providers": [
+            328,
+            326,
+            329,
+            328,
+            326,
+            325
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 457.8125,
+              "candidate": 412.5,
+              "ratio_candidate_over_baseline": 0.9010238907849829,
+              "delta_candidate_minus_baseline": -45.3125
+            },
+            "allocation_p95": {
+              "baseline": 1471.875,
+              "candidate": 1592.1875,
+              "ratio_candidate_over_baseline": 1.0817409766454353,
+              "delta_candidate_minus_baseline": 120.3125
+            },
+            "workflow_p50": {
+              "baseline": 802.60009765625,
+              "candidate": 772.0947265625,
+              "ratio_candidate_over_baseline": 0.9619918173660436,
+              "delta_candidate_minus_baseline": -30.50537109375
+            },
+            "workflow_p95": {
+              "baseline": 816.34521484375,
+              "candidate": 836.77978515625,
+              "ratio_candidate_over_baseline": 1.0250317757009346,
+              "delta_candidate_minus_baseline": 20.4345703125
+            },
+            "throughput": {
+              "baseline": 1263300.74329951,
+              "candidate": 1294161.63328927,
+              "ratio_candidate_over_baseline": 1.0244287752963377,
+              "delta_candidate_minus_baseline": 30860.889989760006
+            }
+          },
+          "baseline_backing": [
+            1331200,
+            1331200,
+            1335296,
+            1331200,
+            1331200,
+            1327104
+          ],
+          "candidate_backing": [
+            1331200,
+            1339392,
+            1331200,
+            1339392,
+            1335296,
+            1331200
+          ],
+          "baseline_providers": [
+            325,
+            325,
+            326,
+            325,
+            325,
+            324
+          ],
+          "candidate_providers": [
+            325,
+            327,
+            325,
+            327,
+            326,
+            325
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 437.5,
+              "candidate": 414.0625,
+              "ratio_candidate_over_baseline": 0.9464285714285714,
+              "delta_candidate_minus_baseline": -23.4375
+            },
+            "allocation_p95": {
+              "baseline": 1328.125,
+              "candidate": 1559.375,
+              "ratio_candidate_over_baseline": 1.1741176470588235,
+              "delta_candidate_minus_baseline": 231.25
+            },
+            "workflow_p50": {
+              "baseline": 741.961669921875,
+              "candidate": 771.051025390625,
+              "ratio_candidate_over_baseline": 1.0392060084071633,
+              "delta_candidate_minus_baseline": 29.08935546875
+            },
+            "workflow_p95": {
+              "baseline": 799.560546875,
+              "candidate": 793.93310546875,
+              "ratio_candidate_over_baseline": 0.9929618320610687,
+              "delta_candidate_minus_baseline": -5.62744140625
+            },
+            "throughput": {
+              "baseline": 1338294.21398495,
+              "candidate": 1300813.00813008,
+              "ratio_candidate_over_baseline": 0.9719932990345489,
+              "delta_candidate_minus_baseline": -37481.20585486991
+            }
+          },
+          "baseline_backing": [
+            1331200,
+            1339392,
+            1331200,
+            1339392,
+            1327104,
+            1331200
+          ],
+          "candidate_backing": [
+            1339392,
+            1335296,
+            1327104,
+            1327104,
+            1335296,
+            1331200
+          ],
+          "baseline_providers": [
+            325,
+            327,
+            325,
+            327,
+            324,
+            325
+          ],
+          "candidate_providers": [
+            327,
+            326,
+            324,
+            324,
+            326,
+            325
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "main",
+      "shape": "phase",
+      "threads": 1,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_phase_shift_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 59.375,
+          "candidate_process_metric_median": 110.15625,
+          "median_paired_ratio": 1.8562023562023562,
+          "paired_ratio_range": [
+            1.8157894736842106,
+            1.9473684210526316
+          ],
+          "median_paired_delta": 50.78125,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.8538406827880514,
+          "last_two_ratio_median": 1.883940620782726
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 82.8125,
+          "candidate_process_metric_median": 151.5625,
+          "median_paired_ratio": 1.8263613415073925,
+          "paired_ratio_range": [
+            1.5076923076923077,
+            2.525
+          ],
+          "median_paired_delta": 66.40625,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.8263613415073925,
+          "last_two_ratio_median": 2.016346153846154
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 275.6591796875,
+          "candidate_process_metric_median": 322.4853515625,
+          "median_paired_ratio": 1.168107282001623,
+          "paired_ratio_range": [
+            1.1022935379785472,
+            1.2263607737291948
+          ],
+          "median_paired_delta": 46.0693359375,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.164327155853871,
+          "last_two_ratio_median": 1.168107282001623
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 327.587890625,
+          "candidate_process_metric_median": 348.2666015625,
+          "median_paired_ratio": 1.161560577421373,
+          "paired_ratio_range": [
+            0.839045443005839,
+            1.245734034127727
+          ],
+          "median_paired_delta": 48.193359375,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.194698329336977,
+          "last_two_ratio_median": 1.009251986651179
+        },
+        "throughput": {
+          "baseline_process_metric_median": 3555138.8979885746,
+          "candidate_process_metric_median": 3072719.7647144003,
+          "median_paired_ratio": 0.8630151037836853,
+          "paired_ratio_range": [
+            0.8295833540743707,
+            0.950688428217821
+          ],
+          "median_paired_delta": -487558.99792486476,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 0.8630151037836853,
+          "last_two_ratio_median": 0.8901358911460958
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 57.8125,
+              "candidate": 109.375,
+              "ratio_candidate_over_baseline": 1.8918918918918919,
+              "delta_candidate_minus_baseline": 51.5625
+            },
+            "allocation_p95": {
+              "baseline": 92.1875,
+              "candidate": 148.4375,
+              "ratio_candidate_over_baseline": 1.6101694915254237,
+              "delta_candidate_minus_baseline": 56.25
+            },
+            "workflow_p50": {
+              "baseline": 271.3623046875,
+              "candidate": 332.7880859375,
+              "ratio_candidate_over_baseline": 1.2263607737291948,
+              "delta_candidate_minus_baseline": 61.42578125
+            },
+            "workflow_p95": {
+              "baseline": 316.0888671875,
+              "candidate": 361.4990234375,
+              "ratio_candidate_over_baseline": 1.143662624546227,
+              "delta_candidate_minus_baseline": 45.41015625
+            },
+            "throughput": {
+              "baseline": 3593140.05000219,
+              "candidate": 3048110.43446984,
+              "ratio_candidate_over_baseline": 0.8483138402768304,
+              "delta_candidate_minus_baseline": -545029.6155323498
+            }
+          },
+          "baseline_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "candidate_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "baseline_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "candidate_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 65
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 59.375,
+              "candidate": 107.8125,
+              "ratio_candidate_over_baseline": 1.8157894736842106,
+              "delta_candidate_minus_baseline": 48.4375
+            },
+            "allocation_p95": {
+              "baseline": 73.4375,
+              "candidate": 150,
+              "ratio_candidate_over_baseline": 2.0425531914893615,
+              "delta_candidate_minus_baseline": 76.5625
+            },
+            "workflow_p50": {
+              "baseline": 279.9560546875,
+              "candidate": 308.59375,
+              "ratio_candidate_over_baseline": 1.1022935379785472,
+              "delta_candidate_minus_baseline": 28.6376953125
+            },
+            "workflow_p95": {
+              "baseline": 339.0869140625,
+              "candidate": 422.412109375,
+              "ratio_candidate_over_baseline": 1.245734034127727,
+              "delta_candidate_minus_baseline": 83.3251953125
+            },
+            "throughput": {
+              "baseline": 3517137.74597496,
+              "candidate": 3087049.36565758,
+              "ratio_candidate_over_baseline": 0.87771636729054,
+              "delta_candidate_minus_baseline": -430088.3803173797
+            }
+          },
+          "baseline_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "candidate_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "baseline_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "candidate_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 65
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 59.375,
+              "candidate": 115.625,
+              "ratio_candidate_over_baseline": 1.9473684210526316,
+              "delta_candidate_minus_baseline": 56.25
+            },
+            "allocation_p95": {
+              "baseline": 62.5,
+              "candidate": 157.8125,
+              "ratio_candidate_over_baseline": 2.525,
+              "delta_candidate_minus_baseline": 95.3125
+            },
+            "workflow_p50": {
+              "baseline": 268.017578125,
+              "candidate": 325.78125,
+              "ratio_candidate_over_baseline": 1.2155219529969028,
+              "delta_candidate_minus_baseline": 57.763671875
+            },
+            "workflow_p95": {
+              "baseline": 284.0576171875,
+              "candidate": 335.0341796875,
+              "ratio_candidate_over_baseline": 1.179458530296519,
+              "delta_candidate_minus_baseline": 50.9765625
+            },
+            "throughput": {
+              "baseline": 3686658.06606462,
+              "candidate": 3058390.16377122,
+              "ratio_candidate_over_baseline": 0.8295833540743707,
+              "delta_candidate_minus_baseline": -628267.9022933999
+            }
+          },
+          "baseline_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "candidate_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "baseline_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "candidate_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 65
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 60.9375,
+              "candidate": 110.9375,
+              "ratio_candidate_over_baseline": 1.8205128205128205,
+              "delta_candidate_minus_baseline": 50.0
+            },
+            "allocation_p95": {
+              "baseline": 101.5625,
+              "candidate": 153.125,
+              "ratio_candidate_over_baseline": 1.5076923076923077,
+              "delta_candidate_minus_baseline": 51.5625
+            },
+            "workflow_p50": {
+              "baseline": 284.814453125,
+              "candidate": 319.189453125,
+              "ratio_candidate_over_baseline": 1.1206926110063433,
+              "delta_candidate_minus_baseline": 34.375
+            },
+            "workflow_p95": {
+              "baseline": 384.66796875,
+              "candidate": 322.75390625,
+              "ratio_candidate_over_baseline": 0.839045443005839,
+              "delta_candidate_minus_baseline": -61.9140625
+            },
+            "throughput": {
+              "baseline": 3332655.30287621,
+              "candidate": 3168316.83168317,
+              "ratio_candidate_over_baseline": 0.950688428217821,
+              "delta_candidate_minus_baseline": -164338.4711930398
+            }
+          },
+          "baseline_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "candidate_backing": [
+            266240,
+            266240,
+            266240,
+            266240,
+            266240,
+            266240
+          ],
+          "baseline_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "candidate_providers": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 65
+        }
+      ]
+    },
+    {
+      "scope": "main",
+      "shape": "phase",
+      "threads": 4,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1,
+          4
+        ],
+        "allocations": 4096,
+        "batch": 64,
+        "rounds": 6,
+        "warmup": 2,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ]
+      },
+      "workload": "arena_lookup_phase_shift_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 103.90625,
+          "candidate_process_metric_median": 360.15625,
+          "median_paired_ratio": 3.5426277702397106,
+          "paired_ratio_range": [
+            3.3676470588235294,
+            4.0701754385964914
+          ],
+          "median_paired_delta": 262.5,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 3.72165488347735,
+          "last_two_ratio_median": 3.539884135472371
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 709.375,
+          "candidate_process_metric_median": 964.84375,
+          "median_paired_ratio": 1.3754135834472359,
+          "paired_ratio_range": [
+            1.3221052631578947,
+            1.4285714285714286
+          ],
+          "median_paired_delta": 269.53125,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.4152095018145827,
+          "last_two_ratio_median": 1.3355424274973147
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 433.001708984375,
+          "candidate_process_metric_median": 644.22607421875,
+          "median_paired_ratio": 1.5242211596400597,
+          "paired_ratio_range": [
+            1.4151674391738633,
+            1.6176648705725245
+          ],
+          "median_paired_delta": 223.01025390625,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.5164161548731938,
+          "last_two_ratio_median": 1.5242211596400597
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 461.31591796875,
+          "candidate_process_metric_median": 678.6407470703125,
+          "median_paired_ratio": 1.484729906295381,
+          "paired_ratio_range": [
+            1.3938732436832901,
+            1.5862682738492546
+          ],
+          "median_paired_delta": 217.352294921875,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.484729906295381,
+          "last_two_ratio_median": 1.4900707587662723
+        },
+        "throughput": {
+          "baseline_process_metric_median": 2314039.70374039,
+          "candidate_process_metric_median": 1574943.85373572,
+          "median_paired_ratio": 0.6710547971087062,
+          "paired_ratio_range": [
+            0.6222433552792019,
+            0.716844260582507
+          ],
+          "median_paired_delta": -750306.047443295,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 0.6695438079308544,
+          "last_two_ratio_median": 0.6710547971087062
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 89.0625,
+              "candidate": 362.5,
+              "ratio_candidate_over_baseline": 4.0701754385964914,
+              "delta_candidate_minus_baseline": 273.4375
+            },
+            "allocation_p95": {
+              "baseline": 676.5625,
+              "candidate": 948.4375,
+              "ratio_candidate_over_baseline": 1.4018475750577368,
+              "delta_candidate_minus_baseline": 271.875
+            },
+            "workflow_p50": {
+              "baseline": 393.060302734375,
+              "candidate": 635.83984375,
+              "ratio_candidate_over_baseline": 1.6176648705725245,
+              "delta_candidate_minus_baseline": 242.779541015625
+            },
+            "workflow_p95": {
+              "baseline": 416.50390625,
+              "candidate": 651.8798828125,
+              "ratio_candidate_over_baseline": 1.5651230949589683,
+              "delta_candidate_minus_baseline": 235.3759765625
+            },
+            "throughput": {
+              "baseline": 2568206.22144195,
+              "candidate": 1598049.25627896,
+              "ratio_candidate_over_baseline": 0.6222433552792019,
+              "delta_candidate_minus_baseline": -970156.9651629901
+            }
+          },
+          "baseline_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "candidate_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "baseline_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "candidate_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 257
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 104.6875,
+              "candidate": 353.125,
+              "ratio_candidate_over_baseline": 3.373134328358209,
+              "delta_candidate_minus_baseline": 248.4375
+            },
+            "allocation_p95": {
+              "baseline": 656.25,
+              "candidate": 937.5,
+              "ratio_candidate_over_baseline": 1.4285714285714286,
+              "delta_candidate_minus_baseline": 281.25
+            },
+            "workflow_p50": {
+              "baseline": 433.233642578125,
+              "candidate": 613.09814453125,
+              "ratio_candidate_over_baseline": 1.4151674391738633,
+              "delta_candidate_minus_baseline": 179.864501953125
+            },
+            "workflow_p95": {
+              "baseline": 456.280517578125,
+              "candidate": 640.771484375,
+              "ratio_candidate_over_baseline": 1.4043367176317936,
+              "delta_candidate_minus_baseline": 184.490966796875
+            },
+            "throughput": {
+              "baseline": 2292163.12635531,
+              "candidate": 1643123.98144666,
+              "ratio_candidate_over_baseline": 0.716844260582507,
+              "delta_candidate_minus_baseline": -649039.1449086501
+            }
+          },
+          "baseline_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "candidate_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "baseline_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "candidate_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 257
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 106.25,
+              "candidate": 357.8125,
+              "ratio_candidate_over_baseline": 3.3676470588235294,
+              "delta_candidate_minus_baseline": 251.5625
+            },
+            "allocation_p95": {
+              "baseline": 742.1875,
+              "candidate": 981.25,
+              "ratio_candidate_over_baseline": 1.3221052631578947,
+              "delta_candidate_minus_baseline": 239.0625
+            },
+            "workflow_p50": {
+              "baseline": 449.371337890625,
+              "candidate": 652.6123046875,
+              "ratio_candidate_over_baseline": 1.4522784380305602,
+              "delta_candidate_minus_baseline": 203.240966796875
+            },
+            "workflow_p95": {
+              "baseline": 506.072998046875,
+              "candidate": 705.401611328125,
+              "ratio_candidate_over_baseline": 1.3938732436832901,
+              "delta_candidate_minus_baseline": 199.32861328125
+            },
+            "throughput": {
+              "baseline": 2215141.66865713,
+              "candidate": 1551838.45119248,
+              "ratio_candidate_over_baseline": 0.7005594599885073,
+              "delta_candidate_minus_baseline": -663303.21746465
+            }
+          },
+          "baseline_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "candidate_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "baseline_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "candidate_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 257
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 103.125,
+              "candidate": 382.8125,
+              "ratio_candidate_over_baseline": 3.712121212121212,
+              "delta_candidate_minus_baseline": 279.6875
+            },
+            "allocation_p95": {
+              "baseline": 765.625,
+              "candidate": 1032.8125,
+              "ratio_candidate_over_baseline": 1.3489795918367347,
+              "delta_candidate_minus_baseline": 267.1875
+            },
+            "workflow_p50": {
+              "baseline": 432.769775390625,
+              "candidate": 690.771484375,
+              "ratio_candidate_over_baseline": 1.5961638812495593,
+              "delta_candidate_minus_baseline": 258.001708984375
+            },
+            "workflow_p95": {
+              "baseline": 466.351318359375,
+              "candidate": 739.75830078125,
+              "ratio_candidate_over_baseline": 1.5862682738492546,
+              "delta_candidate_minus_baseline": 273.406982421875
+            },
+            "throughput": {
+              "baseline": 2335916.28112547,
+              "candidate": 1498607.40370353,
+              "ratio_candidate_over_baseline": 0.6415501342289051,
+              "delta_candidate_minus_baseline": -837308.87742194
+            }
+          },
+          "baseline_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "candidate_backing": [
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672,
+            1052672
+          ],
+          "baseline_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "candidate_providers": [
+            257,
+            257,
+            257,
+            257,
+            257,
+            257
+          ],
+          "phase_provider_publications_during_B": 0,
+          "prepared_chunks": 257
+        }
+      ]
+    },
+    {
+      "scope": "tiny",
+      "shape": "fixed",
+      "threads": 1,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1
+        ],
+        "allocations": 128,
+        "batch": 64,
+        "rounds": 64,
+        "warmup": 16
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 80.46875,
+          "candidate_process_metric_median": 89.0625,
+          "median_paired_ratio": 1.1457326892109503,
+          "paired_ratio_range": [
+            1.0204081632653061,
+            1.2413793103448276
+          ],
+          "median_paired_delta": 10.9375,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.0472411186696902,
+          "last_two_ratio_median": 1.2293853073463268
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 124.21875,
+          "candidate_process_metric_median": 157.03125,
+          "median_paired_ratio": 1.214835164835165,
+          "paired_ratio_range": [
+            1.101123595505618,
+            1.5606060606060606
+          ],
+          "median_paired_delta": 26.5625,
+          "candidate_slower_pairs": 4,
+          "first_two_ratio_median": 1.1719903691813804,
+          "last_two_ratio_median": 1.3737096237096238
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 415.234375,
+          "candidate_process_metric_median": 421.875,
+          "median_paired_ratio": 0.9793450720035921,
+          "paired_ratio_range": [
+            0.9528795811518325,
+            1.1046511627906976
+          ],
+          "median_paired_delta": -8.59375,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 0.9793450720035921,
+          "last_two_ratio_median": 1.028765371971265
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 556.640625,
+          "candidate_process_metric_median": 597.265625,
+          "median_paired_ratio": 1.0858160406189672,
+          "paired_ratio_range": [
+            0.9055851063829787,
+            1.445906432748538
+          ],
+          "median_paired_delta": 46.484375,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 0.9818073979958079,
+          "last_two_ratio_median": 1.2797544121889177
+        },
+        "throughput": {
+          "baseline_process_metric_median": 2222533.023722045,
+          "candidate_process_metric_median": 2138802.765312715,
+          "median_paired_ratio": 1.0195192480335307,
+          "paired_ratio_range": [
+            0.8817603256808632,
+            1.0297575204030527
+          ],
+          "median_paired_delta": 40974.0016492249,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 1.0284738069674333,
+          "last_two_ratio_median": 0.9468043641080552
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 84.375,
+              "candidate": 90.625,
+              "ratio_candidate_over_baseline": 1.0740740740740742,
+              "delta_candidate_minus_baseline": 6.25
+            },
+            "allocation_p95": {
+              "baseline": 139.0625,
+              "candidate": 153.125,
+              "ratio_candidate_over_baseline": 1.101123595505618,
+              "delta_candidate_minus_baseline": 14.0625
+            },
+            "workflow_p50": {
+              "baseline": 427.34375,
+              "candidate": 417.1875,
+              "ratio_candidate_over_baseline": 0.9762340036563071,
+              "delta_candidate_minus_baseline": -10.15625
+            },
+            "workflow_p95": {
+              "baseline": 578.90625,
+              "candidate": 612.5,
+              "ratio_candidate_over_baseline": 1.058029689608637,
+              "delta_candidate_minus_baseline": 33.59375
+            },
+            "throughput": {
+              "baseline": 2101213.22492113,
+              "candidate": 2158345.40903702,
+              "ratio_candidate_over_baseline": 1.027190093531814,
+              "delta_candidate_minus_baseline": 57132.18411588995
+            }
+          },
+          "baseline_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "candidate_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "baseline_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "candidate_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 76.5625,
+              "candidate": 78.125,
+              "ratio_candidate_over_baseline": 1.0204081632653061,
+              "delta_candidate_minus_baseline": 1.5625
+            },
+            "allocation_p95": {
+              "baseline": 109.375,
+              "candidate": 135.9375,
+              "ratio_candidate_over_baseline": 1.2428571428571429,
+              "delta_candidate_minus_baseline": 26.5625
+            },
+            "workflow_p50": {
+              "baseline": 400.78125,
+              "candidate": 393.75,
+              "ratio_candidate_over_baseline": 0.9824561403508771,
+              "delta_candidate_minus_baseline": -7.03125
+            },
+            "workflow_p95": {
+              "baseline": 587.5,
+              "candidate": 532.03125,
+              "ratio_candidate_over_baseline": 0.9055851063829787,
+              "delta_candidate_minus_baseline": -55.46875
+            },
+            "throughput": {
+              "baseline": 2343852.82252296,
+              "candidate": 2413600.07071094,
+              "ratio_candidate_over_baseline": 1.0297575204030527,
+              "delta_candidate_minus_baseline": 69747.24818797968
+            }
+          },
+          "baseline_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "candidate_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "baseline_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "candidate_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 71.875,
+              "candidate": 87.5,
+              "ratio_candidate_over_baseline": 1.2173913043478262,
+              "delta_candidate_minus_baseline": 15.625
+            },
+            "allocation_p95": {
+              "baseline": 103.125,
+              "candidate": 160.9375,
+              "ratio_candidate_over_baseline": 1.5606060606060606,
+              "delta_candidate_minus_baseline": 57.8125
+            },
+            "workflow_p50": {
+              "baseline": 403.125,
+              "candidate": 445.3125,
+              "ratio_candidate_over_baseline": 1.1046511627906976,
+              "delta_candidate_minus_baseline": 42.1875
+            },
+            "workflow_p95": {
+              "baseline": 522.65625,
+              "candidate": 582.03125,
+              "ratio_candidate_over_baseline": 1.1136023916292974,
+              "delta_candidate_minus_baseline": 59.375
+            },
+            "throughput": {
+              "baseline": 2393781.77780375,
+              "candidate": 2110741.80000515,
+              "ratio_candidate_over_baseline": 0.8817603256808632,
+              "delta_candidate_minus_baseline": -283039.97779859975
+            }
+          },
+          "baseline_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "candidate_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "baseline_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "candidate_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 90.625,
+              "candidate": 112.5,
+              "ratio_candidate_over_baseline": 1.2413793103448276,
+              "delta_candidate_minus_baseline": 21.875
+            },
+            "allocation_p95": {
+              "baseline": 142.1875,
+              "candidate": 168.75,
+              "ratio_candidate_over_baseline": 1.1868131868131868,
+              "delta_candidate_minus_baseline": 26.5625
+            },
+            "workflow_p50": {
+              "baseline": 447.65625,
+              "candidate": 426.5625,
+              "ratio_candidate_over_baseline": 0.9528795811518325,
+              "delta_candidate_minus_baseline": -21.09375
+            },
+            "workflow_p95": {
+              "baseline": 534.375,
+              "candidate": 772.65625,
+              "ratio_candidate_over_baseline": 1.445906432748538,
+              "delta_candidate_minus_baseline": 238.28125
+            },
+            "throughput": {
+              "baseline": 2094444.30240585,
+              "candidate": 2119260.12158841,
+              "ratio_candidate_over_baseline": 1.0118484025352474,
+              "delta_candidate_minus_baseline": 24815.819182559848
+            }
+          },
+          "baseline_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "candidate_backing": [
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192,
+            8192
+          ],
+          "baseline_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "candidate_providers": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "tiny",
+      "shape": "mixed",
+      "threads": 1,
+      "configuration": {
+        "pairs": 4,
+        "threads": [
+          1
+        ],
+        "allocations": 128,
+        "batch": 64,
+        "rounds": 64,
+        "warmup": 16
+      },
+      "workload": "arena_lookup_composite_v1",
+      "metrics": {
+        "allocation_p50": {
+          "baseline_process_metric_median": 80.46875,
+          "candidate_process_metric_median": 80.46875,
+          "median_paired_ratio": 0.99,
+          "paired_ratio_range": [
+            0.9090909090909091,
+            1.7916666666666667
+          ],
+          "median_paired_delta": -0.78125,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 1.3958333333333335,
+          "last_two_ratio_median": 0.9445454545454546
+        },
+        "allocation_p95": {
+          "baseline_process_metric_median": 202.34375,
+          "candidate_process_metric_median": 196.875,
+          "median_paired_ratio": 0.9351309307752138,
+          "paired_ratio_range": [
+            0.8650793650793651,
+            1.1130434782608696
+          ],
+          "median_paired_delta": -14.0625,
+          "candidate_slower_pairs": 1,
+          "first_two_ratio_median": 1.025487256371814,
+          "last_two_ratio_median": 0.8987050960735171
+        },
+        "workflow_p50": {
+          "baseline_process_metric_median": 456.640625,
+          "candidate_process_metric_median": 458.984375,
+          "median_paired_ratio": 0.992553579987675,
+          "paired_ratio_range": [
+            0.948892674616695,
+            1.0670103092783505
+          ],
+          "median_paired_delta": -3.90625,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 1.017271388405409,
+          "last_two_ratio_median": 0.9832336835297887
+        },
+        "workflow_p95": {
+          "baseline_process_metric_median": 622.265625,
+          "candidate_process_metric_median": 704.6875,
+          "median_paired_ratio": 1.128303192204947,
+          "paired_ratio_range": [
+            0.9328657314629258,
+            1.1797297297297298
+          ],
+          "median_paired_delta": 80.078125,
+          "candidate_slower_pairs": 3,
+          "first_two_ratio_median": 1.0562977305963277,
+          "last_two_ratio_median": 1.128303192204947
+        },
+        "throughput": {
+          "baseline_process_metric_median": 2111093.208640765,
+          "candidate_process_metric_median": 1987883.27469114,
+          "median_paired_ratio": 0.985155661407205,
+          "paired_ratio_range": [
+            0.8987559898968422,
+            1.029771615008159
+          ],
+          "median_paired_delta": -32015.656004149932,
+          "candidate_slower_pairs": 2,
+          "first_two_ratio_median": 0.9642638024525007,
+          "last_two_ratio_median": 0.985155661407205
+        }
+      },
+      "pairs": [
+        {
+          "pair": 0,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 82.8125,
+              "candidate": 82.8125,
+              "ratio_candidate_over_baseline": 1.0,
+              "delta_candidate_minus_baseline": 0.0
+            },
+            "allocation_p95": {
+              "baseline": 226.5625,
+              "candidate": 212.5,
+              "ratio_candidate_over_baseline": 0.9379310344827586,
+              "delta_candidate_minus_baseline": -14.0625
+            },
+            "workflow_p50": {
+              "baseline": 481.25,
+              "candidate": 465.625,
+              "ratio_candidate_over_baseline": 0.9675324675324676,
+              "delta_candidate_minus_baseline": -15.625
+            },
+            "workflow_p95": {
+              "baseline": 779.6875,
+              "candidate": 727.34375,
+              "ratio_candidate_over_baseline": 0.9328657314629258,
+              "delta_candidate_minus_baseline": -52.34375
+            },
+            "throughput": {
+              "baseline": 1908444.96214327,
+              "candidate": 1965262.45082046,
+              "ratio_candidate_over_baseline": 1.029771615008159,
+              "delta_candidate_minus_baseline": 56817.48867718992
+            }
+          },
+          "baseline_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "candidate_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "baseline_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "candidate_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "pair": 1,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 75,
+              "candidate": 134.375,
+              "ratio_candidate_over_baseline": 1.7916666666666667,
+              "delta_candidate_minus_baseline": 59.375
+            },
+            "allocation_p95": {
+              "baseline": 179.6875,
+              "candidate": 200,
+              "ratio_candidate_over_baseline": 1.1130434782608696,
+              "delta_candidate_minus_baseline": 20.3125
+            },
+            "workflow_p50": {
+              "baseline": 454.6875,
+              "candidate": 485.15625,
+              "ratio_candidate_over_baseline": 1.0670103092783505,
+              "delta_candidate_minus_baseline": 30.46875
+            },
+            "workflow_p95": {
+              "baseline": 578.125,
+              "candidate": 682.03125,
+              "ratio_candidate_over_baseline": 1.1797297297297298,
+              "delta_candidate_minus_baseline": 103.90625
+            },
+            "throughput": {
+              "baseline": 2151599.51673058,
+              "candidate": 1933762.95352076,
+              "ratio_candidate_over_baseline": 0.8987559898968422,
+              "delta_candidate_minus_baseline": -217836.56320982007
+            }
+          },
+          "baseline_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "candidate_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "baseline_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "candidate_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "pair": 2,
+          "order": "AB",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 85.9375,
+              "candidate": 78.125,
+              "ratio_candidate_over_baseline": 0.9090909090909091,
+              "delta_candidate_minus_baseline": -7.8125
+            },
+            "allocation_p95": {
+              "baseline": 196.875,
+              "candidate": 170.3125,
+              "ratio_candidate_over_baseline": 0.8650793650793651,
+              "delta_candidate_minus_baseline": -26.5625
+            },
+            "workflow_p50": {
+              "baseline": 458.59375,
+              "candidate": 435.15625,
+              "ratio_candidate_over_baseline": 0.948892674616695,
+              "delta_candidate_minus_baseline": -23.4375
+            },
+            "workflow_p95": {
+              "baseline": 571.875,
+              "candidate": 637.5,
+              "ratio_candidate_over_baseline": 1.1147540983606556,
+              "delta_candidate_minus_baseline": 65.625
+            },
+            "throughput": {
+              "baseline": 2094283.66908682,
+              "candidate": 2147651.00671141,
+              "ratio_candidate_over_baseline": 1.0254823825503352,
+              "delta_candidate_minus_baseline": 53367.33762458991
+            }
+          },
+          "baseline_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "candidate_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "baseline_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "candidate_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "metrics": {
+            "allocation_p50": {
+              "baseline": 78.125,
+              "candidate": 76.5625,
+              "ratio_candidate_over_baseline": 0.98,
+              "delta_candidate_minus_baseline": -1.5625
+            },
+            "allocation_p95": {
+              "baseline": 207.8125,
+              "candidate": 193.75,
+              "ratio_candidate_over_baseline": 0.9323308270676691,
+              "delta_candidate_minus_baseline": -14.0625
+            },
+            "workflow_p50": {
+              "baseline": 444.53125,
+              "candidate": 452.34375,
+              "ratio_candidate_over_baseline": 1.0175746924428823,
+              "delta_candidate_minus_baseline": 7.8125
+            },
+            "workflow_p95": {
+              "baseline": 666.40625,
+              "candidate": 760.9375,
+              "ratio_candidate_over_baseline": 1.141852286049238,
+              "delta_candidate_minus_baseline": 94.53125
+            },
+            "throughput": {
+              "baseline": 2127902.74819471,
+              "candidate": 2010504.09856182,
+              "ratio_candidate_over_baseline": 0.9448289402640748,
+              "delta_candidate_minus_baseline": -117398.64963288978
+            }
+          },
+          "baseline_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "candidate_backing": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "baseline_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "candidate_providers": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ]
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Same current overwrite-cache strategy versus retained-shape candidate; not the pre-cursor library.",
+    "Host CPU affinity, frequency and other activity not controlled.",
+    "All pairs retained; no retries, exclusions or pooling with earlier runs.",
+    "P50/P95 allocation metric is batch elapsed time divided by batch size, not an individual-call latency distribution.",
+    "Phase preparation and 64 A seeds excluded from timed B; not end-to-end preparation+use performance.",
+    "Native final-resource and provider-publication checks were recomputed from output, not independently observed by another allocator monitor."
+  ],
+  "raw_native_sha256": {
+    "main/fixed-t1-p00-0-baseline": "d7604ffeb940f177bee334697645e30e3123370e4581a979ea8df9f0414b6a87",
+    "main/fixed-t1-p00-1-candidate": "602ef45782397f7a3e425228b1efe0acd49e155cfa52b2cfef760c538d064b36",
+    "main/fixed-t1-p01-0-candidate": "9776e4bfb58646524bcb8d83ad25a431d8f45f510abaea4036bfebada156ed7a",
+    "main/fixed-t1-p01-1-baseline": "4d46bf864b93b720f7c042885fc624e426a4a89cf085339dea3cd48291de2902",
+    "main/fixed-t1-p02-0-baseline": "91ff06b12cb7211ae4d4cc5151ce3ee5235b6f3e105b33832c64b5980485a46e",
+    "main/fixed-t1-p02-1-candidate": "b5b0fa2536fb3a71ddc09be17e2fa012ec14a5cd128bf988ebea984861e0ac74",
+    "main/fixed-t1-p03-0-candidate": "3adb48b872ce36eb6d483414c7053f02cc9da1c4524ac4e7f187c3f6ae07a849",
+    "main/fixed-t1-p03-1-baseline": "a36f861ae0807372b570ba91ef43d178d8c89c4dac18c8218640b53d1f470405",
+    "main/fixed-t4-p00-0-baseline": "e821e8a3090c82f2f3405340ddc1b090290e7ade8fd59c6541a799e2c0cccf66",
+    "main/fixed-t4-p00-1-candidate": "d02e23f863742c9d3640273da4250e4229f10f263dcb3e6ee1c6c9348dc0bad8",
+    "main/fixed-t4-p01-0-candidate": "0caa91bb634f87ac178484804bd376465fbbe8a36c19f213f3e8507594089b97",
+    "main/fixed-t4-p01-1-baseline": "46cad6f9dd996c4d1af33671efa2bdd5aa984dae9e34a1bf82bf402c9f3cc5a7",
+    "main/fixed-t4-p02-0-baseline": "9cb595d90546a36660c309e06851fca0dd8a279c0a4e312d1346175102c8879f",
+    "main/fixed-t4-p02-1-candidate": "29ffa8aea125214d561467d3d6d0dfdf9734fd5f4993da3a27b5a39ac0b44d21",
+    "main/fixed-t4-p03-0-candidate": "abb794b01acd07954dfaa91792306b57a34723d8e72fa0c884276aec96586582",
+    "main/fixed-t4-p03-1-baseline": "d31fe424b4c97c3f1d59e73f7e4df3fb9df41c8dc0e3e4f0cd3fd82cd1f0a2c5",
+    "main/mixed-t1-p00-0-baseline": "a1a0a4684e4f9db9f888df9cfca282be325a159370249dafd5165a6578b2e450",
+    "main/mixed-t1-p00-1-candidate": "7f1ac183cd036be99b35c528660fd271d83b4e37e13eb0f8990213009f9bd41b",
+    "main/mixed-t1-p01-0-candidate": "321614662cf8a31c590c26ef5c987b60f256afaac006cbfe3d97fece131fb724",
+    "main/mixed-t1-p01-1-baseline": "e4f3b1548f7ddc4845a6498c84ee281e8a5d68a089d0d944cd90ab11237ebd5f",
+    "main/mixed-t1-p02-0-baseline": "acc09731f55a8d77fee8d7cb09761c53ec7f6e00f869d23a6d91141ec6c384ec",
+    "main/mixed-t1-p02-1-candidate": "768ba596563ead3fee0693fd68d7a2df68f77a87468ee5aaef825c4920312647",
+    "main/mixed-t1-p03-0-candidate": "7cebbf9b8c657f558ad9f8b79b5cbd99f32413bf0994adc53029ea51381ff7dd",
+    "main/mixed-t1-p03-1-baseline": "f71795670f4cc4b82a92e886663fb490e637358f7af2eafec888c7359425b4ed",
+    "main/mixed-t4-p00-0-baseline": "d6fddb7a6ce4cd16f1cfba5846e270db626ee4883bc1d1ba24a9c90bf1c3eaac",
+    "main/mixed-t4-p00-1-candidate": "7c6bb5a9a35655d8a1f15dbfd4edb80cdb2a743d78b6934515edcade5f57878e",
+    "main/mixed-t4-p01-0-candidate": "27341ad4180184d8ad536c8d726765c2bf70c6f9d8a50a1ee44fa8a0975e9fac",
+    "main/mixed-t4-p01-1-baseline": "5de141f9f87ec108a024b4721b3b63afa6c10032beba4c58fe9ffd978100b058",
+    "main/mixed-t4-p02-0-baseline": "1a6aa62c42d7917eb438f5633f433ccd64cc0a52cbb1a063358d1a950fc58b08",
+    "main/mixed-t4-p02-1-candidate": "bf790e2df0ceb8ad792ba2746d2526ea559bd7e3171e9bedf9ba17f45ff39f19",
+    "main/mixed-t4-p03-0-candidate": "4e149b1e6e65af085070daeb34241d5d9445b42d8707b79714ee7449c7885f0d",
+    "main/mixed-t4-p03-1-baseline": "2194623bc98714d472f8bee3b16b0ff4459a39906a7767cf028d71ec37be9d20",
+    "main/phase-t1-p00-0-baseline": "ba8300f8ba2ae234e0b401e36e9223e42cb8a04efc6589b06eda5b09d7c9e767",
+    "main/phase-t1-p00-1-candidate": "45c6d83e5c950decb13982f5ef531af19c9e74fd8bb7036f3720cbd65d04285b",
+    "main/phase-t1-p01-0-candidate": "40ddffadf5256f98b26290f6fafe08b3f3e68169143fd2f29b1d941e8154465b",
+    "main/phase-t1-p01-1-baseline": "26e07e2d2618e630e9c0f03491bc51e85856ec005a4de8584e39baac56b5f461",
+    "main/phase-t1-p02-0-baseline": "dd879c7cada0b55a1c200a30882f5a0fa03c00dcf65f182c7b5092731456ea69",
+    "main/phase-t1-p02-1-candidate": "fe5845fbb0371b305d8b47c4d22f2015b7e55cd7b992ad0bbe09ac7333ce9996",
+    "main/phase-t1-p03-0-candidate": "b1e1e5f3d9c78d74689bebace95e432ac775d56a249a27128f6534e83f0e8536",
+    "main/phase-t1-p03-1-baseline": "dd042c1d8a0a4226fc5e4a7b0318afc93b54270a664d6ffc2ae9e8cb58a63b07",
+    "main/phase-t4-p00-0-baseline": "445c12d6dd16c930d96125961c1a4b6a48a1164042a8b6cf509b0b9d9673663b",
+    "main/phase-t4-p00-1-candidate": "4353998006663d69cdc18abd6f3246ab3c0d44a1f991c6e7c1baead5fc92afdf",
+    "main/phase-t4-p01-0-candidate": "45185c42c90894eb9a9ea631314677a81dc071c50b0d69a58c1160fc926325a8",
+    "main/phase-t4-p01-1-baseline": "1acf6273823e2820163ebca64eccc35cadb95571e3959aafb30acf98fc1ae66e",
+    "main/phase-t4-p02-0-baseline": "aebd175477a577d0702c87ab3c1a4bed1943dde9bc4a77facfce8568fd85c481",
+    "main/phase-t4-p02-1-candidate": "421e378dd92c120cdff003ebdfb7d5b8f2bf306618fe1607fc22add99752da07",
+    "main/phase-t4-p03-0-candidate": "477db6796b5f4a1480ce45ebc409c0f552f1bdd9ae64294468bfffe26c45f778",
+    "main/phase-t4-p03-1-baseline": "8bcf346b8cdb9485ea755c4a92fb83f796da6675046c8d37f3d2e52449901180",
+    "tiny/fixed-t1-p00-0-baseline": "a8c2cac72d92534dcb8c61aa241b28f2a95748a84da3a9e91a893322b4936133",
+    "tiny/fixed-t1-p00-1-candidate": "7b10ad4d02af049c22e55fdd41a6226390ae9bb28080b5f0ec1d7554d814ad89",
+    "tiny/fixed-t1-p01-0-candidate": "e83401492f8537ace4230680543d576e5a463c872818998c2eaf94c63966a383",
+    "tiny/fixed-t1-p01-1-baseline": "db2ff35f655a20d9e87911bbe2f84ffcbd59eadbc4dd996029e6411974f66e46",
+    "tiny/fixed-t1-p02-0-baseline": "ce387f6d8de6f41a0a6e32f2482112fd585526aa7c8de3dfb3241892ca53312c",
+    "tiny/fixed-t1-p02-1-candidate": "4d9c5b0c53b20998e89976961b40c7163fe7e12a147caf27fb0d4c23e42e72b7",
+    "tiny/fixed-t1-p03-0-candidate": "24502b621c3143577a6279929be49c9cbf662a855c797cc40c9756c86886faed",
+    "tiny/fixed-t1-p03-1-baseline": "b217859fc0df952469b13525c1e1835ff2f923c39eedd7922803a780694ae94a",
+    "tiny/mixed-t1-p00-0-baseline": "da3d2d9006fcc0b66061523a8a32bfaacb3b307627a12c1d1475e0e8a70f187b",
+    "tiny/mixed-t1-p00-1-candidate": "f86bfb253c83d055665b74ec3ed7a518483711589f612b851aa61ba6c01d9980",
+    "tiny/mixed-t1-p01-0-candidate": "a3549bc34595ea4ce52133a23bb2f0fb5e12fe038511a241442819c122ef499e",
+    "tiny/mixed-t1-p01-1-baseline": "f5534da05482f6cc6ba45cd664c784d9acee06865fe19b4fdbe1b8f9ca1f2a4e",
+    "tiny/mixed-t1-p02-0-baseline": "500cd7f16a7fad3bd400d041e4afe0484e4c6dfe86b41e48a0d573b2b051d7a1",
+    "tiny/mixed-t1-p02-1-candidate": "5f15ed05f9b0f7703af596465c5c7304a99b11e9d1ff9597a183f508fea45f8d",
+    "tiny/mixed-t1-p03-0-candidate": "96ba281a69d72db48628f8b4171cc338c3960325103b5b5b2c82ca704c54d045",
+    "tiny/mixed-t1-p03-1-baseline": "6535afadd09e7b7b9894988d43e2787f6e90b1175e71d8d65828d9f303888b1e"
+  },
+  "adoption": "REJECTED_NOT_MERGED",
+  "scope_limit": "HOST_EXPLORATORY_NO_ANDROID_OR_PRODUCT_GAIN_CLAIM",
+  "base_commit": "d2b6aa30351dc7f0cee886e6e57559e0c9da90ae",
+  "candidate_core_sha256": "82ea20b3f8406326dd9815b7feeffc5726d6ab98c635a68d63d853f41f8ff414"
+}

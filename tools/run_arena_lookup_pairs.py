@@ -38,7 +38,7 @@ def expected_checksum(shape, threads, allocations):
     result = 0
     for worker in range(threads):
         for operation in range(allocations):
-            count = 64 if shape == "fixed" else (operation % 4 + 1) * 32
+            count = (operation % 4 + 1) * 32 if shape == "mixed" else 64
             first = (worker * 17 + operation * 31) % 256
             before_wrap = min(count, 256 - first)
             result += before_wrap * (2 * first + before_wrap - 1) // 2
@@ -66,8 +66,9 @@ def runtimes(directory):
 
 
 def validate(native, shape, threads, args, staged):
+    workload = "arena_lookup_phase_shift_v1" if shape == "phase" else "arena_lookup_composite_v1"
     require(isinstance(native, dict) and native.get("schema_version") == 1 and
-            native.get("workload") == "arena_lookup_composite_v1" and native.get("success") is True,
+            native.get("workload") == workload and native.get("success") is True,
             "native_not_success")
     require(native.get("shape") == shape and native.get("threads") == threads and
             native.get("allocations_per_thread") == args.allocations and
@@ -78,6 +79,12 @@ def validate(native, shape, threads, args, staged):
     require(loaded in staged and sha(loaded) == staged[loaded], "loaded_runtime_not_selected_bytes")
     per_round = expected_checksum(shape, threads, args.allocations)
     operations = args.allocations * threads
+    prepared = (operations * 64 + 64 * 32 + 4095) // 4096
+    if shape == "phase":
+        require(native.get("phase_seed_allocations") == 64 and native.get("phase_seed_bytes") == 32 and
+                native.get("phase_seed_alignment") == 8 and native.get("timed_phase_bytes") == 64 and
+                native.get("timed_phase_alignment") == 16 and native.get("phase_prepared_chunks") == prepared,
+                "phase_preparation_identity_mismatch")
     require(native.get("checksum") == per_round * args.rounds and
             native.get("completed_operations") == operations * args.rounds and
             native.get("final_resources") == "CLOSED_ZERO" and native.get("performance_qualified") is False,
@@ -93,6 +100,10 @@ def validate(native, shape, threads, args, staged):
                 type(row.get("peak_backing_bytes")) is int and row["peak_backing_bytes"] > 0 and
                 type(row.get("provider_allocation_count")) is int and row["provider_allocation_count"] > 1,
                 "round_result_mismatch")
+        if shape == "phase":
+            require(row.get("provider_allocation_count_before_timed") == prepared and
+                    row["provider_allocation_count"] == prepared and row["peak_backing_bytes"] == prepared * 4096,
+                    "provider_published_during_B_phase")
         values = row.get("allocation_batch_ns_per_op")
         require(isinstance(values, list) and
                 len(values) == threads * math.ceil(args.allocations / args.batch) and
@@ -122,6 +133,7 @@ def main():
     parser.add_argument("--out-dir", type=Path, default=ROOT / "build/arena-lookup-pairs")
     parser.add_argument("--pairs", type=int, default=4)
     parser.add_argument("--threads", type=int, nargs="+", default=[1, 4])
+    parser.add_argument("--shapes", nargs="+", choices=("fixed", "mixed", "phase"), default=["fixed", "mixed"])
     parser.add_argument("--allocations", type=int, default=4096)
     parser.add_argument("--batch", type=int, default=64)
     parser.add_argument("--rounds", type=int, default=6)
@@ -129,6 +141,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=60)
     args = parser.parse_args()
     require(2 <= args.pairs <= 32 and args.pairs % 2 == 0, "pairs_must_be_even_between_2_and_32")
+    require(len(set(args.shapes)) == len(args.shapes), "duplicate_shapes")
     require(args.threads and len(set(args.threads)) == len(args.threads) and
             all(1 <= count <= 16 for count in args.threads), "invalid_thread_counts")
     require(128 <= args.allocations <= 65536 and
@@ -153,9 +166,11 @@ def main():
                "runtime_files": {label: [{"name": path.name, "sha256": digest} for path, digest in items]
                                  for label, items in libraries.items()},
                "runs": [], "summaries": [], "failure": None}
+    if args.shapes != ["fixed", "mixed"]:
+        receipt["configuration"]["shapes"] = args.shapes
     save(output / "receipt.json", receipt)
     try:
-        for shape in ("fixed", "mixed"):
+        for shape in args.shapes:
             for threads in args.threads:
                 paired = []
                 for pair in range(args.pairs):

@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_INDEPENDENT_SOURCE_AUDIT_WITH_ADOPTION_DEFERRED",
+  "base_commit": "d2b6aa30351dc7f0cee886e6e57559e0c9da90ae",
+  "reviewed_source_sha256": {
+    "src/mgmem.cpp": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+    "tests/core_tests.cpp": "a03e12be000cb982e2a7c99f4771bc4fae625a972df62bf34496ecce8f8d17a7"
+  },
+  "source_binding": {
+    "src/mgmem.cpp": {
+      "expected": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+      "actual": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+      "matches": true
+    },
+    "tests/core_tests.cpp": {
+      "expected": "a03e12be000cb982e2a7c99f4771bc4fae625a972df62bf34496ecce8f8d17a7",
+      "actual": "a03e12be000cb982e2a7c99f4771bc4fae625a972df62bf34496ecce8f8d17a7",
+      "matches": true
+    },
+    "CMakeLists.txt": {
+      "expected": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+      "actual": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+      "matches": true
+    },
+    "tests/cpp_checked/CMakeLists.txt": {
+      "expected": "68b2ff1d33d3fb1483456dc7f548e1b9359dc434a63c25caf243b41aa6b21053",
+      "actual": "68b2ff1d33d3fb1483456dc7f548e1b9359dc434a63c25caf243b41aa6b21053",
+      "matches": true
+    },
+    "tests/cpp_checked_import_tests.cpp": {
+      "expected": "5a7dfc69ed6c93d4ee140f925712ff68c7d0453926284ca9654b83fe9ef528aa",
+      "actual": "5a7dfc69ed6c93d4ee140f925712ff68c7d0453926284ca9654b83fe9ef528aa",
+      "matches": true
+    }
+  },
+  "validation_log_binding": {
+    "normal": {
+      "path": "build/claim-ref-v2-semantic-20261109",
+      "recorded_passed": 23,
+      "recorded_total": 23,
+      "summary_line": [
+        "100% tests passed, 0 tests failed out of 23"
+      ],
+      "all_log_hashes_match": true,
+      "logs": {
+        "configure.log": {
+          "exists": true,
+          "matches": true
+        },
+        "build.log": {
+          "exists": true,
+          "matches": true
+        },
+        "ctest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "Testing/Temporary/LastTest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "CMakeFiles/CMakeConfigureLog.yaml": {
+          "exists": true,
+          "matches": true
+        }
+      }
+    },
+    "cpp": {
+      "path": "build/claim-ref-v2-cpp-20261109",
+      "recorded_passed": 12,
+      "recorded_total": 12,
+      "summary_line": [
+        "100% tests passed, 0 tests failed out of 12"
+      ],
+      "all_log_hashes_match": true,
+      "logs": {
+        "configure.log": {
+          "exists": true,
+          "matches": true
+        },
+        "build.log": {
+          "exists": true,
+          "matches": true
+        },
+        "ctest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "Testing/Temporary/LastTest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "CMakeFiles/CMakeConfigureLog.yaml": {
+          "exists": true,
+          "matches": true
+        }
+      }
+    },
+    "asan": {
+      "path": "build/claim-ref-v2-asan-20261109",
+      "recorded_passed": 23,
+      "recorded_total": 23,
+      "summary_line": [
+        "100% tests passed, 0 tests failed out of 23"
+      ],
+      "all_log_hashes_match": true,
+      "logs": {
+        "configure.log": {
+          "exists": true,
+          "matches": true
+        },
+        "build.log": {
+          "exists": true,
+          "matches": true
+        },
+        "ctest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "Testing/Temporary/LastTest.log": {
+          "exists": true,
+          "matches": true
+        },
+        "CMakeFiles/CMakeConfigureLog.yaml": {
+          "exists": true,
+          "matches": true
+        }
+      }
+    }
+  },
+  "findings": [],
+  "invariants_reviewed": [
+    {
+      "name": "registry_reference_lifetime",
+      "result": "PASS_SCOPED",
+      "evidence": "src/mgmem.cpp:134-205,341-402,523-594,632-704",
+      "reason": "A reference becomes active only after successful list insertion. No cleanup path erases a pending claim before publication. Erase clears active/reference. Backing list splices preserve references; registry list insert/erase of other nodes preserve iterators."
+    },
+    {
+      "name": "single_cleanup_responsibility",
+      "result": "PASS_SCOPED",
+      "evidence": "src/mgmem.cpp:577-584,682-691",
+      "reason": "Rollback copies Backing and immediately removes its original backing node before releasing the domain lock; trivial destruction performs no implicit claim cleanup, so only the local copy can drop the claim."
+    },
+    {
+      "name": "callback_reentrancy_and_registry_lock",
+      "result": "PASS_SCOPED",
+      "evidence": "src/mgmem.cpp:273-304,341-402",
+      "reason": "Range registry lock is held only while inspecting/modifying registry nodes, never across provider or external callbacks. Detached backings are uniquely owned by their cleanup invocation while domain pending/maintenance blocks premature destruction."
+    },
+    {
+      "name": "unknown_outcome_quarantine",
+      "result": "PASS_SCOPED",
+      "evidence": "src/mgmem.cpp:280-294,584-592,687-701",
+      "reason": "Checked callback failures, thrown legacy/provider callbacks, unsafe overlap, and uncertain retain preserve the registry claim and poison/charge the domain without retry. Known retain failure consumes the claim without release."
+    },
+    {
+      "name": "overlap_and_external_identity",
+      "result": "UNCHANGED",
+      "evidence": "src/mgmem.cpp:143-145,183-190",
+      "reason": "External import still rejects overlapping ranges and reused external IDs. Owned publication scans all other non-releasing claims; only own-node identification changes from token equality to iterator equality. Token monotonic overflow guard remains."
+    },
+    {
+      "name": "arena_cache_rejected_policies_absent",
+      "result": "PASS_SCOPED",
+      "evidence": "src/mgmem.cpp:487-511",
+      "reason": "Normalized successful requests overwrite valid/bytes/alignment/iterator unconditionally exactly as HEAD. Same-shape requests use cached lower bound; different shapes scan from begin. No retained-shape or prefix-only cache candidate remains."
+    },
+    {
+      "name": "public_abi",
+      "result": "UNCHANGED",
+      "evidence": "git diff include;src/mgmem.cpp",
+      "reason": "Changes are internal Backing representation/helper signatures; public headers and exported API definitions unchanged."
+    }
+  ],
+  "layout_evidence": {
+    "path": "build/claim-ref-v2-layout-20261109/layout.public.json",
+    "scope": "WINDOWS_X64_MSVC_RELEASE_STRUCT_SIZE_ONLY",
+    "baseline_and_candidate": {
+      "Backing": 80,
+      "RangeClaim": 40,
+      "domain": 456
+    },
+    "not_proof_of": [
+      "Android layout",
+      "allocator usable size",
+      "RSS",
+      "total metadata reduction"
+    ]
+  },
+  "adoption_recommendation": "PRESERVE_EXPERIMENT_BRANCH_DO_NOT_SWITCH_GENERAL_DEFAULT_ON_CURRENT_MIXED_ARENA_COUNTEREVIDENCE",
+  "limits": [
+    "Static scoped audit and hash-bound prior tests do not prove all interleavings; TSan was not run.",
+    "ASan evidence is MSVC address sanitizer, not leak freedom or concurrency proof.",
+    "Quarantined domains intentionally retain uncertain ownership and claims.",
+    "No tests or device commands were executed by this audit.",
+    "Performance adoption requires independent statistical audit; this source audit does not certify speed."
+  ]
+}

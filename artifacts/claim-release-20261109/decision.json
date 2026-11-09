@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-09",
+  "state": "ROUND_CLOSED_EXPERIMENT_PRESERVED_DEFAULT_NOT_ADOPTED",
+  "performance_qualified": false,
+  "production_core": {
+    "strategy": "UNCHANGED_TOKEN_LOOKUP",
+    "base_commit": "d2b6aa30351dc7f0cee886e6e57559e0c9da90ae",
+    "source_sha256": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a"
+  },
+  "experiment": {
+    "branch": "codex/claim-reference-experiment-20261109",
+    "core_commit": "f9882d8",
+    "source_sha256": "54c61f43c0d5f9980141e2c0b33e493db2bede01403b3a4e2a011594df9d1def",
+    "adoption": "DEFERRED_MIXED_AND_TINY_ARENA_COUNTEREVIDENCE",
+    "branch_scope": "LOCAL_BRANCH_WITH_SOURCE_PATCH_PUBLISHED_IN_MAIN",
+    "patch_application": "git apply --unidiff-zero <claim-reference-v1.patch-or-v2.patch> against baseline core; patches use zero context so patch-format context markers do not masquerade as trailing source whitespace."
+  },
+  "rejected_cache_trials": {
+    "sticky": "REJECTED_NOT_MERGED",
+    "prefix_hint": "REJECTED_NOT_MERGED",
+    "identity": "Each retained patch independently applied in memory to the frozen baseline matches its reported candidate source hash."
+  },
+  "independently_recomputed_rounds": {
+    "host_v1": {
+      "processes": 160,
+      "pairs": 80,
+      "groups": 20,
+      "evidence": "host-v1.json"
+    },
+    "host_v2": {
+      "processes": 160,
+      "pairs": 80,
+      "groups": 20,
+      "evidence": "host-v2.json"
+    },
+    "arm64_v2": {
+      "processes": 160,
+      "pairs": 80,
+      "groups": 20,
+      "frozen_inputs": 31,
+      "evidence": "arm64-v2.json"
+    }
+  },
+  "metadata_corrections": [
+    {
+      "original": "Host v2 Arena counter-plan attribution says INTERNAL_CACHE_POLICY_CHANGE and its claim_plan_sha256 points at the v1 plan.",
+      "correction": "The actual v2 frozen inputs, runtime hashes and raw trial identity were independently verified. This is a stable-node-reference v2 countercheck, not a cache-policy comparison. Frozen originals remain unchanged.",
+      "verified_v2_claim_plan_sha256": "30f15eba0c33714518b04170c983d7a0fe7653a4eaae3c1a38553f784e11578b"
+    },
+    {
+      "original": "ARM64 receipt binary_manifest is empty.",
+      "correction": "Identity evidence comes from complete per-invocation pre/post EXE and SO hashes and recorded module path; an empty manifest is not cited as proof."
+    },
+    {
+      "original": "At audit time no public aggregate or adoption decision existed.",
+      "correction": "Resolved by this decision and its host-v1/host-v2/arm64-v2 evidence files; the time-of-audit summaries are retained unchanged."
+    },
+    {
+      "original": "New CI smoke receipts were not uploaded and Arena baseline wording described only the first cache trial.",
+      "correction": "Both receipt paths are now included in upload-artifact and the contract identifies each later trial through its own frozen source hashes."
+    }
+  ],
+  "device": {
+    "new_commands_during_finish": 0,
+    "post_observation": "Recorded sample-final_occupancy and final boot check already exist in the historical receipt; no diagnostic process or instrumentation observed then.",
+    "remote_experiment_directory": "RETAINED_AS_PLANNED",
+    "shared_lock": false,
+    "current_state_claimed": false
+  },
+  "qualification": {
+    "android_sdk_or_aar_rebuilt": false,
+    "bil_changed": false,
+    "release": "NOT_PERFORMED",
+    "long_term_goal": "REMAINS_PAUSED"
+  },
+  "limits": [
+    "Descriptive paired medians only; four pairs per group, no product performance qualification.",
+    "Release wins do not negate Arena mixed/tiny and forward counterevidence.",
+    "Concurrent mixed groups have differing peak backing; API workload and byte oracle match, scheduling and capacity trajectory are uncontrolled.",
+    "x64 Release sizeof equality is not metadata total, Android layout, RSS or memory-saving evidence.",
+    "ASan is not TSan, proof of all interleavings or leak freedom; uncertain ownership is quarantined."
+  ],
+  "files_sha256": {
+    "host-v1.json": "21cbaa2d2c1d4d93a2940495a9c6212c747cf7fd8b82e0fa24440006e63d1702",
+    "host-v2.json": "68f039cdd1566efe8536f008d5a72a7a5d6207a2ef70d324978251358b4351b8",
+    "arm64-v2.json": "fddbe3ccad8a3462921028f1ecaa1ca2424330a8ff37c9e2d3456bf1a9229565",
+    "semantics-audit.json": "4177065128ff18d944a4008482b0c94e72f7c46b39d3f0b62a7b8afb298338a8",
+    "benchmark-audit.json": "b01b96a6a60798bb79f968f74637edc4a7e22e54823520e4db7292043ca42a8a",
+    "layout-v1.json": "9ec403f47ec28b226d86fc92adc1c3ed62c080831cd0e0647feacad5e1530e36",
+    "layout-v2.json": "b78f5ceb0d66b8ad31ab000ed1193bfc9455501eda368e7c0c2f0c201f4cfd22",
+    "claim-reference-v1.patch": "9f03970368076dbe18f30bfa0dc42d9d4afc73b2e2711aac2a083862d346ff4d",
+    "claim-reference-v2.patch": "28c3c9c95d1ce0a32c2cd718dc336836198e788db0c2521493d4c4efed79b486",
+    "validation-v2.json": "fedb7f3e429cbe91002e95fd1d6629b4a589f48992b26bf48061f6e0226fa5dc",
+    "rejected-sticky.json": "6c06198fb5c11afebf1dbb4e1060c63134264846aebd747e045a20b741579a00",
+    "rejected-hint.json": "fa8938fbb1e07d3488c38dc265e843383a8484d0fb25a9cc5a448e5c166771ed",
+    "rejected-sticky.patch": "676ffb6d8f0a35384eff0b625d5bf3317fcf2bba9ef9a997e92ad191cc52bae7",
+    "rejected-hint.patch": "493786b9dbe910d02c73f0af3f51a7bcc86b3d4d78a2d05787a5adf950a161b7",
+    "main-host-validation.json": "e1461ecb735aa14db2b10bcdfbe62cb43ea15362325ad4da82038d3a4042db28"
+  },
+  "main_validation": "main-host-validation.json"
+}

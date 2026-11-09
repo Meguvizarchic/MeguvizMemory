@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_STATIC_BENCHMARK_AND_CI_REVIEW_WITH_NONBLOCKING_GAPS",
+  "scope": "CURRENT_UNCOMMITTED_BENCHMARK_CONTROLLERS_AND_CI_ONLY",
+  "source_sha256": {
+    "bench/arena_lookup.cpp": "24ddde7e9ff0f7158c28e8b5d6e5e1b40df0c092427db6129733d4f270411eef",
+    "tools/run_arena_lookup_pairs.py": "301e1531c6eec396cc8a6417091dfc2aa5569bb8dfc0bea534c41da44ea818ee",
+    "bench/claim_release.cpp": "7b72cf63ae4f59bd7476e94acfbe653df26f2f9bf2fcd6390506dd55c8b4b13f",
+    "bench/claim_release/CMakeLists.txt": "bc9434212ff81341f739b9c038aff3c7b69b05d7441f59d8ee536000b46ae9ae",
+    "tools/run_claim_release_pairs.py": "7dc10748db77cc42a7c5269e760e387c3dba325791c4c1d51af1c460a4c62b8d",
+    "CMakeLists.txt": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+    ".github/workflows/core.yml": "e3eff251771fb02575502db6470e2506f967ea28c69c34c874adb7be880f98a5",
+    "bench/ARENA_LOOKUP.md": "859f0e37ea2d9f42c2cfca85a08a328acc40ee22788d19736ed4015aa35250c4",
+    "bench/CLAIM_RELEASE.md": "67eaef73e71707b9a04514fb92c438c6419f22621dde9cd461d67ebd9f65547c"
+  },
+  "reviewed_contracts": [
+    "Arena fixed/mixed semantics remain unchanged; phase workload has a distinct identifier.",
+    "Phase storage is prepared identically before timing; A requests seed history and B provider publications are prohibited and checked before/after.",
+    "Claim workload has fixed 2048x64-byte allocations, exact 1/32-domain budgets, checksum and independent release-permutation hash.",
+    "Claim release batch, release phase and complete workflow metrics remain separate; complete workflow includes preparation, thread construction and close.",
+    "Controllers stage one executable and exact selected runtimes, observe loaded module path, verify disk hashes, workload, completion, resource states and recomputed raw statistics.",
+    "Pairs alternate AB/BA, preserve raw JSON and stderr, do not retry or remove samples, and return nonzero for failure/incomplete receipt.",
+    "CI builds against installed SDK and runs small A/A functional pairs without a noisy speed threshold."
+  ],
+  "nonblocking_gaps": [
+    {
+      "path": ".github/workflows/core.yml",
+      "issue": "New benchmark smoke receipt directories are not included in upload-artifact paths; add receipts or directories for durable CI evidence."
+    },
+    {
+      "path": "bench/ARENA_LOOKUP.md",
+      "issue": "Wording that both sides must be overwrite-cache versus retained-shape describes the earlier experiment, but is too restrictive for the claim-index countercheck; identify it as historical."
+    }
+  ],
+  "limits": [
+    "No new performance process, device operation, build, or test was started by this review.",
+    "Module path and disk hash are not mapped-page attestation or signed provenance.",
+    "Failure paths may retain process-local resources until exit and never establish normal cleanup.",
+    "Four-thread global release interleaving is scheduler-dependent; each thread has deterministic strided positions.",
+    "Arena workflow excludes preparation and close by existing contract; claim workflow is a distinct complete allocator round and cannot be pooled.",
+    "CI smoke success establishes installed consumer functionality, not performance or Android runtime qualification."
+  ],
+  "recommendation": "KEEP_BENCHMARKS_AND_EVIDENCE_IN_MAIN_PRESERVE_PRODUCTION_INDEX_CANDIDATE_ON_EXPERIMENT_BRANCH_PENDING_REGRESSION_RESOLUTION"
+}

@@ -1440,5 +1440,17 @@
     "BIL": "NOT_INTEGRATED",
     "evidence": "artifacts/android-round-20261109/",
     "host_ci": "artifacts/android-round-20261109/ci-6968ed1.json"
+  },
+  "claim_reference_experiment_20261109": {
+    "state": "ROUND_CLOSED_DEFAULT_NOT_ADOPTED",
+    "production_core_changed": false,
+    "experiment_branch": "codex/claim-reference-experiment-20261109",
+    "experiment_core_commit": "f9882d8",
+    "evidence": "artifacts/claim-release-20261109/decision.json",
+    "performance_qualified": false,
+    "host_v1_processes": 160,
+    "host_v2_processes": 160,
+    "arm64_v2_processes": 160,
+    "long_term_goal": "REMAINS_PAUSED"
   }
 }

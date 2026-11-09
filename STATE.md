@@ -2,6 +2,21 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## 稳定登记引用实验收尾（2026-11-09）
+
+本轮已完成独立审计与采用决定：两项缓存调校否决；稳定登记引用 v2 保留于
+`codex/claim-reference-experiment-20261109`（核心提交 `f9882d8`），不进入通用默认。
+主线核心继续保持 `d2b6aa3` 的字节，新增基准、first-fit 回归与 CI 功能回执。
+host v1、host v2、arm64 v2 各 160 进程／80 对／20 组独立重算，全部轮次保留。
+逆序／打散释放有改善，但 arm64 Arena mixed 四线程 workflow 比 1.378（4/4 对变慢），
+tiny fixed 比 1.420；并发 mixed 存在峰值 backing 差异，不可将代价完全归因于索引指令。
+现有核心 23/23、C++ 12/12、ASan 23/23 与 arm64 三模式功能证据均核对匹配，
+不因此取得正式产品性能资格。本次只离线收尾，未新增设备命令、制品或 BIL 变更，
+长期目标仍暂停。[采用决定与完整证据](artifacts/claim-release-20261109/decision.json) ·
+[实验说明](docs/CLAIM_REFERENCE_EXPERIMENT.md)。
+
+主线收尾后重新构建验证：核心及可选 JNI 45/45、C++ 12/12，两个安装后基准的 A/A 功能配对各 12 个进程通过。[本次宿主回执](artifacts/claim-release-20261109/main-host-validation.json)。
+
 ## Android 新制品与真机验证（2026-11-09）
 
 本轮源码提交 `6968ed1` 的 [Windows/Linux CI](artifacts/android-round-20261109/ci-6968ed1.json) 均通过；设备结论来自下述独立真机回执。

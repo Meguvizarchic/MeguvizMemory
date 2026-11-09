@@ -1,0 +1,103 @@
+{
+  "state": "PASS_HOST_MAIN_FUNCTIONAL_ONLY",
+  "performance_qualified": false,
+  "source_sha256": {
+    "src/mgmem.cpp": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a",
+    "tests/core_tests.cpp": "a03e12be000cb982e2a7c99f4771bc4fae625a972df62bf34496ecce8f8d17a7",
+    "CMakeLists.txt": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+    "bench/arena_lookup.cpp": "24ddde7e9ff0f7158c28e8b5d6e5e1b40df0c092427db6129733d4f270411eef",
+    "bench/claim_release.cpp": "7b72cf63ae4f59bd7476e94acfbe653df26f2f9bf2fcd6390506dd55c8b4b13f",
+    "tools/run_arena_lookup_pairs.py": "301e1531c6eec396cc8a6417091dfc2aa5569bb8dfc0bea534c41da44ea818ee",
+    "tools/run_claim_release_pairs.py": "7dc10748db77cc42a7c5269e760e387c3dba325791c4c1d51af1c460a4c62b8d"
+  },
+  "core_ctest": {
+    "passed": 45,
+    "total": 45,
+    "includes_optional_host_fake_jni": true
+  },
+  "cpp_ctest": {
+    "passed": 12,
+    "total": 12
+  },
+  "steps": [
+    {
+      "name": "core-configure",
+      "exit_code": 0,
+      "log_sha256": "06175e9d769a0383abee20e6b160f3812e97624b929e68cbccb6f18485aed009"
+    },
+    {
+      "name": "core-build",
+      "exit_code": 0,
+      "log_sha256": "b083b2a7eb9d1741a8d28beffd73b84acf128837e7915c56752d6c510d6e1460"
+    },
+    {
+      "name": "core-ctest",
+      "exit_code": 0,
+      "log_sha256": "850f6fd3dab9a044da49c3c4d36575225168231e4ad71ae4df84ac6bb197039d"
+    },
+    {
+      "name": "core-install",
+      "exit_code": 0,
+      "log_sha256": "154a2a4d2ed2e1fa70cd4e5dc8da88a99b2d079ab23a85791e7b1f3dce00dfdc"
+    },
+    {
+      "name": "cpp-configure",
+      "exit_code": 0,
+      "log_sha256": "3d0db91c3b596d069a02888f137daf209cafbc6ad541f196cb220a3757c9b43d"
+    },
+    {
+      "name": "cpp-build",
+      "exit_code": 0,
+      "log_sha256": "a47e41fa999191dce4aead8c1e6c7947dc6ce6ade6d0f9450ab7bc7a77c09166"
+    },
+    {
+      "name": "cpp-ctest",
+      "exit_code": 0,
+      "log_sha256": "0b0ef7ab2a0860dce52963367cd0f148276633d7e68c8008a330cb85333926cf"
+    },
+    {
+      "name": "arena-configure",
+      "exit_code": 0,
+      "log_sha256": "53b2e4a72972adcd8d00f224c3639014ccc176c68c948c5fe722a059ea555116"
+    },
+    {
+      "name": "arena-build",
+      "exit_code": 0,
+      "log_sha256": "3d76a14998d624478581d54b7caff1fcc9656d2c27d061a801bb962b513240d9"
+    },
+    {
+      "name": "arena-aa",
+      "exit_code": 0,
+      "log_sha256": "508d620c3cc2099696492c23de3f71dc622717b5ea1ede56427539ca1612b9df"
+    },
+    {
+      "name": "claim-configure",
+      "exit_code": 0,
+      "log_sha256": "1eb96577272d77a81dc00c942adcb290d8edb6e05621fdc653b01ed4b7ace0f9"
+    },
+    {
+      "name": "claim-build",
+      "exit_code": 0,
+      "log_sha256": "e529476221d98f467731071b13f0705448a96aa839196f69c72e86654c7cd850"
+    },
+    {
+      "name": "claim-aa",
+      "exit_code": 0,
+      "log_sha256": "508d620c3cc2099696492c23de3f71dc622717b5ea1ede56427539ca1612b9df"
+    }
+  ],
+  "receipt_sha256": "d739873c6e74bbb62487a3d94c2d6a7d559a49f54127f9547b21ac62251bbb9b",
+  "logs_private": true,
+  "arena-aa": {
+    "state": "PASS_SCOPED_SYNTHETIC_PAIRED",
+    "processes": 12,
+    "receipt_sha256": "dc20879ea26bb1f42bcc5a77e1c38e04766f34084a2c4d999e44914d13224cf5",
+    "purpose": "A_A_FUNCTIONAL_ONLY_NO_SPEED_THRESHOLD"
+  },
+  "claim-aa": {
+    "state": "PASS_SCOPED_SYNTHETIC_PAIRED",
+    "processes": 12,
+    "receipt_sha256": "8bb9536e9861576988957b583767ee302c4ea0b9e75e111f38364693f267256b",
+    "purpose": "A_A_FUNCTIONAL_ONLY_NO_SPEED_THRESHOLD"
+  }
+}

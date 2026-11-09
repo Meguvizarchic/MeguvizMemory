@@ -1,0 +1,32 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -488,17 +488,22 @@
+                     Allocation{&backing, offset, bytes, 0, false, false, false});
+                 commit_allocation(*domain, insertion.first->second, bytes);
+                 backing.used = offset + bytes;
++                if ((!same_shape || candidate != domain->arena_search) &&
++                    candidate != domain->backing.begin()) {
++                    domain->arena_search_valid = true;
++                    domain->arena_search_bytes = bytes;
++                    domain->arena_search_alignment = alignment;
++                    domain->arena_search = candidate;
++                }
++                *out = {domain->id, id, runtime_origin()};
++                return MGMEM_OK;
++            }
++            if (!same_shape || domain->arena_search != domain->backing.end()) {
+                 domain->arena_search_valid = true;
+                 domain->arena_search_bytes = bytes;
+                 domain->arena_search_alignment = alignment;
+-                domain->arena_search = candidate;
+-                *out = {domain->id, id, runtime_origin()};
+-                return MGMEM_OK;
++                domain->arena_search = domain->backing.end();
+             }
+-            domain->arena_search_valid = true;
+-            domain->arena_search_bytes = bytes;
+-            domain->arena_search_alignment = alignment;
+-            domain->arena_search = domain->backing.end();
+         }
+         if (!counters_fit(*domain, bytes, true)) return MGMEM_OVERFLOW;
+         const u64 capacity = domain->mode == MGMEM_ARENA ? std::max(bytes, domain->chunk_bytes) : bytes;
