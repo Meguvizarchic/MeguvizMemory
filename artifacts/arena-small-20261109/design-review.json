@@ -1,0 +1,80 @@
+{
+  "state": "READ_ONLY_STRUCTURAL_DESIGN_REVIEW_COMPLETE_NO_RUNTIME_CLAIM",
+  "base_commit": "40c7b1fa7d7926506103d1f6cbc12f2d78c670ac",
+  "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "production_files_modified": false,
+  "tests_or_builds_or_measurements_started": false,
+  "recommendation": "After baseline stage and real allocator-count diagnosis, first evaluate one domain-owned spare lease std::map::node_type. It removes a recurring node allocation/free pair rather than only changing comparisons or hints.",
+  "cost_structure": {
+    "current": "Each owner uses an allocations map node. Each lease acquire/release uses another leases map node; owner release while borrowed retains the allocation node until last lease release. The small trace has a batch of live owners but normally one active lease at a time.",
+    "predicted_reduction_not_measured": "Within a serial 32-owner batch, one spare lease node can serve 32 lease cycles after the first lease node creation: 31 subsequent lease metadata allocations and their matching frees can be avoided, while one node is released at collect/trim. Actual implementation heap-count evidence remains required.",
+    "allocation_pool_caveat": "A prepared-single batch creates all owners before their release, so allocation-node recycling within that batch has no opportunity. Pooling allocation nodes first may add cold setup and retention without benefiting this trace."
+  },
+  "minimal_shape": {
+    "declaration": "using LeaseMap = std::map<u64, Lease>; LeaseMap leases; LeaseMap::node_type spare_lease;",
+    "acquire": "Keep all validation and take_id under the existing domain mutex. If spare is empty use the existing emplace path. Otherwise move the spare into a local node handle, replace key with the fresh ID, overwrite mapped Lease, and insert the node into this same leases map. Update reader/writer counts and publish out only after insertion.",
+    "release": "After locating the live lease and updating its allocation counts as today, extract(iterator) into spare if spare is empty; otherwise erase(iterator) as today. Continue owner retirement and backing cleanup unchanged.",
+    "cleanup": "In reclaim_all, after the provider_poisoned guard and before detach/unlock/callbacks, reset spare to an empty node_type. The trim/collect callers have already required quiet. Arena reset intentionally retains the spare for reuse. Destruction provides a final RAII release.",
+    "no_extra_policy": "One spare is a hard cap on idle lease nodes, no vector/free-list allocation or production dependency. Do not add map insertion hints or notification gating to this candidate."
+  },
+  "invariants": [
+    "next_id initializes once, increments under domain mutex, never resets on Arena reset, and stops before overflow; replacing a detached node key with the new ID does not recycle a public handle.",
+    "All lease map and spare handle operations use the same domain mutex. Releasing from another thread is serialized exactly like the existing map erase path.",
+    "The cache node is extracted from, and reinserted into, the same domain leases map. Its allocator is therefore equal to the target allocator; production std::allocator is always equal. Do not transfer a node between the allocations and leases map types or between domains.",
+    "An extracted node is no longer an active lease: leases.size(), quiet, and snapshot active_leases must continue to consider only the map, not the spare. Its old mapped allocation ID is inert and overwritten before reinsertion.",
+    "Lease contains only an allocation ID and writer flag, so a cached node owns no backing, external context or provider lifetime. Caching does not retain external buffers or bypass read-only permission checks.",
+    "Owner release with outstanding readers/writer still increments retiring bytes and preserves allocation/backing exactly as before. Last lease release still consumes its allocation metadata and returns standalone backing when appropriate.",
+    "The empty map sentinel remains owned by the map. Destroying the separate spare handle frees only an extracted node, unlike releasing the underlying resource of a still-live empty pmr map.",
+    "Unknown external/provider callback outcomes retain claims and budget as before. A poisoned domain that cannot collect/destroy may additionally retain at most one idle lease node; it must not be described as leak freedom.",
+    "The public domain type is opaque; an additional node_handle field changes internal domain size, not the public C ABI or C++ wrapper layout. No new capability bit or API is needed."
+  ],
+  "exception_and_ownership": [
+    "Default-empty node_handle needs no node allocation. extract(iterator) transfers node ownership and preserves the original allocator; it does not construct a new node.",
+    "insert(node_type&&) reuses the existing node but can still perform comparisons or max_size checks. A local node handle remains the RAII owner if insertion throws; discarding optional cached storage is safe, and the original guard maps errors as before.",
+    "Reader/writer counters and output handles remain after successful insertion. A failed insertion therefore publishes no lease and consumes no new logical ownership, just as failed emplace does today.",
+    "Duplicate keys are unreachable from the existing strictly increasing ID invariant. Do not add speculative duplicate-key recovery machinery; the same invariant already makes ignored emplace duplicate results safe in baseline.",
+    "Resetting a spare node to node_type{} deallocates it through its original allocator. No cache-path allocation is required on release or quiet trim/collect.",
+    "CountingAllocator diagnostic state must outlive the cached handle allocator copy. Put counter/resource state before maps/cache members so reverse destruction releases cache and maps first."
+  ],
+  "memory_and_budget": {
+    "retention_bound": "At most one idle lease node plus one node_handle field per domain; live map nodes remain unchanged. Exact bytes depend on MSVC/libc++ and build mode and must be measured rather than copied from a guessed size.",
+    "cold_cost": "A default-empty handle adds internal domain storage but no heap cache allocation. The first lease still allocates one node; later compatible lease cycles can reuse it.",
+    "pressure_release": "quiet trim and collect clear the spare before provider callbacks. Arena reset keeps it because reset already retains Arena storage.",
+    "accounting": "mgmem_snapshot_v1.backing_bytes explicitly excludes metadata and RSS. Preserve its budget meaning; report the bounded metadata retention separately and do not claim zero resident memory from CLOSED_ZERO or fewer allocator calls.",
+    "rss": "The CRT/OS may already cache freed nodes. Eliminating allocator calls proves work reduction only; lower RSS, energy or product latency are not implied."
+  },
+  "alternatives": [
+    {
+      "option": "std::pmr::unsynchronized_pool_resource for both maps",
+      "assessment": "C++17 standard-only and mutex serialization fit, but chunks retain a potentially large peak. Calling release while an empty map is alive can invalidate an allocator-owned sentinel on MSVC. Safe pressure release needs destroying/reconstructing maps and explicit reconstruction failure handling, so it is a larger first step."
+    },
+    {
+      "option": "Custom domain allocator/free list",
+      "assessment": "Can bound cached blocks and keep map APIs, but adds alignment, rebind, node-size buckets, destruction and matching-deallocation machinery. Prefer a standard node handle for the first isolated structural change."
+    },
+    {
+      "option": "Segmented slot table",
+      "assessment": "Could remove tree searches and amortize allocations, but monotonically increasing public IDs cannot directly index a permanently growing vector. Recycling slots requires ID-to-slot/generation logic, stable-address and rollback design across callbacks. This is substantially broader than one bounded node cache."
+    },
+    {
+      "option": "Lease stores allocation iterator/pointer",
+      "assessment": "Can remove the second allocation-map lookup on release because leases keep allocation metadata alive, but it changes internal references and needs independent lifetime/exception audit. It does not remove the recurring lease-node allocation/free pair and should not be mixed into this candidate."
+    }
+  ],
+  "meaningful_validation_after_diagnosis": [
+    "Actual CountingAllocator node counts: empty baseline sentinel counts separately; serial multi-lease cycles allocate one lease node then reuse; simultaneous live leases still have distinct nodes; trim/collect release the spare.",
+    "Fresh-ID and stale-handle checks after reuse, including cross-thread read/write lease release and an external imported region.",
+    "Existing owner/lease close, callback failure/quarantine, budget and reset/trim contracts; selected-source host and ASan gates.",
+    "Compare staged cost diagnostics and unchanged existing main/tiny/prepared-single paired workloads; retain cold/close and concurrent reverse cases and memory-retention evidence."
+  ],
+  "primary_local_sources": [
+    "src/mgmem.cpp:198 mgmem_domain map members",
+    "src/mgmem.cpp:297 take_id monotonic ID",
+    "src/mgmem.cpp:364 reclaim_all quiet maintenance lifecycle",
+    "src/mgmem.cpp:746 owner release / 769 lease acquire / 800 lease release",
+    "src/mgmem.cpp:826 reset / 842 trim / 884 collect / 895 destroy",
+    "include/mgmem/mgmem.h:107 snapshot backing_bytes excludes metadata/RSS",
+    "MSVC 14.51.36231 include/xnode_handle.h:81/100/115 empty, ownership and clearing",
+    "MSVC 14.51.36231 include/xtree:1756/1790 iterator extraction and node insertion"
+  ]
+}

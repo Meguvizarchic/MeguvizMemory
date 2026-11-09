@@ -2,6 +2,18 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## Arena 小负载固定成本与结构实验（2026-11-09）
+
+先完成128进程未修改基线成本诊断及真实allocator计数，再实现一个Arena闲置lease节点复用。
+重复stream的lease节点申请128→1；domain456→472B，另最多保留一个56B闲节点，trim/collect释放。
+候选保存于本地`codex/arena-lease-reuse-experiment-20261109`/`7abf79f`，不切换默认核心。
+832进程/416对/58组独立原始重算：重复stream完整round-wall P50比0.8785–0.9395、各8/8改善；
+System32域部分组全部4对变慢约5%–6%，单次held/worker及cold也有明确代价，所有反向保留。
+主线运行库继续保持40c7b1f/c8be3d52…；只纳入诊断/配对工具、公开行为回归与证据。
+候选核心46/46、C++12/12、ASan46/46及arm64静态通过；基线加载新公开lease回归2项/2476检查通过，
+主线重新构建46/46及成本工具A/A通过。本轮没有设备运行、新Android制品、BIL或产品性能资格。
+[诊断与取舍](docs/ARENA_SMALL_WORKLOAD.md) · [全部证据](artifacts/arena-small-20261109/decision.json)。
+
 ## Arena mixed 优化与小负载限制（2026-11-09）
 
 已采用最小请求支配下界复用：尺寸与规范化对齐均不小于缓存请求时复用 first-fit 位置，

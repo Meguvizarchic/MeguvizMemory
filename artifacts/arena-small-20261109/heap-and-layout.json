@@ -1,0 +1,4306 @@
+{
+  "schema_version": 1,
+  "state": "PASS_INDEPENDENT_CANDIDATE_HEAP_LIFETIME_AND_LAYOUT_AUDIT",
+  "performance_qualified": false,
+  "timing_sampled_by_this_audit": false,
+  "candidate_core_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+  "baseline_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "manifest_sha256": "541e7993323f86c160d5b7bcf922724c776c962d8cfdc678b4102b999b334c57",
+  "plan_sha256": "638f3a3dc8dbbf5cd5f6322b2cdf746f45eb5acfaf9457a7c21b72fea71a731a",
+  "validation_receipt_sha256": "32bfc8041d41e7c1fdc4bcc08dc20f152b429f61d4d8eebf10ff4a62af3d257f",
+  "count_only_processes": 32,
+  "matched_variant_combinations": 16,
+  "layouts": {
+    "mgmem_heap_layout_baseline": {
+      "raw_sha256": "8800b4eba59be4e83675052e739e7304bb3f0d0f73e5d328dc061df267a4d72f",
+      "values": {
+        "scope": "HOST_RELEASE_LAYOUT_AND_DIAGNOSTIC_UPSTREAM_REQUEST_ONLY",
+        "domain": 456,
+        "allocation_map": 16,
+        "lease_map": 16,
+        "lease_node_handle": 16,
+        "counted_lease_node_handle": 16,
+        "Backing": 80,
+        "Allocation": 40,
+        "Lease": 16,
+        "pointer": 8,
+        "node_probe_upstream_allocations": 1,
+        "node_probe_request_bytes": 56,
+        "is_rss_or_allocator_usable_size": false
+      }
+    },
+    "mgmem_heap_layout_candidate": {
+      "raw_sha256": "bd0576524b192743b2db71cbd0810687524c812759707c0d579dec54469b7456",
+      "values": {
+        "scope": "HOST_RELEASE_LAYOUT_AND_DIAGNOSTIC_UPSTREAM_REQUEST_ONLY",
+        "domain": 472,
+        "allocation_map": 16,
+        "lease_map": 16,
+        "lease_node_handle": 16,
+        "counted_lease_node_handle": 16,
+        "Backing": 80,
+        "Allocation": 40,
+        "Lease": 16,
+        "pointer": 8,
+        "node_probe_upstream_allocations": 1,
+        "node_probe_request_bytes": 56,
+        "is_rss_or_allocator_usable_size": false
+      }
+    },
+    "mgmem_heap_layout_baseline_counted": {
+      "raw_sha256": "8800b4eba59be4e83675052e739e7304bb3f0d0f73e5d328dc061df267a4d72f",
+      "values": {
+        "scope": "HOST_RELEASE_LAYOUT_AND_DIAGNOSTIC_UPSTREAM_REQUEST_ONLY",
+        "domain": 456,
+        "allocation_map": 16,
+        "lease_map": 16,
+        "lease_node_handle": 16,
+        "counted_lease_node_handle": 16,
+        "Backing": 80,
+        "Allocation": 40,
+        "Lease": 16,
+        "pointer": 8,
+        "node_probe_upstream_allocations": 1,
+        "node_probe_request_bytes": 56,
+        "is_rss_or_allocator_usable_size": false
+      }
+    },
+    "mgmem_heap_layout_candidate_counted": {
+      "raw_sha256": "bd0576524b192743b2db71cbd0810687524c812759707c0d579dec54469b7456",
+      "values": {
+        "scope": "HOST_RELEASE_LAYOUT_AND_DIAGNOSTIC_UPSTREAM_REQUEST_ONLY",
+        "domain": 472,
+        "allocation_map": 16,
+        "lease_map": 16,
+        "lease_node_handle": 16,
+        "counted_lease_node_handle": 16,
+        "Backing": 80,
+        "Allocation": 40,
+        "Lease": 16,
+        "pointer": 8,
+        "node_probe_upstream_allocations": 1,
+        "node_probe_request_bytes": 56,
+        "is_rss_or_allocator_usable_size": false
+      }
+    }
+  },
+  "binary_hashes_observed_at_audit": {
+    "mgmem_heap_layout_baseline.exe": "34808b963bc19490825a5241c7b71d5d1be1c82ccf91aa29a3efac3b3cedf807",
+    "mgmem_heap_layout_candidate.exe": "4d3b338102637340ada459e07d4c3e660dfd804978f0c3f1cb76706c3d62750a",
+    "mgmem_heap_layout_baseline_counted.exe": "c53d34bb1cf9d060088f91b8a41ffcfe105e9139743ecb4f6bea79fd4d71aa7f",
+    "mgmem_heap_layout_candidate_counted.exe": "4de3616b6fdb63614eed662ba78b749ef34f7dd74888c6b06aaff0060f544d13",
+    "mgmem.dll": "8edb1e50d13cd62ebba68e6c74e4efe1c51e049e6fb74f358d568837e2e17759",
+    "mgmem_heap_probe_driver.exe": "bb53725c749e789c71a4fe21dbda1efa7f223b35c54089f218ed46126c83a095",
+    "mgmem_heap_baseline.dll": "a609e60f6924cf95f4d975e355d2596d48007e27fb9112758bfbfc2c68cc7a66",
+    "mgmem_heap_baseline_driver.exe": "b6106c056b78d36c70dc4ff2bb84129c1d5787442756c60ba2ee6570e343112d"
+  },
+  "results": [
+    {
+      "id": "candidate-prepared-single-fixed-stream-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "50d22ae285f2c80562c55cef23f2c4fe70f707ab412d43596ff8fe3c2ce9be49",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-fixed-stream-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "b41500b77f8594d496d4d090ac4abb8c8f7c70badacd410cbb2fa54aeb121270",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-fixed-held-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "f2029badb7d93e28ebb721f3c6c467bf3a3480d7715690acca91ea783e46943e",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 125,
+          "successful_allocations": 125,
+          "failed_allocations": 0,
+          "deallocations": 124,
+          "allocated_request_bytes": 7000,
+          "deallocated_request_bytes": 6944
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-fixed-held-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "4c42984a0e03561673a09a5bc6bc13a564baeb081f375637e3694850f0f75b4e",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 125,
+          "successful_allocations": 125,
+          "failed_allocations": 0,
+          "deallocations": 124,
+          "allocated_request_bytes": 7000,
+          "deallocated_request_bytes": 6944
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-mixed-stream-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "f29a1980815967758a5978dc882dd3595eae4b398d083d31260a462a816c85eb",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-mixed-stream-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "a2155b042aa46b982feec0273a46cf62d606a0c082702f2cc0048ec69730fa28",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-mixed-held-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "23e5b6c85ccd6df7d1526b1a3eee245a8b62393bd5896d0ffab36206d8ac7991",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 125,
+          "successful_allocations": 125,
+          "failed_allocations": 0,
+          "deallocations": 124,
+          "allocated_request_bytes": 7000,
+          "deallocated_request_bytes": 6944
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-prepared-single-mixed-held-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "b751356ad98ed9a7048e98679bcff52c050430cbb1ca330c08d0d1a406b61244",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 125,
+          "successful_allocations": 125,
+          "failed_allocations": 0,
+          "deallocations": 124,
+          "allocated_request_bytes": 7000,
+          "deallocated_request_bytes": 6944
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 31,
+            "successful_allocations": 31,
+            "failed_allocations": 0,
+            "deallocations": 31,
+            "allocated_request_bytes": 1736,
+            "deallocated_request_bytes": 1736
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-fixed-stream-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "633363b70f41695423345550dc8525978bc47929c40ea59b877114d5e2af8953",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-fixed-stream-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "4ec696a279f766f2d4eb2674db242a24b0ece2a4232945cc5798df408437265f",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-fixed-held-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "59233317a2bb36c68c6385f0c6f85d43990c308970914ba3b9bb2535e93a6f2d",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 505,
+          "successful_allocations": 505,
+          "failed_allocations": 0,
+          "deallocations": 504,
+          "allocated_request_bytes": 28280,
+          "deallocated_request_bytes": 28224
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 127,
+            "successful_allocations": 127,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7112,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-fixed-held-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "530c46eac4c55a9089cdc15e43a8a5ea5db9dde89e6eaf0052f7e4b505cd1b64",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 505,
+          "successful_allocations": 505,
+          "failed_allocations": 0,
+          "deallocations": 504,
+          "allocated_request_bytes": 28280,
+          "deallocated_request_bytes": 28224
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 127,
+            "successful_allocations": 127,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7112,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-mixed-stream-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "d7160f730bd3886188210b91109afc21c6e33d02bb8d12a22e68e6953c4b9176",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-mixed-stream-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "5d9773a731182f67759081164a05d02e17129934762159bef2dffe94e20cde39",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 1,
+          "successful_allocations": 1,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 56,
+          "deallocated_request_bytes": 0
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 1,
+            "successful_allocations": 1,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 56,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 0,
+            "successful_allocations": 0,
+            "failed_allocations": 0,
+            "deallocations": 0,
+            "allocated_request_bytes": 0,
+            "deallocated_request_bytes": 0
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-mixed-held-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "e69c54d0ee4260be946947b283269d98b16d770289ca86e4e7a37010c08763f8",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 505,
+          "successful_allocations": 505,
+          "failed_allocations": 0,
+          "deallocations": 504,
+          "allocated_request_bytes": 28280,
+          "deallocated_request_bytes": 28224
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 127,
+            "successful_allocations": 127,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7112,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "candidate-default-mixed-held-trim-collect",
+      "variant": "candidate",
+      "source_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+      "raw_sha256": "745ce559e2a478408e839f9fdb60ccbd086ed0db599fa3e0776786cc77737a90",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 505,
+          "successful_allocations": 505,
+          "failed_allocations": 0,
+          "deallocations": 504,
+          "allocated_request_bytes": 28280,
+          "deallocated_request_bytes": 28224
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 127,
+            "successful_allocations": 127,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7112,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 126,
+            "successful_allocations": 126,
+            "failed_allocations": 0,
+            "deallocations": 126,
+            "allocated_request_bytes": 7056,
+            "deallocated_request_bytes": 7056
+          },
+          "retained_lease_request_bytes_excluding_head": 56
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 56,
+      "observed_reset_keeps_spare": true,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-fixed-stream-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "067f044dff07e9f4bceb82b699496a37f5667ba54c47a8e208a1eef3a2d3f20c",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-fixed-stream-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "a5fe81cc4526217bf3dd6f6977cf8a57ba88dae35f20b7b9b993af5f1882c558",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-fixed-held-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "de0a3d1e254bba27d216c87f4fd938d231ae940798c424e36d7c1ad9ad6fe4d6",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-fixed-held-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "6ee61a139000ab345ee625deab42d4e6f6fb9661d1851f0e82d6ec7c94eff29f",
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-mixed-stream-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "2c16db3ccd1d325e6e535a567d3757b2788a9fce9a62308c2e10403376e0ae93",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-mixed-stream-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "5fcea2fc0cd41e8c50451d8bc3f0be4284d9e8bfe8ee60adf85818cf30316927",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-mixed-held-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "c09041996ecaf6ab949ffd0ca1c8613adf28e0afaab4dbdbc8f11422a07748d4",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-prepared-single-mixed-held-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "daa52092e0f0ee6320d6fcba76c61247e07ff4794a964e7b03b95b8bd613f571",
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 32,
+      "rounds": 4,
+      "completed_operations": 128,
+      "provider_publications_before_close": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 32,
+            "successful_allocations": 32,
+            "failed_allocations": 0,
+            "deallocations": 32,
+            "allocated_request_bytes": 1792,
+            "deallocated_request_bytes": 1792
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-fixed-stream-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "2a037c876b139b54f89b0d2a66232a5ab6f5267a03542785159401a1983ecc6d",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-fixed-stream-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "c2ffe48ad5335f8b286d8aa813675f3552af40d4763a43506cfdc6c164f56747",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-fixed-held-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "85f1992073095765ec2fc45965dbbc3698f648684bd80ce9ad9a108a26387cc3",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-fixed-held-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "f653e8325ce80608d72d049f6260c84a0722882f223d08ff22fcc89f2e57278e",
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-mixed-stream-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "185445debb3f3381143ad0aec76352223610fca84bb094e2c613cbdb0d52b3c0",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-mixed-stream-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "2a9e11200922ed04502379345f978bc19a8ec0ebbea4c1f842357d1455c9cbe2",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-mixed-held-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "b657db5ae3d0d68a6275cf574c035a38600282e7ae92bf45bc6c704440937ae0",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    },
+    {
+      "id": "baseline-augmented-default-mixed-held-trim-collect",
+      "variant": "baseline-augmented",
+      "source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "raw_sha256": "7196c17d3c573f750a62e5a888828366d6d40ed18f13bdce09f98473a4ed5aac",
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "batch": 64,
+      "rounds": 4,
+      "completed_operations": 512,
+      "provider_publications_before_close": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "per_round_lease_deltas": [
+        {
+          "round": 0,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 1,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 2,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        },
+        {
+          "round": 3,
+          "lease_allocator_delta": {
+            "allocation_attempts": 128,
+            "successful_allocations": 128,
+            "failed_allocations": 0,
+            "deallocations": 128,
+            "allocated_request_bytes": 7168,
+            "deallocated_request_bytes": 7168
+          },
+          "retained_lease_request_bytes_excluding_head": 0
+        }
+      ],
+      "lease_map_head_request_bytes": 56,
+      "retained_node_request_bytes_excluding_head": 0,
+      "observed_reset_keeps_spare": false,
+      "observed_trim_or_collect_releases_spare": true,
+      "startup_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      },
+      "final_live_request_bytes": {
+        "domain": 0,
+        "allocation_map": 0,
+        "lease_map": 0,
+        "backing_list": 0,
+        "range_claim_list": 56
+      }
+    }
+  ],
+  "variant_comparisons": [
+    {
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 125,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 124,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 125,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 124,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 125,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 124,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "prepared-single",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "operations": 128,
+      "baseline_lease_work_allocations": 128,
+      "candidate_lease_work_allocations": 125,
+      "baseline_lease_work_deallocations": 128,
+      "candidate_lease_work_deallocations": 124,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 505,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 504,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "fixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 505,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 504,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "stream",
+      "cleanup": "trim-collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 1,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 0,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 505,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 504,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    },
+    {
+      "profile": "default",
+      "shape": "mixed",
+      "mode": "held",
+      "cleanup": "trim-collect",
+      "operations": 512,
+      "baseline_lease_work_allocations": 512,
+      "candidate_lease_work_allocations": 505,
+      "baseline_lease_work_deallocations": 512,
+      "candidate_lease_work_deallocations": 504,
+      "note": "Deallocation of retained candidate56Bnode occurs later at trim/collect, head56B remains until domain destruction."
+    }
+  ],
+  "conclusions": [
+    "Stream candidate retains exactlyonelease node:128or512logicaloperations need1upstreamleaseallocationinsteadof128or512; cleanupfrees theheldnode.",
+    "Heldcandidateisacountercase:preparedsingle128operations require125allocations versus128; default512operations require505versus512. One spareisnotabatchpool.",
+    "Per-domainhostlayoutgrows456to472bytesfrom16byte node_handle evenwithoutapopulatedspare. Onepopulatedspareadditionallyretains56requestedbytes,excludingtheunchanged56byte maphead.",
+    "Resetpreservesthesingle56byte spare; trim andbeginclose/collect releaseit; domain destroyreturnsallcountedmetadata tostartupbaseline.",
+    "Allocationmapchurnandpayloadbackingareunchanged inmatchedprobevariants; no generalmetadataelimination ormemorysaving claim."
+  ],
+  "limits": [
+    "Onlycountedstd_allocatorrequests/requestedbytes andhostRelease sizeof; notCRT/OSheapcalls,usablecapacity,RSSorAndroidlayout.",
+    "Countinginstrumentationusesatomicsandisnotperformancemeasurement.",
+    "Currentbinaryhashesrecordedatalditaudit; inputmanifestandvalidationloghasheslinkgeneratedsourcesandpriorruns; nofulltoolchainreproducibilityclaim.",
+    "No newspawnedperformance,compilation,deviceorvalidationprocesses."
+  ]
+}

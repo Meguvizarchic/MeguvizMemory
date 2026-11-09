@@ -1,0 +1,52 @@
+{
+  "state": "PASS_SCOPED_IMPLEMENTATION_AND_PAIR_CONTROLLER_REVIEW_NO_BLOCKER",
+  "source_sha256": {
+    "src/mgmem.cpp": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+    "tools/run_arena_small_cost_pairs.py": "28d73ae327c3a03c45511c7e6753eb7dcf6d36bb24f3494cee3755f388092198",
+    "tools/run_arena_small_cost.py": "399c1204d07f96952fa241c7b7073767e195197ab4278e4cc9766eefed77b346"
+  },
+  "scope": "ACTUAL_ARENA_ONLY_SPARE_LEASE_NODE_AND_MATCHED_COST_PAIR_CONTROLLER",
+  "production_or_test_files_modified_by_review": false,
+  "build_test_performance_or_device_commands_started": false,
+  "blocking_findings": [],
+  "implementation": {
+    "arena_only": "Acquire uses spare only when mode is ARENA and spare is nonempty; release extracts only when mode is ARENA and spare is empty. SYSTEM retains ordinary emplace/erase semantics. SYSTEM still has an added mode check and the opaque domain field, so no unchanged-performance assertion is justified.",
+    "fresh_ids": "take_id is still mutex-protected, strictly increasing, non-recycling and stops before overflow. A reused node receives both fresh key and complete Lease mapped value before insertion; stale public IDs cannot find the detached node.",
+    "publication_order": "All access, owner/pending, range and reader/writer checks precede take_id. Map insert/emplace precedes reader/writer updates and out publication. A local node handle owns the extracted node if insertion throws; the existing guarded boundary handles failure without publishing a lease.",
+    "allocator": "The node is extracted from and reinserted into the same domain LeaseMap. Its retained allocator therefore matches the target allocator. Production uses std::allocator; no map type or allocator swap occurs. Successful insertion transfers ownership and leaves the temporary insert_return_type node empty.",
+    "release_order": "Lease attributes are read before extraction. After extract/erase, no lease iterator or node reference is used. The allocation reference belongs to the independent allocation map, and last-lease retirement preserves existing owner/backing cleanup.",
+    "idle_node": "spare_lease is not counted as a live lease and contains only an inert old allocation ID and writer bool. Its mapped value is overwritten on reuse; it owns no Backing or external/provider context.",
+    "maintenance": "reclaim_all clears the independent spare after the poison guard and before backing detach/unlock/callbacks. Both callers require quiet under the same mutex. Arena reset retains spare; normal trim/collect releases it. Destroy provides RAII fallback.",
+    "sentinel": "Clearing the extracted node handle deallocates only that independent node through its original allocator. The leases map sentinel and active container storage are not released or reconstructed.",
+    "quarantine": "The existing provider_poisoned early return may retain at most one idle cached lease node along with the quarantined domain. Unknown claims/charges and no-retry callback rules are unchanged. This is not leak-freedom evidence.",
+    "abi": "The public mgmem_domain remains opaque and no public header or capability contract changes. Internal domain size and metadata retention still require separate measurement/disclosure."
+  },
+  "callback_unlock_analysis": [
+    "On an Arena external last-lease release, the map node can enter spare, the allocation record is retired, and reclaim_standalone detaches the Backing before unlocking. pending increments before unlock and prevents quiet collect/destroy.",
+    "While the external callback is executing, another thread may borrow an existing other owner and consume/release the spare. The outer release frame never dereferences its old lease iterator or cached node after extraction; reclaim_standalone uses only its detached Backing and post-callback ledger fields.",
+    "The cached Lease stores no Backing pointer, so reusing its storage cannot invalidate the detached external Backing. Each other borrow/release operation accesses the shared spare under the domain mutex.",
+    "Full reclaim_all begins quiet and sets maintenance before unlocking. There is no live allocation available for a successful borrow, and new allocation is blocked by maintenance; a cleared spare cannot become an active lease through that full-reclaim callback window.",
+    "Existing provider/external callbacks remain outside domain and registry locks. Same-domain callback reentry remains forbidden by the original contract; the review covers separate-thread API work on an existing other owner, not unsupported direct callback reentry."
+  ],
+  "controller": {
+    "AB_BA": "Even pair count 2..16 is required; each profile alternates baseline/candidate and candidate/baseline, so AB and BA counts are balanced. Shapes/batches/modes/executors remain separate profile summaries.",
+    "identity": "Each process gets the same staged executable hash and one selected runtime copy verified against captured hashes. Native validation confirms reported module path plus disk bytes; this is path/disk identity, not mapped-page attestation.",
+    "matched_work": "Native validator checks independent byte oracle, payload and operation counts, logical metadata operations, peak live lease records, preparation counts/bytes, raw timing consistency and CLOSED_ZERO. Pair comparison requires matching semantic fields; physical allocator counts are intentionally allowed to differ.",
+    "raw_metrics": "validate recomputes nearest-rank P50/P95 and throughput from every raw cycle/round, requires finite reported values and exact metric names, and checks nonnegative raw durations with positive hot time.",
+    "zero_baseline": "If a validated baseline metric is zero, pair ratio is None and the absolute delta is still kept. A group with all zero baselines yields median None rather than fake ratio 1, infinity or an empty-median error. Defined ratios alone enter the ratio median, while every original None remains in the pair records.",
+    "failures": "Nonzero child status, nonblank stderr, malformed JSON, identity/semantic/metric mismatch or timeout keeps an incomplete receipt and returns nonzero. Timeout partial streams are retained; no retries or exclusions exist.",
+    "scope": "Prepared-stream and held-stage lifetimes have different workload IDs/peak leases and must not be combined. Worker outer timing is not pure library cost, and the controller correctly labels observations as descriptive non-product data."
+  },
+  "nonblocking_reporting_notes": [
+    "When publishing medians for metrics with zero baseline, disclose defined and undefined pair counts; the compact controller summary does not directly include those counts although all pair values are preserved.",
+    "The printed processes count is attempted runs, not necessarily completed runs on failure. Only PASS_SCOPED rows may count as completed observations; state and row details prevent accidental success.",
+    "Source hashes in the controller are recorded at entry; the outer frozen plan/build receipt remains necessary to bind compiled artifacts and historical source closure continuously. Runtime and executable staging hashes are checked for each process.",
+    "No System performance invariance, lower RSS, Android runtime benefit or all-interleavings proof follows from this read-only review."
+  ],
+  "evidence_locations": {
+    "source": "src/mgmem.cpp:114 LeaseMap; 236 spare; 368 reclaim_all; 774 acquire; 812 release",
+    "callback": "src/mgmem.cpp:335 reclaim_standalone pending/detach/unlock",
+    "controller": "tools/run_arena_small_cost_pairs.py:40 bounds; 69 AB/BA; 97 child; 114 semantic comparison; 122 zero baseline; 128 defined-ratio median",
+    "validator": "tools/run_arena_small_cost.py:58 validate through raw-cycle recomputation and finite summary matching"
+  }
+}

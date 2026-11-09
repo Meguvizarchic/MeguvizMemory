@@ -798,6 +798,153 @@ void test_arena_first_fit_smaller_bytes_higher_alignment() {
     CHECK(provider.active.empty() && provider.deallocation_calls == 2 && provider.releases == 1);
 }
 
+void test_arena_lease_reuse_identity_reset_and_trim() {
+    Provider provider;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 512, 256);
+    config.provider = &table;
+    auto *domain = create(config);
+    const auto owner = allocate(domain, 64);
+    mgmem_handle_v1 previous{};
+    for (unsigned iteration = 0; iteration < 24; ++iteration) {
+        const auto writer = borrow(domain, owner, 64);
+        CHECK(writer.lease.id > previous.id);
+        if (previous.id) CHECK(mgmem_borrow_release_v1(domain, previous) == MGMEM_STALE_HANDLE);
+        std::memset(writer.data, static_cast<int>(iteration), 64);
+        mgmem_borrow_v1 rejected{};
+        CHECK(mgmem_borrow_acquire_v1(domain, owner, 0, 1, MGMEM_READ, &rejected) == MGMEM_BUSY);
+        CHECK(rejected.data == nullptr && rejected.lease.id == 0);
+        CHECK(mgmem_borrow_release_v1(domain, writer.lease) == MGMEM_OK);
+        const auto reader = borrow(domain, owner, 64, MGMEM_READ);
+        CHECK(reader.lease.id > writer.lease.id);
+        CHECK(mgmem_borrow_release_v1(domain, writer.lease) == MGMEM_STALE_HANDLE);
+        CHECK(mgmem_borrow_acquire_v1(domain, owner, 0, 1, MGMEM_WRITE, &rejected) == MGMEM_BUSY);
+        CHECK(snapshot(domain).active_leases == 1);
+        for (unsigned index = 0; index < 64; ++index)
+            CHECK(static_cast<unsigned char *>(reader.data)[index] == iteration);
+        CHECK(mgmem_borrow_release_v1(domain, reader.lease) == MGMEM_OK);
+        previous = reader.lease;
+    }
+    CHECK(mgmem_arena_reset_v1(domain) == MGMEM_BUSY);
+    CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    const auto generation = snapshot(domain).generation;
+    CHECK(mgmem_arena_reset_v1(domain) == MGMEM_OK);
+    CHECK(snapshot(domain).generation == generation + 1);
+    const auto after_reset = allocate(domain, 64);
+    const auto reset_view = borrow(domain, after_reset, 64);
+    CHECK(reset_view.lease.id > previous.id);
+    CHECK(mgmem_borrow_release_v1(domain, previous) == MGMEM_STALE_HANDLE);
+    CHECK(mgmem_release_v1(domain, after_reset) == MGMEM_OK);
+    CHECK(snapshot(domain).retiring_bytes == 64);
+    CHECK(mgmem_borrow_release_v1(domain, reset_view.lease) == MGMEM_OK);
+
+    struct ReadOnlyOrigin {
+        alignas(64) unsigned char bytes[64]{};
+        unsigned retains = 0, releases = 0;
+    } origin;
+    std::memset(origin.bytes, 0xa7, sizeof(origin.bytes));
+    mgmem_external_buffer_v1 input{};
+    input.struct_size = sizeof(input);
+    input.abi_major = MGMEM_ABI_MAJOR;
+    input.abi_minor = MGMEM_ABI_MINOR;
+    input.data = origin.bytes;
+    input.capacity_bytes = sizeof(origin.bytes);
+    input.alignment = 64;
+    input.external_id = 0x6172656e616c6561ull;
+    input.access = MGMEM_READ;
+    input.context = &origin;
+    input.retain = [](void *context) -> mgmem_status {
+        ++static_cast<ReadOnlyOrigin *>(context)->retains;
+        return MGMEM_OK;
+    };
+    input.release = [](void *context) { ++static_cast<ReadOnlyOrigin *>(context)->releases; };
+    input.managing_runtime_origin = mgmem_runtime_origin_v1();
+    mgmem_handle_v1 imported{};
+    CHECK(mgmem_import_external_arena_v1(domain, &input, &imported) == MGMEM_OK);
+    CHECK(origin.retains == 1 && origin.releases == 0);
+    mgmem_borrow_v1 rejected{};
+    CHECK(mgmem_borrow_acquire_v1(domain, imported, 0, 1, MGMEM_WRITE, &rejected) == MGMEM_UNSUPPORTED);
+    CHECK(rejected.data == nullptr && rejected.lease.id == 0);
+    const auto external_view = borrow(domain, imported, 64, MGMEM_READ);
+    CHECK(external_view.lease.id > reset_view.lease.id);
+    CHECK(mgmem_borrow_release_v1(domain, reset_view.lease) == MGMEM_STALE_HANDLE);
+    CHECK(mgmem_release_v1(domain, imported) == MGMEM_OK);
+    CHECK(origin.releases == 0 && snapshot(domain).retiring_bytes == 64);
+    for (unsigned index = 0; index < 64; ++index)
+        CHECK(static_cast<unsigned char *>(external_view.data)[index] == 0xa7);
+    CHECK(mgmem_borrow_release_v1(domain, external_view.lease) == MGMEM_OK);
+    CHECK(origin.releases == 1);
+    CHECK(mgmem_domain_trim_v1(domain) == MGMEM_OK);
+    auto state = snapshot(domain);
+    CHECK(state.backing_bytes == 0 && state.active_allocations == 0 && state.active_leases == 0);
+    CHECK(provider.deallocation_calls == 1);
+    const auto after_trim = allocate(domain, 64);
+    const auto trim_view = borrow(domain, after_trim, 64);
+    CHECK(trim_view.lease.id > external_view.lease.id);
+    CHECK(mgmem_borrow_release_v1(domain, external_view.lease) == MGMEM_STALE_HANDLE);
+    CHECK(mgmem_borrow_release_v1(domain, trim_view.lease) == MGMEM_OK);
+    CHECK(mgmem_release_v1(domain, after_trim) == MGMEM_OK);
+    close(domain);
+    CHECK(provider.active.empty() && provider.allocation_calls == 2 &&
+          provider.deallocation_calls == 2 && provider.releases == 1 && origin.releases == 1);
+}
+
+void test_arena_lease_reuse_readers_cross_thread_close() {
+    Provider provider;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 512, 256);
+    config.provider = &table;
+    auto *domain = create(config);
+    const auto owner = allocate(domain, 64);
+    const auto writer = borrow(domain, owner, 64);
+    for (unsigned index = 0; index < 64; ++index)
+        static_cast<unsigned char *>(writer.data)[index] = static_cast<unsigned char>(index);
+    CHECK(mgmem_borrow_release_v1(domain, writer.lease) == MGMEM_OK);
+    std::vector<mgmem_borrow_v1> readers;
+    for (unsigned index = 0; index < 4; ++index) {
+        readers.push_back(borrow(domain, owner, 64, MGMEM_READ));
+        CHECK(readers.back().lease.id > (index ? readers[index - 1].lease.id : writer.lease.id));
+    }
+    CHECK(snapshot(domain).active_leases == 4);
+    CHECK(mgmem_borrow_release_v1(domain, writer.lease) == MGMEM_STALE_HANDLE);
+    mgmem_borrow_v1 rejected{};
+    CHECK(mgmem_borrow_acquire_v1(domain, owner, 0, 1, MGMEM_WRITE, &rejected) == MGMEM_BUSY);
+    CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    CHECK(mgmem_domain_begin_close_v1(domain) == MGMEM_OK);
+    auto state = snapshot(domain);
+    CHECK(state.state == MGMEM_CLOSING && state.live_bytes == 0 && state.retiring_bytes == 64);
+    CHECK(state.active_allocations == 1 && state.active_leases == 4);
+    CHECK(mgmem_borrow_acquire_v1(domain, owner, 0, 1, MGMEM_READ, &rejected) == MGMEM_IS_CLOSED);
+    CHECK(mgmem_release_v1(domain, owner) == MGMEM_STALE_HANDLE);
+    const auto release_reader = [&](unsigned index) {
+        for (unsigned byte = 0; byte < 64; ++byte)
+            CHECK(static_cast<unsigned char *>(readers[index].data)[byte] == byte);
+        CHECK(mgmem_borrow_release_v1(domain, readers[index].lease) == MGMEM_OK);
+    };
+    std::thread first([&] { release_reader(0); });
+    std::thread second([&] { release_reader(1); });
+    first.join(); second.join();
+    state = snapshot(domain);
+    CHECK(state.active_leases == 2 && state.active_allocations == 1 && state.retiring_bytes == 64);
+    CHECK(mgmem_domain_collect_v1(domain) == MGMEM_BUSY);
+    CHECK(mgmem_domain_drain_v1(domain, 0) == MGMEM_TIMEOUT);
+    CHECK(mgmem_domain_destroy_v1(domain) == MGMEM_BUSY);
+    CHECK(mgmem_borrow_release_v1(domain, readers[0].lease) == MGMEM_STALE_HANDLE);
+    CHECK(mgmem_borrow_release_v1(domain, readers[1].lease) == MGMEM_STALE_HANDLE);
+    std::thread third([&] { release_reader(2); });
+    std::thread fourth([&] { release_reader(3); });
+    third.join(); fourth.join();
+    state = snapshot(domain);
+    CHECK(state.active_allocations == 0 && state.active_leases == 0 && state.retiring_bytes == 0);
+    CHECK(state.backing_bytes == 256 && provider.deallocation_calls == 0);
+    CHECK(mgmem_domain_collect_v1(domain) == MGMEM_OK);
+    CHECK(mgmem_domain_drain_v1(domain, 0) == MGMEM_OK);
+    state = snapshot(domain);
+    CHECK(state.state == MGMEM_CLOSED && state.backing_bytes == 0 && state.reserved_bytes == 0);
+    CHECK(mgmem_domain_destroy_v1(domain) == MGMEM_OK);
+    CHECK(provider.active.empty() && provider.deallocation_calls == 1 && provider.releases == 1);
+}
+
 void test_growth_peak_and_failure_atomicity() {
     auto *domain = create(options(MGMEM_SYSTEM, 192));
     const auto old_allocation = allocate(domain, 64);
@@ -934,6 +1081,13 @@ int main(int argc, char **argv) {
         test_arena_first_fit_larger_bytes_lower_alignment();
         test_arena_first_fit_smaller_bytes_higher_alignment();
         std::printf("{\"suite\":\"mgmem-arena-shape-retention\",\"tests\":5,\"checks\":%u,\"status\":\"PASS\"}\n",
+                    checks.load());
+        return 0;
+    }
+    if (argc == 2 && std::strcmp(argv[1], "--arena-lease-reuse") == 0) {
+        test_arena_lease_reuse_identity_reset_and_trim();
+        test_arena_lease_reuse_readers_cross_thread_close();
+        std::printf("{\"suite\":\"mgmem-arena-lease-reuse\",\"tests\":2,\"checks\":%u,\"status\":\"PASS\"}\n",
                     checks.load());
         return 0;
     }

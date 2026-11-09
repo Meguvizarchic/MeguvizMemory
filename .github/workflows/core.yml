@@ -212,6 +212,16 @@ jobs:
       - name: Prepared single Arena functional pairs (Windows)
         if: runner.os == 'Windows'
         run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/Release/mgmem_arena_lookup.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/arena-single-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed --profile prepared-single --allocations 32 --batch 32 --rounds 2 --warmup 0
+      - name: Configure small Arena cost diagnostic
+        run: cmake -S bench/arena_small_cost -B build/arena-small-cost-ci -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install/host
+      - name: Build small Arena cost diagnostic
+        run: cmake --build build/arena-small-cost-ci --config Release --parallel 2
+      - name: Small Arena lifetime functional pairs (Linux)
+        if: runner.os == 'Linux'
+        run: python tools/run_arena_small_cost_pairs.py --exe build/arena-small-cost-ci/mgmem_arena_small_cost --baseline-runtime-dir install/host/lib --candidate-runtime-dir install/host/lib --out-dir build/arena-small-cost-smoke-ci --pairs 2 --batches 1 32 --executors inline --cycles 2 --rounds 2 --warmup 0
+      - name: Small Arena lifetime functional pairs (Windows)
+        if: runner.os == 'Windows'
+        run: python tools/run_arena_small_cost_pairs.py --exe build/arena-small-cost-ci/Release/mgmem_arena_small_cost.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/arena-small-cost-smoke-ci --pairs 2 --batches 1 32 --executors inline --cycles 2 --rounds 2 --warmup 0
       - name: Configure claim release benchmark
         run: cmake -S bench/claim_release -B build/claim-release-ci -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install/host
       - name: Build claim release benchmark
@@ -291,4 +301,5 @@ jobs:
             build/capture-journal-ci/regression-receipt.json
             build/arena-lookup-smoke-ci/receipt.json
             build/arena-single-smoke-ci/receipt.json
+            build/arena-small-cost-smoke-ci/receipt.json
             build/claim-release-smoke-ci/receipt.json

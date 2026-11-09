@@ -1,0 +1,27 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -114,0 +115,2 @@
++
++using LeaseMap = std::map<u64, Lease>;
+@@ -234 +236,3 @@
+-    std::map<u64, Lease> leases;
++    LeaseMap leases;
++    // One detached Arena lease node. It owns no backing or active lease ID.
++    LeaseMap::node_type spare_lease;
+@@ -366,0 +371 @@
++    domain.spare_lease = LeaseMap::node_type{};
+@@ -790 +795,8 @@
+-        domain->leases.emplace(id, Lease{handle.id, access == MGMEM_WRITE});
++        if (domain->mode == MGMEM_ARENA && !domain->spare_lease.empty()) {
++            auto node = std::move(domain->spare_lease);
++            node.key() = id;
++            node.mapped() = Lease{handle.id, access == MGMEM_WRITE};
++            domain->leases.insert(std::move(node));
++        } else {
++            domain->leases.emplace(id, Lease{handle.id, access == MGMEM_WRITE});
++        }
+@@ -812 +824,3 @@
+-        domain->leases.erase(lease);
++        if (domain->mode == MGMEM_ARENA && domain->spare_lease.empty())
++            domain->spare_lease = domain->leases.extract(lease);
++        else domain->leases.erase(lease);

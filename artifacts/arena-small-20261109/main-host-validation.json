@@ -1,0 +1,41 @@
+{
+  "state": "PASS_MAIN_BASELINE_CORE_AND_NEW_DIAGNOSTIC_CONTRACTS",
+  "production_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "steps": [
+    {
+      "name": "configure",
+      "exit_code": 0,
+      "log_sha256": "a13754372055551cde017f73bfa2fac65ca77ef89309774b47352a0decbb9423"
+    },
+    {
+      "name": "build",
+      "exit_code": 0,
+      "log_sha256": "7a6fc639e6f02fd0a773764e0d5874de274bff99ced6b1375fc3244c09b32f28"
+    },
+    {
+      "name": "ctest",
+      "exit_code": 0,
+      "log_sha256": "f907ff87b1af8365cebb5d2f19966d786f95570d95f114dffaffedf13940dd89"
+    },
+    {
+      "name": "cost-aa",
+      "exit_code": 0,
+      "log_sha256": "271f20755026975f09adc30cc75e0af0e86eae7d325f481799325829fc53f48b"
+    }
+  ],
+  "performance_qualified": false,
+  "source_sha256": {
+    "src/mgmem.cpp": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+    "tests/core_tests.cpp": "91ee86ec643075518fad1a3bdf4960b6fcb8d8dcdb4e529043e0f90c8d3445b7",
+    "CMakeLists.txt": "0137d4cb8e6ffcc7b98c9e2c19f30c1d76eb117bad9bb2e44f1bae775531ffdb",
+    "bench/arena_small_cost.cpp": "e8d60728266cbeecc71d77db79359055b1c8ecb106a001a82787dfe1c77db16c",
+    "tools/run_arena_small_cost.py": "399c1204d07f96952fa241c7b7073767e195197ab4278e4cc9766eefed77b346",
+    "tools/run_arena_small_cost_pairs.py": "28d73ae327c3a03c45511c7e6753eb7dcf6d36bb24f3494cee3755f388092198"
+  },
+  "scope": "UNCHANGED_40C7B1F_CORE_WITH_NEW_PUBLIC_CONTRACT_TEST_AND_TOOLS",
+  "core_ctest": {
+    "passed": 46,
+    "total": 46
+  },
+  "private_receipt_sha256": "88c3545e1ab4068a938915946958031c91a2b70fe85d4810b528fe1de639bde2"
+}

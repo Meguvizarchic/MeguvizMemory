@@ -20,6 +20,10 @@ source.copyTo(destination, 0, 0, byteCount);
 
 ## 当前 mixed 优化与小负载限制
 
+小负载后续轮已完成固定成本拆分与单 lease 节点复用结构实验。重复 stream 的
+完整生命周期有改善，但 System/held/单次反向代价仍在，候选未切换默认核心。
+主线继续使用 `40c7b1f` 的实现；[诊断、实现与全部取舍](ARENA_SMALL_WORKLOAD.md)。
+
 已采用请求支配关系下的查找下界复用。首批独立八对中，main mixed 1/4 线程
 allocation P50 比为 0.6604/0.4951，workflow 比为 0.8966/0.7610；tiny fixed
 workflow 仍有 1.0268 倍、约 +10.55 ns/op 的配对代价。通知和 map 提示没有

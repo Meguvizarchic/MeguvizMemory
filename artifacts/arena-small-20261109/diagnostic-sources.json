@@ -1,0 +1,94 @@
+{
+  "scope": "EXACT_COUNT_ONLY_SOURCES_AND_ARCHIVED_COST_V1_NOT_PRODUCTION_SDK",
+  "archive": "diagnostic-sources.zip",
+  "files": {
+    "heap-probe/CMakeLists.txt": {
+      "bytes": 1430,
+      "sha256": "650b7824036325ebc335d174b61a4c4b79bfd36c22b0f1719e9f81df13d702a4"
+    },
+    "heap-probe/core.baseline.cpp": {
+      "bytes": 41869,
+      "sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe"
+    },
+    "heap-probe/core.counted.cpp": {
+      "bytes": 42846,
+      "sha256": "191875d003e7640755a89af42f1c1dd480b63264d6b5a0dac574b292aa97063b"
+    },
+    "heap-probe/counting_allocator.hpp": {
+      "bytes": 4655,
+      "sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2"
+    },
+    "heap-probe/driver.cpp": {
+      "bytes": 13040,
+      "sha256": "1c4cbd33983a6d57ea1c70bf9dcb15de29c9ff319121c7fb175c8f7022e8d026"
+    },
+    "heap-probe/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "heap-probe/probe_api.h": {
+      "bytes": 1321,
+      "sha256": "bb5e76bf5987f09c4ae30e6ec524486826806eda817a1659ace860bec61cf591"
+    },
+    "candidate-heap-probe/CMakeLists.txt": {
+      "bytes": 3004,
+      "sha256": "65d9bf08c46e43cc71f67fda4df0b1ce3d3c264125b97179b64e2726198a5bb4"
+    },
+    "candidate-heap-probe/core.baseline.counted.cpp": {
+      "bytes": 42846,
+      "sha256": "191875d003e7640755a89af42f1c1dd480b63264d6b5a0dac574b292aa97063b"
+    },
+    "candidate-heap-probe/core.baseline.cpp": {
+      "bytes": 41869,
+      "sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe"
+    },
+    "candidate-heap-probe/core.candidate.cpp": {
+      "bytes": 42513,
+      "sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423"
+    },
+    "candidate-heap-probe/core.counted.cpp": {
+      "bytes": 43490,
+      "sha256": "09ce49e2c1223f2264a776f48b80b8080222094d4ec6f50308cdf7fb865133f2"
+    },
+    "candidate-heap-probe/counting_allocator.hpp": {
+      "bytes": 4655,
+      "sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2"
+    },
+    "candidate-heap-probe/driver.cpp": {
+      "bytes": 15084,
+      "sha256": "8983659f21dad06d122acfb47762f649d950392b21e5843941d17b7fdc5dcbcb"
+    },
+    "candidate-heap-probe/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "candidate-heap-probe/layout.baseline.counted.cpp": {
+      "bytes": 2263,
+      "sha256": "09b5df84e3a8a45b3b0a1951381dc9c4de66493f0f3474fe4252759620c72ba0"
+    },
+    "candidate-heap-probe/layout.baseline.cpp": {
+      "bytes": 2255,
+      "sha256": "f15553b8b740fd59154928a44db31132368de78ae351fe1abf4dd6a639da0295"
+    },
+    "candidate-heap-probe/layout.candidate.counted.cpp": {
+      "bytes": 2254,
+      "sha256": "8fef05634a6d50b38270f082bdbbb0d9006edbea6bdc8cb94df41091ed2668c5"
+    },
+    "candidate-heap-probe/layout.candidate.cpp": {
+      "bytes": 2256,
+      "sha256": "690c06ead7f21f52604fca0dfceabda578c68e5d5ef5fe5edbb47e51a06283e8"
+    },
+    "candidate-heap-probe/probe_api.h": {
+      "bytes": 1321,
+      "sha256": "bb5e76bf5987f09c4ae30e6ec524486826806eda817a1659ace860bec61cf591"
+    },
+    "cost-diagnosis-source/arena_small_cost.cpp": {
+      "bytes": 20306,
+      "sha256": "6fdbe32cac69c5822957f8a9c3d8e9e2008214702d60266198e4b95b177e0004"
+    },
+    "cost-diagnosis-source/run_arena_small_cost.py": {
+      "bytes": 14211,
+      "sha256": "702f4f8b9d3d9c099a117685995e72e0a166ac80fd3fe35430d5da72130500d2"
+    }
+  }
+}

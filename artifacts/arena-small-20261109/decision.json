@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-09",
+  "state": "STRUCTURAL_CANDIDATE_VALIDATED_EXPERIMENT_PRESERVED_DEFAULT_NOT_ADOPTED",
+  "performance_qualified": false,
+  "base_commit": "40c7b1fa7d7926506103d1f6cbc12f2d78c670ac",
+  "default_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "candidate_core_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+  "candidate_branch": "codex/arena-lease-reuse-experiment-20261109",
+  "candidate_core_commit": "7abf79f",
+  "branch_scope": "LOCAL_BRANCH_WITH_COMPLETE_SOURCE_PATCH_PUBLISHED_IN_MAIN",
+  "default_runtime_changed": false,
+  "implemented_change": "At most one detached lease map node per Arena, fresh logical ID and mapped record before reinsertion; reset retains, quiet trim/collect releases. System does not cache.",
+  "fixed_cost_evidence": {
+    "unmodified_cost_processes": 128,
+    "unmodified_cost_groups": 32,
+    "initial_heap_count_processes": 4,
+    "candidate_heap_count_processes": 32,
+    "matched_heap_combinations": 16,
+    "layout_probes": 4,
+    "counted_timing_used_for_performance": false
+  },
+  "performance_evidence": {
+    "processes": 832,
+    "pairs": 416,
+    "groups": 58,
+    "plan_sha256": "010bfdb65421132ff2c4241af4989be9db997faa99dca008c8cd6626b43b9f81",
+    "complete_report": "paired-performance-full.json.gz",
+    "comparison": "Same executable, request and lifetime within each balanced AB/BA pair; no retry, exclusion or pooling."
+  },
+  "observed_benefit": "All eight repeated-stream profiles: full round-wall P50 ratios 0.87854-0.93953 and full-round derived throughput improved in all eight pairs with same first/last-half direction.",
+  "not_adopted_reason": [
+    "Once mixed held batch32 worker full-wall P50/P95 ratios 1.1221/1.2016 with unfavorable halves.",
+    "Cold mixed batch1 worker full-wall P50 1.0759 and last half 1.3369; no generic single-use gain.",
+    "System32 reverse t1 P50/P95 1.0498/1.0481 and shuffled t4 1.0600/1.0320, all four pairs slower with throughput and halves also adverse.",
+    "Legacy allocation and single tails have additional adverse groups; hot gains do not erase them."
+  ],
+  "memory_cost_host_only": {
+    "platform": "WINDOWS_X64_MSVC_RELEASE",
+    "domain_bytes_baseline": 456,
+    "domain_bytes_candidate": 472,
+    "node_handle_bytes": 16,
+    "arena_idle_node_max_request_bytes": 56,
+    "lease_map_head_request_bytes_separate": 56,
+    "is_rss_or_allocator_usable_size": false
+  },
+  "allocator_work": {
+    "stream_128_operations_baseline_lease_allocations": 128,
+    "stream_128_operations_candidate_lease_allocations": 1,
+    "candidate_work_phase_lease_deallocations": 0,
+    "candidate_trim_or_collect_releases_idle_node": true,
+    "held_128_operations_candidate_lease_allocations": 125,
+    "scope": "Actual std::allocator upstream requests after rebind, excluding prepare/head; not OS heap events."
+  },
+  "qualification": {
+    "candidate_host_core": "46_OF_46",
+    "candidate_host_cpp": "12_OF_12",
+    "candidate_host_asan": "46_OF_46",
+    "main_baseline_core_with_new_tests": "46_OF_46",
+    "new_public_lease_suite": "2_TESTS_2476_CHECKS_ON_BASELINE_AND_CANDIDATE",
+    "android": "CANDIDATE_ARM64_STATIC_ONLY",
+    "device_commands": 0,
+    "new_android_sdk_aar_apk": false,
+    "bil_changed": false,
+    "formal_release": "NOT_PERFORMED"
+  },
+  "patch_application": "git apply --unidiff-zero experimental-spare-lease.patch against the unchanged baseline core.",
+  "limits": [
+    "Thread scheduling, CPU frequency, affinity and other activity uncontrolled.",
+    "Stream and stages have different live sets; phase timings cannot be subtracted as isolated CPU/heap attribution.",
+    "Complete round-wall includes domain create through destroy, but excludes parse/report and specified helper/result container destruction.",
+    "Zero baseline ratios remain null with defined/undefined counts and paired deltas preserved.",
+    "Default keeps the existing runtime; experimental gains are not installed-library or product claims.",
+    "Metadata is outside the existing backing budget; allocator request reduction is not RSS/energy reduction.",
+    "All frozen inputs were checked before restoring the default source; archived snapshots preserve every historical source version."
+  ],
+  "files": {
+    "baseline-cost-full.json.gz": {
+      "bytes": 50380,
+      "sha256": "8d38a0d1f95eb2a3b0621a623ef12f8526db3c96e07241cde8c08e0f675a78d5",
+      "uncompressed_bytes": 677310,
+      "uncompressed_sha256": "f9a56124eaff6c0777390b4992ec8d35287d5d7f2de6bd3bda69692bbfe3afa7"
+    },
+    "paired-performance-full.json.gz": {
+      "bytes": 603041,
+      "sha256": "cab79a2aac03144e06e8704427ce6418d188b0dac8b277e1bd5ba20e0a5a641c",
+      "uncompressed_bytes": 9320917,
+      "uncompressed_sha256": "97e67a83100f69d95a43b00c164a4858a8d0508e65968ffc92c3f82be7da64ce"
+    },
+    "baseline-cost-conclusions.json": {
+      "bytes": 33094,
+      "sha256": "2d4b74f0e6a2abb42b17a45696d30d7f88eb282fcb5411d679902a75a9f21e7d"
+    },
+    "heap-and-layout.json": {
+      "bytes": 143791,
+      "sha256": "50fb9d6947d703c55a3b9ef53f500c15cf801fb97d0d9039a8f545a0baf9fe48"
+    },
+    "performance-advice.json": {
+      "bytes": 1600491,
+      "sha256": "7c8b2f290f857062e4e2cc8c9bec22e16483cdd0c945ae590aab3ffdf77ead83"
+    },
+    "design-review.json": {
+      "bytes": 9804,
+      "sha256": "4fb94b5b83dcdfbceb28f28813b656e502f3af5efa933b065928bf76cec12439"
+    },
+    "implementation-review.json": {
+      "bytes": 7845,
+      "sha256": "93b620a5be6a516d70f2d6a95d4459803c55adddb4509b43fd4df990010cf764"
+    },
+    "paired-performance-summary.json": {
+      "bytes": 4723156,
+      "sha256": "0745907d360d65055412632582d092bc75a2f11965f1f58561efbdbc4f65d8aa"
+    },
+    "experimental-spare-lease.patch": {
+      "bytes": 1090,
+      "sha256": "31fd4296a44c775abeeae5e6c06ebf97a9f36bd2903e0ef2639367bf97f26bb0"
+    },
+    "diagnostic-sources.zip": {
+      "bytes": 86223,
+      "sha256": "ff4b30d499725098a2560b71044ec8ab5da1995e6310b375434430aeaccfed9a"
+    },
+    "diagnostic-sources.json": {
+      "bytes": 3608,
+      "sha256": "942cf3f33fb27ed95924890a6f38e3bc59317e2f8669b2fadd3aca7f5d260348"
+    },
+    "candidate-host-validation.json": {
+      "bytes": 11331,
+      "sha256": "50489d0cec945cc92c182900c16a5c856b80a5e328cdc1148bdbc58078f34ba0"
+    },
+    "main-host-validation.json": {
+      "bytes": 1651,
+      "sha256": "40e3e5670cd5396aeecac7876d7b9af4c742dbc523394cfea4eefc5500160fa4"
+    },
+    "candidate-arm64-static.json": {
+      "bytes": 2847,
+      "sha256": "c349249c657b2ffd1072ca6803fcd614a62ec1c0d66e85c65253910bfccbe063"
+    }
+  }
+}

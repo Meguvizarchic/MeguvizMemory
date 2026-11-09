@@ -1469,5 +1469,21 @@
       256
     ],
     "performance_qualified": false
+  },
+  "arena_small_fixed_cost_20261109": {
+    "state": "STRUCTURAL_CANDIDATE_VALIDATED_EXPERIMENT_PRESERVED_DEFAULT_NOT_ADOPTED",
+    "evidence": "artifacts/arena-small-20261109/decision.json",
+    "default_runtime_changed": false,
+    "default_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+    "candidate_core_sha256": "da0fc1418ffe4544aead473bd82d8b7f872caed0e69d74b5941c16990330a423",
+    "candidate_local_branch": "codex/arena-lease-reuse-experiment-20261109",
+    "candidate_core_commit": "7abf79f",
+    "baseline_cost_processes": 128,
+    "paired_performance_processes": 832,
+    "paired_performance_groups": 58,
+    "main_core_tests": "46_OF_46",
+    "candidate_core_cpp_asan": "46_OF_46_12_OF_12_46_OF_46",
+    "performance_qualified": false,
+    "small_default_workflow_improvement": "NOT_CLAIMED_CANDIDATE_REMAINS_EXPERIMENTAL"
   }
 }

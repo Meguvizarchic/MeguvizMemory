@@ -1,0 +1,982 @@
+{
+  "state": "BASELINE_FIXED_COST_DIAGNOSIS_ONLY",
+  "performance_qualified": false,
+  "evidence_sha256": "f9a56124eaff6c0777390b4992ec8d35287d5d7f2de6bd3bda69692bbfe3afa7",
+  "receipt_source_hashes_match_frozen_plan": true,
+  "processes": 128,
+  "groups": 32,
+  "heap_count_only_runs": 4,
+  "conclusions": [
+    "Thetimedpreparedbaselinepublishesnobackingduringhotcycles; providerandbytesremainfixedforeachshape/batch.",
+    "Smallone-cycleworkerouterwallincludesobservablehandoff/join/schedulingaroundtheloop; workercreatereadyisaseparateexcludedcomponent. Thesearewallobservations,notisolatedCPUcost.",
+    "At128cyclesworkerouterwallgapamortizes,butwarmallocationandstreamremainderremain. Inline/workerhavesameAPI/bytework; noCPUorlockattributionisproven.",
+    "Stagedborrowandlease-releasephasescontainmapoperationsandlocks,butstageshasbatchliveleaseswhile streamhasatmostone; theirphasesarenotsubtracted.",
+    "Count-onlyupstreamrequestsproveallocation-mapandlease-mapnodechurnindependentlyofsemanticAPIcounts: afterpreparetheyeachperformoneallocateandonedeallocateperlogicaloperation,80B/56Brequestedhere.",
+    "Aone-sparelease-nodereuseexperimenthasameasurableallocatorchurntargetinthestreamlifetime,buthasnotbeenmeasuredanditswholephasecannotbeattributedtoheapcost.",
+    "ResetP50oftenreports0nsatthisclockgranularity; thisisnotproofresetisfree.",
+    "Allprocessmetricmediansreportedseparatelybycycles/shape/batch/mode/executor; mediansofcomponentsneednotsumtothemediantotal."
+  ],
+  "compact_descriptive_table": [
+    {
+      "id": "c1-fixed-b32-stream-inline",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 50.0,
+        "stream_remainder_ns_per_op_p50": 192.1875
+      },
+      "hot_p50_ns_per_op": 242.1875,
+      "loop_p50_ns_per_op": 248.4375,
+      "outer_p50_ns_per_op": 248.4375,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 800.0,
+      "close_p50_ns_per_round": 300.0
+    },
+    {
+      "id": "c1-fixed-b32-stream-worker",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 65.625,
+        "stream_remainder_ns_per_op_p50": 223.4375
+      },
+      "hot_p50_ns_per_op": 287.5,
+      "loop_p50_ns_per_op": 298.4375,
+      "outer_p50_ns_per_op": 782.8125,
+      "create_ready_p50_ns_per_round": 37800.0,
+      "outer_minus_loop_p50_ns_per_round": 16050.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1450.0,
+      "close_p50_ns_per_round": 1250.0
+    },
+    {
+      "id": "c1-fixed-b32-stages-inline",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 51.5625,
+        "borrow_ns_per_op_p50": 56.25,
+        "payload_ns_per_op_p50": 84.375,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 53.125
+      },
+      "hot_p50_ns_per_op": 259.375,
+      "loop_p50_ns_per_op": 264.0625,
+      "outer_p50_ns_per_op": 265.625,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 850.0,
+      "close_p50_ns_per_round": 400.0
+    },
+    {
+      "id": "c1-fixed-b32-stages-worker",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 73.4375,
+        "borrow_ns_per_op_p50": 95.3125,
+        "payload_ns_per_op_p50": 87.5,
+        "owner_release_ns_per_op_p50": 31.25,
+        "lease_release_ns_per_op_p50": 79.6875
+      },
+      "hot_p50_ns_per_op": 371.875,
+      "loop_p50_ns_per_op": 387.5,
+      "outer_p50_ns_per_op": 871.875,
+      "create_ready_p50_ns_per_round": 45100.0,
+      "outer_minus_loop_p50_ns_per_round": 15800.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1550.0,
+      "close_p50_ns_per_round": 1350.0
+    },
+    {
+      "id": "c1-fixed-b64-stream-inline",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 52.34375,
+        "stream_remainder_ns_per_op_p50": 191.40625
+      },
+      "hot_p50_ns_per_op": 244.53125,
+      "loop_p50_ns_per_op": 246.875,
+      "outer_p50_ns_per_op": 248.4375,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 800.0,
+      "close_p50_ns_per_round": 350.0
+    },
+    {
+      "id": "c1-fixed-b64-stream-worker",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 82.8125,
+        "stream_remainder_ns_per_op_p50": 212.5
+      },
+      "hot_p50_ns_per_op": 293.75,
+      "loop_p50_ns_per_op": 300.78125,
+      "outer_p50_ns_per_op": 552.34375,
+      "create_ready_p50_ns_per_round": 40450.0,
+      "outer_minus_loop_p50_ns_per_round": 15300.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 2100.0,
+      "close_p50_ns_per_round": 2300.0
+    },
+    {
+      "id": "c1-fixed-b64-stages-inline",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 57.03125,
+        "borrow_ns_per_op_p50": 59.375,
+        "payload_ns_per_op_p50": 100.78125,
+        "owner_release_ns_per_op_p50": 19.53125,
+        "lease_release_ns_per_op_p50": 56.25
+      },
+      "hot_p50_ns_per_op": 303.90625,
+      "loop_p50_ns_per_op": 307.03125,
+      "outer_p50_ns_per_op": 307.8125,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 1000.0,
+      "close_p50_ns_per_round": 500.0
+    },
+    {
+      "id": "c1-fixed-b64-stages-worker",
+      "cycles": 1,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 66.40625,
+        "borrow_ns_per_op_p50": 74.21875,
+        "payload_ns_per_op_p50": 85.9375,
+        "owner_release_ns_per_op_p50": 30.46875,
+        "lease_release_ns_per_op_p50": 69.53125
+      },
+      "hot_p50_ns_per_op": 321.09375,
+      "loop_p50_ns_per_op": 327.34375,
+      "outer_p50_ns_per_op": 576.5625,
+      "create_ready_p50_ns_per_round": 52300.0,
+      "outer_minus_loop_p50_ns_per_round": 16150.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1650.0,
+      "close_p50_ns_per_round": 1350.0
+    },
+    {
+      "id": "c1-mixed-b32-stream-inline",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "stream_remainder_ns_per_op_p50": 221.875
+      },
+      "hot_p50_ns_per_op": 268.75,
+      "loop_p50_ns_per_op": 275.0,
+      "outer_p50_ns_per_op": 275.0,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 800.0,
+      "close_p50_ns_per_round": 400.0
+    },
+    {
+      "id": "c1-mixed-b32-stream-worker",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 68.75,
+        "stream_remainder_ns_per_op_p50": 242.1875
+      },
+      "hot_p50_ns_per_op": 309.375,
+      "loop_p50_ns_per_op": 321.875,
+      "outer_p50_ns_per_op": 776.5625,
+      "create_ready_p50_ns_per_round": 45200.0,
+      "outer_minus_loop_p50_ns_per_round": 14650.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1450.0,
+      "close_p50_ns_per_round": 1100.0
+    },
+    {
+      "id": "c1-mixed-b32-stages-inline",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 51.5625,
+        "borrow_ns_per_op_p50": 56.25,
+        "payload_ns_per_op_p50": 128.125,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 53.125
+      },
+      "hot_p50_ns_per_op": 304.6875,
+      "loop_p50_ns_per_op": 309.375,
+      "outer_p50_ns_per_op": 309.375,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 850.0,
+      "close_p50_ns_per_round": 400.0
+    },
+    {
+      "id": "c1-mixed-b32-stages-worker",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 71.875,
+        "borrow_ns_per_op_p50": 75.0,
+        "payload_ns_per_op_p50": 128.125,
+        "owner_release_ns_per_op_p50": 26.5625,
+        "lease_release_ns_per_op_p50": 78.125
+      },
+      "hot_p50_ns_per_op": 379.6875,
+      "loop_p50_ns_per_op": 389.0625,
+      "outer_p50_ns_per_op": 879.6875,
+      "create_ready_p50_ns_per_round": 45650.0,
+      "outer_minus_loop_p50_ns_per_round": 15600.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1400.0,
+      "close_p50_ns_per_round": 1400.0
+    },
+    {
+      "id": "c1-mixed-b64-stream-inline",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 78.125,
+        "stream_remainder_ns_per_op_p50": 223.4375
+      },
+      "hot_p50_ns_per_op": 304.6875,
+      "loop_p50_ns_per_op": 307.8125,
+      "outer_p50_ns_per_op": 307.8125,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 0.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2900.0,
+      "close_p50_ns_per_round": 2400.0
+    },
+    {
+      "id": "c1-mixed-b64-stream-worker",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 75.78125,
+        "stream_remainder_ns_per_op_p50": 239.0625
+      },
+      "hot_p50_ns_per_op": 317.1875,
+      "loop_p50_ns_per_op": 324.21875,
+      "outer_p50_ns_per_op": 571.875,
+      "create_ready_p50_ns_per_round": 44150.0,
+      "outer_minus_loop_p50_ns_per_round": 15550.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1800.0,
+      "close_p50_ns_per_round": 1450.0
+    },
+    {
+      "id": "c1-mixed-b64-stages-inline",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 52.34375,
+        "borrow_ns_per_op_p50": 53.90625,
+        "payload_ns_per_op_p50": 122.65625,
+        "owner_release_ns_per_op_p50": 17.96875,
+        "lease_release_ns_per_op_p50": 50.0
+      },
+      "hot_p50_ns_per_op": 299.21875,
+      "loop_p50_ns_per_op": 303.125,
+      "outer_p50_ns_per_op": 303.90625,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 1150.0,
+      "close_p50_ns_per_round": 500.0
+    },
+    {
+      "id": "c1-mixed-b64-stages-worker",
+      "cycles": 1,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 69.53125,
+        "borrow_ns_per_op_p50": 82.03125,
+        "payload_ns_per_op_p50": 128.90625,
+        "owner_release_ns_per_op_p50": 30.46875,
+        "lease_release_ns_per_op_p50": 68.75
+      },
+      "hot_p50_ns_per_op": 378.90625,
+      "loop_p50_ns_per_op": 387.5,
+      "outer_p50_ns_per_op": 621.875,
+      "create_ready_p50_ns_per_round": 47500.0,
+      "outer_minus_loop_p50_ns_per_round": 16000.0,
+      "reset_p50_ns_per_cycle": 200.0,
+      "prepare_p50_ns_per_round": 1800.0,
+      "close_p50_ns_per_round": 1250.0
+    },
+    {
+      "id": "c128-fixed-b32-stream-inline",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "stream_remainder_ns_per_op_p50": 187.5
+      },
+      "hot_p50_ns_per_op": 234.375,
+      "loop_p50_ns_per_op": 239.94140625,
+      "outer_p50_ns_per_op": 239.95361328125,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 1300.0,
+      "close_p50_ns_per_round": 700.0
+    },
+    {
+      "id": "c128-fixed-b32-stream-worker",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "stream_remainder_ns_per_op_p50": 187.5
+      },
+      "hot_p50_ns_per_op": 231.25,
+      "loop_p50_ns_per_op": 237.17041015625,
+      "outer_p50_ns_per_op": 244.47021484375,
+      "create_ready_p50_ns_per_round": 62250.0,
+      "outer_minus_loop_p50_ns_per_round": 25000.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2800.0,
+      "close_p50_ns_per_round": 2700.0
+    },
+    {
+      "id": "c128-fixed-b32-stages-inline",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "borrow_ns_per_op_p50": 50.0,
+        "payload_ns_per_op_p50": 96.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 50.0
+      },
+      "hot_p50_ns_per_op": 262.5,
+      "loop_p50_ns_per_op": 270.76416015625,
+      "outer_p50_ns_per_op": 270.7763671875,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3200.0,
+      "close_p50_ns_per_round": 700.0
+    },
+    {
+      "id": "c128-fixed-b32-stages-worker",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 50.0,
+        "borrow_ns_per_op_p50": 50.0,
+        "payload_ns_per_op_p50": 96.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 50.0
+      },
+      "hot_p50_ns_per_op": 260.9375,
+      "loop_p50_ns_per_op": 271.4599609375,
+      "outer_p50_ns_per_op": 277.099609375,
+      "create_ready_p50_ns_per_round": 61750.0,
+      "outer_minus_loop_p50_ns_per_round": 29150.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3250.0,
+      "close_p50_ns_per_round": 2650.0
+    },
+    {
+      "id": "c128-fixed-b64-stream-inline",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 50.0,
+        "stream_remainder_ns_per_op_p50": 189.84375
+      },
+      "hot_p50_ns_per_op": 239.84375,
+      "loop_p50_ns_per_op": 245.599365234375,
+      "outer_p50_ns_per_op": 245.611572265625,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3800.0,
+      "close_p50_ns_per_round": 1050.0
+    },
+    {
+      "id": "c128-fixed-b64-stream-worker",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 50.0,
+        "stream_remainder_ns_per_op_p50": 190.625
+      },
+      "hot_p50_ns_per_op": 240.625,
+      "loop_p50_ns_per_op": 249.395751953125,
+      "outer_p50_ns_per_op": 253.265380859375,
+      "create_ready_p50_ns_per_round": 66400.0,
+      "outer_minus_loop_p50_ns_per_round": 29700.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3150.0,
+      "close_p50_ns_per_round": 2650.0
+    },
+    {
+      "id": "c128-fixed-b64-stages-inline",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 48.4375,
+        "borrow_ns_per_op_p50": 47.65625,
+        "payload_ns_per_op_p50": 97.65625,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 45.3125
+      },
+      "hot_p50_ns_per_op": 256.25,
+      "loop_p50_ns_per_op": 261.80419921875,
+      "outer_p50_ns_per_op": 261.8408203125,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2300.0,
+      "close_p50_ns_per_round": 1150.0
+    },
+    {
+      "id": "c128-fixed-b64-stages-worker",
+      "cycles": 128,
+      "shape": "fixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 48.4375,
+        "borrow_ns_per_op_p50": 46.875,
+        "payload_ns_per_op_p50": 97.65625,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 46.09375
+      },
+      "hot_p50_ns_per_op": 254.6875,
+      "loop_p50_ns_per_op": 265.576171875,
+      "outer_p50_ns_per_op": 269.268798828125,
+      "create_ready_p50_ns_per_round": 66700.0,
+      "outer_minus_loop_p50_ns_per_round": 26850.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2900.0,
+      "close_p50_ns_per_round": 2750.0
+    },
+    {
+      "id": "c128-mixed-b32-stream-inline",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "stream_remainder_ns_per_op_p50": 215.625
+      },
+      "hot_p50_ns_per_op": 262.5,
+      "loop_p50_ns_per_op": 269.66552734375,
+      "outer_p50_ns_per_op": 269.68994140625,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 1500.0,
+      "close_p50_ns_per_round": 800.0
+    },
+    {
+      "id": "c128-mixed-b32-stream-worker",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "stream_remainder_ns_per_op_p50": 217.1875
+      },
+      "hot_p50_ns_per_op": 262.5,
+      "loop_p50_ns_per_op": 270.263671875,
+      "outer_p50_ns_per_op": 281.48193359375,
+      "create_ready_p50_ns_per_round": 68650.0,
+      "outer_minus_loop_p50_ns_per_round": 27750.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2700.0,
+      "close_p50_ns_per_round": 2650.0
+    },
+    {
+      "id": "c128-mixed-b32-stages-inline",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "borrow_ns_per_op_p50": 50.0,
+        "payload_ns_per_op_p50": 121.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 50.0
+      },
+      "hot_p50_ns_per_op": 287.5,
+      "loop_p50_ns_per_op": 293.85986328125,
+      "outer_p50_ns_per_op": 293.88427734375,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 50.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 2600.0,
+      "close_p50_ns_per_round": 700.0
+    },
+    {
+      "id": "c128-mixed-b32-stages-worker",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 32,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 48.4375,
+        "borrow_ns_per_op_p50": 50.0,
+        "payload_ns_per_op_p50": 121.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 50.0
+      },
+      "hot_p50_ns_per_op": 285.9375,
+      "loop_p50_ns_per_op": 294.5068359375,
+      "outer_p50_ns_per_op": 301.9287109375,
+      "create_ready_p50_ns_per_round": 59400.0,
+      "outer_minus_loop_p50_ns_per_round": 24000.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3800.0,
+      "close_p50_ns_per_round": 2350.0
+    },
+    {
+      "id": "c128-mixed-b64-stream-inline",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 49.21875,
+        "stream_remainder_ns_per_op_p50": 217.1875
+      },
+      "hot_p50_ns_per_op": 265.625,
+      "loop_p50_ns_per_op": 274.45068359375,
+      "outer_p50_ns_per_op": 274.468994140625,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 4400.0,
+      "close_p50_ns_per_round": 1350.0
+    },
+    {
+      "id": "c128-mixed-b64-stream-worker",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stream",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 50.0,
+        "stream_remainder_ns_per_op_p50": 218.75
+      },
+      "hot_p50_ns_per_op": 268.75,
+      "loop_p50_ns_per_op": 276.837158203125,
+      "outer_p50_ns_per_op": 280.9326171875,
+      "create_ready_p50_ns_per_round": 69100.0,
+      "outer_minus_loop_p50_ns_per_round": 31000.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 3600.0,
+      "close_p50_ns_per_round": 3000.0
+    },
+    {
+      "id": "c128-mixed-b64-stages-inline",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "inline",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 46.875,
+        "borrow_ns_per_op_p50": 46.875,
+        "payload_ns_per_op_p50": 121.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 45.3125
+      },
+      "hot_p50_ns_per_op": 277.34375,
+      "loop_p50_ns_per_op": 285.3759765625,
+      "outer_p50_ns_per_op": 285.394287109375,
+      "create_ready_p50_ns_per_round": 0.0,
+      "outer_minus_loop_p50_ns_per_round": 100.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 4050.0,
+      "close_p50_ns_per_round": 1700.0
+    },
+    {
+      "id": "c128-mixed-b64-stages-worker",
+      "cycles": 128,
+      "shape": "mixed",
+      "batch": 64,
+      "mode": "stages",
+      "executor": "worker",
+      "processes": 4,
+      "phase_p50_ns_per_op": {
+        "allocate_ns_per_op_p50": 47.65625,
+        "borrow_ns_per_op_p50": 46.875,
+        "payload_ns_per_op_p50": 121.875,
+        "owner_release_ns_per_op_p50": 15.625,
+        "lease_release_ns_per_op_p50": 45.3125
+      },
+      "hot_p50_ns_per_op": 278.125,
+      "loop_p50_ns_per_op": 283.563232421875,
+      "outer_p50_ns_per_op": 288.9404296875,
+      "create_ready_p50_ns_per_round": 62500.0,
+      "outer_minus_loop_p50_ns_per_round": 25500.0,
+      "reset_p50_ns_per_cycle": 0.0,
+      "prepare_p50_ns_per_round": 7100.0,
+      "close_p50_ns_per_round": 3000.0
+    }
+  ],
+  "heap_work_deltas": [
+    {
+      "id": "prepared-single-fixed",
+      "raw_sha256": "7d31f900985abe114772ab41485a53dc67d7b8c563defd129ac50929490c572c",
+      "completed_operations": 128,
+      "provider_publications": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "metadata_requests_per_operation": {
+        "allocation_map": 1.0,
+        "lease_map": 1.0
+      },
+      "upstream_request_bytes_per_operation": {
+        "allocation_map": 80.0,
+        "lease_map": 56.0
+      },
+      "count_scope": "Actual successful std_allocator allocate/rebind requests; not semantic API operation counts, CRT/OS heap events, RSS or timing."
+    },
+    {
+      "id": "prepared-single-mixed",
+      "raw_sha256": "b84367ead3079d7f6724514ca305f49978918c2837ec35f0145ef74f342ce581",
+      "completed_operations": 128,
+      "provider_publications": 1,
+      "peak_backing_bytes": 4096,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 10240,
+          "deallocated_request_bytes": 10240
+        },
+        "lease_map": {
+          "allocation_attempts": 128,
+          "successful_allocations": 128,
+          "failed_allocations": 0,
+          "deallocations": 128,
+          "allocated_request_bytes": 7168,
+          "deallocated_request_bytes": 7168
+        },
+        "backing_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "metadata_requests_per_operation": {
+        "allocation_map": 1.0,
+        "lease_map": 1.0
+      },
+      "upstream_request_bytes_per_operation": {
+        "allocation_map": 80.0,
+        "lease_map": 56.0
+      },
+      "count_scope": "Actual successful std_allocator allocate/rebind requests; not semantic API operation counts, CRT/OS heap events, RSS or timing."
+    },
+    {
+      "id": "default-fixed",
+      "raw_sha256": "1511a2aa79d38c1ebf7a2cb7ef69f3e6cfc50bb55a7ec5f375c892668831d771",
+      "completed_operations": 512,
+      "provider_publications": 2,
+      "peak_backing_bytes": 8192,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 192,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 2,
+          "successful_allocations": 2,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 112,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "metadata_requests_per_operation": {
+        "allocation_map": 1.0,
+        "lease_map": 1.0
+      },
+      "upstream_request_bytes_per_operation": {
+        "allocation_map": 80.0,
+        "lease_map": 56.0
+      },
+      "count_scope": "Actual successful std_allocator allocate/rebind requests; not semantic API operation counts, CRT/OS heap events, RSS or timing."
+    },
+    {
+      "id": "default-mixed",
+      "raw_sha256": "c03d06f7c2f305e5427cc3f0deb2a130f3cc60a89d696f794bd919142c063200",
+      "completed_operations": 512,
+      "provider_publications": 4,
+      "peak_backing_bytes": 16384,
+      "work_delta_after_prepare_to_before_close": {
+        "domain": {
+          "allocation_attempts": 0,
+          "successful_allocations": 0,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 0,
+          "deallocated_request_bytes": 0
+        },
+        "allocation_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 40960,
+          "deallocated_request_bytes": 40960
+        },
+        "lease_map": {
+          "allocation_attempts": 512,
+          "successful_allocations": 512,
+          "failed_allocations": 0,
+          "deallocations": 512,
+          "allocated_request_bytes": 28672,
+          "deallocated_request_bytes": 28672
+        },
+        "backing_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 384,
+          "deallocated_request_bytes": 0
+        },
+        "range_claim_list": {
+          "allocation_attempts": 4,
+          "successful_allocations": 4,
+          "failed_allocations": 0,
+          "deallocations": 0,
+          "allocated_request_bytes": 224,
+          "deallocated_request_bytes": 0
+        }
+      },
+      "metadata_requests_per_operation": {
+        "allocation_map": 1.0,
+        "lease_map": 1.0
+      },
+      "upstream_request_bytes_per_operation": {
+        "allocation_map": 80.0,
+        "lease_map": 56.0
+      },
+      "count_scope": "Actual successful std_allocator allocate/rebind requests; not semantic API operation counts, CRT/OS heap events, RSS or timing."
+    }
+  ],
+  "limits": [
+    "Preparedbaseline only; noproductionoptimizationhasbeenmeasured inthisreport.",
+    "Atomiccountinginstrumentationiscountonlyandneverusedfortiming.",
+    "Allocatorrequests/requestedbytes arenotCRT/OSheaptraffic,malloccapacity,RSS,peakmemorysavingsorperformancecausation.",
+    "Clockoverhead,lockcost,mapnew/deletecost,payloadloopandschedulingarenotisolatedcomponents.",
+    "NoAndroidruntime,device,energy,productorformalperformancequalification."
+  ]
+}
