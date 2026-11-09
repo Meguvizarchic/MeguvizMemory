@@ -1,0 +1,124 @@
+{
+  "state": "PASS_SCOPED_HOST_FUNCTIONAL",
+  "date": "2026-11-09",
+  "core_ctest": {
+    "passed": 21,
+    "total": 21
+  },
+  "cpp_ctest": {
+    "passed": 12,
+    "total": 12
+  },
+  "ucodex_steps_passed": 11,
+  "arena_consumer": {
+    "state": "PASS_HOST_FUNCTIONAL_ONLY",
+    "device_executed": false,
+    "performance_qualification": "NOT_MEASURED",
+    "bil_integrated": false,
+    "input": {
+      "sha256": "83ac99bc338e8bfc1980e382a4c318871cac0364dc449ae7b0316f601c136ab0",
+      "bytes": 10540184
+    },
+    "sdk_source_lock_sha256": "128624d18f0f359706bdc8f54fb155b9a71ee47f97343c2c6ca70a0eb739daa7",
+    "sdk_files_checked": 65,
+    "binary_sha256": "e0c5036b60385e6fb938218fdbd2b8f586fdc8668a31bd4e3ee5045f61f423e6",
+    "baseline_binary_sha256": "66a0da0d1a29dbdf1eb51ba307d52696944c0fbe84de3a8aed14b1daacbcc777",
+    "runtime_sha256": "5ca495b97a9d8ffe8c8a8373e10e27108ade0410626e18e0f48edb65e15e2769",
+    "source_identity": {
+      "src/mgmem.cpp": "e7616706b405ff182c2fbfd6dff9a726ff094c7d61ba54582f97c8e492d70a9e",
+      "include/mgmem/mgmem.h": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486",
+      "consumers/dex/import_consumer.cpp": "e2fdc6c66296e44f091ed0b61a4b78f6c8aa6b1981dfddbaa6d4e2f2865834d3",
+      "consumers/dex/CMakeLists.txt": "14c6f4a54cd4b55c6f4b3dbb8d7ae0b43dabae8bd6cca1609d2524f8feb339c0",
+      "tools/verify_dex_arena_import.py": "a5831aeacbfa8a376f75effc138ea2a7e84a285881285c54cf462f579c1bf5ed"
+    },
+    "baseline": {
+      "variant": "direct",
+      "case": "normal",
+      "source_bytes": 10540184,
+      "methods": 54147,
+      "checksum": 12701547145945416225,
+      "memory_backing_peak_bytes": 0,
+      "imported_subset_bytes": 0,
+      "workspace_flushes": null,
+      "final_resources": "ZERO"
+    },
+    "runs": [
+      {
+        "variant": "arena-import",
+        "case": "normal",
+        "source_bytes": 10540184,
+        "methods": 54147,
+        "checksum": 12701547145945416225,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 10150,
+        "final_resources": "ZERO"
+      },
+      {
+        "variant": "arena-import",
+        "case": "cross-thread",
+        "source_bytes": 10540184,
+        "methods": 54147,
+        "checksum": 12701547145945416225,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 10150,
+        "final_resources": "ZERO"
+      },
+      {
+        "variant": "arena-import",
+        "case": "soft-budget",
+        "source_bytes": 10540184,
+        "methods": 54147,
+        "checksum": 12701547145945416225,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 10150,
+        "final_resources": "ZERO"
+      },
+      {
+        "variant": "arena-import",
+        "case": "workspace-budget",
+        "source_bytes": 10540184,
+        "methods": 54147,
+        "checksum": 12701547145945416225,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 10150,
+        "final_resources": "ZERO"
+      },
+      {
+        "variant": "arena-import",
+        "case": "corrupt",
+        "source_bytes": 10540184,
+        "methods": 0,
+        "checksum": 0,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 0,
+        "final_resources": "ZERO"
+      },
+      {
+        "variant": "arena-import",
+        "case": "borrow-budget",
+        "source_bytes": 10540184,
+        "methods": 0,
+        "checksum": 0,
+        "memory_backing_peak_bytes": 10548376,
+        "imported_subset_bytes": 10540184,
+        "workspace_flushes": 0,
+        "final_resources": "ZERO"
+      }
+    ],
+    "limitations": [
+      "SDK parser allocations remain outside this workspace.",
+      "The workspace buffers consumer result-hash input; it is not a speedup measurement.",
+      "Runtime identity is the selected file hash, not independent loaded-image attestation.",
+      "Library paths and input are not published."
+    ]
+  },
+  "legacy_consumer_state": "PASS_HOST_FUNCTIONAL_AND_BOUNDED_STABILITY",
+  "device": "NOT_RUN_FOR_THIS_EXTENSION",
+  "performance": "NOT_MEASURED",
+  "formal_release": "NOT_QUALIFIED"
+}

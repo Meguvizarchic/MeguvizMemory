@@ -35,3 +35,7 @@
 __pycache__/
 *.user
 CMakeUserPresets.json
+
+# Local code index and workflow execution logs.
+/.codegraph/
+/.codex-workflow/runs/

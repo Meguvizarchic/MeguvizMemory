@@ -44,6 +44,14 @@ SDK snapshot 建立后立即归还 bridge 的 caller 引用；import 还会归�
 
 Memory 导入在此提供集中预算、READ lease、跨关闭寿命和可观测账目；它仍有 metadata/引用计数/域操作成本。parser 内部内存由原 SDK 管理，另记 peak。当前功能/稳定性运行中的 duration 只说明实际覆盖时间，未冻结性能协议，不能据其比较耗时、RSS/PSS、能量或 TLB 净收益。旧 D-C2/D-Z0 的性能记录也不会因新导入功能而被改写。
 
+## Arena 导入与消费者结果工作区
+
+`mgmem_dex_arena_import_consumer` 是通过 CMake `MGMEM_DEX_ENABLE_ARENA_IMPORT=ON` 显式启用的独立编译目标，要求同一安装版运行库提供 `mgmem_import_external_arena_v1` 和 `MGMEM_CAP_ARENA_EXTERNAL_IMPORT`；默认不构建，也不更改原目标的旧库动态链接要求。其 `arena-import` 路径把 DEX 全容量以只读方式导入 Arena 域，并在同一域申请 4096 字节工作区（8192 字节 Arena backing）。结果查询时以工作区批量缓存方法字段，再按原顺序计算同一个完整结果 checksum；SDK parser 的内部内存没有移入该域。
+
+原始输入和 Memory 的外部导入是同一 backing，只有一份容量；域的 backing 另包含独立的 8192 字节 Arena 块。功能核验检查这两部分、批量工作区实际使用、同一查询 oracle、预算拒绝、parser 拒绝、跨线程最终释放和域关闭后归零。作用域是独立消费者功能，不代表零复制以外的额外节约或任何性能收益。
+
+`tools/verify_dex_arena_import.py` 通过显式传入新旧二进制、安装库、锁定 SDK、真实输入和输出路径，校验直接借用基线与六组 Arena 导入功能。它不运行 ADB，输出仅含输入摘要、容量和验证结果，不发布本地路径或输入；旧 `tools/verify_dex_import.py` 及其 direct/import 合同保持独立。
+
 ## 复跑
 
 ```powershell

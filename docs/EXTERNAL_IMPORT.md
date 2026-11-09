@@ -4,7 +4,11 @@
 
 ## 唯一backing合同
 
-`mgmem_external_buffer_v1` 必须描述一个完整、真实、稳定的外部backing：地址、全部可访问容量、对齐、外部owner的非零稳定ID、读写权限和retain/release。一次成功导入创建一个owner handle，**全容量**计入既有domain预算；多个子视图用同一handle的offset/length lease表达，不重新导入或重复收费。当前仅支持SYSTEM域，arena导入明确返回UNSUPPORTED。
+`mgmem_external_buffer_v1` 必须描述一个完整、真实、稳定的外部backing：地址、全部可访问容量、对齐、外部owner的非零稳定ID、读写权限和retain/release。一次成功导入创建一个owner handle，**全容量**计入既有domain预算；多个子视图用同一handle的offset/length lease表达，不重新导入或重复收费。原有两个导入入口仍仅接受 SYSTEM 域，对 arena 域返回 `UNSUPPORTED`。
+
+可选扩展 `mgmem_import_external_arena_v1` 和 `mgmem_import_external_arena_checked_v1` 分别使用既有普通和 checked 描述符，只接受 arena 域。调用者须先在同一个运行库确认 `MGMEM_CAP_ARENA_EXTERNAL_IMPORT` 并解析所需新符号；checked 版本还须确认 `MGMEM_CAP_CHECKED_EXTERNAL_RELEASE`，不能仅依据 ABI minor 推断扩展可用。旧运行库不提供这些新符号。它不改变任何公开结构体布局和旧入口语义。
+
+外部 backing 与 arena 自有 chunk 共用同一软预算，但从不作为 arena 子分配或 reset 的可重用空间；最后一个 owner 或 lease 结束后即在锁外向来源归还，不等到 reset、trim 或域关闭。域仍处于 OPEN 且未隔离时，只要 owner、lease 或回调尚在进行，reset 和 trim 均返回 `BUSY`。回调完成后，reset 只重绕自有 chunk，trim 在域安静时回收剩余自有 backing；checked release 失败仍保留不确定 claim 和计费并隔离整个域，不重试该回调。
 
 `external_id` 在同一manager runtime的所有活跃导入中必须唯一对应这份region及其origin owner；独立origin也不能使用相同ID表示不同存储。不能给同一backing的子区间另造ID规避账目。模块范围registry拒绝重复ID及与任何已登记owned/external region的重叠，包括其他domain和在途import。相邻不重叠region允许。虚拟地址区间是检查依据，不能识别不同VA映射的相同物理页，也不是进程范围PFN去重。
 

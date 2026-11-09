@@ -230,6 +230,98 @@ void soft_arena_limit_and_cpp_raii() {
     CHECK(o.refs==1 && o.releases==1 && o.other_release);
 }
 
+void arena_import_budget_close_and_dedup() {
+    CHECK((mgmem_capabilities_v1()&MGMEM_CAP_ARENA_EXTERNAL_IMPORT)!=0);
+    auto *arena=make(MGMEM_ARENA,128),*other=make(MGMEM_ARENA,128);
+    Owner source(64);source.data[0]=0x5a;auto b=source.table(64,MGMEM_READ);mgmem_handle_v1 h{},denied{};
+    auto *system=make();CHECK(mgmem_import_external_arena_v1(system,&b,&denied)==MGMEM_UNSUPPORTED && source.retains==0);finish(system);
+    CHECK(mgmem_import_external_v1(arena,&b,&denied)==MGMEM_UNSUPPORTED && source.retains==0);
+    CHECK(mgmem_import_external_arena_v1(arena,&b,&h)==MGMEM_OK && source.retains==1 && source.refs==2);
+    CHECK(snapshot(arena).backing_bytes==64 && imported(arena).external_backing_bytes==64);
+    CHECK(mgmem_import_external_arena_v1(other,&b,&denied)==MGMEM_BUSY && source.retains==1);
+    mgmem_borrow_v1 first{},second{},writer{};
+    CHECK(mgmem_borrow_acquire_v1(arena,h,0,32,MGMEM_READ,&first)==MGMEM_OK);
+    CHECK(mgmem_borrow_acquire_v1(arena,h,0,64,MGMEM_READ,&second)==MGMEM_OK);
+    CHECK(mgmem_borrow_acquire_v1(arena,h,0,1,MGMEM_WRITE,&writer)==MGMEM_UNSUPPORTED);
+    CHECK(mgmem_arena_reset_v1(arena)==MGMEM_BUSY && mgmem_domain_trim_v1(arena)==MGMEM_BUSY);
+    CHECK(mgmem_domain_set_budget_v1(arena,0)==MGMEM_OK);
+    Owner distinct(64);auto d=distinct.table();CHECK(mgmem_import_external_arena_v1(arena,&d,&denied)==MGMEM_OUT_OF_BUDGET);
+    CHECK(distinct.retains==0 && static_cast<const unsigned char *>(first.data)[0]==0x5a);
+    CHECK(mgmem_release_v1(arena,h)==MGMEM_OK && source.releases==0 && snapshot(arena).retiring_bytes==64);
+    CHECK(mgmem_domain_begin_close_v1(arena)==MGMEM_OK);
+    CHECK(mgmem_borrow_acquire_v1(arena,h,0,1,MGMEM_READ,&writer)==MGMEM_IS_CLOSED);
+    CHECK(mgmem_import_external_arena_v1(arena,&d,&denied)==MGMEM_IS_CLOSED);
+    CHECK(mgmem_domain_collect_v1(arena)==MGMEM_BUSY && mgmem_domain_drain_v1(arena,0)==MGMEM_TIMEOUT);
+    CHECK(static_cast<const unsigned char *>(second.data)[0]==0x5a);
+    CHECK(mgmem_borrow_release_v1(arena,first.lease)==MGMEM_OK && source.releases==0);
+    CHECK(mgmem_borrow_release_v1(arena,second.lease)==MGMEM_OK && source.releases==1 && source.refs==1);
+    CHECK(mgmem_borrow_release_v1(arena,second.lease)==MGMEM_STALE_HANDLE);
+    CHECK(imported(arena).external_backing_bytes==0 && snapshot(arena).backing_bytes==0);finish(arena);
+    CHECK(mgmem_import_external_arena_v1(other,&b,&h)==MGMEM_OK);
+    CHECK(mgmem_release_v1(other,h)==MGMEM_OK && source.releases==2 && source.refs==1);
+    CHECK(imported(other).external_backing_count==0 && snapshot(other).backing_bytes==0);finish(other);
+}
+
+void arena_import_does_not_supply_arena_storage() {
+    auto *d=make(MGMEM_ARENA,256);Owner source(64);auto b=source.table();mgmem_handle_v1 external{},owned{};
+    CHECK(mgmem_import_external_arena_v1(d,&b,&external)==MGMEM_OK);
+    CHECK(mgmem_allocate_v1(d,32,16,&owned)==MGMEM_OK);
+    mgmem_borrow_v1 v{};CHECK(mgmem_borrow_acquire_v1(d,owned,0,32,MGMEM_WRITE,&v)==MGMEM_OK);
+    CHECK(v.data!=source.data && snapshot(d).backing_bytes==192);
+    CHECK(mgmem_borrow_release_v1(d,v.lease)==MGMEM_OK && mgmem_release_v1(d,owned)==MGMEM_OK);
+    CHECK(mgmem_arena_reset_v1(d)==MGMEM_BUSY && mgmem_domain_trim_v1(d)==MGMEM_BUSY);
+    CHECK(mgmem_release_v1(d,external)==MGMEM_OK && source.releases==1);
+    CHECK(imported(d).external_backing_bytes==0 && snapshot(d).backing_bytes==128);
+    CHECK(mgmem_arena_reset_v1(d)==MGMEM_OK && snapshot(d).backing_bytes==128);
+    CHECK(mgmem_domain_trim_v1(d)==MGMEM_OK && snapshot(d).backing_bytes==0);finish(d);
+}
+
+void arena_import_pending_reservation_and_close() {
+    Owner o;o.block_retain=true;auto *d=make(MGMEM_ARENA,64),*other=make(MGMEM_ARENA,64);
+    auto b=o.table();mgmem_handle_v1 h{},denied{};mgmem_status status=MGMEM_BUSY;
+    std::thread worker([&]{status=mgmem_import_external_arena_v1(d,&b,&h);});o.wait();
+    CHECK(imported(d).pending_import_bytes==64 && snapshot(d).reserved_bytes==64);
+    CHECK(mgmem_import_external_arena_v1(other,&b,&denied)==MGMEM_BUSY && o.retains==1);
+    CHECK(mgmem_arena_reset_v1(d)==MGMEM_BUSY && mgmem_domain_trim_v1(d)==MGMEM_BUSY);
+    CHECK(mgmem_domain_set_budget_v1(d,0)==MGMEM_OK);o.unblock();worker.join();
+    CHECK(status==MGMEM_OK && snapshot(d).budget_bytes==0 && snapshot(d).backing_bytes==64);
+    CHECK(mgmem_release_v1(d,h)==MGMEM_OK && o.releases==1 && o.refs==1);finish(d);finish(other);
+    Owner closing;closing.block_retain=true;d=make(MGMEM_ARENA);b=closing.table();h={};
+    std::thread pending([&]{status=mgmem_import_external_arena_v1(d,&b,&h);});closing.wait();
+    CHECK(mgmem_domain_begin_close_v1(d)==MGMEM_OK && mgmem_domain_collect_v1(d)==MGMEM_BUSY);
+    closing.unblock();pending.join();
+    CHECK(status==MGMEM_IS_CLOSED && h.id==0 && closing.retains==1 && closing.releases==1 && closing.refs==1);
+    CHECK(snapshot(d).backing_bytes==0 && snapshot(d).reserved_bytes==0 && imported(d).import_count==0);finish(d);
+}
+
+void arena_checked_import_success() {
+    auto *d=make(MGMEM_ARENA);Owner owner;auto b=owner.table();
+    mgmem_external_buffer_checked_v1 cb{sizeof(cb),b.abi_major,b.abi_minor,b.required_flags,b.data,b.capacity_bytes,
+        b.alignment,b.external_id,b.access,b.reserved,b.context,b.retain,
+        [](void *p)->mgmem_status {Owner::release(p);return MGMEM_OK;},b.managing_runtime_origin};
+    mgmem_handle_v1 h{},denied{};CHECK(mgmem_import_external_checked_v1(d,&cb,&denied)==MGMEM_UNSUPPORTED);
+    auto *system=make();CHECK(mgmem_import_external_arena_checked_v1(system,&cb,&denied)==MGMEM_UNSUPPORTED && owner.retains==0);finish(system);
+    CHECK(mgmem_import_external_arena_checked_v1(d,&cb,&h)==MGMEM_OK);
+    mgmem_borrow_v1 v{};CHECK(mgmem_borrow_acquire_v1(d,h,0,64,MGMEM_READ,&v)==MGMEM_OK);
+    CHECK(mgmem_release_v1(d,h)==MGMEM_OK && owner.releases==0);
+    CHECK(mgmem_borrow_release_v1(d,v.lease)==MGMEM_OK && owner.releases==1 && owner.refs==1);
+    CHECK(imported(d).external_backing_count==0 && snapshot(d).backing_bytes==0);finish(d);
+}
+
+void arena_import_release_callback_keeps_charge() {
+    auto *d=make(MGMEM_ARENA,64),*other=make();Owner owner;owner.block_release=true;
+    auto b=owner.table();mgmem_handle_v1 h{},denied{};mgmem_status status=MGMEM_BUSY;
+    CHECK(mgmem_import_external_arena_v1(d,&b,&h)==MGMEM_OK);
+    std::thread worker([&]{status=mgmem_release_v1(d,h);});owner.wait();
+    CHECK(snapshot(d).backing_bytes==64 && imported(d).external_backing_bytes==64);
+    CHECK(mgmem_import_external_v1(other,&b,&denied)==MGMEM_BUSY && owner.retains==1);
+    CHECK(mgmem_allocate_v1(d,1,1,&denied)==MGMEM_OUT_OF_BUDGET);
+    CHECK(mgmem_arena_reset_v1(d)==MGMEM_BUSY && mgmem_domain_trim_v1(d)==MGMEM_BUSY);
+    owner.unblock();worker.join();
+    CHECK(status==MGMEM_OK && owner.releases==1 && owner.refs==1 && snapshot(d).backing_bytes==0);
+    CHECK(mgmem_arena_reset_v1(d)==MGMEM_OK && mgmem_domain_trim_v1(d)==MGMEM_OK);finish(d);finish(other);
+}
+
 struct AliasProvider {
     void *address;std::atomic<unsigned> deallocations{0};
     static mgmem_status allocate(void *p,uint64_t,uint64_t,void **out) { *out=static_cast<AliasProvider *>(p)->address;return MGMEM_OK; }
@@ -240,7 +332,8 @@ void poison_case(const char *name) {
     // These are deliberately violating callbacks. Quarantine cannot safely be
     // destroyed; this isolated mode validates it then exits without pretending
     // normal ownership cleanup succeeded. Ordinary tests perform full cleanup.
-    Owner o;auto *d=make();auto desc=o.table();mgmem_handle_v1 h{};
+    Owner o;auto *d=make(std::strcmp(name,"--poison-arena-checked")==0 ? MGMEM_ARENA : MGMEM_SYSTEM);
+    auto desc=o.table();mgmem_handle_v1 h{};
     if(std::strcmp(name,"--poison-retain")==0) {
         o.throw_retain=true;CHECK(mgmem_import_external_v1(d,&desc,&h)==MGMEM_PROVIDER_ERROR && h.id==0);
         CHECK(o.releases==0 && imported(d).poisoned==1 && snapshot(d).backing_bytes==64);
@@ -248,6 +341,17 @@ void poison_case(const char *name) {
         h=acquire(d,o);o.throw_release=true;CHECK(mgmem_release_v1(d,h)==MGMEM_PROVIDER_ERROR);
         CHECK(o.releases==1 && imported(d).poisoned==1 && snapshot(d).backing_bytes==64);
         CHECK(mgmem_release_v1(d,h)==MGMEM_STALE_HANDLE && o.releases==1);
+    } else if(std::strcmp(name,"--poison-arena-checked")==0) {
+        mgmem_external_buffer_checked_v1 cb{sizeof(cb),desc.abi_major,desc.abi_minor,desc.required_flags,
+            desc.data,desc.capacity_bytes,desc.alignment,desc.external_id,desc.access,desc.reserved,
+            desc.context,desc.retain,[](void *p)->mgmem_status {++static_cast<Owner *>(p)->releases;return MGMEM_BUSY;},
+            desc.managing_runtime_origin};
+        CHECK(mgmem_import_external_arena_checked_v1(d,&cb,&h)==MGMEM_OK);
+        CHECK(mgmem_release_v1(d,h)==MGMEM_PROVIDER_ERROR && o.releases==1 && o.refs==2);
+        CHECK(mgmem_release_v1(d,h)==MGMEM_STALE_HANDLE && o.releases==1);
+        CHECK(imported(d).poisoned==1 && imported(d).external_backing_bytes==64 && snapshot(d).backing_bytes==64);
+        auto *other=make(MGMEM_ARENA);mgmem_handle_v1 denied{};
+        CHECK(mgmem_import_external_arena_checked_v1(other,&cb,&denied)==MGMEM_BUSY && denied.id==0);finish(other);
     } else {
         h=acquire(d,o);AliasProvider provider{const_cast<void *>(desc.data)};
         mgmem_provider_v1 table{sizeof(table),1,1,0,&provider,AliasProvider::allocate,AliasProvider::deallocate,AliasProvider::retain,AliasProvider::release};
@@ -278,13 +382,17 @@ void poison_case(const char *name) {
 
 int main(int argc,char **argv) {
     if(argc==2) {
-        if(std::strcmp(argv[1],"--poison-retain") && std::strcmp(argv[1],"--poison-release") && std::strcmp(argv[1],"--poison-alias")) return 2;
+        if(std::strcmp(argv[1],"--poison-retain") && std::strcmp(argv[1],"--poison-release") &&
+           std::strcmp(argv[1],"--poison-alias") && std::strcmp(argv[1],"--poison-arena-checked")) return 2;
         poison_case(argv[1]);return 1;
     }
     if(argc!=1)return 2;
     abi_validation_and_failure_atomicity();readonly_views_identity_and_unique_charge();
     owned_alias_and_whole_region_writer();pending_budget_and_close_races();
     pending_provider_survives_soft_reduction();release_keeps_charge_and_claim_until_callback();soft_arena_limit_and_cpp_raii();
-    std::printf("{\"suite\":\"mgmem-import-v1\",\"groups\":7,\"checks\":%u,\"status\":\"PASS\"}\n",checks.load());
+    arena_import_budget_close_and_dedup();arena_import_does_not_supply_arena_storage();
+    arena_import_pending_reservation_and_close();arena_checked_import_success();arena_import_release_callback_keeps_charge();
+    // Preserve the v1 consumer's seven legacy groups; report new groups separately.
+    std::printf("{\"suite\":\"mgmem-import-v1\",\"groups\":7,\"arena_groups\":5,\"checks\":%u,\"status\":\"PASS\"}\n",checks.load());
     return 0;
 }

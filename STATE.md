@@ -2,6 +2,10 @@
 
 最近补充：2026-11-01。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/jichuo1/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## Arena 外部导入功能收尾（2026-11-09）
+
+显式 Arena 导入、checked 释放和 C++ 入口已实现；外部 backing 与自有 chunk 共用预算且不会进入 Arena 子分配。独立 DEX 消费者的工作区实际参与完整结果 checksum。迁移后新构建、安装验证及旧消费者回归通过：[宿主证据](artifacts/arena-import-20261109/host.json)，核心 21/21、C++ 12/12、Arena 消费者 6 项加 direct 对照；无新设备或性能资格。
+
 ## 压力关闭准入竞争修复（2026-11-01）
 
 - 修复 Java backend 和原生 JNI 两层竞争：后台线程启动尚未确认时，并发关闭不得误报已受理；明确失败可重试，JNI 异常未知时不盲目重试，独立完成回调可确认受理。极端线程已启动但 detach 抛异常时保守保留线程对象和可能的系统句柄。[合同](docs/ANDROID_PRESSURE.md)

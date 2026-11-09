@@ -1401,5 +1401,12 @@
     "second_attempt": "artifacts/managed-probe-20261101/linux-host-second-attempt.json",
     "third_attempt": "artifacts/managed-probe-20261101/linux-host-third-attempt.json",
     "candidate_evidence": "artifacts/managed-probe-20261101/linux-host-candidate-pass.json"
+  },
+  "arena_external_import_20261109": {
+    "implementation": "EXPLICIT_ARENA_IMPORT_AND_CPP_WITH_INSTALLED_DEX_WORKSPACE",
+    "host_validation": "PASS_SCOPED",
+    "device_validation": "NOT_RUN_FOR_THIS_EXTENSION",
+    "performance_validation": "NOT_MEASURED",
+    "evidence": "artifacts/arena-import-20261109/host.json"
   }
 }

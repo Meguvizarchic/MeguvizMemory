@@ -315,10 +315,11 @@ void commit_allocation(mgmem_domain &domain, Allocation &allocation, u64 bytes) 
     domain.cumulative_requested += bytes;
 }
 
-// The allocation metadata has already been consumed. Keep backing charged until
-// deallocation finishes; callback latency must not let another request evade budget.
-mgmem_status reclaim_system(mgmem_domain &domain, Backing *backing,
-                            std::unique_lock<std::mutex> &lock) noexcept {
+// The allocation metadata has already been consumed. A SYSTEM allocation or an
+// external backing in either mode is independently returned to its origin. Keep
+// it charged until the callback finishes so another request cannot evade budget.
+mgmem_status reclaim_standalone(mgmem_domain &domain, Backing *backing,
+                                std::unique_lock<std::mutex> &lock) noexcept {
     std::list<Backing> detached;
     for (auto it = domain.backing.begin(); it != domain.backing.end(); ++it) {
         if (&*it == backing) {
@@ -386,7 +387,7 @@ uint64_t mgmem_capabilities_v1(void) {
     return MGMEM_CAP_SYSTEM | MGMEM_CAP_ARENA | MGMEM_CAP_CUSTOM_PROVIDER |
            MGMEM_CAP_RW_LEASE | MGMEM_CAP_EXPLICIT_COLLECTION |
            MGMEM_CAP_EXTERNAL_IMPORT | MGMEM_CAP_SOFT_BUDGET |
-           MGMEM_CAP_CHECKED_EXTERNAL_RELEASE;
+           MGMEM_CAP_CHECKED_EXTERNAL_RELEASE | MGMEM_CAP_ARENA_EXTERNAL_IMPORT;
 }
 uint64_t mgmem_runtime_origin_v1(void) { return runtime_origin(); }
 
@@ -463,7 +464,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         if (!take_id(*domain, id)) return MGMEM_OVERFLOW;
         if (domain->mode == MGMEM_ARENA) {
             for (auto &backing : domain->backing) {
-                if (backing.pending || backing.alignment < alignment) continue;
+                if (backing.external || backing.pending || backing.alignment < alignment) continue;
                 u64 offset = 0;
                 if (!round_up(backing.used, alignment, offset) || offset > backing.bytes ||
                     bytes > backing.bytes - offset) continue;
@@ -557,7 +558,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
 
 static mgmem_status import_external_impl(mgmem_domain *domain,
     const mgmem_external_buffer_v1 *buffer,
-    mgmem_status (*release_checked)(void *), mgmem_handle_v1 *out) {
+    mgmem_status (*release_checked)(void *), bool arena_only, mgmem_handle_v1 *out) {
     if (!out) return MGMEM_INVALID_ARGUMENT;
     *out = {};
     if (!domain || !buffer || buffer->struct_size < sizeof(*buffer)) return MGMEM_INVALID_ARGUMENT;
@@ -577,7 +578,7 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
     return guarded([&]() -> mgmem_status {
         std::unique_lock<std::mutex> lock(domain->mutex);
         if (domain->state != MGMEM_OPEN) return MGMEM_IS_CLOSED;
-        if (domain->mode != MGMEM_SYSTEM) return MGMEM_UNSUPPORTED;
+        if (domain->mode != (arena_only ? MGMEM_ARENA : MGMEM_SYSTEM)) return MGMEM_UNSUPPORTED;
         if (domain->provider_poisoned) return MGMEM_PROVIDER_ERROR;
         if (domain->maintenance) return MGMEM_BUSY;
         if (!counters_fit(*domain, input.capacity_bytes, false) || domain->pending == max_u64 ||
@@ -661,11 +662,11 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
 
 mgmem_status mgmem_import_external_v1(mgmem_domain *domain,
     const mgmem_external_buffer_v1 *buffer, mgmem_handle_v1 *out) {
-    return import_external_impl(domain, buffer, nullptr, out);
+    return import_external_impl(domain, buffer, nullptr, false, out);
 }
 
-mgmem_status mgmem_import_external_checked_v1(mgmem_domain *domain,
-    const mgmem_external_buffer_checked_v1 *buffer, mgmem_handle_v1 *out) {
+static mgmem_status import_external_checked_impl(mgmem_domain *domain,
+    const mgmem_external_buffer_checked_v1 *buffer, bool arena_only, mgmem_handle_v1 *out) {
     if (!out) return MGMEM_INVALID_ARGUMENT;
     *out = {};
     if (!domain || !buffer || buffer->struct_size < sizeof(*buffer)) return MGMEM_INVALID_ARGUMENT;
@@ -675,7 +676,22 @@ mgmem_status mgmem_import_external_checked_v1(mgmem_domain *domain,
         sizeof(mgmem_external_buffer_v1), input.abi_major, input.abi_minor, input.required_flags,
         input.data, input.capacity_bytes, input.alignment, input.external_id, input.access,
         input.reserved, input.context, input.retain, nullptr, input.managing_runtime_origin};
-    return import_external_impl(domain, &legacy, input.release_checked, out);
+    return import_external_impl(domain, &legacy, input.release_checked, arena_only, out);
+}
+
+mgmem_status mgmem_import_external_checked_v1(mgmem_domain *domain,
+    const mgmem_external_buffer_checked_v1 *buffer, mgmem_handle_v1 *out) {
+    return import_external_checked_impl(domain, buffer, false, out);
+}
+
+mgmem_status mgmem_import_external_arena_v1(mgmem_domain *domain,
+    const mgmem_external_buffer_v1 *buffer, mgmem_handle_v1 *out) {
+    return import_external_impl(domain, buffer, nullptr, true, out);
+}
+
+mgmem_status mgmem_import_external_arena_checked_v1(mgmem_domain *domain,
+    const mgmem_external_buffer_checked_v1 *buffer, mgmem_handle_v1 *out) {
+    return import_external_checked_impl(domain, buffer, true, out);
 }
 
 mgmem_status mgmem_domain_set_budget_v1(mgmem_domain *domain, u64 bytes) {
@@ -708,7 +724,8 @@ mgmem_status mgmem_release_v1(mgmem_domain *domain, mgmem_handle_v1 handle) {
         Backing *backing = allocation.backing;
         domain->allocations.erase(found);
         domain->changed.notify_all();
-        return domain->mode == MGMEM_SYSTEM ? reclaim_system(*domain, backing, lock) : MGMEM_OK;
+        return domain->mode == MGMEM_SYSTEM || backing->external
+            ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
     });
 }
 
@@ -761,7 +778,8 @@ mgmem_status mgmem_borrow_release_v1(mgmem_domain *domain, mgmem_handle_v1 handl
             domain->retiring_bytes -= allocation.bytes;
             domain->allocations.erase(found);
             domain->changed.notify_all();
-            return domain->mode == MGMEM_SYSTEM ? reclaim_system(*domain, backing, lock) : MGMEM_OK;
+            return domain->mode == MGMEM_SYSTEM || backing->external
+                ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
         }
         domain->changed.notify_all();
         return MGMEM_OK;
@@ -777,7 +795,7 @@ mgmem_status mgmem_arena_reset_v1(mgmem_domain *domain) {
         if (domain->provider_poisoned) return MGMEM_PROVIDER_ERROR;
         if (!quiet(*domain)) return MGMEM_BUSY;
         if (domain->generation == max_u64) return MGMEM_OVERFLOW;
-        for (auto &backing : domain->backing) backing.used = 0;
+        for (auto &backing : domain->backing) if (!backing.external) backing.used = 0;
         ++domain->generation;
         return MGMEM_OK;
     });

@@ -301,6 +301,41 @@ public:
         return MGMEM_OK;
     }
 
+    // These methods link optional arena-import symbols. The selected runtime
+    // must export them as well as advertise MGMEM_CAP_ARENA_EXTERNAL_IMPORT.
+    mgmem_status import_external_arena(const mgmem_external_buffer_v1 &buffer,
+                                       owned_allocation &out) const noexcept {
+        if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
+        if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
+        if ((mgmem_capabilities_v1() & MGMEM_CAP_ARENA_EXTERNAL_IMPORT) == 0) return MGMEM_UNSUPPORTED;
+        mgmem_handle_v1 handle{};
+        const mgmem_status status = mgmem_import_external_arena_v1(state_->native, &buffer, &handle);
+        if (status != MGMEM_OK) return status;
+        out.state_ = state_;
+        out.handle_ = handle;
+        out.bytes_ = buffer.capacity_bytes;
+        return MGMEM_OK;
+    }
+
+    mgmem_status import_external_arena_checked(const mgmem_external_buffer_checked_v1 &buffer,
+                                               owned_allocation &out) const noexcept {
+        if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
+        if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
+        const uint64_t required = MGMEM_CAP_ARENA_EXTERNAL_IMPORT | MGMEM_CAP_CHECKED_EXTERNAL_RELEASE;
+        if ((mgmem_capabilities_v1() & required) != required) return MGMEM_UNSUPPORTED;
+        mgmem_handle_v1 handle{};
+        const mgmem_status status = mgmem_import_external_arena_checked_v1(state_->native, &buffer, &handle);
+        if (status != MGMEM_OK) {
+            if (status == MGMEM_PROVIDER_ERROR) state_->observe_checked_import_error();
+            return status;
+        }
+        out.state_ = state_;
+        out.handle_ = handle;
+        out.bytes_ = buffer.capacity_bytes;
+        out.checked_ = true;
+        return MGMEM_OK;
+    }
+
     mgmem_status set_budget(uint64_t bytes) const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_domain_set_budget_v1(state_->native, bytes);

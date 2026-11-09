@@ -17,6 +17,10 @@
 namespace {
 constexpr uint64_t input_limit = 32ull * 1024 * 1024;
 constexpr uint64_t parser_limit = 256ull * 1024 * 1024;
+#ifdef MGMEM_DEX_ARENA_IMPORT
+constexpr uint64_t workspace_bytes = 4096;
+constexpr uint64_t workspace_chunk = 8192;
+#endif
 std::atomic<uint64_t> next_identity{1};
 void require(bool value, const char *message) { if (!value) throw std::runtime_error(message); }
 void memory_check(mgmem_status status, const char *name) {
@@ -81,6 +85,22 @@ struct Input {
     const uint8_t *data;
     const uint64_t size, capacity;
     uint64_t backing_peak = 0, imported_peak = 0;
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    mgmem_handle_v1 workspace_owner{};
+    mgmem_borrow_v1 workspace_lease{};
+    bool workspace_owner_live = false, workspace_lease_live = false;
+    uint64_t workspace_flushes = 0;
+    void release_workspace() {
+        if (workspace_lease_live) {
+            memory_check(mgmem_borrow_release_v1(domain, workspace_lease.lease), "workspace_lease_release");
+            workspace_lease_live = false;
+        }
+        if (workspace_owner_live) {
+            memory_check(mgmem_release_v1(domain, workspace_owner), "workspace_owner_release");
+            workspace_owner_live = false;
+        }
+    }
+#endif
     explicit Input(bool mode, Origin *source, OriginStats &value)
         : imported(mode), caller_origin(source), stats(value), data(source->bytes.data()),
           size(source->bytes.size()), capacity(source->bytes.capacity()) {}
@@ -113,7 +133,12 @@ struct Input {
     void prepare(const std::string &test_case) {
         if (!imported) return;
         const mgmem_domain_options_v1 options{sizeof(options), MGMEM_ABI_MAJOR, MGMEM_ABI_MINOR,
+#ifdef MGMEM_DEX_ARENA_IMPORT
+            0, MGMEM_ARENA, 0, capacity + workspace_chunk, workspace_chunk, nullptr};
+        require((mgmem_capabilities_v1() & MGMEM_CAP_ARENA_EXTERNAL_IMPORT) != 0, "arena_import_capability_missing");
+#else
             0, MGMEM_SYSTEM, 0, capacity, 0, nullptr};
+#endif
         memory_check(mgmem_domain_create_v1(&options, &domain), "domain_create");
         auto descriptor = mgmem_external_buffer_v1{sizeof(mgmem_external_buffer_v1), MGMEM_ABI_MAJOR,
             MGMEM_ABI_MINOR, 0, data, capacity, 1, caller_origin->identity, MGMEM_READ, 0,
@@ -130,7 +155,11 @@ struct Input {
             require(mgmem_import_external_v1(domain, &foreign, &rejected) == MGMEM_STALE_HANDLE &&
                     rejected.id == 0 && stats.retains == 0, "foreign_cookie_not_rejected_before_retain");
         }
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        memory_check(mgmem_import_external_arena_v1(domain, &descriptor, &owner), "import"); owner_live = true;
+#else
         memory_check(mgmem_import_external_v1(domain, &descriptor, &owner), "import"); owner_live = true;
+#endif
         if (test_case == "duplicate") {
             // Permit reservation first so this case actually reaches the
             // identity/region registry instead of being rejected by budget.
@@ -151,11 +180,31 @@ struct Input {
                 detail.external_backing_bytes == capacity && detail.external_backing_count == 1 &&
                 detail.import_count == 1 && !detail.poisoned, "import_charge_not_unique_capacity");
         backing_peak = state.peak_backing_bytes; imported_peak = detail.external_backing_bytes;
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        if (test_case == "workspace-budget") {
+            memory_check(mgmem_domain_set_budget_v1(domain, capacity), "workspace_budget_limit");
+            require(mgmem_allocate_v1(domain, workspace_bytes, alignof(uint64_t), &rejected) == MGMEM_OUT_OF_BUDGET &&
+                    rejected.id == 0 && snapshot().backing_bytes == capacity, "workspace_budget_not_enforced");
+            memory_check(mgmem_domain_set_budget_v1(domain, capacity + workspace_chunk), "workspace_budget_restore");
+        }
+        memory_check(mgmem_allocate_v1(domain, workspace_bytes, alignof(uint64_t), &workspace_owner), "workspace_allocate");
+        workspace_owner_live = true;
+        memory_check(mgmem_borrow_acquire_v1(domain, workspace_owner, 0, workspace_bytes, MGMEM_WRITE, &workspace_lease), "workspace_acquire");
+        workspace_lease_live = true;
+        state = snapshot();
+        require(state.backing_bytes == capacity + workspace_chunk && state.provider_allocation_count == 1 &&
+                state.active_leases == 2, "workspace_accounting_mismatch");
+        backing_peak = state.peak_backing_bytes;
+#endif
         if (test_case == "soft-budget") {
             memory_check(mgmem_domain_set_budget_v1(domain, 0), "soft_budget_zero");
             require(mgmem_allocate_v1(domain, 1, 1, &rejected) == MGMEM_OUT_OF_BUDGET && rejected.id == 0,
                     "zero_budget_admitted_new_backing");
-            require(snapshot().backing_bytes == capacity && !stats.freed, "soft_budget_reclaimed_existing_lease");
+            require(snapshot().backing_bytes == capacity
+#ifdef MGMEM_DEX_ARENA_IMPORT
+                    + workspace_chunk
+#endif
+                    && !stats.freed, "soft_budget_reclaimed_existing_lease");
         }
         Origin::release(caller_origin); caller_origin = nullptr;
         require(!stats.freed && stats.retains == 1 && stats.releases == 1, "import_not_retaining_origin");
@@ -168,7 +217,13 @@ struct Input {
         if (sdk_holds_source) {
             const auto state = snapshot();
             require(state.state == MGMEM_CLOSING && state.retiring_bytes == capacity &&
-                    state.active_leases == 1 && !stats.freed, "close_did_not_preserve_result_lease");
+                    state.active_leases ==
+#ifdef MGMEM_DEX_ARENA_IMPORT
+                    2
+#else
+                    1
+#endif
+                    && !stats.freed, "close_did_not_preserve_result_lease");
             require(mgmem_domain_collect_v1(domain) == MGMEM_BUSY &&
                     mgmem_domain_drain_v1(domain, 0) == MGMEM_TIMEOUT, "close_poll_freed_live_lease");
         }
@@ -190,6 +245,9 @@ struct Input {
         memory_check(mgmem_domain_destroy_v1(domain), "destroy"); domain = nullptr;
     }
     ~Input() noexcept {
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        try { release_workspace(); } catch (...) { std::terminate(); }
+#endif
         release_caller();
         // SDK wrappers are declared later and are destroyed before this bridge.
         // Keeping a callback to a dead stack or destroying a busy domain is fatal.
@@ -204,28 +262,55 @@ uint64_t mix(uint64_t hash, uint64_t word) {
     for (unsigned i = 0; i < 8; ++i) { hash = (hash ^ (word & 255u)) * UINT64_C(1099511628211); word >>= 8; }
     return hash;
 }
-uint64_t consume(dmg_result *result, uint32_t expected) {
+uint64_t consume(dmg_result *result, uint32_t expected
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    , Input &input
+#endif
+) {
     dmg_result_info info{}; dex_check(dmg_result_get_info(result, &info), "result_info");
     require(info.execution_status == DMG_OK && info.coverage == DMG_COVERAGE_COMPLETE &&
             info.candidates_count == expected, "incomplete_query");
     uint64_t hash = UINT64_C(14695981039346656037);
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    auto *words = static_cast<uint64_t *>(input.workspace_lease.data);
+    size_t used = 0;
+    const auto flush = [&] {
+        if (!used) return;
+        for (size_t i = 0; i < used; ++i) hash = mix(hash, words[i]);
+        used = 0;
+        ++input.workspace_flushes;
+    };
+    const auto add = [&](uint64_t word) {
+        words[used++] = word;
+        if (used == workspace_bytes / sizeof(uint64_t)) flush();
+    };
+#else
+    const auto add = [&](uint64_t word) { hash = mix(hash, word); };
+#endif
     for (uint32_t index = 0; index < expected; ++index) {
         dmg_method_row row{}; dex_check(dmg_result_get_method(result, index, &row), "method_row");
-        hash = mix(hash, row.method_index); hash = mix(hash, row.access_flags);
-        hash = mix(hash, row.declaration_offset); hash = mix(hash, row.code_offset);
+        add(row.method_index); add(row.access_flags);
+        add(row.declaration_offset); add(row.code_offset);
         const uint16_t *texts[] = {row.owner, row.name, row.prototype};
         const uint64_t lengths[] = {row.owner_length, row.name_length, row.prototype_length};
         for (unsigned part = 0; part < 3; ++part) {
-            require(texts[part] || !lengths[part], "invalid_method_text"); hash = mix(hash, lengths[part]);
-            for (uint64_t i = 0; i < lengths[part]; ++i) hash = mix(hash, texts[part][i]);
+            require(texts[part] || !lengths[part], "invalid_method_text"); add(lengths[part]);
+            for (uint64_t i = 0; i < lengths[part]; ++i) add(texts[part][i]);
         }
     }
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    flush();
+    require(input.workspace_flushes > 0, "workspace_was_not_used");
+#endif
     return hash;
 }
 struct Outcome {
     uint64_t size = 0, capacity = 0, methods = 0, checksum = 0, backing = 0, imported = 0;
     uint64_t parser_peak = 0, origin_retains = 0, origin_releases = 0, sdk_retains = 0, sdk_releases = 0;
     bool other_thread = false;
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    uint64_t workspace_flushes = 0;
+#endif
     std::string sha;
 };
 Outcome run(const char *path, bool imported, const std::string &test_case) {
@@ -253,6 +338,9 @@ Outcome run(const char *path, bool imported, const std::string &test_case) {
         require(status == static_cast<dmg_status>(test_case == "corrupt" ? DMG_CORRUPT_INPUT : DMG_BUDGET_EXCEEDED) && !snapshot,
                 "expected_parser_rejection_missing");
         require(input.retains == (test_case == "corrupt" ? 1u : 0u), "parser_rejection_retained_unexpectedly");
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        input.release_workspace();
+#endif
         input.retire(false);
     } else {
         dex_check(status, "open_borrowed"); dmg_snapshot_info info{};
@@ -266,7 +354,14 @@ Outcome run(const char *path, bool imported, const std::string &test_case) {
         dmg_result *raw_result = nullptr; dex_check(dmg_query_methods(snapshot.get(), &query, &raw_result, &error), "query");
         Result result(raw_result, &dmg_result_release); snapshot.reset();
         require(input.references == 1 && !stats.freed, "result_not_retaining_source_after_snapshot_release");
-        outcome.checksum = consume(result.get(), static_cast<uint32_t>(outcome.methods));
+        outcome.checksum = consume(result.get(), static_cast<uint32_t>(outcome.methods)
+#ifdef MGMEM_DEX_ARENA_IMPORT
+            , input
+#endif
+        );
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        input.release_workspace();
+#endif
         if (test_case == "cross-thread" || test_case == "soft-budget") {
             std::thread final_release([owned = std::move(result)]() mutable { owned.reset(); }); final_release.join();
             require(input.final_other_thread && stats.freed_on_other_thread, "final_release_not_on_worker");
@@ -279,7 +374,11 @@ Outcome run(const char *path, bool imported, const std::string &test_case) {
     outcome.backing = input.backing_peak; outcome.imported = input.imported_peak;
     outcome.origin_retains = stats.retains; outcome.origin_releases = stats.releases;
     outcome.sdk_retains = input.retains; outcome.sdk_releases = input.releases;
-    outcome.other_thread = input.final_other_thread; return outcome;
+    outcome.other_thread = input.final_other_thread;
+#ifdef MGMEM_DEX_ARENA_IMPORT
+    outcome.workspace_flushes = input.workspace_flushes;
+#endif
+    return outcome;
 }
 } // namespace
 
@@ -313,10 +412,16 @@ int main(int argc, char **argv) {
                 }
             } else throw std::runtime_error("unknown_option");
         }
+#ifdef MGMEM_DEX_ARENA_IMPORT
+        require(variant == "arena-import", "invalid_variant");
+        require(test_case == "normal" || test_case == "cross-thread" || test_case == "corrupt" ||
+                test_case == "borrow-budget" || test_case == "soft-budget" || test_case == "workspace-budget", "invalid_case");
+#else
         require(variant == "direct" || variant == "import", "invalid_variant");
         require(test_case == "normal" || test_case == "cross-thread" || test_case == "corrupt" || test_case == "borrow-budget" ||
                 (variant == "import" && (test_case == "soft-budget" || test_case == "duplicate" ||
                     test_case == "import-budget" || test_case == "foreign-cookie")), "invalid_case");
+#endif
         require(dmg_abi_version() == DMG_ABI_VERSION && mgmem_abi_version_v1() >= 0x10001u, "ABI_mismatch");
         require(min_duration_ms <= wall_ms, "minimum_duration_exceeds_wall");
         const auto elapsed_ms = [&] {
@@ -324,7 +429,13 @@ int main(int argc, char **argv) {
         };
         std::vector<Outcome> outcomes; outcomes.reserve(cycles);
         while (outcomes.size() < 65536 && elapsed_ms() < wall_ms) {
-            outcomes.push_back(run(argv[1], variant == "import", test_case));
+            outcomes.push_back(run(argv[1],
+#ifdef MGMEM_DEX_ARENA_IMPORT
+                true,
+#else
+                variant == "import",
+#endif
+                test_case));
             if (outcomes.size() >= cycles && elapsed_ms() >= min_duration_ms) break;
         }
         const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - started).count();
@@ -345,13 +456,24 @@ int main(int argc, char **argv) {
                       << ",\"method_count\":" << o.methods << ",\"result_checksum\":" << o.checksum
                       << ",\"memory_backing_peak_bytes\":" << o.backing << ",\"imported_backing_subset_bytes\":" << o.imported
                       << ",\"source_plus_input_unique_capacity_bytes\":" << o.capacity
-                      << ",\"extra_input_backing_bytes\":0,\"copy_bytes\":0,\"provider_published_count\":0"
+                      << ",\"extra_input_backing_bytes\":0,\"copy_bytes\":0,\"provider_published_count\":"
+#ifdef MGMEM_DEX_ARENA_IMPORT
+                      << 1 << ",\"workspace_requested_bytes\":" << workspace_bytes
+                      << ",\"workspace_backing_bytes\":" << workspace_chunk
+                      << ",\"workspace_flushes\":" << o.workspace_flushes
+#else
+                      << 0
+#endif
                       << ",\"parser_peak_owned_bytes\":" << o.parser_peak
                       << ",\"origin_retains\":" << o.origin_retains << ",\"origin_releases_including_caller\":" << o.origin_releases
                       << ",\"SDK_retains\":" << o.sdk_retains << ",\"SDK_releases_including_caller\":" << o.sdk_releases
                       << ",\"last_release_on_worker\":" << (o.other_thread ? "true" : "false")
                       << ",\"source_freed\":true,\"final_resources\":\"ZERO\",\"memory_domain\":"
+#ifdef MGMEM_DEX_ARENA_IMPORT
+                      << "\"CLOSED_ZERO\""
+#else
                       << (variant == "import" ? "\"CLOSED_ZERO\"" : "null")
+#endif
                       << ",\"memory_metadata_bytes\":null,\"rss_pss\":null,\"energy\":null}";
         }
         std::cout << "],\"scope\":\"independent_DexMeguviz_not_BIL\",\"performance_qualification\":\"NOT_MEASURED\"}\n";

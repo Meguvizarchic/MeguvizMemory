@@ -218,6 +218,49 @@ void concurrent_releases() {
     CHECK(failures == 2 && first.releases == 1 && second.releases == 1);
     assert_quarantine(domain, 128);
 }
+
+void arena_normal() {
+    Origin origin, plain;
+    auto config = options(); config.mode = MGMEM_ARENA; config.arena_chunk_bytes = 128;
+    mgmem::domain domain;
+    CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
+    auto input = origin.descriptor(1011);
+    mgmem::owned_allocation imported, workspace, plain_owner;
+    CHECK(domain.import_external_arena_checked(input, imported) == MGMEM_OK);
+    mgmem_external_buffer_v1 plain_input{sizeof(mgmem_external_buffer_v1), MGMEM_ABI_MAJOR,
+        MGMEM_ABI_MINOR, 0, plain.bytes, sizeof(plain.bytes), 64, 1013, MGMEM_READ, 0,
+        &plain, Origin::retain, [](void *p) { (void)Origin::release(p); }, mgmem_runtime_origin_v1()};
+    CHECK(domain.import_external_arena(plain_input, plain_owner) == MGMEM_OK);
+    CHECK(plain_owner.release() == MGMEM_OK && plain.releases == 1);
+    CHECK(domain.allocate(64, 16, workspace) == MGMEM_OK);
+    mgmem::borrow input_view, workspace_view;
+    CHECK(imported.acquire_borrow(0, 64, MGMEM_READ, input_view) == MGMEM_OK);
+    CHECK(workspace.acquire_borrow(0, 64, MGMEM_WRITE, workspace_view) == MGMEM_OK);
+    CHECK(input_view.data() == origin.bytes && workspace_view.write_data() != origin.bytes);
+    CHECK(imported.release() == MGMEM_OK && workspace.release() == MGMEM_OK);
+    CHECK(domain.begin_close() == MGMEM_OK && domain.collect() == MGMEM_BUSY);
+    CHECK(input_view.release() == MGMEM_OK && origin.releases == 1);
+    CHECK(workspace_view.release() == MGMEM_OK);
+    CHECK(domain.collect() == MGMEM_OK && domain.drain(0) == MGMEM_OK);
+    mgmem_snapshot_v1 snapshot{};
+    CHECK(domain.snapshot(snapshot) == MGMEM_OK && snapshot.backing_bytes == 0);
+}
+
+void arena_failure() {
+    static Origin origin;
+    origin.release_status = MGMEM_BUSY;
+    auto config = options(); config.mode = MGMEM_ARENA; config.arena_chunk_bytes = 128;
+    mgmem::domain domain;
+    CHECK(mgmem::domain::create(config, domain) == MGMEM_OK);
+    mgmem::owned_allocation owner;
+    auto input = origin.descriptor(1012);
+    CHECK(domain.import_external_arena_checked(input, owner) == MGMEM_OK);
+    mgmem::borrow view;
+    CHECK(owner.acquire_borrow(0, 64, MGMEM_READ, view) == MGMEM_OK);
+    CHECK(owner.release() == MGMEM_OK && origin.releases == 0);
+    CHECK(view.release() == MGMEM_PROVIDER_ERROR && !view && origin.releases == 1);
+    assert_quarantine(domain, 64);
+}
 }
 
 int main(int argc, char **argv) {
@@ -230,11 +273,13 @@ int main(int argc, char **argv) {
     else if (!std::strcmp(argv[1], "move-assignment")) move_assignment_failure();
     else if (!std::strcmp(argv[1], "rollback-failure")) rollback_failure();
     else if (!std::strcmp(argv[1], "concurrent")) concurrent_releases();
+    else if (!std::strcmp(argv[1], "arena-normal")) arena_normal();
+    else if (!std::strcmp(argv[1], "arena-failure")) arena_failure();
     else return 2;
     std::printf("{\"suite\":\"cpp-checked-import\",\"case\":\"%s\",\"status\":\"PASS\"}\n", argv[1]);
     std::fflush(stdout);
     // Uncertain resources intentionally remain quarantined; an isolated
     // process exits without claiming successful release or leak freedom.
-    if (std::strcmp(argv[1], "normal")) std::_Exit(0);
+    if (std::strcmp(argv[1], "normal") && std::strcmp(argv[1], "arena-normal")) std::_Exit(0);
     return 0;
 }

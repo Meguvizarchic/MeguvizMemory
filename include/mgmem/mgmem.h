@@ -37,6 +37,8 @@ extern "C" {
 #define MGMEM_CAP_SOFT_BUDGET 64ull
 /* Optional additive extension; availability is not implied by ABI minor 1. */
 #define MGMEM_CAP_CHECKED_EXTERNAL_RELEASE 128ull
+/* Optional additive extension; resolve both arena import symbols separately. */
+#define MGMEM_CAP_ARENA_EXTERNAL_IMPORT 256ull
 
 typedef uint32_t mgmem_status;
 #define MGMEM_OK 0u
@@ -116,7 +118,9 @@ typedef struct mgmem_snapshot_v1 {
     uint64_t page_size;
 } mgmem_snapshot_v1;
 
-/* ABI 1.1: one complete externally-owned region, SYSTEM domains only.
+/* ABI 1.1: one complete externally-owned region. The original import functions
+ * accept SYSTEM domains only; the optional explicit arena functions below
+ * accept ARENA domains only and require MGMEM_CAP_ARENA_EXTERNAL_IMPORT.
  * external_id is a stable nonzero identity assigned by its origin owner. During
  * any import lifetime it must identify exactly this region and callback owner.
  * Memory imports the entire capacity, not a separately charged child view.
@@ -212,6 +216,16 @@ MGMEM_API mgmem_status mgmem_allocate_v1(mgmem_domain *domain, uint64_t bytes, u
 MGMEM_API mgmem_status mgmem_import_external_v1(mgmem_domain *domain,
     const mgmem_external_buffer_v1 *buffer, mgmem_handle_v1 *out);
 MGMEM_API mgmem_status mgmem_import_external_checked_v1(mgmem_domain *domain,
+    const mgmem_external_buffer_checked_v1 *buffer, mgmem_handle_v1 *out);
+/* Optional arena imports. Imported capacity is charged once to the same budget,
+ * never used as arena allocation storage, and returned to its origin immediately
+ * after the final owner/lease. Existing import functions retain their SYSTEM-only
+ * contract. Availability is not implied by ABI minor 1: resolve the desired
+ * symbol and check MGMEM_CAP_ARENA_EXTERNAL_IMPORT in that same runtime; the
+ * checked form additionally requires MGMEM_CAP_CHECKED_EXTERNAL_RELEASE. */
+MGMEM_API mgmem_status mgmem_import_external_arena_v1(mgmem_domain *domain,
+    const mgmem_external_buffer_v1 *buffer, mgmem_handle_v1 *out);
+MGMEM_API mgmem_status mgmem_import_external_arena_checked_v1(mgmem_domain *domain,
     const mgmem_external_buffer_checked_v1 *buffer, mgmem_handle_v1 *out);
 /* A soft admission limit, including zero. Existing owners/leases and operations
  * with an existing reservation remain valid; no forced reclamation or implicit
