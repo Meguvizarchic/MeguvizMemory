@@ -218,6 +218,42 @@ extern "C" JNIEXPORT jint JNICALL JNI_NAME(nativeCopy)(JNIEnv *env, jclass, jlon
     } catch (...) { return MGMEM_PROVIDER_ERROR; }
 }
 
+// Entry locks, not Java object monitors, protect both borrowed ranges through
+// the copy. Tokens are monotonic, so ascending token order also handles opposite
+// direction transfers without lock inversion; self-copy acquires just one lock.
+extern "C" JNIEXPORT jint JNICALL JNI_NAME(nativeTransfer)(JNIEnv *, jclass,
+    jlong source_token, jlong source_offset, jlong destination_token, jlong destination_offset, jint count) {
+    try {
+        if (source_token <= 0 || destination_token <= 0 || source_offset < 0 ||
+            destination_offset < 0 || count < 0 ||
+            static_cast<u64>(count) > MGMEM_ANDROID_BORROW_MAX_WRITE_BYTES)
+            return MGMEM_INVALID_ARGUMENT;
+        auto source = lookup(static_cast<u64>(source_token));
+        auto destination = source_token == destination_token ? source : lookup(static_cast<u64>(destination_token));
+        if (!source || !destination) return MGMEM_STALE_HANDLE;
+        auto first = source_token < destination_token ? source : destination;
+        auto second = source_token < destination_token ? destination : source;
+        std::unique_lock<std::mutex> first_lock(first->mutex);
+        std::unique_lock<std::mutex> second_lock;
+        if (source != destination) second_lock = std::unique_lock<std::mutex>(second->mutex);
+        if (!source->ready || source->closed || !source->claimed ||
+            !destination->ready || destination->closed || !destination->claimed)
+            return MGMEM_IS_CLOSED;
+        if (destination->access != MGMEM_WRITE) return MGMEM_UNSUPPORTED;
+        const auto start = static_cast<u64>(source_offset);
+        const auto target = static_cast<u64>(destination_offset);
+        const auto bytes = static_cast<u64>(count);
+        if (start > source->view.length || bytes > source->view.length - start ||
+            target > destination->view.length || bytes > destination->view.length - target)
+            return MGMEM_INVALID_ARGUMENT;
+        if (!count) return MGMEM_OK;
+        std::memmove(static_cast<unsigned char *>(destination->view.data) + static_cast<size_t>(target),
+                     static_cast<const unsigned char *>(source->view.data) + static_cast<size_t>(start),
+                     static_cast<size_t>(bytes));
+        return MGMEM_OK;
+    } catch (...) { return MGMEM_PROVIDER_ERROR; }
+}
+
 extern "C" JNIEXPORT jint JNICALL JNI_NAME(nativeClose)(JNIEnv *, jclass, jlong token) {
     try { return token > 0 ? close_registration(static_cast<u64>(token), true) : MGMEM_INVALID_ARGUMENT; }
     catch (...) { return MGMEM_PROVIDER_ERROR; }

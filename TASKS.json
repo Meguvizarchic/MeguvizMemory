@@ -1408,5 +1408,12 @@
     "device_validation": "NOT_RUN_FOR_THIS_EXTENSION",
     "performance_validation": "NOT_MEASURED",
     "evidence": "artifacts/arena-import-20261109/host.json"
+  },
+  "lease_transfer_20261109": {
+    "implementation": "CONTROLLED_NATIVE_LEASE_MEMMOVE_WITH_MANAGED_FACADE",
+    "host": "BORROW_2_MANAGED_50_PASS",
+    "performance": "SCOPED_SINGLE_HOST_JVM_EXPLORATORY_12_PAIRS",
+    "android": "NOT_RUN_FOR_THIS_FEATURE",
+    "evidence": "artifacts/lease-transfer-20261109/host.json"
   }
 }

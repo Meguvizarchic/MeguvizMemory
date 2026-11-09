@@ -15,6 +15,7 @@
 extern "C" jlong JNICALL JNI_NAME(nativeClaim)(JNIEnv *,jclass,jlong);
 extern "C" jint JNICALL JNI_NAME(nativeCopy)(JNIEnv *,jclass,jlong,jlong,jbyteArray,jint,jint,jboolean);
 extern "C" jint JNICALL JNI_NAME(nativeClose)(JNIEnv *,jclass,jlong);
+extern "C" jint JNICALL JNI_NAME(nativeTransfer)(JNIEnv *,jclass,jlong,jlong,jlong,jlong,jint);
 extern "C" void mgmem_borrow_test_fail_staging_allocation();
 
 namespace {
@@ -214,6 +215,52 @@ int main() {
         for(unsigned i=1;i<ids.size();++i) REQUIRE(JNI_NAME(nativeClose)(env,nullptr,ids[i])==MGMEM_OK);
         REQUIRE(owner.pins==1 && mgmem_domain_collect_v1(domain)==MGMEM_OK &&
                 mgmem_domain_drain_v1(domain,0)==MGMEM_OK && mgmem_domain_destroy_v1(domain)==MGMEM_OK);
+    }
+    {
+        Fixture source, destination; uint64_t from=0, to=0;
+        REQUIRE(mgmem_android_borrow_register_v1(source.domain,&source.callbacks,source.owner,0,32,MGMEM_READ,MGMEM_ANDROID_BORROW_INITIALIZED,&from)==MGMEM_OK);
+        REQUIRE(mgmem_android_borrow_register_v1(destination.domain,&destination.callbacks,destination.owner,0,32,MGMEM_WRITE,MGMEM_ANDROID_BORROW_INITIALIZED,&to)==MGMEM_OK);
+        REQUIRE(JNI_NAME(nativeClaim)(env,nullptr,from)==32 && JNI_NAME(nativeClaim)(env,nullptr,to)==-32);
+        REQUIRE(mgmem_release_v1(source.domain,source.owner)==MGMEM_OK && mgmem_domain_begin_close_v1(source.domain)==MGMEM_OK);
+        REQUIRE(mgmem_release_v1(destination.domain,destination.owner)==MGMEM_OK && mgmem_domain_begin_close_v1(destination.domain)==MGMEM_OK);
+        Array cleared{std::vector<jbyte>(32,0)}, output{std::vector<jbyte>(32,0)};
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(cleared),0,32,JNI_TRUE)==MGMEM_OK);
+        // No array JNI function or staging allocation is needed for transfer.
+        mgmem_borrow_test_fail_staging_allocation();
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,4,to,8,16)==MGMEM_OK);
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(cleared),0,1,JNI_TRUE)==MGMEM_OUT_OF_MEMORY);
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(output),0,32,JNI_FALSE)==MGMEM_OK);
+        for (unsigned i=0;i<32;++i) REQUIRE(output.data[i]==(i>=8 && i<24 ? 0x5a : 0));
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,to,0,from,0,1)==MGMEM_UNSUPPORTED);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,31,to,0,2)==MGMEM_INVALID_ARGUMENT);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,0,to,32,1)==MGMEM_INVALID_ARGUMENT);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,0,to,0,MGMEM_ANDROID_BORROW_MAX_WRITE_BYTES+1)==MGMEM_INVALID_ARGUMENT);
+        Array unchanged{std::vector<jbyte>(32,0)};
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(unchanged),0,32,JNI_FALSE)==MGMEM_OK && unchanged.data==output.data);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,32,to,32,0)==MGMEM_OK);
+        Array pattern{std::vector<jbyte>{0,1,2,3,4,5,6,7}};
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(pattern),0,8,JNI_TRUE)==MGMEM_OK);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,to,0,to,2,6)==MGMEM_OK);
+        Array overlap{std::vector<jbyte>(8,0)}, expected{std::vector<jbyte>{0,1,0,1,2,3,4,5}};
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(overlap),0,8,JNI_FALSE)==MGMEM_OK && overlap.data==expected.data);
+        REQUIRE(JNI_NAME(nativeClose)(env,nullptr,from)==MGMEM_OK);
+        REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,0,to,0,1)==MGMEM_STALE_HANDLE);
+        REQUIRE(JNI_NAME(nativeClose)(env,nullptr,to)==MGMEM_OK);
+        source.finish();destination.finish();
+    }
+    {
+        // Opposite transfer directions share the same token lock order.
+        Fixture a,b; uint64_t x=0,y=0;
+        REQUIRE(mgmem_android_borrow_register_v1(a.domain,&a.callbacks,a.owner,0,32,MGMEM_WRITE,MGMEM_ANDROID_BORROW_INITIALIZED,&x)==MGMEM_OK);
+        REQUIRE(mgmem_android_borrow_register_v1(b.domain,&b.callbacks,b.owner,0,32,MGMEM_WRITE,MGMEM_ANDROID_BORROW_INITIALIZED,&y)==MGMEM_OK);
+        REQUIRE(JNI_NAME(nativeClaim)(env,nullptr,x)==-32 && JNI_NAME(nativeClaim)(env,nullptr,y)==-32);
+        std::thread forward([&] {for (unsigned i=0;i<1000;++i) REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,x,0,y,0,32)==MGMEM_OK);});
+        std::thread reverse([&] {for (unsigned i=0;i<1000;++i) REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,y,0,x,0,32)==MGMEM_OK);});
+        forward.join();reverse.join();
+        REQUIRE(JNI_NAME(nativeClose)(env,nullptr,x)==MGMEM_OK && JNI_NAME(nativeClose)(env,nullptr,y)==MGMEM_OK);
+        REQUIRE(mgmem_release_v1(a.domain,a.owner)==MGMEM_OK && mgmem_domain_begin_close_v1(a.domain)==MGMEM_OK);
+        REQUIRE(mgmem_release_v1(b.domain,b.owner)==MGMEM_OK && mgmem_domain_begin_close_v1(b.domain)==MGMEM_OK);
+        a.finish();b.finish();
     }
     {
         // A violating origin callback can consume a lease before returning an

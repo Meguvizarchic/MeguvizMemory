@@ -9,6 +9,8 @@ public final class NativeMemoryLease implements AutoCloseable {
     static { System.loadLibrary("mgmem_pressure_jni"); }
     /** Maximum bytes in one write; separately invoked writes commit independently. */
     public static final int MAX_WRITE_BYTES = 1024 * 1024;
+    /** Maximum bytes in one lease-to-lease transfer; no staging is allocated. */
+    public static final int MAX_COPY_BYTES = MAX_WRITE_BYTES;
     /** Aggregate native staging payload limit across this loaded JNI runtime. */
     public static final int MAX_RUNTIME_STAGING_BYTES = 16 * 1024 * 1024;
     public static final int CLOSE_OPEN = 0;
@@ -81,6 +83,36 @@ public final class NativeMemoryLease implements AutoCloseable {
         if (status != 0) throw new IllegalStateException("native write failed: " + status);
     }
 
+    /** Copies directly into another WRITE lease in this loaded runtime.
+     * Overlap, including self-copy, has memmove semantics. No Java array or
+     * native staging buffer is allocated. Each call commits independently.
+     * Tokens are admitted under separate short object locks; a transfer already
+     * admitted may complete while close starts, or fail before copying if native
+     * close wins. No two Java object monitors are held together. */
+    public void copyTo(NativeMemoryLease destination, long sourceOffset,
+                       long destinationOffset, int count) {
+        Objects.requireNonNull(destination, "destination");
+        if (count < 0 || count > MAX_COPY_BYTES) throw new IllegalArgumentException("invalid copy length");
+        final long sourceToken;
+        synchronized (this) {
+            if (sourceOffset < 0 || sourceOffset > length || count > length - sourceOffset)
+                throw new IndexOutOfBoundsException("source lease range");
+            if (token == 0) throw new IllegalStateException("source lease closed");
+            sourceToken = token;
+        }
+        final long destinationToken;
+        synchronized (destination) {
+            if (destinationOffset < 0 || destinationOffset > destination.length ||
+                    count > destination.length - destinationOffset)
+                throw new IndexOutOfBoundsException("destination lease range");
+            if (destination.token == 0) throw new IllegalStateException("destination lease closed");
+            if (!destination.writable) throw new IllegalStateException("read-only destination lease");
+            destinationToken = destination.token;
+        }
+        int status = nativeTransfer(sourceToken, sourceOffset, destinationToken, destinationOffset, count);
+        if (status != 0) throw new IllegalStateException("native transfer failed: " + status);
+    }
+
     /** Stops admission once and releases the lease outside this object's lock.
      * A concurrent repeated close may return before that release finishes; only
      * its first caller receives any error. A native failure is quarantined; a
@@ -110,5 +142,7 @@ public final class NativeMemoryLease implements AutoCloseable {
     private static native long nativeClaim(long registration);
     private static native int nativeCopy(long registration, long offset, byte[] array,
                                          int arrayOffset, int count, boolean write);
+    private static native int nativeTransfer(long source, long sourceOffset, long destination,
+                                             long destinationOffset, int count);
     private static native int nativeClose(long registration);
 }

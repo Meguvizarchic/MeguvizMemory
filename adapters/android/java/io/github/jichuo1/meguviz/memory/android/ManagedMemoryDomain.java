@@ -531,6 +531,14 @@ public final class ManagedMemoryDomain implements AutoCloseable {
             if (closeState != NativeMemoryLease.CLOSE_OPEN) throw new IllegalStateException("lease closing or closed");
             delegate.write(offset, source, arrayOffset, count);
         }
+        /** Direct bounded transfer between existing leases; no Java array is needed. */
+        public void copyTo(Lease destination, long sourceOffset, long destinationOffset, int count) {
+            if (destination == null) throw new NullPointerException("destination");
+            if (closeState != NativeMemoryLease.CLOSE_OPEN ||
+                    destination.closeState != NativeMemoryLease.CLOSE_OPEN)
+                throw new IllegalStateException("lease closing or closed");
+            delegate.copyTo(destination.delegate, sourceOffset, destinationOffset, count);
+        }
         @Override public void close() {
             synchronized (this) {
                 if (closeState != NativeMemoryLease.CLOSE_OPEN) return;

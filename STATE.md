@@ -2,6 +2,10 @@
 
 最近补充：2026-11-01。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/jichuo1/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## Lease 直接传输（2026-11-09）
+
+Java 及托管 Lease 新增 `copyTo`，普通 JNI 直接 memmove，避免 Java 中转数组和 write staging。借用宿主 2/2、托管域 50/50 专项通过，包含双向并发、自重叠和 CLOSING 期间持 lease 传输。64 KiB、复用数组基线的单进程宿主 12 对探索性测量，candidate/baseline 配对中位比 0.32531；CPU/频率未固定、无独立 JVM 重复，不构成 Android 或产品收益。[证据](artifacts/lease-transfer-20261109/host.json)、[复现](bench/LEASE_TRANSFER.md)。新 Java/JNI 须配套部署，旧 JNI 不支持新 nativeTransfer。
+
 ## Arena 外部导入功能收尾（2026-11-09）
 
 显式 Arena 导入、checked 释放和 C++ 入口已实现；外部 backing 与自有 chunk 共用预算且不会进入 Arena 子分配。独立 DEX 消费者的工作区实际参与完整结果 checksum。迁移后新构建、安装验证及旧消费者回归通过：[宿主证据](artifacts/arena-import-20261109/host.json)，核心 21/21、C++ 12/12、Arena 消费者 6 项加 direct 对照；无新设备或性能资格。

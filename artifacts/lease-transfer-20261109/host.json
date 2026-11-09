@@ -1,0 +1,53 @@
+{
+  "state": "PASS_EXPLORATORY_HOST_ONLY",
+  "scope": "WINDOWS_X64_REAL_HOST_JVM_PAIRED_MICROBENCHMARK_NOT_ANDROID_OR_PRODUCT",
+  "input_bytes": 65536,
+  "pairs": 12,
+  "order_counts": {
+    "AB": 6,
+    "BA": 6
+  },
+  "iterations_per_window": 3000,
+  "logical_bytes_per_window": 196608000,
+  "baseline": "read_then_write_reused_java_array",
+  "baseline_java_array": "REUSED_NOT_ALLOCATED_PER_OPERATION",
+  "candidate": "copyTo",
+  "median_baseline_ns_per_operation": 3359.9333333333334,
+  "median_copyTo_ns_per_operation": 1109.0833333333335,
+  "median_paired_copyTo_over_baseline": 0.32531131879186165,
+  "paired_ratio_range": [
+    0.3187912551369695,
+    0.34795388213864337
+  ],
+  "candidate_faster_pairs": 12,
+  "validation": "full_destination_bytes_and_unchanged_source_after_every_window",
+  "final_domain": "CLOSED_ZERO",
+  "raw_private_receipt_sha256": "474348bc96d84f794a2f77be9b1a02d4ce269797ee8a5564ed44a5c75191f7a0",
+  "benchmark_source_sha256": "5ca53567555af191e015f9d0e3d2f4692078443a93f393571bf4453f43b110aa",
+  "limits": [
+    "single_host_JVM_process",
+    "cache_resident_64KiB_payload",
+    "CPU_frequency_affinity_and_other_work_not_controlled",
+    "not_Android_or_product_qualification",
+    "No confidence interval or cross-process replication; the ratio is exploratory only.",
+    "The legacy write path includes its required native staging; logical transfer work is equal, physical copy counts differ."
+  ],
+  "measured_native_library_sha256": "07473f5f7600e1ff752640546116ddfeadff78279b60b9eab212ee76539e0b09",
+  "jni_composition": "TEST_ONLY_HOST_DLL_WITH_EMBEDDED_CORE_NO_FAULT_HOOKS",
+  "java_runtime": "Microsoft OpenJDK 17.0.20 x64; one process",
+  "functional_validation": {
+    "borrow_host_ctest": {
+      "passed": 2,
+      "total": 2
+    },
+    "managed_host_ctest": {
+      "passed": 50,
+      "total": 50
+    }
+  },
+  "production_sources": {
+    "adapters/android/native/borrow_jni.cpp": "f0546b93a1d8ea8ff47cd127a23e3af70e932e1f5e7985c1741b2e73888ff396",
+    "adapters/android/java/io/github/jichuo1/meguviz/memory/android/NativeMemoryLease.java": "88c47b38009579351a0fb6ac9eb456b134e151aea0c23c64f240cdcd7a96a6ce",
+    "adapters/android/java/io/github/jichuo1/meguviz/memory/android/ManagedMemoryDomain.java": "54b1e567092749928e7fcf03c507df5b0eb54377a505f8bd5437594edb7afc8e"
+  }
+}

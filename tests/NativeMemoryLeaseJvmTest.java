@@ -75,6 +75,7 @@ public final class NativeMemoryLeaseJvmTest {
         rejected(() -> read.read(Long.MAX_VALUE,output,0,1),IndexOutOfBoundsException.class);
         rejected(() -> read.read(0,output,Integer.MAX_VALUE,1),IndexOutOfBoundsException.class);
         read.read(16,output,16,0);
+        rejected(() -> read.copyTo(read,0,0,1),IllegalStateException.class);
         read.close();read.close();
         require(read.closeState()==NativeMemoryLease.CLOSE_RELEASED && read.closeFailureStatus()==NativeMemoryLease.CLOSE_FAILURE_UNKNOWN);
         rejected(() -> read.read(0,output,0,1),IllegalStateException.class);
@@ -85,7 +86,17 @@ public final class NativeMemoryLeaseJvmTest {
         require(write.length()==16 && write.isWritable());
         byte[] input={1,2,3,4};write.write(3,input,0,input.length);
         byte[] actual=new byte[4];write.read(3,actual,0,4);require(Arrays.equals(actual,input));
-        write.close();require(finish());
+        byte[] sequence={0,1,2,3,4,5,6,7};write.write(0,sequence,0,sequence.length);
+        write.copyTo(write,0,2,6);
+        byte[] moved=new byte[8];write.read(0,moved,0,8);
+        require(Arrays.equals(moved,new byte[]{0,1,0,1,2,3,4,5}));
+        write.copyTo(write,2,0,6);write.read(0,moved,0,8);
+        require(Arrays.equals(moved,new byte[]{0,1,2,3,4,5,4,5}));
+        write.copyTo(write,16,16,0);
+        rejected(() -> write.copyTo(write,Long.MAX_VALUE,0,1),IndexOutOfBoundsException.class);
+        rejected(() -> write.copyTo(write,0,16,1),IndexOutOfBoundsException.class);
+        rejected(() -> write.copyTo(write,0,0,NativeMemoryLease.MAX_COPY_BYTES+1),IllegalArgumentException.class);
+        write.close();rejected(() -> write.copyTo(write,0,0,1),IllegalStateException.class);require(finish());
 
         long callbackToken=create(false);require(callbackToken>0);
         callbackCanObserveClosed(NativeMemoryLease.fromNativeRegistration(callbackToken),false);
