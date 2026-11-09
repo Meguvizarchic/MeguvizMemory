@@ -1,0 +1,118 @@
+{
+  "archive": "diagnostic-sources.zip",
+  "scope": "EXACT_COUNT_ONLY_AND_LAYOUT_SOURCES_NOT_PRODUCTION_TIMING",
+  "files": {
+    "lease-only/array_tracking.hpp": {
+      "bytes": 4056,
+      "sha256": "171b6d23b0e053e5f080db5fafee7032fda978f261ed014e20f1966c3658a565"
+    },
+    "lease-only/CMakeLists.txt": {
+      "bytes": 3413,
+      "sha256": "f49e3f1b7822ccccac88b6cabce2aba73f0bf3444a2d9e7c60fceb314ecb58b7"
+    },
+    "lease-only/core.baseline.counted.cpp": {
+      "bytes": 43139,
+      "sha256": "ede04045e1c508ec1a8403d68b9044906b871be0ab1d9f68fcb09c4d63b41456"
+    },
+    "lease-only/core.baseline.cpp": {
+      "bytes": 41869,
+      "sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe"
+    },
+    "lease-only/core.candidate.cpp": {
+      "bytes": 45731,
+      "sha256": "55ec865a21f5467a3f333383f0194083c15e08a22ce34783d4a831d5dbf6e22d"
+    },
+    "lease-only/core.counted.cpp": {
+      "bytes": 47096,
+      "sha256": "6472fed55cb4027a7bb2554640f728f823a0c188d71b1b6d9eec47bca29d4e2d"
+    },
+    "lease-only/counting_allocator.hpp": {
+      "bytes": 4655,
+      "sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2"
+    },
+    "lease-only/driver.cpp": {
+      "bytes": 17071,
+      "sha256": "f441527b2966d2425c919dddfcdf84c59296321056c7b4faa16767f363f25c68"
+    },
+    "lease-only/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "lease-only/layout.baseline.cpp": {
+      "bytes": 1069,
+      "sha256": "d620c5f5c7e3b5a1c474bab07d6d7db21dc1b11a9598c8842ea3ecec4124d862"
+    },
+    "lease-only/layout.baseline_counted.cpp": {
+      "bytes": 1077,
+      "sha256": "9a01fc1fb1cfdbdfdaf1d6ebcd0e5a94beb575e9d42035642db31a47ed9166af"
+    },
+    "lease-only/layout.candidate.cpp": {
+      "bytes": 1070,
+      "sha256": "3d5a94b042e81fbd8089932caf296323de513977c6889c741884c359218cc8ce"
+    },
+    "lease-only/layout.candidate_counted.cpp": {
+      "bytes": 1068,
+      "sha256": "d61af3e200d6bcd34136d7cabfd67c898aeb113e7db2ea32c44850ff2ea12829"
+    },
+    "lease-only/probe_api.h": {
+      "bytes": 1782,
+      "sha256": "bb7bcfd64b53c7847fdb6667a35e2880dffc75811050ec1d97bb06393be4fc08"
+    },
+    "fusion/array_tracking.hpp": {
+      "bytes": 5021,
+      "sha256": "12954beb6f1a642500bc1b8640720f4c41519fbc1e897c0c80011fd3a10c4669"
+    },
+    "fusion/CMakeLists.txt": {
+      "bytes": 3437,
+      "sha256": "a905444eed434c6a93e3e1e27d95186c4edb91b529eeb4c88e24b70f6c5c4a5f"
+    },
+    "fusion/core.baseline.counted.cpp": {
+      "bytes": 43188,
+      "sha256": "e500f98c1f50a22d2440dc895d306bef75717d139166e95e60f773b7c03b2106"
+    },
+    "fusion/core.baseline.cpp": {
+      "bytes": 41869,
+      "sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe"
+    },
+    "fusion/core.candidate.cpp": {
+      "bytes": 46388,
+      "sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6"
+    },
+    "fusion/core.counted.cpp": {
+      "bytes": 48027,
+      "sha256": "622fbcd66165f0f7dc1c2e0c0bc566a10211c18a38e89fac59efa5dd7f40ebff"
+    },
+    "fusion/counting_allocator.hpp": {
+      "bytes": 4655,
+      "sha256": "d9d1b4d25459629e110f52028533830ccdb4ac38cf11aa6f9d2a8e1356bba0b2"
+    },
+    "fusion/driver.cpp": {
+      "bytes": 17944,
+      "sha256": "d2de714d5d375e95264c35d28aae3a6081b141f32c72455a71d4360dbd419c5b"
+    },
+    "fusion/include/mgmem/mgmem.h": {
+      "bytes": 12427,
+      "sha256": "5a88b3e4a7935dd6275623813e64e21335c5422c7cd8c6122e98127db8c68486"
+    },
+    "fusion/layout.baseline.cpp": {
+      "bytes": 1141,
+      "sha256": "2b2a69514b5192f1ecc3ce762399e1b14880941dab8c79b843c7af75c8f37434"
+    },
+    "fusion/layout.baseline_counted.cpp": {
+      "bytes": 1149,
+      "sha256": "100796263d4fb417b164c9ebdbeb4f3e0125a50da1b4ab2437b2b2f96e532135"
+    },
+    "fusion/layout.candidate.cpp": {
+      "bytes": 1142,
+      "sha256": "d52beed87f81d0c62e5a89838ddeb08af1e2843592f55227c20f171c638ce5c2"
+    },
+    "fusion/layout.candidate_counted.cpp": {
+      "bytes": 1140,
+      "sha256": "325220c5413f64ceab13c6ab6b01841be996eb2358b5ed4dba2316a29852cdde"
+    },
+    "fusion/probe_api.h": {
+      "bytes": 1998,
+      "sha256": "102d73b6765078f0e10810581a7783142b21eb20747cd172509a2d04782cd69d"
+    }
+  }
+}

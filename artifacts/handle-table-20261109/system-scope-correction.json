@@ -1,0 +1,10 @@
+{
+  "state": "SOURCE_SCOPE_CORRECTION_ONLY_NO_STATISTIC_RECOMPUTATION",
+  "applies_to_report_sha256": "0a06896b27dc79813c503bde2ae6dd20454304a335b8bfd66965d4effc15619a",
+  "applies_to_candidate": "55ec865a21f5467a3f333383f0194083c15e08a22ce34783d4a831d5dbf6e22d",
+  "original_reports_preserved_unchanged": true,
+  "correction": "System preparation creates owners then acquires each WRITE lease, writes/reads payload and releases the lease. N_OWNERS_NO_LEASES describes the completed preparation checkpoint and timed owner-release phase only; it does not describe all preparation.",
+  "release_phase_scope": "Timed release does not acquire or release leases. For the lease-only55candidate its owner lookup remainedstdmap, so lease-table hashing/backshift is not timed release work; preparation does exercise lease storage. This exclusion must not be transferred to the fused890candidate, whose owner table has changed.",
+  "statistics_changed": false,
+  "source": "bench/claim_release.cpp preparation loop and prepared snapshot preceding timed release"
+}

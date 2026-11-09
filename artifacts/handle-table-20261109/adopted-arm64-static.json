@@ -1,0 +1,129 @@
+{
+  "state": "PASS_ARM64_CROSS_COMPILE_ONLY",
+  "scope": "SELECTED_FUSION_CORE_AND_SIX_ELF_STATIC_ONLY",
+  "core_source_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "performance_qualified": false,
+  "device_executed": false,
+  "sdk_published": false,
+  "artifacts": {
+    "core": {
+      "bytes": 581696,
+      "sha256": "7ed2533d248ed123179d4882a2109d2942cb4f964f2cdd0ebbd9f967bf2d498d",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": false,
+      "rpath": false
+    },
+    "mgmem_claim_release": {
+      "bytes": 420384,
+      "sha256": "f44b085cf2258bae03218be2fb3952008910c33e076c350118a255a95187208b",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_lookup": {
+      "bytes": 410960,
+      "sha256": "eb5387a74c34192b6081c08fe7e673ac72d948efc06619c31819a219c755149a",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_small_cost": {
+      "bytes": 417736,
+      "sha256": "c9365a5315827953ffb49f5161f9045e54ada8c95f6bebc630d1ef931be2b6e3",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_core_tests": {
+      "bytes": 150296,
+      "sha256": "386ba95ff849ee2b0fb1002d4b0dafa5d2f17293c29ed90ffcb5fedbf4e1fe40",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_lease_table_tests": {
+      "bytes": 398864,
+      "sha256": "c9e2973cdb359d93156644d796017545cc6edc90a5b40838121fa9940c93be6f",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": true,
+      "rpath": false
+    }
+  },
+  "private_manifest_sha256": "b5ecad1f39650794e2b2ab4f89fb6e206129509d12daea921cccdce066eb6309",
+  "limits": [
+    "No target executable was run; no ADB, device, APK, SDK archive or publication.",
+    "Only the frozen generic owner/lease HandleTable plus compact stable-claim fusion was built; no old runtime is a performance baseline.",
+    "ELF 16KiB LOAD alignment is static evidence, not an Android loader/device result.",
+    "Source closure and selected tool hashes are recorded; the full NDK sysroot is not exhaustively hashed."
+  ]
+}

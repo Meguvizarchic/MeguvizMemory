@@ -9,6 +9,7 @@
 | Arena 外部输入 | C 的 `mgmem_import_external_arena_v1` / checked 版本，或 C++ `domain::import_external_arena` | 同域预算计入完整输入与自有工作区；[DEX 示例](DEX_EXTERNAL_IMPORT.md)已完成安装版宿主完整查询 |
 | 已有 lease 间传输 | Java `source.copyTo(destination, sourceOffset, destinationOffset, count)` | 每次最多 1 MiB，目标必须可写，重叠按 memmove 处理；须部署配套 Java/JNI |
 | Arena 同形及支配请求查找 | 普通 `allocate` 调用，无需新参数 | 域内保留 first-fit；尺寸与对齐均不小于提示请求时复用下界，仍有域锁、metadata 和 provider 成本 |
+| allocation/lease 紧凑句柄登记与稳定 claim 定位 | 原 allocate/borrow/release 调用 | 单条记录内联，批量连续表，保留 ID 与回调合同；真实收益与扩容峰值分别记录 |
 
 ```java
 // source / destination 是已获得并由调用方持有的 ManagedMemoryDomain.Lease。
@@ -20,16 +21,21 @@ source.copyTo(destination, 0, 0, byteCount);
 
 ## 当前 mixed 优化与小负载限制
 
-小负载后续轮已完成固定成本拆分与单 lease 节点复用结构实验。重复 stream 的
-完整生命周期有改善，但 System/held/单次反向代价仍在，候选未切换默认核心。
-主线继续使用 `40c7b1f` 的实现；[诊断、实现与全部取舍](ARENA_SMALL_WORKLOAD.md)。
+当前已采用两表内联/平坦存储与稳定登记节点引用的组合。以 `a1bf94c` 为基线，
+组合轮 tiny fixed/mixed workflow P50 比0.8452/0.8886，各8/8改善；System
+reverse/shuffled主要组为0.4236–0.6034。一次性部分held完整时段、single尾部和
+扩容峰值仍有代价。[当前实现与全部取舍](HANDLE_TABLE_OPTIMIZATION.md)。
 
-已采用请求支配关系下的查找下界复用。首批独立八对中，main mixed 1/4 线程
+历史小负载轮已完成固定成本拆分与单 lease 节点复用结构实验。重复 stream 的
+完整生命周期有改善，但 System/held/单次反向代价仍在，候选未切换默认核心。
+当时主线保持 `40c7b1f`；[历史诊断、实现与全部取舍](ARENA_SMALL_WORKLOAD.md)。
+
+此前 `40c7b1f` 仅采用请求支配关系下的查找下界复用。该轮独立八对中，main mixed 1/4 线程
 allocation P50 比为 0.6604/0.4951，workflow 比为 0.8966/0.7610；tiny fixed
 workflow 仍有 1.0268 倍、约 +10.55 ns/op 的配对代价。通知和 map 提示没有
 进入当前源码。1248 个进程的三批结果分别保留，不混池；新增真正单块的
 prepared-single profile，不把原有 2～4 块 tiny 当作单块。
-[采用决定与全部限制](ARENA_MIXED_OPTIMIZATION.md)。小负载收益仍未证实。
+[历史采用决定与限制](ARENA_MIXED_OPTIMIZATION.md)。该轮尚未证实小负载收益，当前组合结果见上。
 
 ## 第一轮研究结论
 

@@ -394,6 +394,75 @@ void test_allocate_close_race() {
     CHECK(provider.releases == 1);
 }
 
+void test_pending_owner_metadata_relocation() {
+    Provider provider;
+    provider.block_next = true;
+    auto table = provider.table();
+    auto config = options(MGMEM_SYSTEM, 4096);
+    config.provider = &table;
+    auto *domain = create(config);
+    mgmem_status late_status = MGMEM_PROVIDER_ERROR;
+    mgmem_handle_v1 late_owner{};
+    std::thread allocator([&] { late_status = mgmem_allocate_v1(domain, 64, 16, &late_owner); });
+    provider.wait_for_entry();
+    auto state = snapshot(domain);
+    CHECK(state.reserved_bytes == 64 && state.backing_bytes == 0);
+    CHECK(state.active_allocations == 1 && state.active_leases == 0 && state.allocation_count == 0);
+
+    std::vector<mgmem_handle_v1> owners;
+    std::vector<mgmem_borrow_v1> views;
+    for (unsigned index = 0; index < 16; ++index) {
+        const auto owner = allocate(domain, 32, 16);
+        const auto view = borrow(domain, owner, 32);
+        for (unsigned byte = 0; byte < 32; ++byte)
+            static_cast<unsigned char *>(view.data)[byte] = static_cast<unsigned char>(index + byte + 1);
+        owners.push_back(owner);
+        views.push_back(view);
+        // Keep all metadata records alive, including retiring owners, while the
+        // first callback still owns its pending placeholder and reservation.
+        CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    }
+    state = snapshot(domain);
+    CHECK(state.active_allocations == 17 && state.active_leases == 16);
+    CHECK(state.reserved_bytes == 64 && state.backing_bytes == 512 && state.peak_backing_bytes == 576);
+    CHECK(state.live_bytes == 0 && state.retiring_bytes == 512);
+    CHECK(state.allocation_count == 16 && state.provider_allocation_count == 16);
+
+    provider.unblock();
+    allocator.join();
+    CHECK(late_status == MGMEM_OK && late_owner.id != 0 && late_owner.domain_id != 0);
+    state = snapshot(domain);
+    CHECK(state.reserved_bytes == 0 && state.backing_bytes == 576);
+    CHECK(state.active_allocations == 17 && state.allocation_count == 17 &&
+          state.provider_allocation_count == 17 && state.live_bytes == 64 && state.retiring_bytes == 512);
+    const auto late_view = borrow(domain, late_owner, 64);
+    for (unsigned byte = 0; byte < 64; ++byte)
+        static_cast<unsigned char *>(late_view.data)[byte] = static_cast<unsigned char>(0xd0 + byte);
+    for (unsigned index = 0; index < views.size(); ++index) {
+        for (unsigned byte = 0; byte < 32; ++byte)
+            CHECK(static_cast<unsigned char *>(views[index].data)[byte] == index + byte + 1);
+        CHECK(mgmem_release_v1(domain, owners[index]) == MGMEM_STALE_HANDLE);
+    }
+    CHECK(mgmem_release_v1(domain, late_owner) == MGMEM_OK);
+    for (unsigned byte = 0; byte < 64; ++byte)
+        CHECK(static_cast<unsigned char *>(late_view.data)[byte] == static_cast<unsigned char>(0xd0 + byte));
+    CHECK(mgmem_borrow_release_v1(domain, late_view.lease) == MGMEM_OK);
+    CHECK(mgmem_domain_begin_close_v1(domain) == MGMEM_OK);
+    CHECK(mgmem_domain_collect_v1(domain) == MGMEM_BUSY);
+    for (size_t remaining = views.size(); remaining != 0; --remaining) {
+        const auto index = remaining - 1;
+        for (unsigned byte = 0; byte < 32; ++byte)
+            CHECK(static_cast<unsigned char *>(views[index].data)[byte] == index + byte + 1);
+        CHECK(mgmem_borrow_release_v1(domain, views[index].lease) == MGMEM_OK);
+    }
+    state = snapshot(domain);
+    CHECK(state.state == MGMEM_CLOSING && state.active_allocations == 0 && state.active_leases == 0);
+    CHECK(state.live_bytes == 0 && state.retiring_bytes == 0 && state.backing_bytes == 0 && state.reserved_bytes == 0);
+    close(domain);
+    CHECK(provider.active.empty() && provider.allocation_calls == 17 &&
+          provider.deallocation_calls == 17 && provider.retains == 1 && provider.releases == 1);
+}
+
 void test_borrow_rules_and_handle_identity() {
     auto *domain = create();
     auto *other = create();
@@ -1088,6 +1157,12 @@ int main(int argc, char **argv) {
         test_arena_lease_reuse_identity_reset_and_trim();
         test_arena_lease_reuse_readers_cross_thread_close();
         std::printf("{\"suite\":\"mgmem-arena-lease-reuse\",\"tests\":2,\"checks\":%u,\"status\":\"PASS\"}\n",
+                    checks.load());
+        return 0;
+    }
+    if (argc == 2 && std::strcmp(argv[1], "--metadata-relocation") == 0) {
+        test_pending_owner_metadata_relocation();
+        std::printf("{\"suite\":\"mgmem-metadata-relocation\",\"tests\":1,\"checks\":%u,\"status\":\"PASS\"}\n",
                     checks.load());
         return 0;
     }

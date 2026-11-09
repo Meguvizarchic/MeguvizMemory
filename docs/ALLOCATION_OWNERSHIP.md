@@ -7,7 +7,7 @@
 | 导入CPU region（ABI1.1） | 外部origin-owner，Memory retain/release其引用，从不自行free | 一个manager runtime整region唯一owner；READ不可取得WRITE；子视图沿用borrow | 最后owner/lease结束且release callback完成后解除claim；违约不确定资源隔离保留 |
 | System backing | 创建 domain 时复制的 provider；默认 `_aligned_malloc/_aligned_free` 或 `posix_memalign/free` | 同域 allocation owner，可跨线程取得/归还读写 lease | owner 与最后 lease 都退出；由原 provider 同步释放 |
 | arena chunk | 同上，domain 保持唯一 backing 清单 | allocation 在 chunk 内有不重叠 offset/length；所有子对象共享 backing 记账 | 无 owner/lease/pending 时 reset 复用；trim/collect 最终释放 |
-| allocation 元数据 | core 的 map/list | 核心 mutex 下访问；不跨 ABI 暴露容器 | 最后 owner/lease 退出，或申请失败回滚 |
+| allocation/lease 元数据 | core 的内联记录及私有连续句柄表 | 核心 mutex 下访问；表记录可移动，公开 ID 与 payload 地址不变 | lease 归还即移除其记录；allocation 在最后 owner/lease 退出后移除，或申请失败回滚；空表归还数组，仍有活动记录时可保留较大容量 |
 | provider context | 外部 provider；domain retain/release 保活 | 回调锁外并发，provider 必须线程安全且 no-throw | collect 后 destroy；不能超时强制销毁 |
 | C++ wrapper state | `shared_ptr<domain_state>` | domain/owned_allocation/borrow 各保活；同一 wrapper 变化须外部同步 | 最后 wrapper 在 cleanup worker 同步关闭；析构清理异常 terminate |
 | Dex 输入字节 | Memory allocation | 先 writer 装载，再 immutable reader；原子 callback context 将同一个 Memory lease 延寿给真实 Dex snapshot/result | 原 owner 提前 release；snapshot release 后 result 仍保活；最后 SDK release 归还 lease |

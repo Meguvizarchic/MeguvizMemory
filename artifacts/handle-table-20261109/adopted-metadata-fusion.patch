@@ -1,0 +1,296 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -12 +11,0 @@
+-#include <map>
+@@ -15,0 +15 @@
++#include <type_traits>
+@@ -86,0 +87,4 @@
++struct RangeClaim { uintptr_t begin; uintptr_t end; u64 external_id; u64 token; bool releasing; };
++
++// Registry references belong to one explicit cleanup path. Destruction never
++// drops an uncertain claim retained by a poisoned domain.
+@@ -93 +97,2 @@
+-    u64 claim = 0;
++    bool claim_active = false;
++    std::list<RangeClaim>::iterator claim_node{};
+@@ -115,0 +121,114 @@
++// Handles remain monotonic IDs. Only these private records move during probing.
++// One active record needs no table allocation; larger live sets use one array.
++template<class Record>
++class HandleTable {
++    static_assert(std::is_trivially_copyable<Record>::value,
++                  "Private handle records must move without throwing");
++    struct Slot {
++        u64 id = 0;
++        Record value{};
++    };
++    Slot single_{};
++    std::unique_ptr<Slot[]> slots_;
++    size_t capacity_ = 0;
++    size_t size_ = 0;
++
++    static size_t index(u64 id, size_t mask) noexcept {
++        // SplitMix64's public-domain output mixing, without generator state.
++        id = (id ^ (id >> 30)) * 0xbf58476d1ce4e5b9ull;
++        id = (id ^ (id >> 27)) * 0x94d049bb133111ebull;
++        return static_cast<size_t>(id ^ (id >> 31)) & mask;
++    }
++
++    static Slot *place(Slot *slots, size_t capacity, const Slot &value) noexcept {
++        const size_t mask = capacity - 1;
++        size_t position = index(value.id, mask);
++        while (slots[position].id) position = (position + 1) & mask;
++        slots[position] = value;
++        return &slots[position];
++    }
++
++    void grow() {
++        const size_t maximum = std::numeric_limits<size_t>::max() / sizeof(Slot);
++        if (capacity_ && capacity_ > maximum / 2) throw std::bad_alloc();
++        const size_t next = capacity_ ? capacity_ * 2 : 4;
++        if (next > maximum) throw std::bad_alloc();
++        auto fresh = std::make_unique<Slot[]>(next);
++        if (!capacity_) place(fresh.get(), next, single_);
++        else for (size_t i = 0; i < capacity_; ++i)
++            if (slots_[i].id) place(fresh.get(), next, slots_[i]);
++        slots_.swap(fresh);
++        capacity_ = next;
++        single_.id = 0;
++    }
++
++public:
++    HandleTable() = default;
++    HandleTable(const HandleTable &) = delete;
++    HandleTable &operator=(const HandleTable &) = delete;
++    bool empty() const noexcept { return size_ == 0; }
++    size_t size() const noexcept { return size_; }
++
++    // The caller takes a fresh nonzero ID under the domain lock before insertion.
++    Record &insert_fresh(u64 id, Record value) {
++        if (!capacity_ && !size_) {
++            single_ = {id, value};
++            size_ = 1;
++            return single_.value;
++        }
++        if (!capacity_ || size_ >= capacity_ - capacity_ / 4) grow();
++        auto *slot = place(slots_.get(), capacity_, Slot{id, value});
++        ++size_;
++        return slot->value;
++    }
++
++    Slot *find(u64 id) noexcept {
++        if (!capacity_) return single_.id == id && id ? &single_ : nullptr;
++        const size_t mask = capacity_ - 1;
++        size_t position = index(id, mask);
++        while (slots_[position].id) {
++            if (slots_[position].id == id) return &slots_[position];
++            position = (position + 1) & mask;
++        }
++        return nullptr;
++    }
++
++    // A location returned under the same lock remains valid until this erase.
++    void erase_found(Slot *slot) noexcept {
++        if (!capacity_) {
++            single_.id = 0;
++            size_ = 0;
++            return;
++        }
++        const size_t mask = capacity_ - 1;
++        size_t hole = static_cast<size_t>(slot - slots_.get());
++        if (--size_ == 0) { release_storage(); return; }
++        for (size_t current = (hole + 1) & mask; slots_[current].id;
++                current = (current + 1) & mask) {
++            const size_t home = index(slots_[current].id, mask);
++            // Move only when the hole lies on this entry's probe path. Keep
++            // scanning past at-home entries: later entries may still cross it.
++            if (((hole - home) & mask) < ((current - home) & mask)) {
++                slots_[hole] = slots_[current];
++                hole = current;
++            }
++        }
++        slots_[hole].id = 0;
++    }
++
++    void erase(u64 id) noexcept {
++        if (auto *slot = find(id)) erase_found(slot);
++    }
++
++    // Used only when there are no active leases. Empty batches retain no array.
++    void release_storage() noexcept {
++        slots_.reset();
++        capacity_ = 0;
++        size_ = 0;
++        single_.id = 0;
++    }
++};
++
++using AllocationTable = HandleTable<Allocation>;
++using LeaseTable = HandleTable<Lease>;
++
+@@ -125 +243,0 @@
+-struct RangeClaim { uintptr_t begin; uintptr_t end; u64 external_id; u64 token; bool releasing; };
+@@ -130,2 +248,3 @@
+-mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, u64 &out) noexcept {
+-    out = 0;
++mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &backing) noexcept {
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -145 +264,2 @@
+-        out = token;
++        backing.claim_node = std::prev(range_claims.end());
++        backing.claim_active = true;
+@@ -151,2 +271,3 @@
+-mgmem_status reserve_owned_claim(u64 &out) noexcept {
+-    out = 0;
++mgmem_status reserve_owned_claim(Backing &backing) noexcept {
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -158 +279,2 @@
+-        out = token;
++        backing.claim_node = std::prev(range_claims.end());
++        backing.claim_active = true;
+@@ -164 +286 @@
+-mgmem_status publish_owned_claim(u64 token, void *data, u64 bytes, bool &unsafe_address) noexcept {
++mgmem_status publish_owned_claim(const Backing &backing, void *data, u64 bytes, bool &unsafe_address) noexcept {
+@@ -171 +293,5 @@
+-    auto own = range_claims.end();
++    if (!backing.claim_active) {
++        unsafe_address = true;
++        return MGMEM_PROVIDER_ERROR;
++    }
++    const auto own = backing.claim_node;
+@@ -173,4 +299,2 @@
+-        if (it->token == token) own = it;
+-        else if (!it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
+-    }
+-    if (own == range_claims.end()) { unsafe_address = true; return MGMEM_PROVIDER_ERROR; }
++        if (it != own && !it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
++    }
+@@ -183,2 +307,2 @@
+-void releasing_claim(u64 token, bool releasing) noexcept {
+-    if (!token) return;
++void releasing_claim(const Backing &backing, bool releasing) noexcept {
++    if (!backing.claim_active) return;
+@@ -186,5 +310,5 @@
+-    for (auto &claim : range_claims) if (claim.token == token) { claim.releasing = releasing; return; }
+-}
+-
+-void drop_claim(u64 token) noexcept {
+-    if (!token) return;
++    backing.claim_node->releasing = releasing;
++}
++
++void drop_claim(Backing &backing) noexcept {
++    if (!backing.claim_active) return;
+@@ -192,3 +316,3 @@
+-    for (auto it = range_claims.begin(); it != range_claims.end(); ++it) {
+-        if (it->token == token) { range_claims.erase(it); return; }
+-    }
++    range_claims.erase(backing.claim_node);
++    backing.claim_active = false;
++    backing.claim_node = {};
+@@ -233,2 +357,2 @@
+-    std::map<u64, Allocation> allocations;
+-    std::map<u64, Lease> leases;
++    AllocationTable allocations;
++    LeaseTable leases;
+@@ -263,2 +387,2 @@
+-bool deallocate_backing(mgmem_domain &domain, const Backing &backing) noexcept {
+-    if (!backing.address) { drop_claim(backing.claim); return true; }
++bool deallocate_backing(mgmem_domain &domain, Backing &backing) noexcept {
++    if (!backing.address) { drop_claim(backing); return true; }
+@@ -266 +390 @@
+-        releasing_claim(backing.claim, true);
++        releasing_claim(backing, true);
+@@ -275 +399 @@
+-        catch (...) { releasing_claim(backing.claim, false); return false; }
++        catch (...) { releasing_claim(backing, false); return false; }
+@@ -283 +407 @@
+-            releasing_claim(backing.claim, false);
++            releasing_claim(backing, false);
+@@ -293 +417 @@
+-    drop_claim(backing.claim);
++    drop_claim(backing);
+@@ -366,0 +491,2 @@
++    domain.allocations.release_storage();
++    domain.leases.release_storage();
+@@ -376 +502 @@
+-    for (const auto &backing : detached) {
++    for (auto &backing : detached) {
+@@ -489 +615 @@
+-                auto insertion = domain->allocations.emplace(id,
++                auto &insertion = domain->allocations.insert_fresh(id,
+@@ -491 +617 @@
+-                commit_allocation(*domain, insertion.first->second, bytes);
++                commit_allocation(*domain, insertion, bytes);
+@@ -520 +646 @@
+-            domain->allocations.emplace(id,
++            domain->allocations.insert_fresh(id,
+@@ -527 +653 @@
+-        const auto claim_status = reserve_owned_claim(backing_it->claim);
++        const auto claim_status = reserve_owned_claim(*backing_it);
+@@ -549 +675 @@
+-        const auto claim_status_after_callback = publish_owned_claim(backing_it->claim, address, capacity, unsafe_address);
++        const auto claim_status_after_callback = publish_owned_claim(*backing_it, address, capacity, unsafe_address);
+@@ -561 +687 @@
+-            auto &allocation = domain->allocations.find(id)->second;
++            auto &allocation = domain->allocations.find(id)->value;
+@@ -569 +695 @@
+-        const Backing failed = *backing_it;
++        Backing failed = *backing_it;
+@@ -625 +751 @@
+-            input.alignment, input.capacity_bytes, true, 0, true, input.access, input.context, input.release,
++            input.alignment, input.capacity_bytes, true, false, {}, true, input.access, input.context, input.release,
+@@ -629 +755 @@
+-            domain->allocations.emplace(id,
++            domain->allocations.insert_fresh(id,
+@@ -636 +762 @@
+-        const auto claimed = claim_range(input.data, input.capacity_bytes, input.external_id, backing_it->claim);
++        const auto claimed = claim_range(input.data, input.capacity_bytes, input.external_id, *backing_it);
+@@ -669 +795 @@
+-            commit_allocation(*domain, domain->allocations.find(id)->second, input.capacity_bytes);
++            commit_allocation(*domain, domain->allocations.find(id)->value, input.capacity_bytes);
+@@ -674 +800 @@
+-        const Backing failed = *backing_it;
++        Backing failed = *backing_it;
+@@ -683 +809 @@
+-        else if (reclaimed) drop_claim(failed.claim);
++        else if (reclaimed) drop_claim(failed);
+@@ -752 +878 @@
+-        if (found == domain->allocations.end() || !found->second.owner || found->second.pending)
++        if (!found || !found->value.owner || found->value.pending)
+@@ -754 +880 @@
+-        auto &allocation = found->second;
++        auto &allocation = found->value;
+@@ -762 +888 @@
+-        domain->allocations.erase(found);
++        domain->allocations.erase_found(found);
+@@ -779 +905 @@
+-        if (found == domain->allocations.end() || !found->second.owner || found->second.pending)
++        if (!found || !found->value.owner || found->value.pending)
+@@ -781 +907 @@
+-        auto &allocation = found->second;
++        auto &allocation = found->value;
+@@ -790 +916 @@
+-        domain->leases.emplace(id, Lease{handle.id, access == MGMEM_WRITE});
++        domain->leases.insert_fresh(id, Lease{handle.id, access == MGMEM_WRITE});
+@@ -805,6 +931,6 @@
+-        const auto lease = domain->leases.find(handle.id);
+-        if (lease == domain->leases.end()) return MGMEM_STALE_HANDLE;
+-        const auto found = domain->allocations.find(lease->second.allocation);
+-        if (found == domain->allocations.end()) return MGMEM_PROVIDER_ERROR;
+-        auto &allocation = found->second;
+-        if (lease->second.writer) allocation.writer = false;
++        const auto record = domain->leases.find(handle.id);
++        if (!record) return MGMEM_STALE_HANDLE;
++        const auto found = domain->allocations.find(record->value.allocation);
++        if (!found) return MGMEM_PROVIDER_ERROR;
++        auto &allocation = found->value;
++        if (record->value.writer) allocation.writer = false;
+@@ -812 +938 @@
+-        domain->leases.erase(lease);
++        domain->leases.erase_found(record);
+@@ -816 +942 @@
+-            domain->allocations.erase(found);
++            domain->allocations.erase_found(found);

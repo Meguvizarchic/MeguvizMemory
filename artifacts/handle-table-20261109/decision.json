@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-09",
+  "state": "ADOPTED_COMPACT_OWNER_LEASE_TABLES_AND_STABLE_CLAIM_REFERENCES_WITH_MEASURED_COSTS",
+  "performance_qualified": false,
+  "base_commit": "a1bf94cfd6d052044a303a1ed0d2b276542189b4",
+  "baseline_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "selected_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "not_adopted_lease_only_core_sha256": "55ec865a21f5467a3f333383f0194083c15e08a22ce34783d4a831d5dbf6e22d",
+  "changes": [
+    "One inline scalar record plus flat linear-probing/backshift fallback for both allocation and lease records.",
+    "Fresh monotonic IDs retained; records looked up by ID again after callback unlock.",
+    "Compact stable RangeClaim list reference removes release token scans; overlap, ID conflicts and uncertain callback quarantine retained."
+  ],
+  "adoption_evidence": "Only adopted-fusion 832 processes; lease-only 832 is preserved separately and not pooled or inherited.",
+  "rounds": [
+    {
+      "name": "lease-only",
+      "selected_for_default": false,
+      "processes": 832,
+      "pairs": 416,
+      "groups": 58,
+      "plan_sha256": "1721707784e0e41262bb389bcdbd60f1430f0c85f4e07863f27dabb035ecd60d",
+      "complete_report": "lease-only-full.json.gz",
+      "summary": "lease-only-summary.json"
+    },
+    {
+      "name": "adopted-fusion",
+      "selected_for_default": true,
+      "processes": 832,
+      "pairs": 416,
+      "groups": 58,
+      "plan_sha256": "b1d0f6a775abd9620077e83a1fc1e6f76f7a3c53e49f3e0de3b5dafcca72eaca",
+      "complete_report": "adopted-fusion-full.json.gz",
+      "summary": "adopted-fusion-summary.json"
+    }
+  ],
+  "total_new_performance_processes": 1664,
+  "total_pairs_separate_rounds": 832,
+  "total_groups_separate_rounds": 116,
+  "observed_strength": {
+    "arena_main_workflow_p50_paired_ratio_range": [
+      0.79129,
+      0.87289
+    ],
+    "arena_main_each_group_favorable_pairs": "8_OF_8",
+    "arena_tiny_fixed_workflow_p50_ratio_approx": 0.84516,
+    "arena_tiny_mixed_workflow_p50_ratio_approx": 0.88856,
+    "arena_tiny_paired_delta_ns_per_op_approx": [
+      -62.89,
+      -53.13
+    ],
+    "system_all_12_workflow_p50_group_medians": "BELOW_ONE",
+    "system_reverse_shuffled_major_workflow_ratio_range_approx": [
+      0.4236,
+      0.6034
+    ]
+  },
+  "selected_counterevidence": [
+    "Once fixed batch64 stream inline full-wall P50/P95 1.05994/1.09455 despite hot P50 0.86844.",
+    "Once fixed batch64 held inline full-wall P50/P95 1.13678/1.12780 despite hot P50 0.94386.",
+    "Once mixed batch64 held worker full-wall P50/P95 1.22799/1.11359 despite hot P50 0.94057.",
+    "Legacy single mixed allocation P50 1.19293 and workflow P95 1.05408; System32 forward t1 P95 1.00307.",
+    "Arrays reduce allocation call count but can increase cumulative request bytes and transient growth peaks."
+  ],
+  "memory_host_release": {
+    "domain_bytes": {
+      "baseline": 456,
+      "selected": 544
+    },
+    "owner_storage_object_bytes": {
+      "baseline": 16,
+      "selected": 72
+    },
+    "lease_storage_object_bytes": {
+      "baseline": 16,
+      "selected": 48
+    },
+    "owner_slot_bytes": 48,
+    "lease_slot_bytes": 24,
+    "backing_bytes_all_four_layouts": 80,
+    "combined_array_peak_bytes_held32": 5376,
+    "combined_array_peak_bytes_held64": 10752,
+    "combined_live_array_peak_fixture": 3,
+    "per_kind_live_array_peak_fixture": 2,
+    "empty_arrays_released": true,
+    "is_rss_or_allocator_usable_size": false
+  },
+  "qualification": {
+    "host_core": "48_OF_48",
+    "host_cpp": "12_OF_12",
+    "host_asan": "48_OF_48",
+    "direct_table": "8_TESTS_4238156_CHECKS_4_OOM",
+    "pending_relocation": "1_TEST_1338_CHECKS",
+    "android": "ARM64_CROSS_COMPILE_ELF_STATIC_ONLY",
+    "device_commands": 0,
+    "new_android_sdk_aar_apk": false,
+    "bil_changed": false,
+    "formal_release": "NOT_PERFORMED"
+  },
+  "sources": {
+    "deletion_principle": "https://arxiv.org/abs/0909.2547",
+    "id_output_mixing": "https://prng.di.unimi.it/splitmix.c",
+    "mixing_notice_installed": "third_party_notices/splitmix64-NOTICE.txt",
+    "stable_claim_component_source_commit": "f9882d8e524b86f48d2fedf90659432a92295c9a"
+  },
+  "patch_application": "git apply --unidiff-zero <patch> against the baseline core.",
+  "limits": [
+    "Engineering adoption for measured target workloads, not universal no-regression or product qualification.",
+    "No retries, excluded pairs, sample pooling or unpaired cross-round ranking.",
+    "Full round-wall includes create through destroy but excludes documented helper/result container teardown and reporting.",
+    "CPU frequency, affinity, thread scheduling and other activity uncontrolled.",
+    "Array request counts and host layout are not RSS, energy, Android performance or actual16KiB loader evidence.",
+    "All source/heap/runtime bindings were audited before selecting current code; exact historical snapshots remain archived."
+  ],
+  "files": {
+    "lease-only-full.json.gz": {
+      "bytes": 606138,
+      "sha256": "e74d1faf54ffc3117a86572594c0832b0cd6b5ba14e76da36afffe2e01c1f73a",
+      "uncompressed_bytes": 9324234,
+      "uncompressed_sha256": "bab460cbbc97fdd089f5c329d99465902def4775c94b52601f2b3c4ea6aea77d"
+    },
+    "lease-only-summary.json": {
+      "bytes": 2885226,
+      "sha256": "2b78c8a0759f7c09aaa604ce3ca5a8369dcb070e2ebccedb180255b105deadfb"
+    },
+    "adopted-fusion-full.json.gz": {
+      "bytes": 631368,
+      "sha256": "47311fa9f833b4f6344984d393a422a48e4db1d533e72fbd10b6236fc0c8132a",
+      "uncompressed_bytes": 9372759,
+      "uncompressed_sha256": "facd299e2dedbb686d652e33ff02c62296f81a8e847e314bbc7202c722234621"
+    },
+    "adopted-fusion-summary.json": {
+      "bytes": 2906416,
+      "sha256": "ac082bfbe07a5dc1d66ad6e99f1beb4f94700b75a8d44bd564e21e327f85152b"
+    },
+    "lease-only-heap.json": {
+      "bytes": 211111,
+      "sha256": "8f051294717ee105d41942e5b58073ee788a02d74250ae45f2ba8b3ac667244c"
+    },
+    "lease-only-phase-counterevidence.json": {
+      "bytes": 1213528,
+      "sha256": "5a34feb9f37bccd6ab548ab16cd5b1011cb030b6a39a90e5a4095c418b379e52"
+    },
+    "adopted-heap-and-layout.json": {
+      "bytes": 367633,
+      "sha256": "a5b1660ef939556388e2de9b419cf7f6d745a8bc01328ce55cd28e6106b5090f"
+    },
+    "system-scope-correction.json": {
+      "bytes": 1054,
+      "sha256": "e817fe139aa951f8e03fdf29dab72af07350faaaaf805050f64d1349216971ca"
+    },
+    "adopted-advice.json": {
+      "bytes": 2155043,
+      "sha256": "cf62cef181e7ba21dee385271fc891fb3751705c0895f7e57929cef6d9851d8e"
+    },
+    "adopted-source-review.json": {
+      "bytes": 11139,
+      "sha256": "d6068ab6924599f9c55e10e1472ce2ee75d0be0ab0cd196b045c4ac1c7d93dfa"
+    },
+    "not-adopted-lease-only.patch": {
+      "bytes": 4979,
+      "sha256": "fc4dc82a413a93dfe8efa474d26cdfcf5d026abc23a2e01046ec41bd1aa692f3"
+    },
+    "adopted-metadata-fusion.patch": {
+      "bytes": 12441,
+      "sha256": "43a0d68bf015732efb1d396bc49e8b59aa2698794e21d7765b8e7bdfb1de09fa"
+    },
+    "diagnostic-sources.zip": {
+      "bytes": 103637,
+      "sha256": "d4f6f19388917ff0079c6dfc85b77d57a42babe15e60e38849e2c6258cbdff98"
+    },
+    "diagnostic-sources.json": {
+      "bytes": 4315,
+      "sha256": "5dce8e93c9c1269fe81d3fcb438a3c93416fdff4109c8653c1c965b0339c92fc"
+    },
+    "adopted-host-validation.json": {
+      "bytes": 4049,
+      "sha256": "e644826aee113c59ea6f8e7f5a8e074c03723daa19be1046cb1226c63a8b2f35"
+    },
+    "adopted-arm64-static.json": {
+      "bytes": 3251,
+      "sha256": "296404da2c7a554fac91d6bed19360136579e97f3e2db7a33421d9326642f342"
+    }
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_OWNER_LEASE_TABLE_AND_STABLE_CLAIM_FUSION_SOURCE_REVIEW",
+  "reviewed_source_sha256": {
+    "src/mgmem.cpp": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6"
+  },
+  "blocking_findings": [],
+  "scope": "Actual combined owner/lease HandleTable and stable RangeClaim references. Read-only source review; no execution or inherited qualification.",
+  "data_structure": {
+    "record_types": "Allocation and Lease are the actual plain scalar/pointer records instantiated by HandleTable<Record>; compile-time trivially-copyable constraint is present.",
+    "table_policy": "One inline record; power-of-two fallback with at most 3/4 occupancy, linear probing and backshift deletion; all modes share the same implementation.",
+    "identity": "IDs are still taken under domain mutex, nonzero, strictly increasing and not recycled. Moving private Slot values does not change public identity.",
+    "copy_move": "Deleted copy construction/assignment suppress implicit move. The domain is also nonmovable through its mutex.",
+    "growth": "Fresh array allocation and scalar record rehash complete before swapping ownership. On fresh allocation failure, all old records and locations remain intact. The concrete Record copies and post-swap insertion are nonthrowing."
+  },
+  "reference_audit": [
+    {
+      "path": "Arena existing-backing allocation",
+      "source": "src/mgmem.cpp:615-624",
+      "conclusion": "insert_fresh returns Allocation&, committed immediately while locked. No callback, unlock or later owner-table mutation occurs before this reference is finished; Backing is an independent stable list element."
+    },
+    {
+      "path": "Owned provider callback admission",
+      "source": "src/mgmem.cpp:641-691",
+      "conclusion": "The pending record is inserted before releasing the domain lock. No Slot/Allocation reference is carried through unlock at 663. The function retains only id and stable backing_it, then reacquires the current Allocation with find(id) at 687. Other owner insertion, growth or backshift while the callback runs is safe."
+    },
+    {
+      "path": "External retain callback admission",
+      "source": "src/mgmem.cpp:750-798",
+      "conclusion": "The external pending record is inserted before unlock at 773. Success publication uses a fresh find(id) after relock, not a pre-callback address. Input descriptor is copied and Backing remains in the list."
+    },
+    {
+      "path": "Pending record protection",
+      "source": "src/mgmem.cpp:593-603, 641-663, 735-773, 872-918",
+      "conclusion": "A pending placeholder has owner=false/pending=true. Normal owner release and borrow reject it. pending and nonempty records prevent quiet reset/trim/collect/destroy from deleting it while its callback is in flight."
+    },
+    {
+      "path": "Borrow acquire across lease insertion",
+      "source": "src/mgmem.cpp:904-921",
+      "conclusion": "The held Allocation& belongs to the owner table. insert_fresh mutates only the distinct lease table; it cannot move this owner record. Permission/count checks precede insertion, reader/writer and out publication follow it. OOM publishes no lease and changes no reader/writer count."
+    },
+    {
+      "path": "Owner release",
+      "source": "src/mgmem.cpp:877-891",
+      "conclusion": "All Allocation fields and Backing* are consumed before allocations.erase_found(found). No owner Slot/reference is dereferenced afterward. The following standalone callback uses only the captured stable Backing pointer/detached list."
+    },
+    {
+      "path": "Last lease release",
+      "source": "src/mgmem.cpp:931-945",
+      "conclusion": "Lease allocation ID/writer are read before leases.erase_found(record); record is never used afterward. The owner Slot remains valid because that erase mutates the other table. If retiring owner finishes, bytes and Backing* are read before owner erase, and neither owner pointer/reference is used afterward."
+    },
+    {
+      "path": "Standalone callback unlock window",
+      "source": "src/mgmem.cpp:455-483",
+      "conclusion": "Backing is moved by std::list::splice into a detached list, which preserves its element address. Neither table location is held. Other threads may mutate both handle tables while unlocked without invalidating the detached Backing; pending keeps domain/provider lifetime admitted."
+    },
+    {
+      "path": "Bulk callback unlock window",
+      "source": "src/mgmem.cpp:488-518",
+      "conclusion": "Both table release_storage calls are behind caller quiet checks, so no active/pending/retiring metadata is discarded. maintenance and pending are set before unlock, preventing new allocation or premature cleanup. Detached Backing elements and claims are independent of table storage."
+    }
+  ],
+  "owner_lifetime_proofs": [
+    "An owner record remains present while owner=true or any reader/writer survives. Lease records keep an allocation ID scalar, not an Allocation pointer, so any owner-table movement is resolved by the next lookup.",
+    "A pending owner record cannot be legitimately erased while its callback is in flight. Re-find after callback is therefore expected to exist even if its physical Slot changed.",
+    "Shared Arena Backing is not individually reclaimed when a suballocation record ends; owned Arena chunks are reclaimed only at quiet bulk cleanup. SYSTEM and external Backings each have the original standalone ownership path.",
+    "Backing* inside Allocation targets std::list storage, not either moving HandleTable. List insertion and splicing of other nodes do not invalidate that element.",
+    "Default domain snapshot active_allocations/active_leases continues to use logical table size, including pending/retiring owner records exactly as before."
+  ],
+  "stable_claim_component_identity": {
+    "RangeClaim": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "98c3bdffbcb258c52aa3f5fd7ebe0d903e9005078ca6732936a6b03b32b3443b"
+    },
+    "Backing": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "bfc88b4a54e8a68cadd39cbb68c852a6164077d93870c8ae65ddcc9397b6ccf9"
+    },
+    "claim_range": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "c0f436456c2c993e7bcd536881854cd35c4d391c4a513f09185e33771024f415"
+    },
+    "reserve_owned_claim": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "493b5c5f175b6713a839998865e301acae010c8a72e9699b2e945d80a6953341"
+    },
+    "publish_owned_claim": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "a83fcdc2f81d936f61afba1a08d3d09ea18f65bd07b054de1531422c56aa5e48"
+    },
+    "releasing_claim": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "9c9787a132473409fe67315b6e49fbfea8226cc72c4cb692ed73e35c99f856f9"
+    },
+    "drop_claim": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "73569a1d10f579fccd62116c1550e8a51441b3ea8c0918d0c19ff02a077ffb4d"
+    },
+    "deallocate_backing": {
+      "exact_source_match": "f9882d8",
+      "definition_sha256": "c060d38ba275a38553dacd7ff4d1a7b0fd0059f1909b54e563c1a8311f772f17"
+    }
+  },
+  "claim_cleanup_audit": [
+    "Each successful claim reserve/import inserts one list element before setting claim_node and then claim_active=true. Initial inactive references are not dereferenced.",
+    "std::list RangeClaim iterators remain valid across insertion/removal of other registry nodes. The registry mutex still protects the overlap scan, releasing marker and erasure; lock order remains domain -> registry, with callbacks outside both locks.",
+    "publish_owned_claim still scans all other non-releasing claims for overlap, now excluding its own node by iterator identity. claim_range still enforces external ID uniqueness and overlap. The token counter and overflow behavior remain present.",
+    "Normal cleanup has one explicit mutable Backing owner. drop_claim checks active, erases exactly its node, and then clears active/iterator. Backing destruction does not implicitly drop a claim.",
+    "Rollback copies Backing into a local failed value, then erases the original owner record and original Backing before unlocking. The local copy becomes the sole cleanup path; destruction of the removed original does not perform a second drop.",
+    "Normal standalone cleanup splices the actual Backing element, and bulk cleanup iterates mutable detached Backings; each successful drop clears that same owner instance.",
+    "Unsafe provider alias and unknown retain/release outcomes do not drop the uncertain claim. Reservation/backing charge and poisoned-domain isolation remain, with no callback retry. A registry node can intentionally outlive the temporary iterator owner; it stores range/id data, not a domain pointer. This is isolation, not leak freedom."
+  ],
+  "memory_and_failure_limits": [
+    "Generic owner and lease fallback arrays can retain high-water capacity while any corresponding record remains. Owner records include pending and retiring states, so owner=false does not itself mean metadata is empty.",
+    "After growth succeeds, a later claim/provider admission failure may erase the new record yet leave larger capacity while other records survive. Logical publication/budget rollback is preserved, but exact metadata footprint need not revert to its pre-call size.",
+    "Each table returns its fallback when its last record is erased; quiet trim/collect also release both storages. No array is retained across an empty table.",
+    "During doubling, old C and fresh 2C arrays coexist. Owner Slots are larger than lease Slots; combined peak requested metadata can rise even where stable storage or allocator call count falls. Measure actual requests and peaks separately.",
+    "Backing and RangeClaim definitions exactly match f9882d8, but the expected Release Backing sizeof of 80 bytes is not certified by source comparison alone. Platform/build/STL sizes require the owning layout probe.",
+    "Average O(1) probing is not an adversarial worst-case bound. Metadata remains outside the existing backing budget; no RSS/OS allocation/energy saving is established here.",
+    "The first lease-only candidate source55 and its 832-process audit are separate historical evidence and do not certify this fusion candidate. This review does not inherit their test or performance qualification."
+  ],
+  "validation_by_this_reviewer": {
+    "source_edits": 0,
+    "builds": 0,
+    "tests": 0,
+    "performance_runs": 0,
+    "device_commands": 0
+  },
+  "reviewed_unlock_sites": [
+    470,
+    498,
+    663,
+    699,
+    773,
+    804
+  ],
+  "source_references": [
+    "src/mgmem.cpp:87-119 claim/backing/allocation/lease records",
+    "src/mgmem.cpp:123-233 generic HandleTable and aliases",
+    "src/mgmem.cpp:248-318 stable claim registry operations",
+    "src/mgmem.cpp:387-418 mutable deallocate_backing",
+    "src/mgmem.cpp:455-518 standalone/bulk cleanup",
+    "src/mgmem.cpp:584-713 allocation admission/rollback",
+    "src/mgmem.cpp:716-823 external retain admission/rollback",
+    "src/mgmem.cpp:872-949 owner/borrow/last-lease release"
+  ]
+}

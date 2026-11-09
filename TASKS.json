@@ -1485,5 +1485,23 @@
     "candidate_core_cpp_asan": "46_OF_46_12_OF_12_46_OF_46",
     "performance_qualified": false,
     "small_default_workflow_improvement": "NOT_CLAIMED_CANDIDATE_REMAINS_EXPERIMENTAL"
+  },
+  "compact_handle_tables_20261109": {
+    "state": "ADOPTED_COMPACT_OWNER_LEASE_TABLES_AND_STABLE_CLAIM_REFERENCES_WITH_MEASURED_COSTS",
+    "evidence": "artifacts/handle-table-20261109/decision.json",
+    "selected_core_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+    "base_commit": "a1bf94cfd6d052044a303a1ed0d2b276542189b4",
+    "host_core": "48_OF_48",
+    "host_cpp": "12_OF_12",
+    "host_asan": "48_OF_48",
+    "new_performance_processes_separate_rounds": [
+      832,
+      832
+    ],
+    "adopted_performance_processes": 832,
+    "adopted_performance_groups": 58,
+    "known_one_shot_and_tail_costs": "RETAINED_NOT_UNIVERSAL_NO_REGRESSION",
+    "android": "ARM64_STATIC_ONLY",
+    "performance_qualified": false
   }
 }

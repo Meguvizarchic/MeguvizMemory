@@ -1,0 +1,128 @@
+{
+  "state": "PASS_TABLE_HOST_CONTRACTS_AND_ASAN",
+  "core_source_sha256": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+  "steps": [
+    {
+      "name": "core-configure",
+      "exit_code": 0,
+      "log_sha256": "aa2a37c8b18bd7c786545a02442f851726f092a0da9e62542dfa6ef0f904c533"
+    },
+    {
+      "name": "core-build",
+      "exit_code": 0,
+      "log_sha256": "126daff53e39f137921c7188e7b07ae3f3808e9605472057d0996b58699057bb"
+    },
+    {
+      "name": "core-ctest",
+      "exit_code": 0,
+      "log_sha256": "ab4782d20cf31f2bad1324f62e797edee4c16f0a9a8603324cbb50d6c87b3595"
+    },
+    {
+      "name": "cpp-configure",
+      "exit_code": 0,
+      "log_sha256": "a2b8ba3bcfd01212d42a622c55087fc552183a6c4cdba6df55679ccce0546d97"
+    },
+    {
+      "name": "cpp-build",
+      "exit_code": 0,
+      "log_sha256": "7eddddec1c13c52d66f2a31f5d7892ddf360511e5420c6eef8d6f8fa7007738b"
+    },
+    {
+      "name": "cpp-ctest",
+      "exit_code": 0,
+      "log_sha256": "a7f239453d15d1c4dcfaaa358f9f08ca8b8913896e8b1d420e0879867aa76b8e"
+    },
+    {
+      "name": "asan-configure",
+      "exit_code": 0,
+      "log_sha256": "005ce775176fc78ea4fa332431be1a08b0e79feb351534a4ba9acb9ac8c9b87d"
+    },
+    {
+      "name": "asan-build",
+      "exit_code": 0,
+      "log_sha256": "285211dfc9d7b583f94ca801bb9d8d2d14d3d50900fa18a68a42e15de2b17856"
+    },
+    {
+      "name": "asan-ctest",
+      "exit_code": 0,
+      "log_sha256": "db7d6c2a22c06b4b8bce63785d4321ed22bfc689eba6b613255eddb6a5f5f1d2"
+    },
+    {
+      "name": "install",
+      "exit_code": 0,
+      "log_sha256": "dd653289019868f0bacc7ea1094ba7b5d4dba3f71c33ac91c352829c4bad42c3"
+    },
+    {
+      "name": "cost-configure",
+      "exit_code": 0,
+      "log_sha256": "14aafe56861afd08bde999a6bda76c971e3008af816f1811cffb2283eec5c4e2"
+    },
+    {
+      "name": "cost-build",
+      "exit_code": 0,
+      "log_sha256": "18ac418b9fe75d7ebeceb322dae58ee44efeafbad4c2d56e7553733c05caa75a"
+    },
+    {
+      "name": "arena-configure",
+      "exit_code": 0,
+      "log_sha256": "44131e0e481873779217d51520c7c56bb430324d3f5661192ad6da4a345f1c6e"
+    },
+    {
+      "name": "arena-build",
+      "exit_code": 0,
+      "log_sha256": "0f599d79fb704dcfcbc5784318b160e4e826323ce03924d016b8a1b025c6f2cf"
+    },
+    {
+      "name": "claim-configure",
+      "exit_code": 0,
+      "log_sha256": "67ccb95e9f0de1200dc245553d66fbbd190df700b64d3d90526a5c17a78d2a0c"
+    },
+    {
+      "name": "claim-build",
+      "exit_code": 0,
+      "log_sha256": "6d736f7d4ad695fc5392dd744236f07a4af9f75ae3a50dc3e11dd898f3a13a97"
+    },
+    {
+      "name": "baseline-public-lease-contract",
+      "exit_code": 0,
+      "log_sha256": "debd433cef51b25fe3876b22dab4f2f51809e31c37ccd06b42a82e934cac8b05"
+    },
+    {
+      "name": "aa-cost-functional",
+      "exit_code": 0,
+      "log_sha256": "271f20755026975f09adc30cc75e0af0e86eae7d325f481799325829fc53f48b"
+    }
+  ],
+  "performance_qualified": false,
+  "source_sha256": {
+    "src/mgmem.cpp": "890e110998341138f69b46ef10993fe0e3cb984c477ec5f12b010b4bbdeec0f6",
+    "tests/core_tests.cpp": "09cf842b9bc8485f673b1b13bcf63cdb8846bb3fb43843f2d1576acfc14be5fd",
+    "tests/lease_table_tests.cpp": "f62aac19583d337fc92dd5b3a95529210b71d2035bf97c707e8701516ba67c2f",
+    "CMakeLists.txt": "cf03918f508b27307992078e7b3487766f10c1c0cc64a8d7bd4054038ed0eb34",
+    "bench/arena_small_cost.cpp": "e8d60728266cbeecc71d77db79359055b1c8ecb106a001a82787dfe1c77db16c",
+    "tools/run_arena_small_cost_pairs.py": "28d73ae327c3a03c45511c7e6753eb7dcf6d36bb24f3494cee3755f388092198"
+  },
+  "scope": "SELECTED_FUSION_SOURCE_HOST_CONTRACTS_ONLY",
+  "core_ctest": {
+    "passed": 48,
+    "total": 48
+  },
+  "cpp_ctest": {
+    "passed": 12,
+    "total": 12
+  },
+  "asan_ctest": {
+    "passed": 48,
+    "total": 48
+  },
+  "direct_table_suite": {
+    "tests": 8,
+    "checks": 4238156,
+    "injected_oom": 4
+  },
+  "metadata_relocation_suite": {
+    "tests": 1,
+    "checks": 1338
+  },
+  "private_receipt_sha256": "755ba4d1d61defa607d6dfda824595db8b0c8fa9fe9541fb241d7ef5ad9d0279"
+}

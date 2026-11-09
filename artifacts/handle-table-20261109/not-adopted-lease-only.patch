@@ -1,0 +1,130 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -113,0 +114,106 @@
++};
++
++// Handles remain monotonic IDs. Only these private records move during probing.
++// One active lease needs no table allocation; larger live sets use one array.
++class LeaseTable {
++    struct Slot {
++        u64 id = 0;
++        Lease value{};
++    };
++    Slot single_{};
++    std::unique_ptr<Slot[]> slots_;
++    size_t capacity_ = 0;
++    size_t size_ = 0;
++
++    static size_t index(u64 id, size_t mask) noexcept {
++        // SplitMix64's public-domain output mixing, without generator state.
++        id = (id ^ (id >> 30)) * 0xbf58476d1ce4e5b9ull;
++        id = (id ^ (id >> 27)) * 0x94d049bb133111ebull;
++        return static_cast<size_t>(id ^ (id >> 31)) & mask;
++    }
++
++    static void place(Slot *slots, size_t capacity, const Slot &value) noexcept {
++        const size_t mask = capacity - 1;
++        size_t position = index(value.id, mask);
++        while (slots[position].id) position = (position + 1) & mask;
++        slots[position] = value;
++    }
++
++    void grow() {
++        const size_t maximum = std::numeric_limits<size_t>::max() / sizeof(Slot);
++        if (capacity_ && capacity_ > maximum / 2) throw std::bad_alloc();
++        const size_t next = capacity_ ? capacity_ * 2 : 4;
++        if (next > maximum) throw std::bad_alloc();
++        auto fresh = std::make_unique<Slot[]>(next);
++        if (!capacity_) place(fresh.get(), next, single_);
++        else for (size_t i = 0; i < capacity_; ++i)
++            if (slots_[i].id) place(fresh.get(), next, slots_[i]);
++        slots_.swap(fresh);
++        capacity_ = next;
++        single_.id = 0;
++    }
++
++public:
++    LeaseTable() = default;
++    LeaseTable(const LeaseTable &) = delete;
++    LeaseTable &operator=(const LeaseTable &) = delete;
++    bool empty() const noexcept { return size_ == 0; }
++    size_t size() const noexcept { return size_; }
++
++    // The caller takes a fresh nonzero ID under the domain lock before insertion.
++    void insert_fresh(u64 id, Lease lease) {
++        if (!capacity_ && !size_) {
++            single_ = {id, lease};
++            size_ = 1;
++            return;
++        }
++        if (!capacity_ || size_ >= capacity_ - capacity_ / 4) grow();
++        place(slots_.get(), capacity_, Slot{id, lease});
++        ++size_;
++    }
++
++    Slot *find(u64 id) noexcept {
++        if (!capacity_) return single_.id == id && id ? &single_ : nullptr;
++        const size_t mask = capacity_ - 1;
++        size_t position = index(id, mask);
++        while (slots_[position].id) {
++            if (slots_[position].id == id) return &slots_[position];
++            position = (position + 1) & mask;
++        }
++        return nullptr;
++    }
++
++    // A location returned under the same lock remains valid until this erase.
++    void erase_found(Slot *slot) noexcept {
++        if (!capacity_) {
++            single_.id = 0;
++            size_ = 0;
++            return;
++        }
++        const size_t mask = capacity_ - 1;
++        size_t hole = static_cast<size_t>(slot - slots_.get());
++        if (--size_ == 0) { release_storage(); return; }
++        for (size_t current = (hole + 1) & mask; slots_[current].id;
++                current = (current + 1) & mask) {
++            const size_t home = index(slots_[current].id, mask);
++            // Move only when the hole lies on this entry's probe path. Keep
++            // scanning past at-home entries: later entries may still cross it.
++            if (((hole - home) & mask) < ((current - home) & mask)) {
++                slots_[hole] = slots_[current];
++                hole = current;
++            }
++        }
++        slots_[hole].id = 0;
++    }
++
++    void erase(u64 id) noexcept {
++        if (auto *slot = find(id)) erase_found(slot);
++    }
++
++    // Used only when there are no active leases. Empty batches retain no array.
++    void release_storage() noexcept {
++        slots_.reset();
++        capacity_ = 0;
++        size_ = 0;
++        single_.id = 0;
++    }
+@@ -234 +340 @@
+-    std::map<u64, Lease> leases;
++    LeaseTable leases;
+@@ -366,0 +473 @@
++    domain.leases.release_storage();
+@@ -790 +897 @@
+-        domain->leases.emplace(id, Lease{handle.id, access == MGMEM_WRITE});
++        domain->leases.insert_fresh(id, Lease{handle.id, access == MGMEM_WRITE});
+@@ -805,3 +912,3 @@
+-        const auto lease = domain->leases.find(handle.id);
+-        if (lease == domain->leases.end()) return MGMEM_STALE_HANDLE;
+-        const auto found = domain->allocations.find(lease->second.allocation);
++        const auto record = domain->leases.find(handle.id);
++        if (!record) return MGMEM_STALE_HANDLE;
++        const auto found = domain->allocations.find(record->value.allocation);
+@@ -810 +917 @@
+-        if (lease->second.writer) allocation.writer = false;
++        if (record->value.writer) allocation.writer = false;
+@@ -812 +919 @@
+-        domain->leases.erase(lease);
++        domain->leases.erase_found(record);
