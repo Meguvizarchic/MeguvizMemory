@@ -1,0 +1,15 @@
+{
+  "state": "PASS_HOST_CI",
+  "code_commit": "6968ed1a3d5f90ae41a327fe08780616644715ac",
+  "run_url": "https://github.com/Meguvizarchic/MeguvizMemory/actions/runs/42555985598",
+  "jobs": {
+    "verify (ubuntu-latest)": "success",
+    "verify (windows-latest)": "success"
+  },
+  "scope": "PROJECT_HOST_AND_OFFLINE_CONTRACTS_INCLUDING_UNIVERSAL_AAR_AND_DIAGNOSTIC_TOOLS",
+  "device_evidence": "r8-arm64.json and arm64-functional.json are separate real-device records",
+  "limitations": [
+    "CI does not itself perform the Android device runs or qualify product performance.",
+    "Subsequent documentation-only evidence and attribution updates are recorded separately."
+  ]
+}

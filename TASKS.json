@@ -1438,6 +1438,7 @@
     "actual_16k_loader": "BLOCKED_ONLY_4K_DEVICE_AVAILABLE_THIS_ROUND",
     "mte": "NOT_QUALIFIED_NO_TAGGED_PROCESS_AND_FAULT_PROTOCOL",
     "BIL": "NOT_INTEGRATED",
-    "evidence": "artifacts/android-round-20261109/"
+    "evidence": "artifacts/android-round-20261109/",
+    "host_ci": "artifacts/android-round-20261109/ci-6968ed1.json"
   }
 }

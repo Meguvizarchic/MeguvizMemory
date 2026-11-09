@@ -4519,5 +4519,7 @@
     "Discrete admission/occupancy and file hashes are not a shared device lock or signed mapped-page attestation."
   ],
   "all_checksums_and_statistics_recomputed": true,
-  "native_final_resources_field_checked": "CLOSED_ZERO_ALL_48_NATIVE_INTERNAL_CHECKS_NOT_INDEPENDENT_RESOURCE_OBSERVATION"
+  "native_final_resources_field_checked": "CLOSED_ZERO_ALL_48_NATIVE_INTERNAL_CHECKS_NOT_INDEPENDENT_RESOURCE_OBSERVATION",
+  "attribution": "MEMORY_INTERNAL_ARENA_LOOKUP_PRE_VS_POST_NOT_MEMORY_ADOPTION_NET_BENEFIT",
+  "independent_analysis_sha256": "e2f10d68480ae4d35ebf2f473cb56666334232239c968df875c6ab29c8bcb8e9"
 }
