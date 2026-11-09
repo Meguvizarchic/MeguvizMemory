@@ -49,3 +49,13 @@ source.copyTo(destination, 0, 0, byteCount);
 4. 评估关闭 worker 中 25 ms 轮询改通知等待的价值；依靠实测关闭分布决定实现，不混入当前数据。
 
 原始本机日志、工具身份和路径留在忽略目录；公开结果引用具体提交和工作负载。论文中的收益数字不作为本库实测数据。
+
+## 下一优化假设：保留已选 shape（尚未实现）
+
+Android 本轮 tiny mixed 的 allocation P50 四对均变慢，应优先检查混合路径开销。现有 ARM64 代码生成在成功复用路径保留3条store，写入 valid、bytes、alignment、iterator 四个字段；当前不同shape成功时也会执行。这是现有策略的合法写入，不能仅凭指令数认定其解释了退化。
+
+候选策略是不增加状态，保留一个已选shape游标；异形请求从头first-fit但不覆盖缓存，同形请求推进下界。此前不满足缓存shape的块，其used只增，不会因异形分配重新合格；provider发布/失败、reset/reclaim仍必须全部失效。缓存end也遵守此条件。下一实现应先只隔离这一项变化，保留全部旧轮数据。
+
+必须同时比较阶段变化 A→长串B 且不触发provider的反例：缓存可能长期偏爱已不热的A，使B失去加速。预计收益仍须独立配对验证，不能把此语义审阅记为性能通过。
+
+方向参考[LLVM BumpPtrAllocator源码](https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/Support/Allocator.h)与[mimalloc原论文](https://www.microsoft.com/en-us/research/wp-content/uploads/2019/06/mimalloc-tr-v1.pdf)的简短快路径与维护组织；没有移植它们不同的释放和预算语义。
