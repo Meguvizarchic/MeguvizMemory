@@ -1,4 +1,33 @@
+<div align="center">
+
+<img src="docs/brand/MeguvizMemory.svg" width="96" height="96" alt="MeguvizMemory">
+
 # MeguvizMemory
+
+**显式 CPU 内存域、有界 arena 与所有权 / 借用合同库**
+
+System provider · mgmem ABI · 受控字节 lease
+
+<br>
+
+[![Language](https://img.shields.io/badge/lang-Python-DEA584?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory)
+[![Issues](https://img.shields.io/github/issues/Meguvizarchic/MeguvizMemory?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory/issues)
+
+[构建和安装](#构建和安装) · [所有权与关闭](#所有权与关闭)
+
+</div>
+
+---
+
+<details>
+<summary><b>目录</b></summary>
+
+- [构建和安装](#构建和安装)
+- [所有权与关闭](#所有权与关闭)
+
+</details>
+
+---
 
 当前开发接续与快路径说明见 [性能路径与接入](docs/PERFORMANCE_PATHS.md)，各项实测范围见 [STATE.md](STATE.md)。
 
