@@ -12,8 +12,16 @@ import org.json.JSONObject;
 public final class ManagedInstrumentation extends Instrumentation {
     private int checks;
     private String stage = "start";
+    private boolean copyArena;
+    private int transferCases, arenaSameShapeAllocations;
     private void check(boolean ok) { ++checks; if (!ok) throw new AssertionError(stage); }
-    @Override public void onCreate(Bundle args) { super.onCreate(args); start(); }
+    @Override public void onCreate(Bundle args) {
+        String scope = args == null ? null : args.getString("probe_scope");
+        if (scope != null && !"pressure-v1".equals(scope) && !"copy-arena-v1".equals(scope))
+            throw new IllegalArgumentException("unsupported probe scope");
+        copyArena = "copy-arena-v1".equals(scope);
+        super.onCreate(args); start();
+    }
 
     private long[] apply(ManagedMemoryDomain.Pressure p, int level) throws Exception {
         long deadline = System.nanoTime() + 5_000_000_000L, ticket = -6;
@@ -121,20 +129,61 @@ public final class ManagedInstrumentation extends Instrumentation {
         check(ds != null && ds[3] == 0 && ds[4] == 0 && ds[8] == 0 && ds[9] == 0);
         d.forgetClosed();
     }
+    private void runTransfer(boolean arena) throws Exception {
+        stage = arena ? "arena_copy_arena" : "system_copy_arena";
+        ManagedMemoryDomain d = arena ? ManagedMemoryDomain.arena(8192, 4096) : ManagedMemoryDomain.system(8192);
+        ManagedMemoryDomain.Allocation source = d.allocate(128, 8), target = d.allocate(128, 8);
+        ManagedMemoryDomain.Lease a = source.borrowWrite(0, 128), b = target.borrowWrite(0, 128);
+        byte[] expected = new byte[128], actual = new byte[128];
+        for (int i = 0; i < expected.length; ++i) expected[i] = (byte)(i * 31 + 7);
+        a.write(0, expected, 0, expected.length);
+        if (arena) {
+            // Real same-shape allocation traffic crosses chunks while both leases survive.
+            for (int i = 0; i < 96; ++i) {
+                ManagedMemoryDomain.Allocation scratch = d.allocate(64, 8);
+                check(scratch != null); scratch.close(); ++arenaSameShapeAllocations;
+            }
+            long[] used = d.snapshot();
+            check(used != null && used[3] == 8192 && used[8] == 2 && used[9] == 2);
+            try { d.allocate(4096, 8); throw new AssertionError(stage); }
+            catch (ManagedMemoryDomain.ManagedException rejected) { check(rejected.status() == 4); }
+        }
+        a.copyTo(b, 0, 0, expected.length); b.read(0, actual, 0, actual.length);
+        for (int i = 0; i < expected.length; ++i) check(actual[i] == expected[i]);
+        a.copyTo(a, 0, 1, 127); System.arraycopy(expected, 0, expected, 1, 127);
+        a.copyTo(a, 1, 0, 127); System.arraycopy(expected, 1, expected, 0, 127);
+        a.read(0, actual, 0, actual.length);
+        for (int i = 0; i < expected.length; ++i) check(actual[i] == expected[i]);
+        source.close(); target.close(); d.beginClose();
+        check(d.state() == ManagedMemoryDomain.CLOSING);
+        a.copyTo(b, 0, 0, expected.length); b.read(0, actual, 0, actual.length);
+        for (int i = 0; i < expected.length; ++i) check(actual[i] == expected[i]);
+        a.close(); b.close(); waitDomain(d);
+        long[] zero = d.snapshot();
+        check(zero != null && zero[3] == 0 && zero[4] == 0 && zero[6] == 0 &&
+              zero[7] == 0 && zero[8] == 0 && zero[9] == 0);
+        d.forgetClosed(); ++transferCases;
+    }
     @Override public void onStart() {
         Bundle result = new Bundle();
         try {
             check(Looper.myLooper() != Looper.getMainLooper());
             runDomain(false); runDomain(true); callbacks();
+            if (copyArena) { runTransfer(false); runTransfer(true); }
             JSONObject report = new JSONObject();
-            report.put("suite", "android-managed-pressure-v1"); report.put("status", "PASS");
-            report.put("checks", checks); report.put("case_count", 3);
+            report.put("suite", copyArena ? "android-managed-copy-arena-v1" : "android-managed-pressure-v1"); report.put("status", "PASS");
+            report.put("checks", checks); report.put("case_count", copyArena ? 5 : 3);
+            if (copyArena) {
+                report.put("copy_to_cases", transferCases);
+                report.put("arena_same_shape_allocations", arenaSameShapeAllocations);
+            }
             report.put("final_backing_bytes", 0); report.put("callback_origin", "synthetic");
             report.put("queued_implies_applied", false); report.put("performance_qualified", false);
             result.putString("report_json", report.toString()); finish(0, result);
         } catch (Throwable error) {
             // stage is a fixed literal; never include exception messages, addresses or payload data.
-            result.putString("report_json", "{\"suite\":\"android-managed-pressure-v1\",\"status\":\"FAIL\",\"checks\":" + checks + ",\"stage\":\"" + stage + "\"}");
+            String suite = copyArena ? "android-managed-copy-arena-v1" : "android-managed-pressure-v1";
+            result.putString("report_json", "{\"suite\":\"" + suite + "\",\"status\":\"FAIL\",\"checks\":" + checks + ",\"stage\":\"" + stage + "\"}");
             finish(1, result);
         }
     }

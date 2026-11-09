@@ -29,6 +29,8 @@ System provider · mgmem ABI · 受控字节 lease
 
 ---
 
+2026-11-09 Android 新候选与三 ABI 通用 AAR 已生成，copyTo/Arena 的限定 R8 与 arm64 真机验证通过；见 [Android 快速接入](docs/ANDROID_QUICKSTART.md)及[本轮证据](artifacts/android-round-20261109/)。
+
 当前开发接续与快路径说明见 [性能路径与接入](docs/PERFORMANCE_PATHS.md)，各项实测范围见 [STATE.md](STATE.md)。
 
 显式 CPU 内存域、System provider、有界 arena 和可验证的所有权/借用合同。当前版本为 **0.2.0 功能工程预览**，核心原生接口使用 `mgmem_*_v1` / ABI 1.1，压力适配另提供可选的 v2 接口。独立于 BIL、Xposed、GPU 后端及 Android UI；不接管进程全局 allocator。

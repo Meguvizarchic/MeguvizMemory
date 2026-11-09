@@ -1,0 +1,89 @@
+{
+  "state": "PASS_SCOPED_R8_ARM64_FUNCTIONAL",
+  "source_candidate_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "candidate_sha256": "7fe27be15cf7a12469959a3283c3fb9cd7e2aa2d78941b570ec0a08e48b451bd",
+  "apk_sha256": "b924195b65704e8ed675d81030bf43b3edbf51b428f40374469aa4075c8c4460",
+  "diagnostic_sources": {
+    "AndroidManifest.xml": "00118c68bd97321b02d55be420fcb1e67f936186ae06cd9740d6e70f5cff0778",
+    "ManagedInstrumentation.java": "4fccf8708bcad65763d7e5e0929b99ca544324c2247aa7d3dd335ebcc4f37b89",
+    "ManagedShrinkWitness.java": "0069c471c43dd1e2296bfad8e440a1afa0630153e23d02287a345070d447c25b",
+    "build_android_managed_probe.py": "fc3904480f09fcae0dad30309b0c795a4b0f464767ff71e3447702a467b085f8",
+    "android_managed_round.py": "3bca8209c31b261fda2779e9e3227e856f9b8747c5080b0c3f6f330dfeb98efd",
+    "build_android_candidate.py": "c6b37dd408c2730fce361ce2f7a080862404ebaee4f01f995292d0edc15d2fe8",
+    "package_feature_preview.py": "609b90c07f6d9903d859818968cc2e04c6812a3adf5fee8e99a6c42046e04040",
+    "source_lock.py": "744a90c739b7918991616ab5a02c4eec06b4cd5c88deb54e55b09476ee755df7"
+  },
+  "r8_evidence": {
+    "dex_sha256": "85649a8fe7ba8d89bf261e4bc378ef5f4166e39d30460a4a91cbcabd06296bec",
+    "instrumentation_retained": true,
+    "managed_native_signatures_retained": true,
+    "native_method_count": 38,
+    "copy_to_native_signature": "(JJJJI)I",
+    "copy_to_calls_retained": true,
+    "shrink_witness_removed": true,
+    "device_execution": "NOT_RUN"
+  },
+  "android_report": {
+    "suite": "android-managed-copy-arena-v1",
+    "status": "PASS",
+    "checks": 1178,
+    "case_count": 5,
+    "copy_to_cases": 2,
+    "arena_same_shape_allocations": 96,
+    "final_backing_bytes": 0,
+    "callback_origin": "synthetic",
+    "queued_implies_applied": false,
+    "performance_qualified": false
+  },
+  "installation": "SAME_SIGNER_CURRENT_USER_UPDATE_DATA_PRESERVED",
+  "postflight_apk_identity": true,
+  "device_profile": {
+    "api": 33,
+    "abi": "arm64-v8a",
+    "page_bytes": 4096
+  },
+  "freezer_observation": "NOT_OBSERVED",
+  "cgroup_samples": 0,
+  "transport_seconds": 0.426,
+  "attempts": [
+    {
+      "attempt": "a",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "same_package_present_for_other_user",
+      "installation": "NOT_REQUESTED",
+      "instrumentation_started": false,
+      "private_receipt_sha256": "50122e90cc8d8b709183b5c9d3123f27fc6ac292c64264141f9116174563426d"
+    },
+    {
+      "attempt": "b",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "initial_other_test_or_own_process_present",
+      "installation": "NOT_REQUESTED",
+      "instrumentation_started": false,
+      "private_receipt_sha256": "1c3ccd44cc0ebc78b9afdcb625915ee487603364c9f13b77884b512409ee315a"
+    },
+    {
+      "attempt": "c",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "package_user_state_unparseable",
+      "installation": "NOT_REQUESTED",
+      "instrumentation_started": false,
+      "private_receipt_sha256": "801be1c41f13ced8105faba2b95286548a5b359b9f834558dcf01ce187fd49ce"
+    },
+    {
+      "attempt": "d",
+      "state": "PASS_FUNCTIONAL_POSTFLIGHT_FREEZER_NOT_OBSERVED",
+      "reason": null,
+      "installation": "OWN_PACKAGE_INSTALLED_OR_SAME_SIGNER_UPDATED_BYTES_VERIFIED_NO_DATA_CLEAR",
+      "instrumentation_started": true,
+      "private_receipt_sha256": "8e9c32419ce2780b464f8e418279d416fc440cc6129e2754af2df3d18dec26d1"
+    }
+  ],
+  "limits": [
+    "Synthetic pressure, not an actual system low-memory event.",
+    "Short diagnostic, not long-stability or product performance qualification.",
+    "Zero cgroup samples means not observed, not proof of no freezing.",
+    "Other-user classification is a package-manager state observation, not a whole-filesystem absence proof.",
+    "Only selected arm64/API33/4KiB runtime was exercised; other ABIs, actual 16KiB loader and MTE are separate."
+  ]
+}

@@ -32,4 +32,6 @@ enable_testing()
 add_test(NAME android_managed_host_stub COMMAND ${Java_JAVA_EXECUTABLE}
   "-Djava.library.path=$<TARGET_FILE_DIR:mgmem_pressure_jni>" -cp "${CLASSES}" HostProbe)
 add_test(NAME android_managed_fault_host_stub COMMAND ${Java_JAVA_EXECUTABLE} -cp "${CLASSES}" FaultProbe)
-set_tests_properties(android_managed_host_stub android_managed_fault_host_stub PROPERTIES TIMEOUT 60)
+add_test(NAME android_managed_copy_arena_host_stub COMMAND ${Java_JAVA_EXECUTABLE}
+  "-Djava.library.path=$<TARGET_FILE_DIR:mgmem_pressure_jni>" -cp "${CLASSES}" HostProbe copy-arena-v1)
+set_tests_properties(android_managed_host_stub android_managed_fault_host_stub android_managed_copy_arena_host_stub PROPERTIES TIMEOUT 60)

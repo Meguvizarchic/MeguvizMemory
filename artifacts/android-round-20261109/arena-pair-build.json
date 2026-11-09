@@ -1,0 +1,107 @@
+{
+  "state": "PASS_ARM64_COMPILE_STATIC_ONLY",
+  "baseline_commit": "50bd9cd7fdae485705f05beda70409cb601be07e",
+  "candidate_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "baseline_core_source_sha256": "e7616706b405ff182c2fbfd6dff9a726ff094c7d61ba54582f97c8e492d70a9e",
+  "candidate_core_source_sha256": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a",
+  "benchmark_source_sha256": "090790eb938154f20a650e73eb31108c21e3927f0d65543cba0aebe75af2ad83",
+  "baseline_source_lock_sha256": "6b73b12277acffa3e9db5874fb319c4ed71d8ae19637c4db1992cfd45efd4efd",
+  "build_parameters": {
+    "NDK": "29.0.14206865",
+    "api": 27,
+    "abi": "arm64-v8a",
+    "configuration": "Release",
+    "cxx_runtime": "STATIC",
+    "shared_core": true,
+    "core_object_flags_identical": true,
+    "core_object_flags": "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O3 -DNDEBUG  -std=c++17 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wall -Wextra -Wpedantic -pthread",
+    "compiler": "NDK Clang 21.0.0",
+    "compiler_hash_matches_candidate": true
+  },
+  "artifacts": {
+    "baseline": {
+      "name": "baseline/libmgmem.so",
+      "bytes": 582952,
+      "sha256": "f48e46d405c085c4cb5b1e902166ca9e0e5350dfe3526bfd2649eac01213bc78",
+      "elf_class": 64,
+      "machine": "AArch64",
+      "type": "DYN",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "rpath": false,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "candidate": {
+      "name": "candidate/libmgmem.so",
+      "bytes": 583096,
+      "sha256": "5d777c44fe3a094ca6c8062680054e980e44981865b22a438514c23bcd38dee8",
+      "elf_class": 64,
+      "machine": "AArch64",
+      "type": "DYN",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "rpath": false,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "benchmark": {
+      "name": "bin/mgmem_arena_lookup",
+      "bytes": 407400,
+      "sha256": "cd498f48012ace2889847d972ac337f6b784cb376a04e1d6efcbe9d90d59468b",
+      "elf_class": 64,
+      "machine": "AArch64",
+      "type": "DYN",
+      "needed": [
+        "libmgmem.so",
+        "libdl.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "rpath": false,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    }
+  },
+  "benchmark_core_imports": [
+    "mgmem_abi_version_v1",
+    "mgmem_allocate_v1",
+    "mgmem_borrow_acquire_v1",
+    "mgmem_borrow_release_v1",
+    "mgmem_domain_begin_close_v1",
+    "mgmem_domain_collect_v1",
+    "mgmem_domain_create_v1",
+    "mgmem_domain_destroy_v1",
+    "mgmem_domain_drain_v1",
+    "mgmem_domain_snapshot_v1",
+    "mgmem_release_v1"
+  ],
+  "benchmark_imports_defined_in_both_libraries": true,
+  "same_header_contract": true,
+  "device": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "first_benchmark_configuration": "PACKAGE_SEARCH_FAILED_WITH_PREFIX_PATH_RETAINED",
+  "successful_benchmark_configuration": "EXPLICIT_MeguvizMemory_DIR_NEW_BUILD",
+  "first_postcheck": "CACHE_KEY_ASSUMPTION_CORRECTED_GENERATED_COMPILER_FILE_USED",
+  "limits": [
+    "ELF and symbol checks do not prove Android loader execution.",
+    "Same executable is prepared for distinct baseline/candidate processes; future device protocol must bind current admission and libraries.",
+    "Original host tiny regression and separate confirmation must remain recorded, never discarded or pooled.",
+    "Frozen benchmark minimum128: tiny fixed2 blocks and mixed4 blocks; no single-block measurement."
+  ]
+}

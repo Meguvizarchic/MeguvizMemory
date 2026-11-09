@@ -1423,5 +1423,21 @@
     "android": "NOT_RUN_FOR_THIS_OPTIMIZATION",
     "evidence": "artifacts/arena-lookup-20261109/host.json",
     "host_ci": "artifacts/arena-lookup-20261109/ci-c74bc39.json"
+  },
+  "android_delivery_20261109": {
+    "candidate_source_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+    "compiled_abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ],
+    "r8_runtime": "PASS_API33_ARM64_4K_5_CASES_1178_CHECKS",
+    "native_runtime": "PASS_12_NORMAL_AND_ONE_EXPECTED_QUARANTINE",
+    "performance": "EXPLORATORY_48_PROCESSES_ALL_DEGRADATIONS_RETAINED",
+    "universal_aar": "MEMBER_IDENTITY_VERIFIED_APK_NOT_BUILT_FROM_UNIVERSAL",
+    "actual_16k_loader": "BLOCKED_ONLY_4K_DEVICE_AVAILABLE_THIS_ROUND",
+    "mte": "NOT_QUALIFIED_NO_TAGGED_PROCESS_AND_FAULT_PROTOCOL",
+    "BIL": "NOT_INTEGRATED",
+    "evidence": "artifacts/android-round-20261109/"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "state": "PASS_MERGED_CANDIDATE_BYTES_ONLY",
+  "candidate_sha256": "7fe27be15cf7a12469959a3283c3fb9cd7e2aa2d78941b570ec0a08e48b451bd",
+  "aar_sha256": "8414afca354168a3cbae1dde3d4e94fc82f41457b000586418c9fbc458d72ba6",
+  "aar_bytes": 654180,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "members": {
+    "AndroidManifest.xml": "b673c0dac0f346b214e6a1e4d43b7487d05c5ce448cd0b6ffa2a035798ee08ca",
+    "META-INF/NOTICE-LLVM.txt": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+    "R.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "classes.jar": "27469fae76f7fe27f17548f7475b9d039bc9c62c1cc85ebbf648d49403fc0d44",
+    "jni/arm64-v8a/libmgmem.so": "5d777c44fe3a094ca6c8062680054e980e44981865b22a438514c23bcd38dee8",
+    "jni/arm64-v8a/libmgmem_pressure_jni.so": "caca5bff653ff4d4a4bed067362669219f527ca77fb295eacdfe1f04be8bacdb",
+    "jni/armeabi-v7a/libmgmem.so": "66fbab0ecc34371b024d74956c6637301433dd3fb4d5a58edc107082386144fc",
+    "jni/armeabi-v7a/libmgmem_pressure_jni.so": "84eea7debe32b8f3c7eff36d38c9ddd3a9a1413686f03abfe24aee4e7dcf561d",
+    "jni/x86_64/libmgmem.so": "a6364d500bd4f1356b8bac91b94e88d78194b5743f9233dd7040189fa7a93ca6",
+    "jni/x86_64/libmgmem_pressure_jni.so": "3765bd20e1ff2fe51b7a6e964399d2eb8380245f761482e23e1e3c4fa257c5e3",
+    "proguard.txt": "08dec0bb36b0ac0f04b257df45fa15bfc7b565dbed1225fe411046994402cf53"
+  },
+  "inherited_candidate_member_bytes": true,
+  "rebuilt_native_libraries": false,
+  "apk_built_from_universal_aar": "NOT_RUN",
+  "device_execution": "NOT_RUN_FOR_UNIVERSAL_AAR"
+}

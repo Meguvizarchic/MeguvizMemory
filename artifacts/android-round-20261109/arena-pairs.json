@@ -1,0 +1,4523 @@
+{
+  "state": "PASS_INDEPENDENT_ANALYSIS_EXPLORATORY_ONLY",
+  "performance_qualified": false,
+  "formal_v2_qualification": false,
+  "sample_processes": 48,
+  "pairs": 24,
+  "scope_counts": {
+    "main_4096": 32,
+    "tiny_128": 16
+  },
+  "raw_receipt_sha256": "1f2691ba7448c6707d77fe18d8a3897f006b609dd3eb3e7be35513f2055e1ac9",
+  "predeclared_plan_sha256": "642a8cedc50f4cdca5090e890af009e9144ed921712169af8922a157693ea2b2",
+  "raw_native_sha256": {
+    "main_4096-fixed-t1-p0-0-baseline.native.json": "9eedb4e63b937681093865ca974242da508c2bd96a4e96ea7f0a2348a8d2bc07",
+    "main_4096-fixed-t1-p0-1-candidate.native.json": "b08cd247fa457c39435cfb902ae962adadc8aa3c331551dcc7ce35dae4adead5",
+    "main_4096-fixed-t1-p1-0-candidate.native.json": "eca629c04bc2ccb5e24169dec8271f1b262369359a3a249aa206c986c4e25291",
+    "main_4096-fixed-t1-p1-1-baseline.native.json": "d87456b13e11f6b9f04efd39ce9e6f1b5e9508395a38964eda85ecc6ac6ecd77",
+    "main_4096-fixed-t1-p2-0-baseline.native.json": "80ac53bcd97c9c768edcea5ba2f79ec0ee1924d6b2f188e30fafbc2faa8c1545",
+    "main_4096-fixed-t1-p2-1-candidate.native.json": "b49eefbf468d80f76668b90afc5ae689b340768f5e2d01a7acfc0cff7b7438eb",
+    "main_4096-fixed-t1-p3-0-candidate.native.json": "a66714f832494d4c3efb45608e00f97cdc3e62b6cc0aa5ddc5b74fcd4640ef0c",
+    "main_4096-fixed-t1-p3-1-baseline.native.json": "dc86567868081a098e56b6314693bfb7da0dfa5845bdee21d222e2cb8710bdef",
+    "main_4096-fixed-t4-p0-0-baseline.native.json": "a3b3b461d8f9239074603a761195f32a37c1f4eaac97de12346c1f789d86b5c3",
+    "main_4096-fixed-t4-p0-1-candidate.native.json": "67e0e7bd96ff226375a488e376600c1049de347b20bdc030661b1107687d306b",
+    "main_4096-fixed-t4-p1-0-candidate.native.json": "7b0646c3f860f5d8b5bb7d4fb968804dd23d0d5c83e5ccc30f8f1d786283a88a",
+    "main_4096-fixed-t4-p1-1-baseline.native.json": "e93af406cd03514896e234664535ccddbf91837879e9f460ccca848f4dc599e3",
+    "main_4096-fixed-t4-p2-0-baseline.native.json": "b15206a257aaa73560a0b5a0b24f8c3f188d7188852bfcda3866cbed7d7a22d8",
+    "main_4096-fixed-t4-p2-1-candidate.native.json": "48fdc8f834149a359a9ec0e7211c6ba098f5a37ea7d72eb507e6b1e54be158c2",
+    "main_4096-fixed-t4-p3-0-candidate.native.json": "7efe8568588be7ac5573462d7dd3a2924eb62bfe955493c2752135cba0ffa97a",
+    "main_4096-fixed-t4-p3-1-baseline.native.json": "bd93d20a7bf79dd604cdc45c6850f37aabc43c2e5ce7b0d30ac456d6d6e71b5d",
+    "main_4096-mixed-t1-p0-0-baseline.native.json": "81e0d4cd03f5a01e583492659ddcf5439554db888f6f9904becb2fd24bb3b4c3",
+    "main_4096-mixed-t1-p0-1-candidate.native.json": "967c1b512bbc5b9bca136466a7299f59319af840c349d4f52846a3768ac739c4",
+    "main_4096-mixed-t1-p1-0-candidate.native.json": "d252d972b2c58363aca4b0b4f14bc4242f15907a33a9ce15b7baee843c494d18",
+    "main_4096-mixed-t1-p1-1-baseline.native.json": "df5983d532eb83112913755df75214848993fbaf66097b3e4122066fb06812f4",
+    "main_4096-mixed-t1-p2-0-baseline.native.json": "f79c3e302a9bb7e5c58ae79126280179910eafec431a7ff3f3b8f2bf4e9b86b8",
+    "main_4096-mixed-t1-p2-1-candidate.native.json": "4d4c10e98381055b3c3523c8d4eb34e647c46cc4f6f413cc792299851fd66f88",
+    "main_4096-mixed-t1-p3-0-candidate.native.json": "1045618c09dca711ecbe5f1e811529ddbb647fba357dab22d2db207ef07e391e",
+    "main_4096-mixed-t1-p3-1-baseline.native.json": "4a7afc2aa5e2d9f4cae89aeb1f42832e6fac8de7cc10b0284c5aacf8915303a4",
+    "main_4096-mixed-t4-p0-0-baseline.native.json": "ad1c02f6a3ffebf3590ec395ccb2f12d20457c75977f29db8cea5fb11b926a4d",
+    "main_4096-mixed-t4-p0-1-candidate.native.json": "2f4a33a650baed535401ddf9f71368dcc70af3c4a4e26d2761d0b5e1728dd171",
+    "main_4096-mixed-t4-p1-0-candidate.native.json": "7c1eb8f351efbc227ea51718b6203bafab3637766e93dc800248a3bd65da256f",
+    "main_4096-mixed-t4-p1-1-baseline.native.json": "52a1703b817f1357a0994c6c76f236d135f293d98a72d3ed1aaddbfb32de37ff",
+    "main_4096-mixed-t4-p2-0-baseline.native.json": "2e6a813f025630d5241e729cc8c713d7ca5e9090b72545f983d8b929cfdca636",
+    "main_4096-mixed-t4-p2-1-candidate.native.json": "d78a15972bb3ed4b1f9eb282fef46c1bbbb056f89229261ae28f4954b717ca81",
+    "main_4096-mixed-t4-p3-0-candidate.native.json": "72e199afeffc9a5c5dde7ad05e8a7ed47881a300cae230a8381b058e8bfbceac",
+    "main_4096-mixed-t4-p3-1-baseline.native.json": "e5180c090d9b884256ec590a5deacb2fa05bb18fb1130d740123bf9ff9f78aca",
+    "tiny_128-fixed-t1-p0-0-baseline.native.json": "28046ef076ece58c2e81fe79ca6d4166048933993372abe7329bf6137450d58b",
+    "tiny_128-fixed-t1-p0-1-candidate.native.json": "7cb4a2259e7059ec08742c0d8071439c00cd855ab8bcf9787ebd07feb8de7b30",
+    "tiny_128-fixed-t1-p1-0-candidate.native.json": "ccdb3210bf4995337b64726f5700c9e97d8d4064d6b31b54530c1d6b65b33391",
+    "tiny_128-fixed-t1-p1-1-baseline.native.json": "c8f55b1ea3cff1eb521e7a3a808a3401d64e2d9fec9628083748ed4e16d87fe0",
+    "tiny_128-fixed-t1-p2-0-baseline.native.json": "3e169e0fc9d175b1b98eaa586adf8e895dd329c004fd5d8d38e11ceca51ca33b",
+    "tiny_128-fixed-t1-p2-1-candidate.native.json": "ed44468adc6cf22e744b2c3fa1e70665b7355a377ce641871d03a70a5df838b0",
+    "tiny_128-fixed-t1-p3-0-candidate.native.json": "5af2b4f9efa2064aa1ad8255b13a22018e7e1758cc44874a753eb04608ef320a",
+    "tiny_128-fixed-t1-p3-1-baseline.native.json": "7ab44ed4b2b500ef7eaf011532a3d70d809291737802760445561a3566678599",
+    "tiny_128-mixed-t1-p0-0-baseline.native.json": "4e9c605132c9bdb9004b3236675f53fa337c4dbb5e371c2c6587a38d5446fb0b",
+    "tiny_128-mixed-t1-p0-1-candidate.native.json": "7d5a87dbab0c2185331892ddd7728333bc6a843bfe1eb62220b5827d757fb028",
+    "tiny_128-mixed-t1-p1-0-candidate.native.json": "81fdfa1ae5048e6ef380a25077558dd7115cbf10a199d6662fe4063bf62b5a1c",
+    "tiny_128-mixed-t1-p1-1-baseline.native.json": "4d85534381e3183702e8abc1307085a92c407c44dd40bc22fbec252a8215f468",
+    "tiny_128-mixed-t1-p2-0-baseline.native.json": "40aaec6e38cbc534131a821dad118d02b5f4ed671d59924a3de5c1dede50a402",
+    "tiny_128-mixed-t1-p2-1-candidate.native.json": "d652781f19d714b38dc1db91a0fe572c03957354d3479154e4d94e6b932e3e05",
+    "tiny_128-mixed-t1-p3-0-candidate.native.json": "8d8d07b34f49f5e0712d65a9e6d3890a36ff973f0a214d0da6e6017f65ffa5dc",
+    "tiny_128-mixed-t1-p3-1-baseline.native.json": "3cc4ced533a093f689026c34404035b18501b1c5119277948d5ff726da49d820"
+  },
+  "all_frozen_local_inputs_still_match": true,
+  "device_observations": {
+    "abi": "arm64-v8a",
+    "api": 33,
+    "page_bytes": 4096
+  },
+  "metrics_definition": {
+    "allocation": "Wall-clock batch allocation duration divided by batch size, including API, locks, metadata and provider work.",
+    "workflow": "Per-round wall duration/completed operations, including worker dispatch/join and access validation; close separately timed.",
+    "p50_p95": "nearest index floor((N-1)*p+0.5), recomputed from every raw measurement",
+    "ratios": "candidate/baseline; below1 means lower duration but lower throughput ratio means worse throughput"
+  },
+  "groups": [
+    {
+      "scope": "main_4096",
+      "shape": "fixed",
+      "threads": 1,
+      "configuration": {
+        "allocations": 4096,
+        "rounds": 6,
+        "warmup": 2
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 550.125,
+                "allocation_batch_ns_per_op_p95": 874.015625,
+                "workflow_round_ns_per_op_p50": 1966.183837890625,
+                "workflow_round_ns_per_op_p95": 1999.71533203125,
+                "workflow_operations_per_second": 509085.5594139989
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 266.109375,
+                "allocation_batch_ns_per_op_p95": 506.1875,
+                "workflow_round_ns_per_op_p50": 1716.435791015625,
+                "workflow_round_ns_per_op_p95": 1730.880859375,
+                "workflow_operations_per_second": 585810.471862755
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.4837252897068848,
+            "allocation_batch_ns_per_op_p95": 0.5791515454886748,
+            "workflow_round_ns_per_op_p50": 0.8729782830770614,
+            "workflow_round_ns_per_op_p95": 0.8655636288075182,
+            "workflow_operations_per_second": 1.1507112331708507
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -284.015625,
+            "allocation_batch_ns_per_op_p95": -367.828125,
+            "workflow_round_ns_per_op_p50": -249.748046875,
+            "workflow_round_ns_per_op_p95": -268.83447265625,
+            "workflow_operations_per_second": 76724.9124487561
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 270.1875,
+                "allocation_batch_ns_per_op_p95": 620.109375,
+                "workflow_round_ns_per_op_p50": 1743.520263671875,
+                "workflow_round_ns_per_op_p95": 2571.99609375,
+                "workflow_operations_per_second": 567900.8990747486
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 550.140625,
+                "allocation_batch_ns_per_op_p95": 878.09375,
+                "workflow_round_ns_per_op_p50": 1973.53369140625,
+                "workflow_round_ns_per_op_p95": 2001.775146484375,
+                "workflow_operations_per_second": 505798.2704193567
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.4911244284131898,
+            "allocation_batch_ns_per_op_p95": 0.7061995088793196,
+            "workflow_round_ns_per_op_p50": 0.8834509749005207,
+            "workflow_round_ns_per_op_p95": 1.2848576416122848,
+            "workflow_operations_per_second": 1.1227814175874953
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -279.953125,
+            "allocation_batch_ns_per_op_p95": -257.984375,
+            "workflow_round_ns_per_op_p50": -230.013427734375,
+            "workflow_round_ns_per_op_p95": 570.220947265625,
+            "workflow_operations_per_second": 62102.62865539192
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 470.390625,
+                "allocation_batch_ns_per_op_p95": 760.09375,
+                "workflow_round_ns_per_op_p50": 1779.581787109375,
+                "workflow_round_ns_per_op_p95": 1952.76904296875,
+                "workflow_operations_per_second": 592502.85709767
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 266.9375,
+                "allocation_batch_ns_per_op_p95": 512.703125,
+                "workflow_round_ns_per_op_p50": 1747.919921875,
+                "workflow_round_ns_per_op_p95": 1766.179443359375,
+                "workflow_operations_per_second": 573190.016548716
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.5674804849692742,
+            "allocation_batch_ns_per_op_p95": 0.6745261686469597,
+            "workflow_round_ns_per_op_p50": 0.9822082550722188,
+            "workflow_round_ns_per_op_p95": 0.9044487107775392,
+            "workflow_operations_per_second": 0.9674046457032183
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -203.453125,
+            "allocation_batch_ns_per_op_p95": -247.390625,
+            "workflow_round_ns_per_op_p50": -31.661865234375,
+            "workflow_round_ns_per_op_p95": -186.589599609375,
+            "workflow_operations_per_second": -19312.840548953973
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 266.109375,
+                "allocation_batch_ns_per_op_p95": 502.921875,
+                "workflow_round_ns_per_op_p50": 1744.05419921875,
+                "workflow_round_ns_per_op_p95": 1769.027587890625,
+                "workflow_operations_per_second": 575037.6251170706
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 529.78125,
+                "allocation_batch_ns_per_op_p95": 841.46875,
+                "workflow_round_ns_per_op_p50": 1985.5244140625,
+                "workflow_round_ns_per_op_p95": 2000.46533203125,
+                "workflow_operations_per_second": 528275.9055049054
+              },
+              "backing": [
+                262144,
+                262144,
+                262144,
+                262144,
+                262144,
+                262144
+              ],
+              "providers": [
+                64,
+                64,
+                64,
+                64,
+                64,
+                64
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.5023004777915413,
+            "allocation_batch_ns_per_op_p95": 0.5976714821554574,
+            "workflow_round_ns_per_op_p50": 0.8783846659685802,
+            "workflow_round_ns_per_op_p95": 0.8843080455157772,
+            "workflow_operations_per_second": 1.0885176081757357
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -263.671875,
+            "allocation_batch_ns_per_op_p95": -338.546875,
+            "workflow_round_ns_per_op_p50": -241.47021484375,
+            "workflow_round_ns_per_op_p95": -231.437744140625,
+            "workflow_operations_per_second": 46761.71961216524
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 539.953125,
+          "candidate_process_median": 266.5234375,
+          "median_paired_ratio": 0.49671245310236556,
+          "paired_ratio_range": [
+            0.4837252897068848,
+            0.5674804849692742
+          ],
+          "median_paired_difference": -271.8125,
+          "candidate_duration_higher_pairs": 0
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 857.7421875,
+          "candidate_process_median": 509.4453125,
+          "median_paired_ratio": 0.6360988254012085,
+          "paired_ratio_range": [
+            0.5791515454886748,
+            0.7061995088793196
+          ],
+          "median_paired_difference": -298.265625,
+          "candidate_duration_higher_pairs": 0
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 1969.8587646484375,
+          "candidate_process_median": 1743.7872314453125,
+          "median_paired_ratio": 0.8809178204345505,
+          "paired_ratio_range": [
+            0.8729782830770614,
+            0.9822082550722188
+          ],
+          "median_paired_difference": -235.7418212890625,
+          "candidate_duration_higher_pairs": 0
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 2000.09033203125,
+          "candidate_process_median": 1767.603515625,
+          "median_paired_ratio": 0.8943783781466582,
+          "paired_ratio_range": [
+            0.8655636288075182,
+            1.2848576416122848
+          ],
+          "median_paired_difference": -209.013671875,
+          "candidate_duration_higher_pairs": 1
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 518680.7324594521,
+          "candidate_process_median": 574113.8208328933,
+          "median_paired_ratio": 1.1056495128816155,
+          "paired_ratio_range": [
+            0.9674046457032183,
+            1.1507112331708507
+          ],
+          "median_paired_difference": 54432.17413377858,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            262144,
+            262144
+          ],
+          "provider_count_range": [
+            64,
+            64
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            262144,
+            262144
+          ],
+          "provider_count_range": [
+            64,
+            64
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.4874248590600373,
+            "baseline_process_median": 550.1328125,
+            "candidate_process_median": 268.1484375
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.6426755271839972,
+            "baseline_process_median": 876.0546875,
+            "candidate_process_median": 563.1484375
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.8782146289887911,
+            "baseline_process_median": 1969.8587646484375,
+            "candidate_process_median": 1729.97802734375
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 1.0752106352099016,
+            "baseline_process_median": 2000.7452392578125,
+            "candidate_process_median": 2151.4384765625
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.5348904813804077,
+            "baseline_process_median": 500.0859375,
+            "candidate_process_median": 266.5234375
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.6360988254012085,
+            "baseline_process_median": 800.78125,
+            "candidate_process_median": 507.8125
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.9302964605203995,
+            "baseline_process_median": 1882.5531005859375,
+            "candidate_process_median": 1745.987060546875
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.8943783781466582,
+            "baseline_process_median": 1976.6171875,
+            "candidate_process_median": 1767.603515625
+          }
+        }
+      }
+    },
+    {
+      "scope": "main_4096",
+      "shape": "fixed",
+      "threads": 4,
+      "configuration": {
+        "allocations": 4096,
+        "rounds": 6,
+        "warmup": 2
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2803.546875,
+                "allocation_batch_ns_per_op_p95": 17010.890625,
+                "workflow_round_ns_per_op_p50": 4759.1590576171875,
+                "workflow_round_ns_per_op_p95": 5841.531799316406,
+                "workflow_operations_per_second": 237584.67337559792
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2685.546875,
+                "allocation_batch_ns_per_op_p95": 8199.046875,
+                "workflow_round_ns_per_op_p50": 4000.3458251953125,
+                "workflow_round_ns_per_op_p95": 4296.1978759765625,
+                "workflow_operations_per_second": 259663.27882213859
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.9579104594068897,
+            "allocation_batch_ns_per_op_p95": 0.4819881013725582,
+            "workflow_round_ns_per_op_p50": 0.8405572868577759,
+            "workflow_round_ns_per_op_p95": 0.735457414864936,
+            "workflow_operations_per_second": 1.092929418101127
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -118.0,
+            "allocation_batch_ns_per_op_p95": -8811.84375,
+            "workflow_round_ns_per_op_p50": -758.813232421875,
+            "workflow_round_ns_per_op_p95": -1545.3339233398438,
+            "workflow_operations_per_second": 22078.605446540663
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2097.15625,
+                "allocation_batch_ns_per_op_p95": 5978.1875,
+                "workflow_round_ns_per_op_p50": 2771.8035278320312,
+                "workflow_round_ns_per_op_p95": 3395.7290649414062,
+                "workflow_operations_per_second": 364984.8753897289
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 5760.09375,
+                "allocation_batch_ns_per_op_p95": 17272.140625,
+                "workflow_round_ns_per_op_p50": 5080.305725097656,
+                "workflow_round_ns_per_op_p95": 6203.006103515625,
+                "workflow_operations_per_second": 208805.3880405376
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.3640837008946252,
+            "allocation_batch_ns_per_op_p95": 0.3461173475710976,
+            "workflow_round_ns_per_op_p50": 0.5455977804915964,
+            "workflow_round_ns_per_op_p95": 0.547432810523407,
+            "workflow_operations_per_second": 1.7479667493966706
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -3662.9375,
+            "allocation_batch_ns_per_op_p95": -11293.953125,
+            "workflow_round_ns_per_op_p50": -2308.502197265625,
+            "workflow_round_ns_per_op_p95": -2807.2770385742188,
+            "workflow_operations_per_second": 156179.48734919133
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 7318.515625,
+                "allocation_batch_ns_per_op_p95": 18727.21875,
+                "workflow_round_ns_per_op_p50": 5412.743896484375,
+                "workflow_round_ns_per_op_p95": 6754.900573730469,
+                "workflow_operations_per_second": 178106.88771497813
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2748.21875,
+                "allocation_batch_ns_per_op_p95": 8701.984375,
+                "workflow_round_ns_per_op_p50": 3959.1185302734375,
+                "workflow_round_ns_per_op_p95": 4118.2708740234375,
+                "workflow_operations_per_second": 258123.54611526662
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.37551586835616,
+            "allocation_batch_ns_per_op_p95": 0.4646704078789062,
+            "workflow_round_ns_per_op_p50": 0.731443904605374,
+            "workflow_round_ns_per_op_p95": 0.6096715753358716,
+            "workflow_operations_per_second": 1.4492620101718805
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -4570.296875,
+            "allocation_batch_ns_per_op_p95": -10025.234375,
+            "workflow_round_ns_per_op_p50": -1453.6253662109375,
+            "workflow_round_ns_per_op_p95": -2636.6296997070312,
+            "workflow_operations_per_second": 80016.65840028849
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2784.015625,
+                "allocation_batch_ns_per_op_p95": 8188.46875,
+                "workflow_round_ns_per_op_p50": 4062.2838134765625,
+                "workflow_round_ns_per_op_p95": 4104.5633544921875,
+                "workflow_operations_per_second": 254457.06446921482
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 2836.09375,
+                "allocation_batch_ns_per_op_p95": 18045.234375,
+                "workflow_round_ns_per_op_p50": 4353.768005371094,
+                "workflow_round_ns_per_op_p95": 6334.6004638671875,
+                "workflow_operations_per_second": 229432.30758283671
+              },
+              "backing": [
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "providers": [
+                256,
+                256,
+                256,
+                256,
+                256,
+                256
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.9816373753512203,
+            "allocation_batch_ns_per_op_p95": 0.453774585568385,
+            "workflow_round_ns_per_op_p50": 0.9330501323141387,
+            "workflow_round_ns_per_op_p95": 0.6479593113890576,
+            "workflow_operations_per_second": 1.1090725066143656
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -52.078125,
+            "allocation_batch_ns_per_op_p95": -9856.765625,
+            "workflow_round_ns_per_op_p50": -291.48419189453125,
+            "workflow_round_ns_per_op_p95": -2230.037109375,
+            "workflow_operations_per_second": 25024.756886378105
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 4298.09375,
+          "candidate_process_median": 2716.8828125,
+          "median_paired_ratio": 0.6667131638815249,
+          "paired_ratio_range": [
+            0.3640837008946252,
+            0.9816373753512203
+          ],
+          "median_paired_difference": -1890.46875,
+          "candidate_duration_higher_pairs": 0
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 17658.6875,
+          "candidate_process_median": 8193.7578125,
+          "median_paired_ratio": 0.45922249672364557,
+          "paired_ratio_range": [
+            0.3461173475710976,
+            0.4819881013725582
+          ],
+          "median_paired_difference": -9941.0,
+          "candidate_duration_higher_pairs": 0
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 4919.732391357422,
+          "candidate_process_median": 3979.732177734375,
+          "median_paired_ratio": 0.786000595731575,
+          "paired_ratio_range": [
+            0.5455977804915964,
+            0.9330501323141387
+          ],
+          "median_paired_difference": -1106.2192993164062,
+          "candidate_duration_higher_pairs": 0
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 6268.803283691406,
+          "candidate_process_median": 4111.4171142578125,
+          "median_paired_ratio": 0.6288154433624646,
+          "paired_ratio_range": [
+            0.547432810523407,
+            0.735457414864936
+          ],
+          "median_paired_difference": -2433.3334045410156,
+          "candidate_duration_higher_pairs": 0
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 219118.84781168716,
+          "candidate_process_median": 258893.4124687026,
+          "median_paired_ratio": 1.279167258393123,
+          "paired_ratio_range": [
+            1.092929418101127,
+            1.7479667493966706
+          ],
+          "median_paired_difference": 52520.7076433333,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            1048576,
+            1048576
+          ],
+          "provider_count_range": [
+            256,
+            256
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            1048576,
+            1048576
+          ],
+          "provider_count_range": [
+            256,
+            256
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.6609970801507574,
+            "baseline_process_median": 4281.8203125,
+            "candidate_process_median": 2391.3515625
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.4140527244718279,
+            "baseline_process_median": 17141.515625,
+            "candidate_process_median": 7088.6171875
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.6930775336746862,
+            "baseline_process_median": 4919.732391357422,
+            "candidate_process_median": 3386.074676513672
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.6414451126941715,
+            "baseline_process_median": 6022.268951416016,
+            "candidate_process_median": 3845.9634704589844
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.6785766218536902,
+            "baseline_process_median": 5077.3046875,
+            "candidate_process_median": 2766.1171875
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.45922249672364557,
+            "baseline_process_median": 18386.2265625,
+            "candidate_process_median": 8445.2265625
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.8322470184597563,
+            "baseline_process_median": 4883.255950927734,
+            "candidate_process_median": 4010.701171875
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.6288154433624646,
+            "baseline_process_median": 6544.750518798828,
+            "candidate_process_median": 4111.4171142578125
+          }
+        }
+      }
+    },
+    {
+      "scope": "main_4096",
+      "shape": "mixed",
+      "threads": 1,
+      "configuration": {
+        "allocations": 4096,
+        "rounds": 6,
+        "warmup": 2
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 509.4375,
+                "allocation_batch_ns_per_op_p95": 948.890625,
+                "workflow_round_ns_per_op_p50": 1771.596435546875,
+                "workflow_round_ns_per_op_p95": 2631.022216796875,
+                "workflow_operations_per_second": 515131.80821954674
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 621.75,
+                "allocation_batch_ns_per_op_p95": 994.46875,
+                "workflow_round_ns_per_op_p50": 2192.217529296875,
+                "workflow_round_ns_per_op_p95": 2219.47998046875,
+                "workflow_operations_per_second": 456166.5961392818
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.2204637467795363,
+            "allocation_batch_ns_per_op_p95": 1.048033064927794,
+            "workflow_round_ns_per_op_p50": 1.2374248927748368,
+            "workflow_round_ns_per_op_p95": 0.8435808585344615,
+            "workflow_operations_per_second": 0.8855337388617746
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 112.3125,
+            "allocation_batch_ns_per_op_p95": 45.578125,
+            "workflow_round_ns_per_op_p50": 420.62109375,
+            "workflow_round_ns_per_op_p95": -411.542236328125,
+            "workflow_operations_per_second": -58965.21208026493
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 626.625,
+                "allocation_batch_ns_per_op_p95": 988.765625,
+                "workflow_round_ns_per_op_p50": 2214.279052734375,
+                "workflow_round_ns_per_op_p95": 2234.4462890625,
+                "workflow_operations_per_second": 453217.46781558474
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 623.375,
+                "allocation_batch_ns_per_op_p95": 1000.15625,
+                "workflow_round_ns_per_op_p50": 2188.046630859375,
+                "workflow_round_ns_per_op_p95": 2197.138427734375,
+                "workflow_operations_per_second": 458327.55202062475
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0052135552436334,
+            "allocation_batch_ns_per_op_p95": 0.9886111545071082,
+            "workflow_round_ns_per_op_p50": 1.0119889683816734,
+            "workflow_round_ns_per_op_p95": 1.0169802051874337,
+            "workflow_operations_per_second": 0.9888505847346265
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 3.25,
+            "allocation_batch_ns_per_op_p95": -11.390625,
+            "workflow_round_ns_per_op_p50": 26.232421875,
+            "workflow_round_ns_per_op_p95": 37.307861328125,
+            "workflow_operations_per_second": -5110.08420504001
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 620.109375,
+                "allocation_batch_ns_per_op_p95": 982.25,
+                "workflow_round_ns_per_op_p50": 2196.642578125,
+                "workflow_round_ns_per_op_p95": 2240.079345703125,
+                "workflow_operations_per_second": 455642.43237637606
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 607.09375,
+                "allocation_batch_ns_per_op_p95": 1081.53125,
+                "workflow_round_ns_per_op_p50": 2259.699462890625,
+                "workflow_round_ns_per_op_p95": 2708.7529296875,
+                "workflow_operations_per_second": 438466.4614102681
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.9790107591906669,
+            "allocation_batch_ns_per_op_p95": 1.1010753372359379,
+            "workflow_round_ns_per_op_p50": 1.0287060286427885,
+            "workflow_round_ns_per_op_p95": 1.2092218674679427,
+            "workflow_operations_per_second": 0.9623038379535293
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -13.015625,
+            "allocation_batch_ns_per_op_p95": 99.28125,
+            "workflow_round_ns_per_op_p50": 63.056884765625,
+            "workflow_round_ns_per_op_p95": 468.673583984375,
+            "workflow_operations_per_second": -17175.97096610797
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 625,
+                "allocation_batch_ns_per_op_p95": 987.140625,
+                "workflow_round_ns_per_op_p50": 2195.816162109375,
+                "workflow_round_ns_per_op_p95": 2227.325439453125,
+                "workflow_operations_per_second": 455726.47688497306
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 619.3125,
+                "allocation_batch_ns_per_op_p95": 1015.625,
+                "workflow_round_ns_per_op_p50": 2181.26953125,
+                "workflow_round_ns_per_op_p95": 2188.33935546875,
+                "workflow_operations_per_second": 458895.85467252275
+              },
+              "backing": [
+                344064,
+                344064,
+                344064,
+                344064,
+                344064,
+                344064
+              ],
+              "providers": [
+                84,
+                84,
+                84,
+                84,
+                84,
+                84
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0091835704914724,
+            "allocation_batch_ns_per_op_p95": 0.9719538461538462,
+            "workflow_round_ns_per_op_p50": 1.0066688828001182,
+            "workflow_round_ns_per_op_p95": 1.017815373966998,
+            "workflow_operations_per_second": 0.9930934704350044
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 5.6875,
+            "allocation_batch_ns_per_op_p95": -28.484375,
+            "workflow_round_ns_per_op_p50": 14.546630859375,
+            "workflow_round_ns_per_op_p95": 38.986083984375,
+            "workflow_operations_per_second": -3169.377787549689
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 619.7109375,
+          "candidate_process_median": 623.375,
+          "median_paired_ratio": 1.0071985628675528,
+          "paired_ratio_range": [
+            0.9790107591906669,
+            1.2204637467795363
+          ],
+          "median_paired_difference": 4.46875,
+          "candidate_duration_higher_pairs": 3
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 991.203125,
+          "candidate_process_median": 991.6171875,
+          "median_paired_ratio": 1.018322109717451,
+          "paired_ratio_range": [
+            0.9719538461538462,
+            1.1010753372359379
+          ],
+          "median_paired_difference": 17.09375,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 2184.6580810546875,
+          "candidate_process_median": 2205.047607421875,
+          "median_paired_ratio": 1.020347498512231,
+          "paired_ratio_range": [
+            1.0066688828001182,
+            1.2374248927748368
+          ],
+          "median_paired_difference": 44.6446533203125,
+          "candidate_duration_higher_pairs": 4
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 2218.60888671875,
+          "candidate_process_median": 2230.8858642578125,
+          "median_paired_ratio": 1.017397789577216,
+          "paired_ratio_range": [
+            0.8435808585344615,
+            1.2092218674679427
+          ],
+          "median_paired_difference": 38.14697265625,
+          "candidate_duration_higher_pairs": 3
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 458611.70334657375,
+          "candidate_process_median": 454471.97235027887,
+          "median_paired_ratio": 0.9755772113440779,
+          "paired_ratio_range": [
+            0.8855337388617746,
+            0.9930934704350044
+          ],
+          "median_paired_difference": -11143.02758557399,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            344064,
+            344064
+          ],
+          "provider_count_range": [
+            84,
+            84
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            344064,
+            344064
+          ],
+          "provider_count_range": [
+            84,
+            84
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 1.1128386510115849,
+            "baseline_process_median": 566.40625,
+            "candidate_process_median": 624.1875
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 1.018322109717451,
+            "baseline_process_median": 974.5234375,
+            "candidate_process_median": 991.6171875
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 1.124706930578255,
+            "baseline_process_median": 1979.821533203125,
+            "candidate_process_median": 2203.248291015625
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.9302805318609476,
+            "baseline_process_median": 2414.080322265625,
+            "candidate_process_median": 2226.963134765625
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.9940971648410697,
+            "baseline_process_median": 619.7109375,
+            "candidate_process_median": 616.046875
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 1.0365145916948921,
+            "baseline_process_median": 998.9375,
+            "candidate_process_median": 1034.3359375
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 1.0176874557214535,
+            "baseline_process_median": 2188.9560546875,
+            "candidate_process_median": 2227.7578125
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 1.1135186207174703,
+            "baseline_process_median": 2214.2093505859375,
+            "candidate_process_median": 2468.0391845703125
+          }
+        }
+      }
+    },
+    {
+      "scope": "main_4096",
+      "shape": "mixed",
+      "threads": 4,
+      "configuration": {
+        "allocations": 4096,
+        "rounds": 6,
+        "warmup": 2
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 7953.296875,
+                "allocation_batch_ns_per_op_p95": 24828.28125,
+                "workflow_round_ns_per_op_p50": 7775.3416748046875,
+                "workflow_round_ns_per_op_p95": 8276.761352539062,
+                "workflow_operations_per_second": 152015.27049556625
+              },
+              "backing": [
+                1351680,
+                1335296,
+                1343488,
+                1335296,
+                1339392,
+                1335296
+              ],
+              "providers": [
+                330,
+                326,
+                328,
+                326,
+                327,
+                326
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 7693.6875,
+                "allocation_batch_ns_per_op_p95": 21829.4375,
+                "workflow_round_ns_per_op_p50": 6184.714660644531,
+                "workflow_round_ns_per_op_p95": 6854.9632568359375,
+                "workflow_operations_per_second": 170042.64528879497
+              },
+              "backing": [
+                1339392,
+                1335296,
+                1339392,
+                1335296,
+                1339392,
+                1335296
+              ],
+              "providers": [
+                327,
+                326,
+                327,
+                326,
+                327,
+                326
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.9673582692711945,
+            "allocation_batch_ns_per_op_p95": 0.8792166191528058,
+            "workflow_round_ns_per_op_p50": 0.7954267374108531,
+            "workflow_round_ns_per_op_p95": 0.828218063183982,
+            "workflow_operations_per_second": 1.118589236031748
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -259.609375,
+            "allocation_batch_ns_per_op_p95": -2998.84375,
+            "workflow_round_ns_per_op_p50": -1590.6270141601562,
+            "workflow_round_ns_per_op_p95": -1421.798095703125,
+            "workflow_operations_per_second": 18027.374793228722
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 3588.0625,
+                "allocation_batch_ns_per_op_p95": 17125.640625,
+                "workflow_round_ns_per_op_p50": 5067.704528808594,
+                "workflow_round_ns_per_op_p95": 6651.5413818359375,
+                "workflow_operations_per_second": 208882.82544687483
+              },
+              "backing": [
+                1331200,
+                1335296,
+                1339392,
+                1339392,
+                1331200,
+                1339392
+              ],
+              "providers": [
+                325,
+                326,
+                327,
+                327,
+                325,
+                327
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 3604.328125,
+                "allocation_batch_ns_per_op_p95": 20837.40625,
+                "workflow_round_ns_per_op_p50": 4765.259460449219,
+                "workflow_round_ns_per_op_p95": 8090.333923339844,
+                "workflow_operations_per_second": 201082.93297008311
+              },
+              "backing": [
+                1331200,
+                1331200,
+                1331200,
+                1335296,
+                1335296,
+                1335296
+              ],
+              "providers": [
+                325,
+                325,
+                325,
+                326,
+                326,
+                326
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.995487196382821,
+            "allocation_batch_ns_per_op_p95": 0.8218700744004547,
+            "workflow_round_ns_per_op_p50": 1.0634687514645558,
+            "workflow_round_ns_per_op_p95": 0.8221590659746285,
+            "workflow_operations_per_second": 1.0387894306174268
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -16.265625,
+            "allocation_batch_ns_per_op_p95": -3711.765625,
+            "workflow_round_ns_per_op_p50": 302.445068359375,
+            "workflow_round_ns_per_op_p95": -1438.7925415039062,
+            "workflow_operations_per_second": 7799.89247679172
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 1549.484375,
+                "allocation_batch_ns_per_op_p95": 14789.21875,
+                "workflow_round_ns_per_op_p50": 4400.196105957031,
+                "workflow_round_ns_per_op_p95": 5027.507141113281,
+                "workflow_operations_per_second": 272797.5405263732
+              },
+              "backing": [
+                1331200,
+                1335296,
+                1335296,
+                1343488,
+                1335296,
+                1347584
+              ],
+              "providers": [
+                325,
+                326,
+                326,
+                328,
+                326,
+                329
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 8583.984375,
+                "allocation_batch_ns_per_op_p95": 22230.640625,
+                "workflow_round_ns_per_op_p50": 6712.700500488281,
+                "workflow_round_ns_per_op_p95": 7835.5439453125,
+                "workflow_operations_per_second": 154298.99179145184
+              },
+              "backing": [
+                1335296,
+                1339392,
+                1335296,
+                1343488,
+                1335296,
+                1335296
+              ],
+              "providers": [
+                326,
+                327,
+                326,
+                328,
+                326,
+                326
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 5.539897344882874,
+            "allocation_batch_ns_per_op_p95": 1.5031653125693336,
+            "workflow_round_ns_per_op_p50": 1.5255457572449005,
+            "workflow_round_ns_per_op_p95": 1.5585346227031738,
+            "workflow_operations_per_second": 0.5656172394139848
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 7034.5,
+            "allocation_batch_ns_per_op_p95": 7441.421875,
+            "workflow_round_ns_per_op_p50": 2312.50439453125,
+            "workflow_round_ns_per_op_p95": 2808.0368041992188,
+            "workflow_operations_per_second": -118498.54873492135
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 3838.703125,
+                "allocation_batch_ns_per_op_p95": 17330.734375,
+                "workflow_round_ns_per_op_p50": 4683.224365234375,
+                "workflow_round_ns_per_op_p95": 6661.278381347656,
+                "workflow_operations_per_second": 208649.81114065656
+              },
+              "backing": [
+                1339392,
+                1331200,
+                1331200,
+                1331200,
+                1335296,
+                1327104
+              ],
+              "providers": [
+                327,
+                325,
+                325,
+                325,
+                326,
+                324
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 6241.046875,
+                "allocation_batch_ns_per_op_p95": 19518.234375,
+                "workflow_round_ns_per_op_p50": 5471.458435058594,
+                "workflow_round_ns_per_op_p95": 6565.761535644531,
+                "workflow_operations_per_second": 189917.06346335507
+              },
+              "backing": [
+                1335296,
+                1335296,
+                1339392,
+                1335296,
+                1339392,
+                1339392
+              ],
+              "providers": [
+                326,
+                326,
+                327,
+                326,
+                327,
+                327
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.6150735929218606,
+            "allocation_batch_ns_per_op_p95": 0.887925313428869,
+            "workflow_round_ns_per_op_p50": 0.8559371181962059,
+            "workflow_round_ns_per_op_p95": 1.0145477177604727,
+            "workflow_operations_per_second": 1.0986364644423645
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -2402.34375,
+            "allocation_batch_ns_per_op_p95": -2187.5,
+            "workflow_round_ns_per_op_p50": -788.2340698242188,
+            "workflow_round_ns_per_op_p95": 95.516845703125,
+            "workflow_operations_per_second": 18732.747677301493
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 4922.6875,
+          "candidate_process_median": 5766.1953125,
+          "median_paired_ratio": 0.9814227328270078,
+          "paired_ratio_range": [
+            0.6150735929218606,
+            5.539897344882874
+          ],
+          "median_paired_difference": -137.9375,
+          "candidate_duration_higher_pairs": 1
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 20177.8203125,
+          "candidate_process_median": 19580.0859375,
+          "median_paired_ratio": 0.8835709662908374,
+          "paired_ratio_range": [
+            0.8218700744004547,
+            1.5031653125693336
+          ],
+          "median_paired_difference": -2593.171875,
+          "candidate_duration_higher_pairs": 1
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 5118.358947753906,
+          "candidate_process_median": 5626.2095947265625,
+          "median_paired_ratio": 0.9597029348303808,
+          "paired_ratio_range": [
+            0.7954267374108531,
+            1.5255457572449005
+          ],
+          "median_paired_difference": -242.89450073242188,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 7328.0477294921875,
+          "candidate_process_median": 6758.120819091797,
+          "median_paired_ratio": 0.9213828904722273,
+          "paired_ratio_range": [
+            0.8221590659746285,
+            1.5585346227031738
+          ],
+          "median_paired_difference": -663.140625,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 195499.99821671908,
+          "candidate_process_median": 189346.22821472576,
+          "median_paired_ratio": 1.0687129475298955,
+          "paired_ratio_range": [
+            0.5656172394139848,
+            1.118589236031748
+          ],
+          "median_paired_difference": 12913.633635010221,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            1331200,
+            1351680
+          ],
+          "provider_count_range": [
+            325,
+            330
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            1327104,
+            1343488
+          ],
+          "provider_count_range": [
+            324,
+            328
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.9814227328270078,
+            "baseline_process_median": 5778.8125,
+            "candidate_process_median": 5640.875
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.8505433467766302,
+            "baseline_process_median": 22832.84375,
+            "candidate_process_median": 19477.5390625
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.9294477444377045,
+            "baseline_process_median": 6270.300567626953,
+            "candidate_process_median": 5626.2095947265625
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.8251885645793052,
+            "baseline_process_median": 8183.547637939453,
+            "candidate_process_median": 6753.2523193359375
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 3.0774854689023674,
+            "baseline_process_median": 3895.265625,
+            "candidate_process_median": 6211.34375
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 1.1955453129991014,
+            "baseline_process_median": 17153.7265625,
+            "candidate_process_median": 19780.6875
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 1.1907414377205532,
+            "baseline_process_median": 4935.8272705078125,
+            "candidate_process_median": 5697.962432861328
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 1.2865411702318232,
+            "baseline_process_median": 5796.634338378906,
+            "candidate_process_median": 7248.411163330078
+          }
+        }
+      }
+    },
+    {
+      "scope": "tiny_128",
+      "shape": "fixed",
+      "threads": 1,
+      "configuration": {
+        "allocations": 128,
+        "rounds": 64,
+        "warmup": 16
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 572.09375,
+                "allocation_batch_ns_per_op_p95": 1585.28125,
+                "workflow_round_ns_per_op_p50": 3284.9140625,
+                "workflow_round_ns_per_op_p95": 4689.1328125,
+                "workflow_operations_per_second": 293026.5720945344
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 636.390625,
+                "allocation_batch_ns_per_op_p95": 1360.671875,
+                "workflow_round_ns_per_op_p50": 3347.1640625,
+                "workflow_round_ns_per_op_p95": 4932.4609375,
+                "workflow_operations_per_second": 286063.1546571183
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.1123887037745124,
+            "allocation_batch_ns_per_op_p95": 0.858315756273532,
+            "workflow_round_ns_per_op_p50": 1.0189502674394546,
+            "workflow_round_ns_per_op_p95": 1.051891924313031,
+            "workflow_operations_per_second": 0.9762362253100733
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 64.296875,
+            "allocation_batch_ns_per_op_p95": -224.609375,
+            "workflow_round_ns_per_op_p50": 62.25,
+            "workflow_round_ns_per_op_p95": 243.328125,
+            "workflow_operations_per_second": -6963.417437416094
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 776.359375,
+                "allocation_batch_ns_per_op_p95": 2002.765625,
+                "workflow_round_ns_per_op_p50": 4443.359375,
+                "workflow_round_ns_per_op_p95": 5843.1015625,
+                "workflow_operations_per_second": 218969.14288549154
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 718.59375,
+                "allocation_batch_ns_per_op_p95": 1964.515625,
+                "workflow_round_ns_per_op_p50": 4305.8203125,
+                "workflow_round_ns_per_op_p95": 5706.375,
+                "workflow_operations_per_second": 228453.57482854338
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0803870406610132,
+            "allocation_batch_ns_per_op_p95": 1.0194704483452506,
+            "workflow_round_ns_per_op_p50": 1.0319425922397918,
+            "workflow_round_ns_per_op_p95": 1.0239603185034283,
+            "workflow_operations_per_second": 0.9584842042845247
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 57.765625,
+            "allocation_batch_ns_per_op_p95": 38.25,
+            "workflow_round_ns_per_op_p50": 137.5390625,
+            "workflow_round_ns_per_op_p95": 136.7265625,
+            "workflow_operations_per_second": -9484.431943051837
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 894.359375,
+                "allocation_batch_ns_per_op_p95": 1782.21875,
+                "workflow_round_ns_per_op_p50": 4464.921875,
+                "workflow_round_ns_per_op_p95": 5459.390625,
+                "workflow_operations_per_second": 219332.49400456823
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 726.734375,
+                "allocation_batch_ns_per_op_p95": 1946.625,
+                "workflow_round_ns_per_op_p50": 4354.65625,
+                "workflow_round_ns_per_op_p95": 5374.3515625,
+                "workflow_operations_per_second": 220361.3037695905
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 0.8125753419871067,
+            "allocation_batch_ns_per_op_p95": 1.0922480756080026,
+            "workflow_round_ns_per_op_p50": 0.9753040191772673,
+            "workflow_round_ns_per_op_p95": 0.9844233416618727,
+            "workflow_operations_per_second": 1.0046906399787752
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": -167.625,
+            "allocation_batch_ns_per_op_p95": 164.40625,
+            "workflow_round_ns_per_op_p50": -110.265625,
+            "workflow_round_ns_per_op_p95": -85.0390625,
+            "workflow_operations_per_second": 1028.8097650222771
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 776.359375,
+                "allocation_batch_ns_per_op_p95": 2014.15625,
+                "workflow_round_ns_per_op_p50": 4073.484375,
+                "workflow_round_ns_per_op_p95": 5989.1796875,
+                "workflow_operations_per_second": 228893.09234064815
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 686.859375,
+                "allocation_batch_ns_per_op_p95": 1506.34375,
+                "workflow_round_ns_per_op_p50": 4372.5546875,
+                "workflow_round_ns_per_op_p95": 6887.2109375,
+                "workflow_operations_per_second": 207489.25264179637
+              },
+              "backing": [
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192,
+                8192
+              ],
+              "providers": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.1303032371073045,
+            "allocation_batch_ns_per_op_p95": 1.3371159471402194,
+            "workflow_round_ns_per_op_p50": 0.93160284230293,
+            "workflow_round_ns_per_op_p95": 0.8696088651633519,
+            "workflow_operations_per_second": 1.103156377625991
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 89.5,
+            "allocation_batch_ns_per_op_p95": 507.8125,
+            "workflow_round_ns_per_op_p50": -299.0703125,
+            "workflow_round_ns_per_op_p95": -898.03125,
+            "workflow_operations_per_second": 21403.839698851778
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 702.7265625,
+          "candidate_process_median": 751.546875,
+          "median_paired_ratio": 1.096387872217763,
+          "paired_ratio_range": [
+            0.8125753419871067,
+            1.1303032371073045
+          ],
+          "median_paired_difference": 61.03125,
+          "candidate_duration_higher_pairs": 3
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 1683.75,
+          "candidate_process_median": 1974.6953125,
+          "median_paired_ratio": 1.0558592619766265,
+          "paired_ratio_range": [
+            0.858315756273532,
+            1.3371159471402194
+          ],
+          "median_paired_difference": 101.328125,
+          "candidate_duration_higher_pairs": 3
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 4339.1875,
+          "candidate_process_median": 4214.0703125,
+          "median_paired_ratio": 0.9971271433083609,
+          "paired_ratio_range": [
+            0.93160284230293,
+            1.0319425922397918
+          ],
+          "median_paired_difference": -24.0078125,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 5582.8828125,
+          "candidate_process_median": 5608.7265625,
+          "median_paired_ratio": 1.0041918300826504,
+          "paired_ratio_range": [
+            0.8696088651633519,
+            1.051891924313031
+          ],
+          "median_paired_difference": 25.84375,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 223893.0344165558,
+          "candidate_process_median": 224627.1980551193,
+          "median_paired_ratio": 0.9904634326444242,
+          "paired_ratio_range": [
+            0.9584842042845247,
+            1.103156377625991
+          ],
+          "median_paired_difference": -2967.3038361969084,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            8192,
+            8192
+          ],
+          "provider_count_range": [
+            2,
+            2
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            8192,
+            8192
+          ],
+          "provider_count_range": [
+            2,
+            2
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 1.096387872217763,
+            "baseline_process_median": 645.34375,
+            "candidate_process_median": 706.375
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.9388931023093913,
+            "baseline_process_median": 1774.8984375,
+            "candidate_process_median": 1681.71875
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 1.025446429839623,
+            "baseline_process_median": 3795.3671875,
+            "candidate_process_median": 3895.26171875
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 1.0379261214082296,
+            "baseline_process_median": 5197.75390625,
+            "candidate_process_median": 5387.78125
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 0.9714392895472056,
+            "baseline_process_median": 790.609375,
+            "candidate_process_median": 751.546875
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 1.214682011374111,
+            "baseline_process_median": 1644.28125,
+            "candidate_process_median": 1980.390625
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.9534534307400986,
+            "baseline_process_median": 4418.73828125,
+            "candidate_process_median": 4214.0703125
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.9270161034126123,
+            "baseline_process_median": 6173.30078125,
+            "candidate_process_median": 5681.765625
+          }
+        }
+      }
+    },
+    {
+      "scope": "tiny_128",
+      "shape": "mixed",
+      "threads": 1,
+      "configuration": {
+        "allocations": 128,
+        "rounds": 64,
+        "warmup": 16
+      },
+      "batch": 64,
+      "pairs": [
+        {
+          "pair": 0,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 747.0625,
+                "allocation_batch_ns_per_op_p95": 1881.5,
+                "workflow_round_ns_per_op_p50": 4470.2109375,
+                "workflow_round_ns_per_op_p95": 6207.6875,
+                "workflow_operations_per_second": 210609.31031980994
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 761.71875,
+                "allocation_batch_ns_per_op_p95": 1516.109375,
+                "workflow_round_ns_per_op_p50": 4301.3515625,
+                "workflow_round_ns_per_op_p95": 6028.2421875,
+                "workflow_operations_per_second": 220097.34901448135
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0196185058144398,
+            "allocation_batch_ns_per_op_p95": 0.8057982327929843,
+            "workflow_round_ns_per_op_p50": 0.9622256360245863,
+            "workflow_round_ns_per_op_p95": 0.9710930499481489,
+            "workflow_operations_per_second": 1.0450504238405407
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 14.65625,
+            "allocation_batch_ns_per_op_p95": -365.390625,
+            "workflow_round_ns_per_op_p50": -168.859375,
+            "workflow_round_ns_per_op_p95": -179.4453125,
+            "workflow_operations_per_second": 9488.038694671413
+          }
+        },
+        {
+          "pair": 1,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 920.40625,
+                "allocation_batch_ns_per_op_p95": 1664.21875,
+                "workflow_round_ns_per_op_p50": 4403.890625,
+                "workflow_round_ns_per_op_p95": 5850.421875,
+                "workflow_operations_per_second": 216382.055060041
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 738.109375,
+                "allocation_batch_ns_per_op_p95": 1620.265625,
+                "workflow_round_ns_per_op_p50": 4582.9296875,
+                "workflow_round_ns_per_op_p95": 6309.8125,
+                "workflow_operations_per_second": 205974.97911900992
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.2469781324752853,
+            "allocation_batch_ns_per_op_p95": 1.0271271107167999,
+            "workflow_round_ns_per_op_p50": 0.9609334913017907,
+            "workflow_round_ns_per_op_p95": 0.92719425101776,
+            "workflow_operations_per_second": 1.0505259230297967
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 182.296875,
+            "allocation_batch_ns_per_op_p95": 43.953125,
+            "workflow_round_ns_per_op_p50": -179.0390625,
+            "workflow_round_ns_per_op_p95": -459.390625,
+            "workflow_operations_per_second": 10407.075941031071
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "variants": {
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 763.34375,
+                "allocation_batch_ns_per_op_p95": 1403,
+                "workflow_round_ns_per_op_p50": 4420.5703125,
+                "workflow_round_ns_per_op_p95": 6022.140625,
+                "workflow_operations_per_second": 215322.52091154392
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            },
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 789.390625,
+                "allocation_batch_ns_per_op_p95": 2024.734375,
+                "workflow_round_ns_per_op_p50": 4541.421875,
+                "workflow_round_ns_per_op_p95": 6260.984375,
+                "workflow_operations_per_second": 209444.30172415203
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0341220780284113,
+            "allocation_batch_ns_per_op_p95": 1.4431463827512474,
+            "workflow_round_ns_per_op_p50": 1.027338454985835,
+            "workflow_round_ns_per_op_p95": 1.0396609386716207,
+            "workflow_operations_per_second": 0.9727003976987307
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 26.046875,
+            "allocation_batch_ns_per_op_p95": 621.734375,
+            "workflow_round_ns_per_op_p50": 120.8515625,
+            "workflow_round_ns_per_op_p95": 238.84375,
+            "workflow_operations_per_second": -5878.219187391893
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "variants": {
+            "candidate": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 786.9375,
+                "allocation_batch_ns_per_op_p95": 2189.9375,
+                "workflow_round_ns_per_op_p50": 4594.7265625,
+                "workflow_round_ns_per_op_p95": 6248.78125,
+                "workflow_operations_per_second": 208486.52121406342
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            },
+            "baseline": {
+              "metrics": {
+                "allocation_batch_ns_per_op_p50": 728.359375,
+                "allocation_batch_ns_per_op_p95": 1556,
+                "workflow_round_ns_per_op_p50": 3883.4609375,
+                "workflow_round_ns_per_op_p95": 6005.859375,
+                "workflow_operations_per_second": 239194.0678236064
+              },
+              "backing": [
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384,
+                16384
+              ],
+              "providers": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            }
+          },
+          "candidate_over_baseline": {
+            "allocation_batch_ns_per_op_p50": 1.0804247559798348,
+            "allocation_batch_ns_per_op_p95": 1.4074148457583548,
+            "workflow_round_ns_per_op_p50": 1.1831525117535704,
+            "workflow_round_ns_per_op_p95": 1.0404474796747967,
+            "workflow_operations_per_second": 0.8716207852103245
+          },
+          "candidate_minus_baseline": {
+            "allocation_batch_ns_per_op_p50": 58.578125,
+            "allocation_batch_ns_per_op_p95": 633.9375,
+            "workflow_round_ns_per_op_p50": 711.265625,
+            "workflow_round_ns_per_op_p95": 242.921875,
+            "workflow_operations_per_second": -30707.546609542973
+          }
+        }
+      ],
+      "metric_summary": {
+        "allocation_batch_ns_per_op_p50": {
+          "baseline_process_median": 742.5859375,
+          "candidate_process_median": 788.1640625,
+          "median_paired_ratio": 1.0572734170041231,
+          "paired_ratio_range": [
+            1.0196185058144398,
+            1.2469781324752853
+          ],
+          "median_paired_difference": 42.3125,
+          "candidate_duration_higher_pairs": 4
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "baseline_process_median": 1588.1328125,
+          "candidate_process_median": 1844.4765625,
+          "median_paired_ratio": 1.2172709782375772,
+          "paired_ratio_range": [
+            0.8057982327929843,
+            1.4431463827512474
+          ],
+          "median_paired_difference": 332.84375,
+          "candidate_duration_higher_pairs": 3
+        },
+        "workflow_round_ns_per_op_p50": {
+          "baseline_process_median": 4445.390625,
+          "candidate_process_median": 4472.65625,
+          "median_paired_ratio": 0.9947820455052108,
+          "paired_ratio_range": [
+            0.9609334913017907,
+            1.1831525117535704
+          ],
+          "median_paired_difference": -24.00390625,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_round_ns_per_op_p95": {
+          "baseline_process_median": 6114.9140625,
+          "candidate_process_median": 6138.51171875,
+          "median_paired_ratio": 1.0053769943098847,
+          "paired_ratio_range": [
+            0.92719425101776,
+            1.0404474796747967
+          ],
+          "median_paired_difference": 29.69921875,
+          "candidate_duration_higher_pairs": 2
+        },
+        "workflow_operations_per_second": {
+          "baseline_process_median": 212965.91561567693,
+          "candidate_process_median": 212913.1783920965,
+          "median_paired_ratio": 1.0088754107696358,
+          "paired_ratio_range": [
+            0.8716207852103245,
+            1.0505259230297967
+          ],
+          "median_paired_difference": 1804.9097536397603,
+          "candidate_duration_higher_pairs": null
+        }
+      },
+      "capacity_summary": {
+        "baseline": {
+          "peak_backing_range": [
+            16384,
+            16384
+          ],
+          "provider_count_range": [
+            4,
+            4
+          ]
+        },
+        "candidate": {
+          "peak_backing_range": [
+            16384,
+            16384
+          ],
+          "provider_count_range": [
+            4,
+            4
+          ]
+        }
+      },
+      "temporal_halves": {
+        "first2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 1.1332983191448625,
+            "baseline_process_median": 742.5859375,
+            "candidate_process_median": 841.0625
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 0.916462671754892,
+            "baseline_process_median": 1750.8828125,
+            "candidate_process_median": 1590.1640625
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 0.9615795636631885,
+            "baseline_process_median": 4526.5703125,
+            "candidate_process_median": 4352.62109375
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 0.9491436504829545,
+            "baseline_process_median": 6258.75,
+            "candidate_process_median": 5939.33203125
+          }
+        },
+        "last2": {
+          "allocation_batch_ns_per_op_p50": {
+            "median_paired_ratio": 1.0572734170041231,
+            "baseline_process_median": 745.8515625,
+            "candidate_process_median": 788.1640625
+          },
+          "allocation_batch_ns_per_op_p95": {
+            "median_paired_ratio": 1.4252806142548011,
+            "baseline_process_median": 1479.5,
+            "candidate_process_median": 2107.3359375
+          },
+          "workflow_round_ns_per_op_p50": {
+            "median_paired_ratio": 1.1052454833697027,
+            "baseline_process_median": 4152.015625,
+            "candidate_process_median": 4568.07421875
+          },
+          "workflow_round_ns_per_op_p95": {
+            "median_paired_ratio": 1.0400542091732086,
+            "baseline_process_median": 6014.0,
+            "candidate_process_median": 6254.8828125
+          }
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Exploratory native API workload; not formal product, end-to-end DEX/image, energy or release qualification.",
+    "CPU affinity/frequency and other system work uncontrolled; battery observations do not establish continuous thermal stability.",
+    "All original observations retained, no retries, exclusions, parameter changes or pooling across scopes/history.",
+    "First/last halves contain only two pairs each; descriptive temporal variation is not a causal trend or confidence interval.",
+    "No single-block case: frozen tiny fixed uses2 blocks and mixed4.",
+    "Discrete admission/occupancy and file hashes are not a shared device lock or signed mapped-page attestation."
+  ],
+  "all_checksums_and_statistics_recomputed": true,
+  "native_final_resources_field_checked": "CLOSED_ZERO_ALL_48_NATIVE_INTERNAL_CHECKS_NOT_INDEPENDENT_RESOURCE_OBSERVATION"
+}

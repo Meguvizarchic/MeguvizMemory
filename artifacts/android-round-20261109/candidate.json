@@ -1,0 +1,29 @@
+{
+  "state": "PASS_SCOPED_ENGINEERING_CANDIDATES",
+  "source_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "source_lock_sha256": "0e7dd13d482f4dc8218a66d06d0efde90547fd9c511e9b5322e541da3a9d6574",
+  "source_set_sha256": "e2f2bf3cfc72fec31ebfd03a14223626d42fd150db4602ffd47b77971dde5589",
+  "source_record_count": 392,
+  "android": {
+    "bytes": 1511829,
+    "sha256": "7fe27be15cf7a12469959a3283c3fb9cd7e2aa2d78941b570ec0a08e48b451bd",
+    "profiles": {
+      "arm64-v8a": {
+        "aar_sha256": "e9d01d6d20468ddc71b57e8e9837e30f2c4db7737ab7be4413b3528edc3cc61a",
+        "sdk_sha256": "0f23301df8bbf6dbacb96a3aef04d499aefd79c31a6d4055f20a9de211525c46"
+      },
+      "armeabi-v7a": {
+        "aar_sha256": "640d7a3f23ed8c81fff9d625f8776be94338ee9539f60c677afab5119f0689c7",
+        "sdk_sha256": "ba3d4f12b3e336dfa73b9071d08fe972c4d90f6b3795eb515a5957526dddbda1"
+      },
+      "x86_64": {
+        "aar_sha256": "5923b59d4e4202fe1ca5d976dd217621e9da038c9b6c893aa07d3028ca630d31",
+        "sdk_sha256": "357e38fbcc2f10e0cbe9bfb4ba515b3f1d418dd3988726777ac16d34661b3442"
+      }
+    }
+  },
+  "device": "NOT_RUN",
+  "r8": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "formal_release": "NOT_QUALIFIED"
+}

@@ -27,6 +27,8 @@ PACKAGE = 'io.github.jichuo1.meguviz.memory.managedprobe'
 INSTRUMENT = 'io.github.jichuo1.meguviz.memory.android.ManagedInstrumentation'
 COMPONENT = PACKAGE + '/' + INSTRUMENT
 REPORT_SUITE = 'android-managed-pressure-v1'
+COPY_REPORT_SUITE = 'android-managed-copy-arena-v1'
+PROBE_SCOPES = ('pressure-v1', 'copy-arena-v1')
 MIN_CHECKS = 302
 MAX_CHECKS = 1000000
 BUSY = re.compile(r'gpudiagnostic|androidx\.test|uiautomator|am instrument|'
@@ -116,7 +118,28 @@ def unique_json(text):
     return json.loads(text, object_pairs_hook=pairs, parse_constant=constant)
 
 
-def parse_report(stdout, transport_code):
+def scope_suite(scope):
+    require(scope in PROBE_SCOPES, 'invalid_probe_scope')
+    return COPY_REPORT_SUITE if scope == 'copy-arena-v1' else REPORT_SUITE
+
+
+def verify_feature_scope(built, scope):
+    scope_suite(scope)
+    if scope == 'copy-arena-v1':
+        evidence = built.get('r8_evidence', {})
+        require(scope in built.get('probe_scopes', []) and
+                evidence.get('copy_to_native_signature') == '(JJJJI)I' and
+                evidence.get('copy_to_calls_retained') is True, 'copy_arena_build_evidence_missing')
+
+
+def instrument_command(adb, serial, user_id, scope):
+    scope_suite(scope)
+    command = [str(adb), '-s', serial, 'shell', 'am', 'instrument', '-w', '-r', '--user', user_id]
+    if scope == 'copy-arena-v1': command += ['-e', 'probe_scope', scope]
+    return command + [COMPONENT]
+
+
+def parse_report(stdout, transport_code, probe_scope='pressure-v1'):
     require(transport_code == 0, 'instrument_transport_not_successful')
     text = stdout.decode('utf-8', 'strict') if isinstance(stdout, bytes) else stdout
     text = text.replace('\r\n', '\n')
@@ -129,22 +152,30 @@ def parse_report(stdout, transport_code):
         report = unique_json(results[0].group(1))
     except (ValueError, TypeError) as error:
         raise Blocked('instrument_report_invalid_json') from error
-    require(isinstance(report, dict) and report.get('suite') == REPORT_SUITE and type(report.get('checks')) is int,
+    require(isinstance(report, dict) and report.get('suite') == scope_suite(probe_scope) and type(report.get('checks')) is int,
             'instrument_report_identity')
     if report.get('status') == 'FAIL':
         require(codes[0].group(1) == '1' and set(report) == {'suite', 'status', 'checks', 'stage'} and
                 0 <= report['checks'] <= MAX_CHECKS and report['stage'] in {
                     'start', 'system_create', 'arena_create', 'system_budget', 'arena_budget',
-                    'system_close', 'arena_close', 'callback_setup', 'callback_concurrent_close'},
+                    'system_close', 'arena_close', 'callback_setup', 'callback_concurrent_close'} |
+                    ({'system_copy_arena', 'arena_copy_arena'} if probe_scope == 'copy-arena-v1' else set()),
                 'instrument_failure_report_invalid')
         return report
-    require(codes[0].group(1) == '0' and set(report) == {
-        'suite', 'status', 'checks', 'case_count', 'final_backing_bytes', 'callback_origin',
-        'queued_implies_applied', 'performance_qualified'} and report.get('status') == 'PASS' and
-        MIN_CHECKS <= report['checks'] <= MAX_CHECKS and type(report['case_count']) is int and report['case_count'] == 3 and
+    expected_fields = {'suite', 'status', 'checks', 'case_count', 'final_backing_bytes', 'callback_origin',
+                       'queued_implies_applied', 'performance_qualified'}
+    extended = probe_scope == 'copy-arena-v1'
+    if extended: expected_fields |= {'copy_to_cases', 'arena_same_shape_allocations'}
+    require(codes[0].group(1) == '0' and set(report) == expected_fields and report.get('status') == 'PASS' and
+        (1100 if extended else MIN_CHECKS) <= report['checks'] <= MAX_CHECKS and
+        type(report['case_count']) is int and report['case_count'] == (5 if extended else 3) and
         type(report['final_backing_bytes']) is int and report['final_backing_bytes'] == 0 and
         report['callback_origin'] == 'synthetic' and report['queued_implies_applied'] is False and
         report['performance_qualified'] is False, 'instrument_report_scope_or_checks')
+    if extended:
+        require(type(report['copy_to_cases']) is int and report['copy_to_cases'] == 2 and
+                type(report['arena_same_shape_allocations']) is int and report['arena_same_shape_allocations'] == 96,
+                'instrument_feature_marker_mismatch')
     return report
 
 
@@ -172,6 +203,45 @@ def parse_gate(ps, activity):
     return {'parsed_processes': len(rows), 'matching_test_processes': len(busy),
             'active_instrumentation': len(active),
             'result': 'PASS_OBSERVATIONAL_ONLY' if not busy and not active else 'BLOCKED'}
+
+
+def parse_package_inventory(text):
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    require(bool(lines) and all(re.fullmatch(r'package:[A-Za-z0-9_.]+', line) for line in lines),
+            'package_inventory_unparseable')
+    require(len(lines) == len(set(lines)), 'package_inventory_ambiguous')
+    return ('package:' + PACKAGE) in lines
+
+
+def parse_package_user_states(text, user_ids, installed):
+    # ADB raw stdout uses CRLF on this device; preserve the raw log and normalize only parsing.
+    text = text.replace('\r\n', '\n')
+    # Queries also contains bare User lines. Only the single package record in
+    # the Packages section describes per-user installation and data state.
+    package_header = r'(?m)^  Package \[' + re.escape(PACKAGE) + r'\] \([^\n]*\):[ \t]*$'
+    starts = list(re.finditer(package_header, text))
+    require(len(starts) == 1 and 'Packages:' in text[:starts[0].start()], 'package_user_state_unparseable')
+    body = text[starts[0].end():]
+    end = re.search(r'(?m)^(?:\S|  Package \[)', body)
+    if end: body = body[:end.start()]
+    rows = re.findall(r'(?m)^    User (\d+):[ \t]+([^\n]+)$', body)
+    require(len(rows) == len(user_ids) and {uid for uid, _ in rows} == set(user_ids),
+            'package_user_state_unparseable')
+    result = {}
+    for uid, line in rows:
+        fields = [part.split('=', 1) for part in line.split()]
+        require(uid not in result and all(len(part) == 2 for part in fields) and
+                len({part[0] for part in fields}) == len(fields), 'package_user_state_unparseable')
+        fields = dict(fields)
+        require(all(fields.get(name) in ('true', 'false') for name in ('installed', 'stopped', 'notLaunched')) and
+                re.fullmatch(r'0|[1-9][0-9]*', fields.get('ceDataInode', '')) is not None,
+                'package_user_state_unparseable')
+        is_installed = fields['installed'] == 'true'
+        require(is_installed == installed[uid], 'package_user_installation_disagrees')
+        empty = (not is_installed and fields['ceDataInode'] == '0' and
+                 fields['stopped'] == 'true' and fields['notLaunched'] == 'true')
+        result[uid] = 'INSTALLED' if is_installed else 'UNINSTALLED_EMPTY' if empty else 'RETAINED_OR_UNKNOWN'
+    return result
 
 
 def parse_package_paths(text):
@@ -225,7 +295,7 @@ def verify_manifest_tree(tree):
             instrument['functionalTest'] == 'true', 'local_apk_instrumentation_target_mismatch')
 
 
-def verify_local(apk, aar, sdk_core, build_receipt, abi, expected_certificate, aapt, java, signer):
+def verify_local(apk, aar, sdk_core, build_receipt, abi, expected_certificate, aapt, java, signer, probe_scope='pressure-v1'):
     built = unique_json(build_receipt.read_text(encoding='utf-8-sig'))
     require(built.get('state') == 'PASS_R8_BUILD_ONLY_NOT_DEVICE_EXECUTION' and
             built.get('device_executed') is False and built.get('package_name') == PACKAGE and
@@ -233,6 +303,7 @@ def verify_local(apk, aar, sdk_core, build_receipt, abi, expected_certificate, a
             'build_receipt_scope_mismatch')
     inputs = built.get('inputs', {})
     r8 = built.get('r8_evidence', {})
+    verify_feature_scope(built, probe_scope)
     require(built.get('apk_sha256') == digest(apk) and built.get('apk_bytes') == apk.stat().st_size and
             built.get('certificate_sha256') == expected_certificate and inputs.get('aar_sha256') == digest(aar),
             'build_receipt_identity_mismatch')
@@ -303,6 +374,8 @@ def verify_build_sources(built):
 
 
 def freeze(args):
+    probe_scope = getattr(args, 'probe_scope', 'pressure-v1')
+    expected_suite = scope_suite(probe_scope)
     require(SERIAL.fullmatch(args.serial) is not None, 'invalid_explicit_serial')
     require(27 <= args.api <= 100 and args.page_bytes in (4096, 16384), 'invalid_device_profile')
     require(15 <= args.timeout_seconds <= 300, 'invalid_timeout')
@@ -321,13 +394,13 @@ def freeze(args):
     preliminary = unique_json(build.read_text(encoding='utf-8-sig'))
     abi, cert = preliminary.get('abi'), preliminary.get('certificate_sha256')
     require(abi in ('arm64-v8a', 'x86_64') and isinstance(cert, str) and SHA.fullmatch(cert), 'invalid_build_identity')
-    built = verify_local(apk, aar, sdk_core, build, abi, cert, tool_paths['aapt2'], tool_paths['java'], tool_paths['apksigner'])
+    built = verify_local(apk, aar, sdk_core, build, abi, cert, tool_paths['aapt2'], tool_paths['java'], tool_paths['apksigner'], probe_scope)
     source_paths = verify_build_sources(built)
     files = [identity(path) for path in [apk, aar, sdk_core, build, ROOT / 'tools/test_android_managed_round.py', *source_paths.values()]]
     require(len({entry['path'] for entry in files}) == len(files), 'duplicate_frozen_input')
     value = {'schema_version': 1, 'state': 'FROZEN_BEFORE_DEVICE_EXECUTION',
              'scope': 'OWN_R8_MANAGED_SYNTHETIC_PRESSURE_NO_BIL_NO_PERFORMANCE', 'frozen_at_utc': utc(),
-             'expected_report_suite': REPORT_SUITE,
+             'expected_report_suite': expected_suite,
              'device_serial_sha256': sha(args.serial.encode()), 'device': {'api': args.api, 'abi': abi, 'page_bytes': args.page_bytes},
              'timeout_seconds': args.timeout_seconds, 'package': PACKAGE, 'component': COMPONENT,
              'certificate_sha256': cert, 'apk_sha256': digest(apk), 'aar_sha256': digest(aar),
@@ -341,6 +414,9 @@ def freeze(args):
                  'No uninstall, data clearing, global freezer/power policy change, or unrelated process termination.',
                  'Only exact diagnostic APK package may be installed; existing package must have the same signer.',
                  'Source and artifact hashes identify frozen inputs; they do not independently prove build provenance.']}
+    if probe_scope == 'copy-arena-v1':
+        value['probe_scope'] = probe_scope
+        value['scope'] = 'OWN_R8_MANAGED_COPY_ARENA_WITH_SYNTHETIC_PRESSURE_NO_BIL_NO_PERFORMANCE'
     output.parent.mkdir(parents=True, exist_ok=not in_private)
     with output.open('x', encoding='utf-8', newline='\n') as stream:
         json.dump(value, stream, ensure_ascii=False, indent=2)
@@ -351,8 +427,11 @@ def freeze(args):
 
 
 def validate_plan(plan, args):
+    probe_scope = getattr(args, 'probe_scope', 'pressure-v1')
+    require(plan.get('probe_scope', 'pressure-v1') == probe_scope, 'plan_probe_scope_mismatch')
+    expected_suite = scope_suite(probe_scope)
     require(plan.get('state') == 'FROZEN_BEFORE_DEVICE_EXECUTION' and plan.get('schema_version') == 1 and
-            plan.get('expected_report_suite') == REPORT_SUITE and
+            plan.get('expected_report_suite') == expected_suite and
             plan.get('package') == PACKAGE and plan.get('component') == COMPONENT and
             SERIAL.fullmatch(args.serial) is not None and
             sha(args.serial.encode()) == plan.get('device_serial_sha256'), 'plan_target_mismatch')
@@ -376,7 +455,7 @@ def validate_plan(plan, args):
     require(set(plan.get('tools', {})) == set(tool_paths) and
             all(path.is_file() and digest(path) == plan['tools'][name] for name, path in tool_paths.items()), 'frozen_tool_drift')
     built = verify_local(paths['apk'], paths['aar'], paths['sdk_core'], paths['build'], plan['device']['abi'],
-                         plan['certificate_sha256'], tool_paths['aapt2'], tool_paths['java'], tool_paths['apksigner'])
+                         plan['certificate_sha256'], tool_paths['aapt2'], tool_paths['java'], tool_paths['apksigner'], probe_scope)
     verify_build_sources(built)
     return paths, tool_paths
 
@@ -491,16 +570,25 @@ def run(args):
         require(matches and all(matches) and len(matches) <= 32, 'user_inventory_unparseable')
         user_ids = [match.group(1) for match in matches]
         require(user_id in user_ids and len(set(user_ids)) == len(user_ids), 'user_inventory_ambiguous')
-        presence = {}
+        presence, installed = {}, {}
         for candidate in user_ids:
             _, listed, _ = device.command('package-inventory-user', ['shell', 'pm', 'list', 'packages', '--user', candidate, '-u'])
-            package_lines = [line.strip() for line in listed.splitlines() if line.strip()]
-            require(bool(package_lines) and all(re.fullmatch(r'package:[A-Za-z0-9_.]+', x) for x in package_lines), 'package_inventory_unparseable')
-            presence[candidate] = ('package:' + PACKAGE) in package_lines
-        listed_own = presence[user_id]
-        other_user_package = any(found for candidate, found in presence.items() if candidate != user_id)
+            _, actual, _ = device.command('installed-package-inventory-user', ['shell', 'pm', 'list', 'packages', '--user', candidate])
+            presence[candidate] = parse_package_inventory(listed)
+            installed[candidate] = parse_package_inventory(actual)
+            require(not installed[candidate] or presence[candidate], 'package_inventory_disagrees')
+        states = {}
+        if any(presence.values()):
+            _, dumped, _ = device.command('package-user-state', ['shell', 'dumpsys', 'package', PACKAGE])
+            states = parse_package_user_states(dumped, user_ids, installed)
+        listed_own = installed[user_id]
+        other_user_package = any(state != 'UNINSTALLED_EMPTY' for uid, state in states.items() if uid != user_id)
         receipt['android_user_count'] = len(user_ids)
         receipt['other_user_package_present'] = other_user_package
+        receipt['known_package_user_count'] = sum(presence.values())
+        receipt['installed_package_user_count'] = sum(installed.values())
+        receipt['other_user_known_empty_count'] = sum(uid != user_id and state == 'UNINSTALLED_EMPTY'
+                                                     for uid, state in states.items())
         code, existing, stderr = device.command('package-path-before', ['shell', 'pm', 'path', PACKAGE], allow_nonzero=True)
         paths_before = parse_package_paths(existing)
         require(code in (0, 1) and not stderr.strip(), 'existing_package_path_ambiguous')
@@ -545,8 +633,8 @@ def run(args):
         save()
         stdout_file = (private / 'instrumentation.stdout').open('wb')
         stderr_file = (private / 'instrumentation.stderr').open('wb')
-        child = subprocess.Popen([str(args.adb), '-s', args.serial, 'shell', 'am', 'instrument', '-w', '-r',
-                                  '--user', user_id, COMPONENT], stdout=stdout_file, stderr=stderr_file)
+        child = subprocess.Popen(instrument_command(args.adb, args.serial, user_id,
+                                  plan.get('probe_scope', 'pressure-v1')), stdout=stdout_file, stderr=stderr_file)
         start = time.monotonic(); device.deadline = start + plan['timeout_seconds']
         receipt['state'] = 'RUNNING'; save()
         while True:
@@ -600,7 +688,7 @@ def run(args):
             receipt['freezer_observation'] = 'FROZEN_OBSERVED' if any(s['mode'] == '1' or s['frozen'] == '1' for s in receipt['cgroup_samples']) else 'DISCRETE_SAMPLES_UNFROZEN_NOT_CONTINUOUS'
         if not stop_reason:
             require(not stderr.strip(), 'instrument_stderr_nonempty')
-            receipt['android_report'] = parse_report(stdout, child.returncode)
+            receipt['android_report'] = parse_report(stdout, child.returncode, plan.get('probe_scope', 'pressure-v1'))
             receipt['report_validated'] = True
             receipt['normal_domain_closed_proven'] = receipt['android_report']['status'] == 'PASS'
             receipt['state'] = 'REPORT_' + receipt['android_report']['status'] + '_POSTFLIGHT_PENDING'
@@ -664,6 +752,7 @@ def main():
         for name in ('apk', 'aar', 'sdk-core', 'build-receipt', 'adb', 'aapt2', 'java', 'apksigner'):
             p.add_argument('--' + name, type=Path, required=True)
         p.add_argument('--serial', required=True)
+        p.add_argument('--probe-scope', choices=PROBE_SCOPES, default='pressure-v1')
     freezer = sub.add_parser('freeze', help='Freeze exact local inputs without ADB')
     common(freezer)
     freezer.add_argument('--api', type=int, required=True)

@@ -113,11 +113,29 @@ def validate_dex(dumped, expected):
     common.require("Class descriptor  : '" + witness_descriptor + "'" not in dumped, 'shrink_witness_remains')
 
 
+def diagnostic_key_input(path, build):
+    if path is None: return None
+    selected = path.resolve(strict=True)
+    common.require(selected.is_relative_to(build.resolve()) and selected.is_file() and
+                   not path.is_symlink(), 'diagnostic_key_must_remain_private_build_file')
+    bounded_file(selected, MAX_EVIDENCE)
+    return selected
+
+
+def validate_copy_calls(dumped):
+    descriptor = 'L' + INSTRUMENT.replace('.', '/') + ';'
+    blocks = re.split(r'(?m)^Class #\d+\s+-\s*$', dumped)
+    found = [block for block in blocks if "Class descriptor  : '" + descriptor + "'" in block]
+    common.require(len(found) == 1 and len(re.findall(r'invoke-[^\n]*\.copyTo:', found[0])) >= 3,
+                   'copy_to_instrumentation_calls_missing')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('candidate-zip', 'candidate-evidence', 'android-sdk', 'java-home', 'ndk', 'out-dir'):
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--abi', choices=('arm64-v8a', 'x86_64'), required=True)
+    parser.add_argument('--diagnostic-keystore', type=Path, help='Optional existing private build/ managedprobe key; no uninstall or data clearing')
     parser.add_argument('--build-tools', default='37.0.0')
     parser.add_argument('--platform', default='android-37.0')
     args = parser.parse_args()
@@ -125,6 +143,8 @@ def main():
                    re.fullmatch(r'android-\d+(?:\.\d+)?', args.platform), 'sdk_version_invalid')
     build = common.workspace_directory('build')
     out = common.fresh_work_directory(args.out_dir, build)
+    existing_key = diagnostic_key_input(args.diagnostic_keystore, build)
+    existing_key_id = common.file_identity(existing_key) if existing_key is not None else None
     candidate = args.candidate_zip.resolve(strict=True)
     evidence = args.candidate_evidence.resolve(strict=True)
     common.require(candidate.is_file() and evidence.is_file() and candidate.is_relative_to(ROOT) and
@@ -168,6 +188,8 @@ def main():
             output = common.run_tool([tools['javap'], '-private', '-s', '-classpath', inputs / 'classes.jar', owner],
                                      out, operations, 'javap-' + klass)
             native_expected[owner] = native_descriptors(output)
+        common.require(native_expected[JAVA_PACKAGE + 'NativeMemoryLease'].get('nativeTransfer') == '(JJJJI)I',
+                       'copy_to_native_declaration_missing')
         symbols = common.run_tool([tools['readelf'], '--dyn-syms', '--wide', inputs / 'libmgmem_pressure_jni.so'],
                                   out, operations, 'jni-symbols')
         expected_exports = {common.JAVA_PREFIX + klass + '_' + method
@@ -195,6 +217,8 @@ def main():
                        'shrink_witness_not_removed')
         dumped = common.run_tool([tools['dexdump'], '-f', dex_file], out, operations, 'dexdump')
         validate_dex(dumped, native_expected)
+        code_dump = common.run_tool([tools['dexdump'], '-d', dex_file], out, operations, 'dexdump-copy-calls')
+        validate_copy_calls(code_dump)
         common.require("Class descriptor  : 'L" + INSTRUMENT.replace('.', '/') + ";'" in dumped,
                        'instrumentation_not_retained')
         unsigned = out / 'unsigned.apk'
@@ -206,10 +230,11 @@ def main():
             package.writestr('lib/' + args.abi + '/libmgmem_pressure_jni.so', jni)
         aligned = out / 'aligned.apk'
         common.run_tool([tools['zipalign'], '-P', '16', '-f', '4', unsigned, aligned], out, operations, 'zipalign')
-        key = out / 'diagnostic.keystore'
-        common.run_tool([tools['keytool'], '-genkeypair', '-keystore', key, '-storepass', 'android', '-keypass', 'android',
-                         '-alias', 'managedprobe', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '3650',
-                         '-dname', 'CN=MeguvizMemory Managed Probe,O=MeguvizMemory', '-noprompt'], out, operations, 'diagnostic-key')
+        key = existing_key if existing_key is not None else out / 'diagnostic.keystore'
+        if existing_key is None:
+            common.run_tool([tools['keytool'], '-genkeypair', '-keystore', key, '-storepass', 'android', '-keypass', 'android',
+                             '-alias', 'managedprobe', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '3650',
+                             '-dname', 'CN=MeguvizMemory Managed Probe,O=MeguvizMemory', '-noprompt'], out, operations, 'diagnostic-key')
         apk = out / 'Managed-Probe.apk'
         common.run_tool([tools['java'], '-jar', tools['apksigner'], 'sign', '--ks', key, '--ks-pass', 'pass:android',
                          '--key-pass', 'pass:android', '--ks-key-alias', 'managedprobe', '--out', apk, aligned],
@@ -238,10 +263,12 @@ def main():
                        bounded_file(evidence, MAX_EVIDENCE) == evidence_bytes and
                        all(common.file_identity(path) == tool_ids[name] for name, path in tools.items()) and
                        all(common.file_identity(path)['sha256'] == source_ids[path.name] for path in sources), 'build_inputs_changed')
+        common.require(existing_key is None or common.file_identity(existing_key) == existing_key_id, 'diagnostic_key_changed')
         common.verify_tool_log_integrity(out, operations)
         receipt = {'schema_version': 1, 'state': 'PASS_R8_BUILD_ONLY_NOT_DEVICE_EXECUTION',
                    'scope': 'ISOLATED_MANAGED_DIAGNOSTIC_NOT_PRODUCTION_APK', 'device_executed': False,
                    'package_name': PACKAGE, 'instrumentation': INSTRUMENT, 'abi': args.abi,
+                   'probe_scopes': list(managed_round.PROBE_SCOPES), 'diagnostic_key_reused': existing_key is not None,
                    'apk_sha256': digest(apk.read_bytes()), 'apk_bytes': apk.stat().st_size,
                    'certificate_sha256': certs[0].lower(), 'candidate_sha256': digest(candidate_bytes),
                    'candidate_source_commit': record['source_commit'], 'signing': 'PRIVATE_DIAGNOSTIC_ONLY',
@@ -250,6 +277,7 @@ def main():
                    'source_sha256': source_ids, 'tools': tool_ids,
                    'r8_evidence': {'dex_sha256': digest(dex_file.read_bytes()), 'instrumentation_retained': True,
                                    'managed_native_signatures_retained': True, 'native_method_count': len(expected_exports),
+                                   'copy_to_native_signature': '(JJJJI)I', 'copy_to_calls_retained': True,
                                    'shrink_witness_removed': True, 'device_execution': 'NOT_RUN'},
                    'apk_manifest_readback': 'PASS_PACKAGE_INSTRUMENTATION_TARGET_AND_SDK',
                    'operations': operations,

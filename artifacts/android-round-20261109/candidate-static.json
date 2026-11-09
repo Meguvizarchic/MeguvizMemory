@@ -1,0 +1,86 @@
+{
+  "state": "PASS_STATIC_POSTCHECK_NOT_DEVICE",
+  "candidate_sha256": "7fe27be15cf7a12469959a3283c3fb9cd7e2aa2d78941b570ec0a08e48b451bd",
+  "source_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "source_record_count": 392,
+  "jni_copyTo_public_signature_present": true,
+  "jni_nativeTransfer_signature_present": true,
+  "arm64_capability_codegen_constant": 511,
+  "arm64_capability_scope": "STATIC_DISASSEMBLY_NOT_RUNTIME_OBSERVATION",
+  "profiles": {
+    "arm64-v8a": {
+      "same_sdk_aar_core": true,
+      "same_sdk_aar_jni": true,
+      "classes_jar_sha256": "27469fae76f7fe27f17548f7475b9d039bc9c62c1cc85ebbf648d49403fc0d44",
+      "jni_native_declarations": 38,
+      "required_defined_symbols": {
+        "core": [
+          "mgmem_import_external_arena_v1",
+          "mgmem_import_external_arena_checked_v1"
+        ],
+        "jni": [
+          "Java_io_github_jichuo1_meguviz_memory_android_NativeMemoryLease_nativeTransfer"
+        ]
+      },
+      "core_sha256": "5d777c44fe3a094ca6c8062680054e980e44981865b22a438514c23bcd38dee8",
+      "jni_sha256": "caca5bff653ff4d4a4bed067362669219f527ca77fb295eacdfe1f04be8bacdb",
+      "core_cmake_consumer": "PASS",
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "armeabi-v7a": {
+      "same_sdk_aar_core": true,
+      "same_sdk_aar_jni": true,
+      "classes_jar_sha256": "27469fae76f7fe27f17548f7475b9d039bc9c62c1cc85ebbf648d49403fc0d44",
+      "jni_native_declarations": 38,
+      "required_defined_symbols": {
+        "core": [
+          "mgmem_import_external_arena_v1",
+          "mgmem_import_external_arena_checked_v1"
+        ],
+        "jni": [
+          "Java_io_github_jichuo1_meguviz_memory_android_NativeMemoryLease_nativeTransfer"
+        ]
+      },
+      "core_sha256": "66fbab0ecc34371b024d74956c6637301433dd3fb4d5a58edc107082386144fc",
+      "jni_sha256": "84eea7debe32b8f3c7eff36d38c9ddd3a9a1413686f03abfe24aee4e7dcf561d",
+      "core_cmake_consumer": "PASS",
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "x86_64": {
+      "same_sdk_aar_core": true,
+      "same_sdk_aar_jni": true,
+      "classes_jar_sha256": "27469fae76f7fe27f17548f7475b9d039bc9c62c1cc85ebbf648d49403fc0d44",
+      "jni_native_declarations": 38,
+      "required_defined_symbols": {
+        "core": [
+          "mgmem_import_external_arena_v1",
+          "mgmem_import_external_arena_checked_v1"
+        ],
+        "jni": [
+          "Java_io_github_jichuo1_meguviz_memory_android_NativeMemoryLease_nativeTransfer"
+        ]
+      },
+      "core_sha256": "a6364d500bd4f1356b8bac91b94e88d78194b5743f9233dd7040189fa7a93ca6",
+      "jni_sha256": "3765bd20e1ff2fe51b7a6e964399d2eb8380245f761482e23e1e3c4fa257c5e3",
+      "core_cmake_consumer": "PASS",
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    }
+  },
+  "operations_recorded": 148,
+  "limits": [
+    "Static packaging, symbol and source checks do not establish Android ART, R8 runtime, device, 16KiB loader, MTE or performance.",
+    "Tool hashes and source identities are local integrity records, not signed build provenance."
+  ]
+}

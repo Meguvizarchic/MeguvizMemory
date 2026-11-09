@@ -11,6 +11,22 @@ import build_android_managed_probe as subject
 
 
 class ManagedProbeBuilderTests(unittest.TestCase):
+    def test_copy_invocations_and_private_diagnostic_key(self):
+        descriptor = 'L' + subject.INSTRUMENT.replace('.', '/') + ';'
+        dump = "Class #0 -\nClass descriptor  : '" + descriptor + "'\n" + (
+            'invoke-virtual {v1}, Lowner;.copyTo:(Lowner;JJI)V\n' * 3)
+        subject.validate_copy_calls(dump)
+        with self.assertRaisesRegex(ValueError, 'copy_to_instrumentation_calls_missing'):
+            subject.validate_copy_calls(dump.replace('invoke-virtual', 'no-invocation'))
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); private = root / 'build'; private.mkdir()
+            key = private / 'diagnostic.keystore'; key.write_bytes(b'private diagnostic fixture')
+            self.assertEqual(subject.diagnostic_key_input(key, private), key.resolve())
+            self.assertIsNone(subject.diagnostic_key_input(None, private))
+            outside = root / 'outside.keystore'; outside.write_bytes(b'fixture')
+            with self.assertRaisesRegex(ValueError, 'diagnostic_key_must_remain_private_build_file'):
+                subject.diagnostic_key_input(outside, private)
+
     def test_javap_descriptors_are_required_and_unique(self):
         text = ('  private static native long nativeCreate(boolean, long);\n'
                 '    descriptor: (ZJ)J\n'

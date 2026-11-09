@@ -87,6 +87,8 @@ jobs:
         run: python tools/test_build_pressure_abi.py
       - name: Android candidate offline safety contracts
         run: python tools/test_build_android_candidate.py
+      - name: Universal Android AAR merge contracts
+        run: python tools/test_merge_android_candidate_aar.py
       - name: Host candidate offline safety contracts
         run: python tools/test_build_host_candidate.py
       - name: Linux candidate CI runner offline contracts

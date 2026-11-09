@@ -1,0 +1,7 @@
+{
+  "state": "INCOMPLETE",
+  "benchmark_samples": 0,
+  "reason": "ADB_PUSH_PROGRESS_STDERR_REJECTED_BEFORE_BENCHMARK",
+  "private_receipt_sha256": "df0602d4ae1f09d773bd00f95e9fce107bce1938e0294a6d55bbcdfa64d3ceb1",
+  "resolution": "New v2 controller retained the same workload matrix and verifies pushed file hashes; original attempt retained."
+}

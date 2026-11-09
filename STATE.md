@@ -2,6 +2,14 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## Android 新制品与真机验证（2026-11-09）
+
+已从固定 `bfd0e65` 生成包含 copyTo 与 Arena 查找优化的三 ABI 工程候选及通用 AAR。三 ABI 静态门禁通过；API33/arm64/4KiB 原生13命令（12正常、1预期隔离）与 R8 5case/1178检查通过。R8实测2个copyTo case、96次Arena同形申请、关闭后归零；0 cgroup样本仅表示未观察。通用AAR只取得同批成员继承，尚未由它单独构建运行APK。[候选与运行证据](artifacts/android-round-20261109/)、[快速接入](docs/ANDROID_QUICKSTART.md)。
+
+原生Arena配对48进程/24对完整保留。main同形1/4线程allocation批次P50配对比0.497/0.667；混合4线程存在一对5.540倍allocation与1.526倍workflow退化。tiny混合allocation四对均变慢，P50中位比1.057、P95比1.217。各scope不混池，不剔样，不作为产品或正式性能资格。首轮push进度stderr误判停在0样本暂存阶段，原记录保留。下一优化重点为mixed/tiny路径开销及多线程尾部，而非仅扩大有利负载。[全部配对结果](artifacts/android-round-20261109/arena-pairs.json)。
+
+多用户安装准入已区分全局已知包与实际安装，CRLF输出可解析，支持复用自有诊断签名；三轮安装前受阻记录保留，随后同签名更新数据保留。新制品未取得其他ABI运行、真实16KiB loader、MTE、长稳、真实系统压力或BIL资格。长期目标保持暂停。
+
 ## Arena 查找快路径（2026-11-09）
 
 代码提交 `c74bc39` 的 [Windows/Linux CI](artifacts/arena-lookup-20261109/ci-c74bc39.json) 均通过；该结论对应宿主构建与合同，不代表设备运行。

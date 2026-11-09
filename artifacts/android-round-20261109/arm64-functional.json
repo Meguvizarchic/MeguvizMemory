@@ -1,0 +1,48 @@
+{
+  "state": "PASS_INDEPENDENT_OFFLINE_POSTCHECK_OF_ARM64_RECEIPT",
+  "scope": "CURRENT_CANDIDATE_CORE_FIRST_FIT_ARENA_IMPORT_AND_INDEPENDENT_DEX_FUNCTIONAL_ONLY",
+  "source_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "device_profile": {
+    "api": 33,
+    "abi": "arm64-v8a",
+    "page_bytes": 4096
+  },
+  "commands_checked": 13,
+  "normal_commands": 12,
+  "quarantine_commands": 1,
+  "checks": {
+    "core_groups": 11,
+    "core_assertions": 145033,
+    "first_fit_tests": 2,
+    "first_fit_assertions": 177,
+    "cpp_cases": 5,
+    "import_legacy_groups": 7,
+    "arena_import_groups": 5,
+    "import_assertions": 501,
+    "dex_direct_cases": 1,
+    "dex_arena_cases": 6
+  },
+  "postcheck": {
+    "unique_final_json_and_duplicate_keys": "PASS",
+    "test_exit_and_empty_stderr": "PASS",
+    "core_case_lines": "PASS",
+    "complete_dex_oracles_and_accounting": "PASS",
+    "source_binary_and_device_pre_post_hashes": "PASS",
+    "same_boot_and_observational_occupancy": "PASS"
+  },
+  "quarantine": {
+    "status": "PASS_EXPECTED_POISON_ISOLATION",
+    "normal_zero_reclamation": false,
+    "source_assertions": "checked release failure retains 64 bytes and claim, rejects retry/overlap, collect/drain report provider error, destroy stays busy; isolated process exits."
+  },
+  "private_receipt_sha256": "f502dca46cb0d9c505dc314f06a1a142962241a7b2b9af60434b5734a885e0d5",
+  "private_build_manifest_sha256": "3ee6ad809447b1882f6e510cf05c22c22588502346f07b8c28d7c2941a91265a",
+  "performance": "NOT_MEASURED",
+  "limits": [
+    "Offline independent readback of retained records, not a second device execution.",
+    "The intentional poison case is not successful reclamation or leak freedom.",
+    "Device occupancy is observational and not a shared lock.",
+    "File hashes and link checks are not signed provenance or mapped-page identity attestation.",
+    "No long-stability, actual 16 KB loader, MTE, product-performance or BIL qualification."
+  ]
+}

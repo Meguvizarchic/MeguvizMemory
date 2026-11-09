@@ -1,0 +1,88 @@
+{
+  "state": "PASS_INDEPENDENT_OFFLINE_POSTCHECK_OF_R8_ARM64_DEVICE_RECEIPT",
+  "scope": "CURRENT_CANDIDATE_R8_MANAGED_COPY_ARENA_WITH_SYNTHETIC_PRESSURE",
+  "candidate_source_commit": "bfd0e653276b0a0827f1abb81688435143047444",
+  "device_profile": {
+    "api": 33,
+    "abi": "arm64-v8a",
+    "page_bytes": 4096
+  },
+  "android_report": {
+    "suite": "android-managed-copy-arena-v1",
+    "status": "PASS",
+    "checks": 1178,
+    "case_count": 5,
+    "copy_to_cases": 2,
+    "arena_same_shape_allocations": 96,
+    "final_backing_bytes": 0,
+    "callback_origin": "synthetic",
+    "queued_implies_applied": false,
+    "performance_qualified": false
+  },
+  "static_r8": {
+    "native_methods": 38,
+    "native_transfer_signature": "(JJJJI)I",
+    "instrumentation_copyTo_invoke_sites": 4,
+    "shrink_witness_removed": true
+  },
+  "identity": {
+    "apk_sha256": "b924195b65704e8ed675d81030bf43b3edbf51b428f40374469aa4075c8c4460",
+    "aar_sha256": "e9d01d6d20468ddc71b57e8e9837e30f2c4db7737ab7be4413b3528edc3cc61a",
+    "core_sha256": "5d777c44fe3a094ca6c8062680054e980e44981865b22a438514c23bcd38dee8",
+    "jni_sha256": "caca5bff653ff4d4a4bed067362669219f527ca77fb295eacdfe1f04be8bacdb",
+    "certificate_sha256": "bb6242929d5104ce0f6fcbfaa232c97b3e732cbe4d617f630a3be089e872492d",
+    "private_device_receipt_sha256": "8e9c32419ce2780b464f8e418279d416fc440cc6129e2754af2df3d18dec26d1",
+    "private_build_receipt_sha256": "d2763fc986d3506c5fa7555a670dd3e147d560e7630786832c93d1fba74d84eb"
+  },
+  "postcheck": {
+    "frozen_files": 13,
+    "all_frozen_inputs_match": true,
+    "signed_apk_installed_and_postflight_bytes_match": true,
+    "same_signer_update_verified": true,
+    "native_sdk_aar_apk_bytes_match": true,
+    "all_operation_logs_match_hashes": true,
+    "scope_argument_plan_report_match": true,
+    "crlf_parser_equivalence": true,
+    "same_boot_and_user": true,
+    "own_test_process_and_instrumentation_not_observed_at_postflight": true
+  },
+  "multi_user_observation": {
+    "users_observed": 2,
+    "diagnostic_installed_users": 1,
+    "other_user_markers": "installed=false, stopped=true, notLaunched=true, ceDataInode=0",
+    "filesystem_empty_proven": false
+  },
+  "prior_attempts": [
+    {
+      "attempt": "a",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "same_package_present_for_other_user",
+      "installation_command_issued": false,
+      "instrumentation_started": false
+    },
+    {
+      "attempt": "b",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "initial_other_test_or_own_process_present",
+      "installation_command_issued": false,
+      "instrumentation_started": false
+    },
+    {
+      "attempt": "c",
+      "state": "INCOMPLETE_OR_BLOCKED",
+      "reason": "package_user_state_unparseable",
+      "installation_command_issued": false,
+      "instrumentation_started": false
+    }
+  ],
+  "freezer_observation": "NOT_OBSERVED",
+  "cgroup_samples": 0,
+  "performance": "NOT_MEASURED",
+  "limits": [
+    "Offline readback of retained records, not another device execution.",
+    "Zero cgroup samples does not establish absence of freezing between observations.",
+    "Package-manager user markers are not forensic proof of an empty filesystem.",
+    "Occupancy and postflight absence are point observations, not a shared device lock or persistent process exclusion.",
+    "Only selected API33 arm64 4KB short synthetic workload; no long-stability, real system low-memory, product, 16KB, MTE or BIL qualification."
+  ]
+}

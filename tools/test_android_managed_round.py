@@ -59,6 +59,55 @@ def parsers():
         except runner.Blocked: pass
         else: raise AssertionError('ambiguous path accepted')
 
+def user_package_states():
+    installed = {'0': True, '999': False}
+    dump = ('Packages:\n  Package [' + runner.PACKAGE + '] (fixture):\n'
+            '    User 0: ceDataInode=32 installed=true stopped=true notLaunched=false\n'
+            '    User 999: ceDataInode=0 installed=false stopped=true notLaunched=true\n'
+            'Queries:\n    User 0:\n    User 999:\n')
+    result = runner.parse_package_user_states(dump, ['0', '999'], installed)
+    assert result == {'0': 'INSTALLED', '999': 'UNINSTALLED_EMPTY'}
+    raw_crlf = dump.replace('\n', '\r\n').encode('utf-8')
+    assert runner.parse_package_user_states(raw_crlf.decode('utf-8'), ['0', '999'], installed) == result
+    for change in (lambda x:x.replace('ceDataInode=0', 'ceDataInode=42'),
+                   lambda x:x.replace('installed=false stopped=true', 'installed=false stopped=false'),
+                   lambda x:x.replace('notLaunched=true', 'notLaunched=false')):
+        assert runner.parse_package_user_states(change(dump), ['0', '999'], installed)['999'] == 'RETAINED_OR_UNKNOWN'
+    for bad in (dump.replace('installed=false', 'installed=false installed=true'),
+                dump.replace('ceDataInode=0 ', ''), dump.replace('notLaunched=true', 'notLaunched=unknown'),
+                dump.replace('installed=false', 'installed=true'), dump.replace('User 999: ceDataInode=0', 'User 0: ceDataInode=0'),
+                dump.replace('Package [' + runner.PACKAGE, 'Package [other.package')):
+        for raw in (bad.encode('utf-8'), bad.replace('\n', '\r\n').encode('utf-8')):
+            try: runner.parse_package_user_states(raw.decode('utf-8'), ['0', '999'], installed)
+            except runner.Blocked: pass
+            else: raise AssertionError('uncertain per-user package state accepted')
+
+
+def feature_scope():
+    report = dict(PASS, suite=runner.COPY_REPORT_SUITE, checks=1200, case_count=5,
+                  copy_to_cases=2, arena_same_shape_allocations=96)
+    assert runner.parse_report(output(report), 0, 'copy-arena-v1') == report
+    reject(output(report))
+    for changed in (dict(report, copy_to_cases=True), dict(report, copy_to_cases=1),
+                    dict(report, arena_same_shape_allocations=95), dict(report, case_count=3),
+                    dict(report, checks=302), PASS):
+        try: runner.parse_report(output(changed), 0, 'copy-arena-v1')
+        except runner.Blocked: pass
+        else: raise AssertionError('new scope accepted incomplete coverage')
+    built = {'probe_scopes': ['pressure-v1', 'copy-arena-v1'], 'r8_evidence': {
+        'copy_to_native_signature': '(JJJJI)I', 'copy_to_calls_retained': True}}
+    runner.verify_feature_scope(built, 'copy-arena-v1')
+    try: runner.verify_feature_scope({}, 'copy-arena-v1')
+    except runner.Blocked: pass
+    else: raise AssertionError('new scope accepted old build')
+    command = runner.instrument_command('adb', 'fake-device', '0', 'copy-arena-v1')
+    assert command[-4:] == ['-e', 'probe_scope', 'copy-arena-v1', runner.COMPONENT]
+    assert '-e' not in runner.instrument_command('adb', 'fake-device', '0', 'pressure-v1')
+    try: runner.validate_plan({'probe_scope': 'copy-arena-v1'}, SimpleNamespace(probe_scope='pressure-v1'))
+    except runner.Blocked as error: assert str(error) == 'plan_probe_scope_mismatch'
+    else: raise AssertionError('plan scope replacement accepted')
+
+
 def atomic(work):
     target = work / 'atomic.json'; target.write_bytes(b'old')
     original = runner.os.replace; calls = []
@@ -111,6 +160,7 @@ class FakeDevice:
     other_busy = False
     installation_timeout = False
     other_user_package = False
+    other_user_state = 'installed'
     postflight_bad = False
     gate_block = False
     installed_before = None
@@ -133,6 +183,22 @@ class FakeDevice:
             return 0, 'Users:\n UserInfo{0:Owner:13} running\n UserInfo{10:Other:30}\n', ''
         if label == 'package-inventory-user' and self.other_user_package and '10' in parts:
             return 0, 'package:com.android.settings\npackage:' + runner.PACKAGE + '\n', ''
+        if label == 'installed-package-inventory-user':
+            present = self.installed_before is not None if '0' in parts else self.other_user_state == 'installed'
+            return 0, 'package:com.android.settings\n' + ('package:' + runner.PACKAGE + '\n' if present else ''), ''
+        if label == 'package-user-state':
+            current = 'true' if self.installed_before is not None else 'false'
+            data = '32' if self.installed_before is not None else '0'
+            launched = 'false' if self.installed_before is not None else 'true'
+            text = 'Packages:\n  Package [' + runner.PACKAGE + '] (fixture):\n'
+            text += '    User 0: ceDataInode=' + data + ' installed=' + current + ' stopped=true notLaunched=' + launched + '\n'
+            if self.other_user_package:
+                state = self.other_user_state
+                text += '    User 10: ceDataInode=' + ('32' if state in ('installed', 'retained') else '0')
+                text += ' installed=' + ('true' if state == 'installed' else 'false') + ' stopped=true'
+                if state != 'unknown': text += ' notLaunched=' + ('false' if state in ('installed', 'retained') else 'true')
+                text += '\n'
+            return 0, text + 'Queries:\n    User 0:\n', ''
         values = {
             'api': '33\n', 'abi': 'arm64-v8a\n', 'page': '4096\n',
             'boot-before': '12345678-1234-1234-1234-123456789abc\n',
@@ -160,8 +226,8 @@ class FakeDevice:
         return 0, values[label], ''
 
 
-def synthetic_run(work, frozen=False, timeout=False, fail=False, late_exit=False, other_busy=False, install_timeout=False, other_user=False, postflight_bad=False, gate_block=False, existing=None, bad_signer=False):
-    suffix = str(frozen) + str(timeout) + str(fail) + str(late_exit) + str(other_busy) + str(install_timeout) + str(other_user) + str(postflight_bad) + str(gate_block) + str(existing) + str(bad_signer)
+def synthetic_run(work, frozen=False, timeout=False, fail=False, late_exit=False, other_busy=False, install_timeout=False, other_user=False, postflight_bad=False, gate_block=False, existing=None, bad_signer=False, other_state='installed'):
+    suffix = str(frozen) + str(timeout) + str(fail) + str(late_exit) + str(other_busy) + str(install_timeout) + str(other_user) + str(postflight_bad) + str(gate_block) + str(existing) + str(bad_signer) + other_state
     serial = 'synthetic-device'; apk = work / ('apk-' + suffix); apk.write_bytes(b'synthetic-apk')
     plan_path = work / ('plan-' + suffix + '.json')
     plan = {'scope': 'SYNTHETIC_NO_DEVICE', 'apk_sha256': hashlib.sha256(apk.read_bytes()).hexdigest(),
@@ -175,6 +241,7 @@ def synthetic_run(work, frozen=False, timeout=False, fail=False, late_exit=False
                            private_dir=work / ('private-' + suffix))
     FakeDevice.calls = []; FakeDevice.sample_frozen = frozen; FakeDevice.expected_apk = apk.read_bytes()
     FakeDevice.other_busy = other_busy; FakeDevice.installation_timeout = install_timeout; FakeDevice.other_user_package = other_user
+    FakeDevice.other_user_state = other_state
     FakeDevice.postflight_bad = postflight_bad; FakeDevice.gate_block = gate_block
     FakeDevice.installed_before = (apk.read_bytes() if existing == 'same' else b'older-apk' if existing else None)
     clock = {'launched': False, 'start_seen': False}
@@ -207,7 +274,10 @@ def synthetic_run(work, frozen=False, timeout=False, fail=False, late_exit=False
     value = json.loads((args.out_dir / 'receipt.json').read_text(encoding='utf-8'))
     assert serial not in json.dumps(value)
     assert all('uninstall' not in ' '.join(parts) and 'clear' not in ' '.join(parts) for _, parts in FakeDevice.calls)
-    if bad_signer:
+    if other_user and other_state == 'unknown':
+        assert result == 2 and value['reason'] == 'package_user_state_unparseable'
+        assert not [x for x in FakeDevice.calls if x[0] == 'install-own-diagnostic']
+    elif bad_signer:
         assert result == 2 and value['reason'] == 'existing_package_signer_mismatch'
         assert not [x for x in FakeDevice.calls if x[0] == 'install-own-diagnostic']
     elif postflight_bad:
@@ -216,7 +286,7 @@ def synthetic_run(work, frozen=False, timeout=False, fail=False, late_exit=False
     elif gate_block:
         assert result == 2 and value['reason'] == 'before-install_other_test'
         assert not [x for x in FakeDevice.calls if x[0] == 'install-own-diagnostic']
-    elif other_user and existing != 'same':
+    elif other_user and other_state != 'empty' and existing != 'same':
         assert result == 2 and value['state'] == 'INCOMPLETE_OR_BLOCKED'
         assert value['reason'] == 'same_package_present_for_other_user' and value['other_user_package_present']
         assert not [x for x in FakeDevice.calls if x[0] == 'install-own-diagnostic']
@@ -388,14 +458,17 @@ def local_artifacts(work):
 def main():
     work = runner.ROOT / 'build' / ('managed-runner-offline-' + secrets.token_hex(8))
     work.mkdir(parents=True, exist_ok=False)
-    parsers(); atomic(work); local_artifacts(work); synthetic_run(work); synthetic_run(work, frozen=True); synthetic_run(work, timeout=True)
+    parsers(); user_package_states(); feature_scope(); atomic(work); local_artifacts(work); synthetic_run(work); synthetic_run(work, frozen=True); synthetic_run(work, timeout=True)
     synthetic_run(work, fail=True); synthetic_run(work, late_exit=True)
     synthetic_run(work, frozen=True, other_busy=True); synthetic_run(work, install_timeout=True)
     synthetic_run(work, other_user=True); synthetic_run(work, postflight_bad=True); synthetic_run(work, gate_block=True)
     synthetic_run(work, existing='same', other_user=True); synthetic_run(work, existing='different')
     synthetic_run(work, existing='different', bad_signer=True)
+    synthetic_run(work, existing='different', other_user=True, other_state='empty')
+    synthetic_run(work, existing='different', other_user=True, other_state='retained')
+    synthetic_run(work, existing='different', other_user=True, other_state='unknown')
     print(json.dumps({'state':'PASS_OFFLINE_SYNTHETIC_NO_DEVICE',
-        'coverage':['report', 'admission', 'atomic_receipt', 'private_plan_default_and_no_overwrite', 'shared_source_drift', 'artifact_identity', 'frozen_plan_hash', 'success', 'fail', 'freeze', 'timeout',
+        'coverage':['report', 'copy_arena_scope_and_markers', 'copy_arena_plan_and_dispatch', 'known_only_empty_other_user', 'retained_or_unknown_other_user_blocked', 'admission', 'atomic_receipt', 'private_plan_default_and_no_overwrite', 'shared_source_drift', 'artifact_identity', 'frozen_plan_hash', 'success', 'fail', 'freeze', 'timeout',
                     'late_exit', 'cross_user', 'install_unknown', 'postflight_drift', 'busy_before_install', 'same_signer_and_other_user_identity', 'no_remote_force_stop']}))
 
 if __name__ == '__main__': main()
