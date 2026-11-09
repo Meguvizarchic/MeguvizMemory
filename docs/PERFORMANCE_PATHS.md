@@ -8,7 +8,7 @@
 |---|---|---|
 | Arena 外部输入 | C 的 `mgmem_import_external_arena_v1` / checked 版本，或 C++ `domain::import_external_arena` | 同域预算计入完整输入与自有工作区；[DEX 示例](DEX_EXTERNAL_IMPORT.md)已完成安装版宿主完整查询 |
 | 已有 lease 间传输 | Java `source.copyTo(destination, sourceOffset, destinationOffset, count)` | 每次最多 1 MiB，目标必须可写，重叠按 memmove 处理；须部署配套 Java/JNI |
-| Arena 同形分配查找 | 普通 `allocate` 调用，无需新参数 | 域内保留 first-fit 语义，缓存仅减少重复找块；仍有域锁、metadata 和 provider 成本 |
+| Arena 同形及支配请求查找 | 普通 `allocate` 调用，无需新参数 | 域内保留 first-fit；尺寸与对齐均不小于提示请求时复用下界，仍有域锁、metadata 和 provider 成本 |
 
 ```java
 // source / destination 是已获得并由调用方持有的 ManagedMemoryDomain.Lease。
@@ -17,6 +17,15 @@ source.copyTo(destination, 0, 0, byteCount);
 ```
 
 关闭 domain 会停止新准入；已有 lease 延续到任务完成。请在合适的清理线程完成原有关闭确认，详见[托管域合同](ANDROID_MANAGED_DOMAIN.md)与[借用合同](ANDROID_NATIVE_BORROW.md)。Java/JNI 使用同批制品；旧 JNI 缺少 nativeTransfer 时不支持新方法。
+
+## 当前 mixed 优化与小负载限制
+
+已采用请求支配关系下的查找下界复用。首批独立八对中，main mixed 1/4 线程
+allocation P50 比为 0.6604/0.4951，workflow 比为 0.8966/0.7610；tiny fixed
+workflow 仍有 1.0268 倍、约 +10.55 ns/op 的配对代价。通知和 map 提示没有
+进入当前源码。1248 个进程的三批结果分别保留，不混池；新增真正单块的
+prepared-single profile，不把原有 2～4 块 tiny 当作单块。
+[采用决定与全部限制](ARENA_MIXED_OPTIMIZATION.md)。小负载收益仍未证实。
 
 ## 第一轮研究结论
 
@@ -50,7 +59,7 @@ source.copyTo(destination, 0, 0, byteCount);
 
 原始本机日志、工具身份和路径留在忽略目录；公开结果引用具体提交和工作负载。论文中的收益数字不作为本库实测数据。
 
-## 本轮结论：shape 调校否决，稳定登记引用保留实验
+## 历史结论（988ea2c）：shape 调校否决，稳定登记引用保留实验
 
 Android 本轮 tiny mixed 的 allocation P50 四对均变慢，应优先检查混合路径开销。现有 ARM64 代码生成在成功复用路径保留3条store，写入 valid、bytes、alignment、iterator 四个字段；当前不同shape成功时也会执行。这是现有策略的合法写入，不能仅凭指令数认定其解释了退化。
 

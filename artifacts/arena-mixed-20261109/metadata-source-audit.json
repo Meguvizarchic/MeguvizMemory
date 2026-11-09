@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "state": "PASS_SCOPED_STATIC_METADATA_HINT_REVIEW",
+  "base_commit": "988ea2c6bb14e4021af89e5995d1c331b9860696",
+  "new_build_test_perf_or_device_commands": 0,
+  "performance_qualified": false,
+  "source_sha256": "82e7a07f519d28b7171528f009332795cbc07d38ffc6f6505caa39ee944fe0e1",
+  "variants": {
+    "hint": {
+      "bytes": 41889,
+      "sha256": "7e99afc9ec6d4fab5cbeae4c5473d01be4a49ad105db524db2ad412ecf6e367c"
+    },
+    "dominance-hint": {
+      "bytes": 42064,
+      "sha256": "82e7a07f519d28b7171528f009332795cbc07d38ffc6f6505caa39ee944fe0e1"
+    }
+  },
+  "snapshot_checks": {
+    "hint_is_exact_four_emplace_transform_plus_comment_and_iterator_result": true,
+    "combined_is_exact_dominance_on_hint": true,
+    "combined_matches_current": true,
+    "manifest_matches_bytes_and_sha256": true,
+    "notification_gate_absent": true,
+    "other_production_changes": false
+  },
+  "invariants": {
+    "next_id_initializes_once_per_domain": true,
+    "next_id_only_increments_in_take_id": true,
+    "max_guard_prevents_wrap_and_reuse": true,
+    "all_new_ids_exceed_existing_keys_in_both_maps": true,
+    "failed_ids_may_leave_gaps_but_are_not_reused": true,
+    "arena_reset_does_not_reset_next_id": true,
+    "all_three_take_id_callers_hold_domain_mutex": true,
+    "arena_reuse_insertion_completes_before_unlock": true,
+    "new_owned_backing_placeholder_inserted_before_provider_unlock": true,
+    "external_import_placeholder_inserted_before_retain_unlock": true,
+    "lease_inserted_before_reader_writer_counts_and_publication": true,
+    "callbacks_still_use_existing_placeholder_find_after_relock": true,
+    "no_new_iterator_survives_callback_unlock": true,
+    "allocation_rollback_catch_and_backing_erase_unchanged": true,
+    "reservation_admission_and_counters_unchanged": true,
+    "public_abi_and_internal_layout_unchanged": true
+  },
+  "exception_and_duplicate_semantics": {
+    "bad_alloc_still_guarded_as_out_of_memory": true,
+    "failed_insertion_does_not_publish_owner_or_lease": true,
+    "consumed_id_on_failed_allocation_unchanged": true,
+    "lease_count_changes_remain_after_successful_insert": true,
+    "end_hint_is_correct_for_strictly_increasing_keys": true,
+    "incorrect_hint_would_still_use_standard_map_correctness": true,
+    "existing_equal_key_unreachable_under_generated_id_invariant": true,
+    "iterator_result_refers_to_same_inserted_allocation_as_prior_pair_first": true
+  },
+  "findings": [],
+  "limits": [
+    "Static source and snapshot audit only; no new runtime, build or performance evidence.",
+    "emplace_hint removes an avoidable ordered-key tree search; node allocation and deallocation remain.",
+    "Theoretical complexity and correct hints do not establish measured benefit for tiny maps or mixed workloads.",
+    "Existing concurrency and exception contracts were reviewed, not proven for every scheduler interleaving."
+  ]
+}

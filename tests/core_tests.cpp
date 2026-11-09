@@ -742,6 +742,62 @@ void test_arena_shape_retention_pending_mixed() {
     CHECK(provider.active.empty() && provider.deallocation_calls == 2 && provider.releases == 1);
 }
 
+void test_arena_first_fit_larger_bytes_lower_alignment() {
+    Provider provider;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 512, 256);
+    config.provider = &table;
+    auto *domain = create(config);
+    std::vector<mgmem_handle_v1> owners;
+    std::vector<mgmem_borrow_v1> views;
+    const auto take = [&](uint64_t bytes, uint64_t alignment) {
+        const auto owner = allocate(domain, bytes, alignment);
+        const auto view = borrow(domain, owner, bytes, MGMEM_READ);
+        owners.push_back(owner); views.push_back(view);
+        CHECK(reinterpret_cast<uintptr_t>(view.data) % alignment == 0);
+        return reinterpret_cast<uintptr_t>(view.data);
+    };
+    const auto first = take(160, 16);
+    const auto second = take(192, 64);
+    CHECK(take(64, 64) == second + 192);
+    // Larger bytes alone do not preserve the prefix proof: the earlier block
+    // was skipped for alignment and remains the first fit at lower alignment.
+    CHECK(take(80, 16) == first + 160);
+    CHECK(snapshot(domain).provider_allocation_count == 2);
+    for (const auto &view : views) CHECK(mgmem_borrow_release_v1(domain, view.lease) == MGMEM_OK);
+    for (const auto owner : owners) CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    close(domain);
+    CHECK(provider.active.empty() && provider.deallocation_calls == 2 && provider.releases == 1);
+}
+
+void test_arena_first_fit_smaller_bytes_higher_alignment() {
+    Provider provider;
+    auto table = provider.table();
+    auto config = options(MGMEM_ARENA, 768, 384);
+    config.provider = &table;
+    auto *domain = create(config);
+    std::vector<mgmem_handle_v1> owners;
+    std::vector<mgmem_borrow_v1> views;
+    const auto take = [&](uint64_t bytes, uint64_t alignment) {
+        const auto owner = allocate(domain, bytes, alignment);
+        const auto view = borrow(domain, owner, bytes, MGMEM_READ);
+        owners.push_back(owner); views.push_back(view);
+        CHECK(reinterpret_cast<uintptr_t>(view.data) % alignment == 0);
+        return reinterpret_cast<uintptr_t>(view.data);
+    };
+    const auto first = take(256, 128);
+    const auto second = take(160, 64);
+    CHECK(take(160, 64) == second + 192);
+    // Higher alignment alone does not preserve the prefix proof: the earlier
+    // block's remaining 128 bytes can satisfy this smaller request.
+    CHECK(take(128, 128) == first + 256);
+    CHECK(snapshot(domain).provider_allocation_count == 2);
+    for (const auto &view : views) CHECK(mgmem_borrow_release_v1(domain, view.lease) == MGMEM_OK);
+    for (const auto owner : owners) CHECK(mgmem_release_v1(domain, owner) == MGMEM_OK);
+    close(domain);
+    CHECK(provider.active.empty() && provider.deallocation_calls == 2 && provider.releases == 1);
+}
+
 void test_growth_peak_and_failure_atomicity() {
     auto *domain = create(options(MGMEM_SYSTEM, 192));
     const auto old_allocation = allocate(domain, 64);
@@ -875,7 +931,9 @@ int main(int argc, char **argv) {
         test_arena_shape_retention_mixed_and_reset();
         test_arena_shape_retention_end_and_budget();
         test_arena_shape_retention_pending_mixed();
-        std::printf("{\"suite\":\"mgmem-arena-shape-retention\",\"tests\":3,\"checks\":%u,\"status\":\"PASS\"}\n",
+        test_arena_first_fit_larger_bytes_lower_alignment();
+        test_arena_first_fit_smaller_bytes_higher_alignment();
+        std::printf("{\"suite\":\"mgmem-arena-shape-retention\",\"tests\":5,\"checks\":%u,\"status\":\"PASS\"}\n",
                     checks.load());
         return 0;
     }

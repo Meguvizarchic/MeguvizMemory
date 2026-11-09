@@ -103,3 +103,37 @@ fixed/mixed, one thread, 16 warmup rounds, 64 measured rounds and 4 balanced
 pairs (16 processes). Freeze final executable/library identities before
 running; retain all pairs and any capacity differences. These are new scopes,
 not additions to or replacements for previous observations.
+
+## Prepared single-chunk profile
+
+`--profile prepared-single` selects the independent
+`arena_lookup_prepared_single_v1` workload with fixed or mixed requests.
+It requires exactly 32 requests, one thread and a batch of 32. The original
+default profile, its argument defaults and fixed/mixed/phase work remain
+unchanged. The original tiny matrix of 128 requests uses two chunks for fixed
+requests and four for mixed requests on the recorded single-thread baseline;
+it must not be described as a single-chunk measurement.
+
+Each new single-chunk round has a 4096-byte domain budget. Before timing it
+allocates one 4096-byte region with guaranteed 64-byte alignment, releases its
+owner and resets the Arena. This lets all four mixed alignments reuse the
+same backing. No A-phase requests are seeded. Both the native executable and
+controller require exactly one provider publication before and after timed
+work, with peak backing exactly 4096 bytes. The byte oracle and final
+zero-resource close checks remain mandatory.
+
+Preparation, reset and the ready snapshot are excluded from the workflow
+clock, as is final close. This measures use of prepared storage, not
+preparation-plus-use cost or a cold first allocation. The profile name,
+preparation identity and per-round provider count are recorded explicitly.
+Do not pool it with the old tiny, default or phase-shift workloads.
+
+```text
+python tools/run_arena_lookup_pairs.py --exe <mgmem_arena_lookup> --baseline-runtime-dir <baseline> --candidate-runtime-dir <candidate> --out-dir build/<new-single-profile-directory> --profile prepared-single --shapes fixed mixed --threads 1 --allocations 32 --batch 32 --rounds 64 --warmup 16 --pairs 4
+```
+
+This proposed single-chunk matrix is 16 independent processes, separate from
+the 48-process main and 16-process original tiny scopes. Each process has
+2048 measured requests plus 512 warmup requests; preparation allocations do
+not enter the measured request count or byte checksum. These remain
+synthetic observations without confidence, Android or product qualification.

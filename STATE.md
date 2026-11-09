@@ -2,11 +2,25 @@
 
 最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
-## 稳定登记引用实验收尾（2026-11-09）
+## Arena mixed 优化与小负载限制（2026-11-09）
+
+已采用最小请求支配下界复用：尺寸与规范化对齐均不小于缓存请求时复用 first-fit 位置，
+不增加状态或修改公开 ABI。基线 `988ea2c`，选定核心 `c8be3d52…`。
+首批原八对 main mixed 1/4线程 allocation P50 比0.6604/0.4951，workflow比0.8966/0.7610，
+P50/P95均8/8改善；tiny fixed仍有workflow 1.0268倍、+10.55ns/op配对代价，小负载收益未证实。
+通知门控及两类map提示撤出，三批576/416/256进程独立审计并完整保留，不剔样或混池。
+新增独立prepared-single，计时前预备1个4096B@64块，前后provider=1；原tiny是2～4块。
+选定源码重新通过核心/JNI45/45、C++12/12、ASan45/45与arm64交叉构建/ELF静态门禁；
+本轮没有设备运行、Android新制品、BIL或正式性能资格，也没有所选版本的System性能实测。
+首轮ASan缺子进程运行库PATH导致的超时与修复后通过记录分别保留。
+[完整采用说明](docs/ARENA_MIXED_OPTIMIZATION.md) · [全部证据](artifacts/arena-mixed-20261109/decision.json)。
+长期目标在本轮范围之外继续保持暂停。
+
+## 历史稳定登记引用实验收尾（988ea2c，2026-11-09）
 
 本轮已完成独立审计与采用决定：两项缓存调校否决；稳定登记引用 v2 保留于
 `codex/claim-reference-experiment-20261109`（核心提交 `f9882d8`），不进入通用默认。
-主线核心继续保持 `d2b6aa3` 的字节，新增基准、first-fit 回归与 CI 功能回执。
+当时主线核心保持 `d2b6aa3` 的字节，新增基准、first-fit 回归与 CI 功能回执。
 host v1、host v2、arm64 v2 各 160 进程／80 对／20 组独立重算，全部轮次保留。
 逆序／打散释放有改善，但 arm64 Arena mixed 四线程 workflow 比 1.378（4/4 对变慢），
 tiny fixed 比 1.420；并发 mixed 存在峰值 backing 差异，不可将代价完全归因于索引指令。

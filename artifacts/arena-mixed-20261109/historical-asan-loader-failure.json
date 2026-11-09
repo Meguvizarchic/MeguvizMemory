@@ -1,0 +1,19 @@
+{
+  "scope": "FIRST_SCAN_NOTIFY_COMBINED_CANDIDATE_NOT_SELECTED_SOURCE",
+  "core_source_sha256": "dbd8889d3c1b629b4f7069e6aeac9b91fe11d4d4e3032d09759b174fdbe2a930",
+  "initial_failure": {
+    "state": "FAILED_LOADER_DEPENDENCY_NOT_CODE_EVIDENCE",
+    "loader_exit_hex": "0xc0000135",
+    "saved_receipt_sha256": "dd8942d03126e7ed356b26097c992577cc730bd19fe2cfdca845200e0ee32013",
+    "raw_timeout_log_sha256": "453ad51fac3fc47fa768e0ae19486aa52284d87799aba4b2120eaacf0a37f670",
+    "action": "Stopped only verified processes within this run directory; no tests or timing samples accepted from failed attempt."
+  },
+  "recovery": {
+    "reason": "Compiler ASan runtime directory was absent from child PATH.",
+    "scope": "CHILD_ENVIRONMENT_ONLY_NO_GLOBAL_SETTINGS_CHANGE",
+    "runtime_sha256": "d7cb4da3bac32d7d3af185be4703f90f7b46c329f35ba095a47b872bf0b92220",
+    "log_sha256": "671b16baea652869e8a94d6157c64a71a44d2d5193800a9cd82ef6adf60bfa5e",
+    "exit_code": 0
+  },
+  "later_selected_source_validation": "selected-host-validation.json"
+}

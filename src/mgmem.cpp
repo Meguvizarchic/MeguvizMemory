@@ -224,7 +224,7 @@ struct mgmem_domain {
     u64 import_count = 0;
     mgmem_provider_v1 provider{};
     std::list<Backing> backing;
-    // A lower bound for first-fit searches of one normalized request shape.
+    // A first-fit lower bound for requests with no smaller size or alignment.
     // Earlier blocks cannot regain space until reset or a pending publication.
     bool arena_search_valid = false;
     u64 arena_search_bytes = 0;
@@ -475,9 +475,11 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         u64 id = 0;
         if (!take_id(*domain, id)) return MGMEM_OVERFLOW;
         if (domain->mode == MGMEM_ARENA) {
-            const bool same_shape = domain->arena_search_valid &&
-                domain->arena_search_bytes == bytes && domain->arena_search_alignment == alignment;
-            auto candidate = same_shape ? domain->arena_search : domain->backing.begin();
+            // Power-of-two alignments are nested: a skipped block that cannot
+            // fit the cached request cannot fit this larger, stricter request.
+            const bool can_resume_search = domain->arena_search_valid &&
+                bytes >= domain->arena_search_bytes && alignment >= domain->arena_search_alignment;
+            auto candidate = can_resume_search ? domain->arena_search : domain->backing.begin();
             for (; candidate != domain->backing.end(); ++candidate) {
                 auto &backing = *candidate;
                 if (backing.external || backing.pending || backing.alignment < alignment) continue;

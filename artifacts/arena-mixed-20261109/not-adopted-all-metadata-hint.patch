@@ -1,0 +1,19 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -297,0 +298 @@
++    // IDs never recycle; callers insert metadata before releasing this lock.
+@@ -487 +488 @@
+-                auto insertion = domain->allocations.emplace(id,
++                auto insertion = domain->allocations.emplace_hint(domain->allocations.end(), id,
+@@ -489 +490 @@
+-                commit_allocation(*domain, insertion.first->second, bytes);
++                commit_allocation(*domain, insertion->second, bytes);
+@@ -518 +519 @@
+-            domain->allocations.emplace(id,
++            domain->allocations.emplace_hint(domain->allocations.end(), id,
+@@ -627 +628 @@
+-            domain->allocations.emplace(id,
++            domain->allocations.emplace_hint(domain->allocations.end(), id,
+@@ -788 +789 @@
+-        domain->leases.emplace(id, Lease{handle.id, access == MGMEM_WRITE});
++        domain->leases.emplace_hint(domain->leases.end(), id, Lease{handle.id, access == MGMEM_WRITE});

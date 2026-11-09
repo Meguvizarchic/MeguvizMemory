@@ -1,0 +1,108 @@
+{
+  "state": "PASS_ADOPTED_DOMINANCE_CONTRACTS_ASAN",
+  "performance_qualified": false,
+  "steps": [
+    {
+      "name": "dominance-configure",
+      "exit_code": 0,
+      "log_sha256": "98e41f818f248495b22da8f11b340b461b04d101dead7e8c3f734bbfd16f3270"
+    },
+    {
+      "name": "dominance-build",
+      "exit_code": 0,
+      "log_sha256": "20d1ac06be40d44912d4db96816cab4a2877bf51711057bfb4b3324a9016a43d"
+    },
+    {
+      "name": "core-configure",
+      "exit_code": 0,
+      "log_sha256": "a454171935a0e1e8ed44e40924c567d82791a2efdcb6e1ffa80d9d9d702ef61e"
+    },
+    {
+      "name": "core-build",
+      "exit_code": 0,
+      "log_sha256": "ddb6a17fea623c1217ae405f11acb319a718831eb5e1284ebc778b2be00ebc09"
+    },
+    {
+      "name": "core-ctest",
+      "exit_code": 0,
+      "log_sha256": "2039d9ef8579c6556b66df9177ef12cb6c83d9c5532b958844222edf8dc254e1"
+    },
+    {
+      "name": "cpp-configure",
+      "exit_code": 0,
+      "log_sha256": "b52055db19f60d0a466fb7adaec1ca213816171847baa0b5d4a871eb6d66925f"
+    },
+    {
+      "name": "cpp-build",
+      "exit_code": 0,
+      "log_sha256": "8373cc85fdbf1a0fd09fb1d76f4a1d7c201e0cb31c175eadf811deb0546b4d61"
+    },
+    {
+      "name": "cpp-ctest",
+      "exit_code": 0,
+      "log_sha256": "ea49e6d5771947ee2f74c61ba99a9ebcc0c429c900b02e50af5a6e0cce9ec462"
+    },
+    {
+      "name": "asan-configure",
+      "exit_code": 0,
+      "log_sha256": "aa125d658e828cff5629f64829505aa96d8c0547d2c68a4c5bf263a7d9f5e35b"
+    },
+    {
+      "name": "asan-build",
+      "exit_code": 0,
+      "log_sha256": "2d7f1a52dc8ffc1eb8cd6a4b648e99e33773910c6aa976b7d2d199a896640660"
+    },
+    {
+      "name": "asan-ctest",
+      "exit_code": 0,
+      "log_sha256": "1419f72ad9f879a1c92172d4bb171e1e848a9a938d6d9b793659a73b40ff500d"
+    }
+  ],
+  "variants": {
+    "dominance": {
+      "core_source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+      "library_sha256": "f0784f576d42999d6badb3bc954a5d360beff424c9969410f3acd0e1b02348f5",
+      "reports": [
+        {
+          "suite": "mgmem-core-v1",
+          "tests": 11,
+          "checks": 145033,
+          "status": "PASS"
+        },
+        {
+          "suite": "mgmem-arena-first-fit",
+          "tests": 2,
+          "checks": 177,
+          "status": "PASS"
+        },
+        {
+          "suite": "mgmem-arena-shape-retention",
+          "tests": 5,
+          "checks": 586,
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "source_sha256": {
+    "src/mgmem.cpp": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+    "tests/core_tests.cpp": "7a9265898997586ad00dafb65e0887d5847f07a3482cc8b20f3631ff80b5ed0e",
+    "CMakeLists.txt": "28268eb3253fde84aee0c0ce4007760e453d382c6d5c2c3a0d3df700e4a0e1b9",
+    "bench/arena_lookup.cpp": "d58770eb6c943d45a9077364c8a208ee7719ead4d58990ad3975c443871c6a17",
+    "tools/run_arena_lookup_pairs.py": "ffda2ce626925a8b0eb226eaf4baa3ad4fe7a8d01c027e0d1e3c9b23f9db38b9"
+  },
+  "scope": "SELECTED_DOMINANCE_SOURCE_HOST_VALIDATION_ONLY",
+  "core_ctest": {
+    "passed": 45,
+    "total": 45
+  },
+  "cpp_ctest": {
+    "passed": 12,
+    "total": 12
+  },
+  "asan_ctest": {
+    "passed": 45,
+    "total": 45
+  },
+  "private_receipt_sha256": "c79232bb08e610718f9d3603039355c13d8331ffbe175bf09d0162dae487cfef"
+}

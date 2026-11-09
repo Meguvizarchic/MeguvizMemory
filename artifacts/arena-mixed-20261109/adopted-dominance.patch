@@ -1,0 +1,14 @@
+--- a/src/mgmem.cpp
++++ b/src/mgmem.cpp
+@@ -227 +227 @@
+-    // A lower bound for first-fit searches of one normalized request shape.
++    // A first-fit lower bound for requests with no smaller size or alignment.
+@@ -478,3 +478,5 @@
+-            const bool same_shape = domain->arena_search_valid &&
+-                domain->arena_search_bytes == bytes && domain->arena_search_alignment == alignment;
+-            auto candidate = same_shape ? domain->arena_search : domain->backing.begin();
++            // Power-of-two alignments are nested: a skipped block that cannot
++            // fit the cached request cannot fit this larger, stricter request.
++            const bool can_resume_search = domain->arena_search_valid &&
++                bytes >= domain->arena_search_bytes && alignment >= domain->arena_search_alignment;
++            auto candidate = can_resume_search ? domain->arena_search : domain->backing.begin();

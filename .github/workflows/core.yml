@@ -206,6 +206,12 @@ jobs:
       - name: Arena phase functional pairs (Windows)
         if: runner.os == 'Windows'
         run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/Release/mgmem_arena_lookup.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/arena-lookup-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed phase --allocations 128 --rounds 2 --warmup 0
+      - name: Prepared single Arena functional pairs (Linux)
+        if: runner.os == 'Linux'
+        run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/mgmem_arena_lookup --baseline-runtime-dir install/host/lib --candidate-runtime-dir install/host/lib --out-dir build/arena-single-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed --profile prepared-single --allocations 32 --batch 32 --rounds 2 --warmup 0
+      - name: Prepared single Arena functional pairs (Windows)
+        if: runner.os == 'Windows'
+        run: python tools/run_arena_lookup_pairs.py --exe build/arena-lookup-ci/Release/mgmem_arena_lookup.exe --baseline-runtime-dir install/host/bin --candidate-runtime-dir install/host/bin --out-dir build/arena-single-smoke-ci --pairs 2 --threads 1 --shapes fixed mixed --profile prepared-single --allocations 32 --batch 32 --rounds 2 --warmup 0
       - name: Configure claim release benchmark
         run: cmake -S bench/claim_release -B build/claim-release-ci -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install/host
       - name: Build claim release benchmark
@@ -284,4 +290,5 @@ jobs:
             build/core/Testing/Temporary/LastTest.log
             build/capture-journal-ci/regression-receipt.json
             build/arena-lookup-smoke-ci/receipt.json
+            build/arena-single-smoke-ci/receipt.json
             build/claim-release-smoke-ci/receipt.json

@@ -1452,5 +1452,22 @@
     "host_v2_processes": 160,
     "arm64_v2_processes": 160,
     "long_term_goal": "REMAINS_PAUSED"
+  },
+  "arena_mixed_20261109": {
+    "state": "ADOPTED_MINIMAL_ARENA_DOMINANCE_WITH_RECORDED_TINY_COST",
+    "evidence": "artifacts/arena-mixed-20261109/decision.json",
+    "core_source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+    "base_commit": "988ea2c6bb14e4021af89e5995d1c331b9860696",
+    "host_core": "45_OF_45",
+    "host_cpp": "12_OF_12",
+    "host_asan": "45_OF_45",
+    "android": "CROSS_COMPILE_STATIC_ONLY",
+    "small_workflow_improvement": "NOT_PROVEN_RECORDED_TINY_FIXED_COST",
+    "processes_separate_rounds": [
+      576,
+      416,
+      256
+    ],
+    "performance_qualified": false
   }
 }

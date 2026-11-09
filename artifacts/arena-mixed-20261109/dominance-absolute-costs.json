@@ -1,0 +1,250 @@
+{
+  "state": "FIRST_ROUND_DOMINANCE_ONLY_PAIRED_ABSOLUTE_COSTS",
+  "source_report_sha256": "0421074f39e8e5c65f3f9cf1fb6e83de5a53370ec7ed5eb4b0c966a7aaefdf82",
+  "source_round_plan_sha256": "57f366cf9825b50b91c9202eb1614681b148edfce68472472c10a1b21d7bd0a7",
+  "performance_qualified": false,
+  "method": "Median of8per-pair(candidate-baseline)metricdeltas; not subtractionofindependentmedians. Original8pairs unchanged; no data from laterhinttrials included.",
+  "groups": {
+    "dominance-main-mixed-t1": {
+      "configuration": {
+        "pairs": 8,
+        "threads": 1,
+        "rounds": 6,
+        "warmup": 2,
+        "batch": 64,
+        "allocations": 4096,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ],
+        "shape": "mixed"
+      },
+      "metrics": {
+        "allocation_batch_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": -42.1875,
+          "all_paired_deltas_ns_per_op": [
+            -42.1875,
+            -43.75,
+            -45.3125,
+            -42.1875,
+            -39.0625,
+            -39.0625,
+            -42.1875,
+            -39.0625
+          ],
+          "median_paired_ratio": 0.6603639240506329,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": -68.75,
+          "all_paired_deltas_ns_per_op": [
+            -67.1875,
+            -68.75,
+            -71.875,
+            -87.5,
+            -68.75,
+            -64.0625,
+            -70.3125,
+            -65.625
+          ],
+          "median_paired_ratio": 0.6233883058470765,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "workflow_round_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": -38.3544921875,
+          "all_paired_deltas_ns_per_op": [
+            -38.8671875,
+            -39.16015625,
+            -44.6044921875,
+            -50.5126953125,
+            -36.279296875,
+            -37.841796875,
+            -33.740234375,
+            -33.984375
+          ],
+          "median_paired_ratio": 0.896581577228953,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "workflow_round_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": -36.04736328125,
+          "all_paired_deltas_ns_per_op": [
+            -31.201171875,
+            -52.880859375,
+            -45.166015625,
+            -50.732421875,
+            -33.837890625,
+            -38.2568359375,
+            -31.93359375,
+            -7.470703125
+          ],
+          "median_paired_ratio": 0.9038811152457786,
+          "pairs": 8,
+          "slower_pairs": 0
+        }
+      }
+    },
+    "dominance-main-mixed-t4": {
+      "configuration": {
+        "pairs": 8,
+        "threads": 4,
+        "rounds": 6,
+        "warmup": 2,
+        "batch": 64,
+        "allocations": 4096,
+        "shapes": [
+          "fixed",
+          "mixed",
+          "phase"
+        ],
+        "shape": "mixed"
+      },
+      "metrics": {
+        "allocation_batch_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": -200.0,
+          "all_paired_deltas_ns_per_op": [
+            -212.5,
+            -192.1875,
+            -195.3125,
+            -201.5625,
+            -209.375,
+            -198.4375,
+            -215.625,
+            -198.4375
+          ],
+          "median_paired_ratio": 0.49507484983349415,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": -167.1875,
+          "all_paired_deltas_ns_per_op": [
+            -95.3125,
+            -150.0,
+            -281.25,
+            -303.125,
+            -178.125,
+            -335.9375,
+            -156.25,
+            -146.875
+          ],
+          "median_paired_ratio": 0.8601601477194042,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "workflow_round_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": -158.9996337890625,
+          "all_paired_deltas_ns_per_op": [
+            -159.3017578125,
+            -153.7841796875,
+            -158.087158203125,
+            -158.697509765625,
+            -173.602294921875,
+            -166.61376953125,
+            -191.015625,
+            -154.443359375
+          ],
+          "median_paired_ratio": 0.7610066669093458,
+          "pairs": 8,
+          "slower_pairs": 0
+        },
+        "workflow_round_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": -155.145263671875,
+          "all_paired_deltas_ns_per_op": [
+            -151.458740234375,
+            -150.244140625,
+            -154.693603515625,
+            -155.45654296875,
+            -184.771728515625,
+            -188.592529296875,
+            -154.833984375,
+            -165.33203125
+          ],
+          "median_paired_ratio": 0.7728054396800974,
+          "pairs": 8,
+          "slower_pairs": 0
+        }
+      }
+    },
+    "dominance-tiny-fixed-t1": {
+      "configuration": {
+        "pairs": 8,
+        "threads": 1,
+        "rounds": 64,
+        "warmup": 16,
+        "batch": 64,
+        "allocations": 128,
+        "shape": "fixed"
+      },
+      "metrics": {
+        "allocation_batch_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": 10.15625,
+          "all_paired_deltas_ns_per_op": [
+            21.875,
+            1.5625,
+            -1.5625,
+            10.9375,
+            4.6875,
+            10.9375,
+            34.375,
+            9.375
+          ],
+          "median_paired_ratio": 1.136968085106383,
+          "pairs": 8,
+          "slower_pairs": 7
+        },
+        "allocation_batch_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": 30.46875,
+          "all_paired_deltas_ns_per_op": [
+            12.5,
+            67.1875,
+            -9.375,
+            32.8125,
+            15.625,
+            34.375,
+            28.125,
+            43.75
+          ],
+          "median_paired_ratio": 1.2713178294573644,
+          "pairs": 8,
+          "slower_pairs": 7
+        },
+        "workflow_round_ns_per_op_p50": {
+          "median_paired_delta_ns_per_op": 10.546875,
+          "all_paired_deltas_ns_per_op": [
+            22.65625,
+            19.53125,
+            -19.53125,
+            4.6875,
+            30.46875,
+            16.40625,
+            -3.90625,
+            3.90625
+          ],
+          "median_paired_ratio": 1.0267857142857144,
+          "pairs": 8,
+          "slower_pairs": 6
+        },
+        "workflow_round_ns_per_op_p95": {
+          "median_paired_delta_ns_per_op": 6.25,
+          "all_paired_deltas_ns_per_op": [
+            50.0,
+            100.78125,
+            -23.4375,
+            20.3125,
+            50.78125,
+            -38.28125,
+            -41.40625,
+            -7.8125
+          ],
+          "median_paired_ratio": 1.0120249574588769,
+          "pairs": 8,
+          "slower_pairs": 4
+        }
+      }
+    }
+  }
+}

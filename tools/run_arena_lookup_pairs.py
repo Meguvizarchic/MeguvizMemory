@@ -66,7 +66,9 @@ def runtimes(directory):
 
 
 def validate(native, shape, threads, args, staged):
-    workload = "arena_lookup_phase_shift_v1" if shape == "phase" else "arena_lookup_composite_v1"
+    single = getattr(args, "profile", "default") == "prepared-single"
+    workload = ("arena_lookup_prepared_single_v1" if single else
+                "arena_lookup_phase_shift_v1" if shape == "phase" else "arena_lookup_composite_v1")
     require(isinstance(native, dict) and native.get("schema_version") == 1 and
             native.get("workload") == workload and native.get("success") is True,
             "native_not_success")
@@ -85,6 +87,11 @@ def validate(native, shape, threads, args, staged):
                 native.get("phase_seed_alignment") == 8 and native.get("timed_phase_bytes") == 64 and
                 native.get("timed_phase_alignment") == 16 and native.get("phase_prepared_chunks") == prepared,
                 "phase_preparation_identity_mismatch")
+    if single:
+        require(shape in ("fixed", "mixed") and threads == 1 and args.allocations == 32 and args.batch == 32 and
+                native.get("profile") == "prepared-single" and native.get("prepared_chunks") == 1 and
+                native.get("preparation_alignment") == 64 and native.get("preparation_reset") is True,
+                "single_preparation_identity_mismatch")
     require(native.get("checksum") == per_round * args.rounds and
             native.get("completed_operations") == operations * args.rounds and
             native.get("final_resources") == "CLOSED_ZERO" and native.get("performance_qualified") is False,
@@ -98,12 +105,17 @@ def validate(native, shape, threads, args, staged):
                 type(row.get("workflow_ns")) is int and row["workflow_ns"] > 0 and
                 type(row.get("close_ns")) is int and row["close_ns"] >= 0 and
                 type(row.get("peak_backing_bytes")) is int and row["peak_backing_bytes"] > 0 and
-                type(row.get("provider_allocation_count")) is int and row["provider_allocation_count"] > 1,
+                type(row.get("provider_allocation_count")) is int and
+                (row["provider_allocation_count"] == 1 if single else row["provider_allocation_count"] > 1),
                 "round_result_mismatch")
         if shape == "phase":
             require(row.get("provider_allocation_count_before_timed") == prepared and
                     row["provider_allocation_count"] == prepared and row["peak_backing_bytes"] == prepared * 4096,
                     "provider_published_during_B_phase")
+        if single:
+            require(row.get("provider_allocation_count_before_timed") == 1 and
+                    row["peak_backing_bytes"] == 4096,
+                    "prepared_single_capacity_changed")
         values = row.get("allocation_batch_ns_per_op")
         require(isinstance(values, list) and
                 len(values) == threads * math.ceil(args.allocations / args.batch) and
@@ -134,6 +146,7 @@ def main():
     parser.add_argument("--pairs", type=int, default=4)
     parser.add_argument("--threads", type=int, nargs="+", default=[1, 4])
     parser.add_argument("--shapes", nargs="+", choices=("fixed", "mixed", "phase"), default=["fixed", "mixed"])
+    parser.add_argument("--profile", choices=("default", "prepared-single"), default="default")
     parser.add_argument("--allocations", type=int, default=4096)
     parser.add_argument("--batch", type=int, default=64)
     parser.add_argument("--rounds", type=int, default=6)
@@ -144,11 +157,14 @@ def main():
     require(len(set(args.shapes)) == len(args.shapes), "duplicate_shapes")
     require(args.threads and len(set(args.threads)) == len(args.threads) and
             all(1 <= count <= 16 for count in args.threads), "invalid_thread_counts")
-    require(128 <= args.allocations <= 65536 and
+    require((args.allocations == 32 if args.profile == "prepared-single" else 128 <= args.allocations <= 65536) and
             args.allocations * max(args.threads) <= 262144 and 1 <= args.batch <= 256 and
             2 <= args.rounds <= 64 and 0 <= args.warmup <= 16 and 1 <= args.timeout <= 600 and
             math.ceil(args.allocations / args.batch) * max(args.threads) * args.rounds <= 262144,
             "invalid_workload_bounds")
+    require(args.profile != "prepared-single" or
+            (args.threads == [1] and args.batch == 32 and all(shape in ("fixed", "mixed") for shape in args.shapes)),
+            "prepared_single_requires_fixed_or_mixed_32_requests_one_thread_batch32")
     executable = args.exe.resolve(strict=True)
     require(executable.is_file(), "executable_missing")
     libraries = {"baseline": runtimes(args.baseline_runtime_dir),
@@ -168,6 +184,8 @@ def main():
                "runs": [], "summaries": [], "failure": None}
     if args.shapes != ["fixed", "mixed"]:
         receipt["configuration"]["shapes"] = args.shapes
+    if args.profile != "default":
+        receipt["configuration"]["profile"] = args.profile
     save(output / "receipt.json", receipt)
     try:
         for shape in args.shapes:
@@ -197,6 +215,8 @@ def main():
                         command = [str(target), "--shape", shape, "--threads", str(threads),
                                    "--allocations", str(args.allocations), "--batch", str(args.batch),
                                    "--rounds", str(args.rounds), "--warmup", str(args.warmup)]
+                        if args.profile != "default":
+                            command.extend(("--profile", args.profile))
                         row = {"shape": shape, "threads": threads, "pair": pair, "position": position,
                                "variant": label, "state": "INCOMPLETE", "directory": directory.name}
                         receipt["runs"].append(row)

@@ -1,0 +1,94 @@
+{
+  "state": "PASS_ARM64_CROSS_COMPILE_ONLY",
+  "scope": "ADOPTED_DOMINANCE_ONLY_ARM64_CROSS_COMPILE_ONLY",
+  "core_source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "performance_qualified": false,
+  "device_executed": false,
+  "sdk_published": false,
+  "artifact_static_checks": {
+    "core": {
+      "bytes": 583112,
+      "sha256": "c0757bb5f92633d4ae0aeb684a525df07bf33984230e01cbc46b878d1c77c729",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "pie": false,
+      "rpath": false
+    },
+    "mgmem_claim_release": {
+      "bytes": 420384,
+      "sha256": "6612554bb1be422c579999d5c4ddb08cddf59f09241036a29295bfeab5174a0a",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_arena_lookup": {
+      "bytes": 410960,
+      "sha256": "d209f629e94a76f222bc366c0949db325dcfa5c70cb194995dd2568f0b9c4f54",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    },
+    "mgmem_core_tests": {
+      "bytes": 123256,
+      "sha256": "4c482a7fd7f0bf0c55e59d9da65192618387732daeb99f00b2c505a7a37f7b4a",
+      "class": 2,
+      "machine": 183,
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libmgmem.so"
+      ],
+      "pie": true,
+      "rpath": false
+    }
+  },
+  "core_flags_match_previous_android_profile": true,
+  "private_manifest_sha256": "c9a73ecdd7252b5e8f871a38351c1638bcfb1da348ac14189f30b2dec78e65bd",
+  "operations_log_sha256": "34288c12d8b8c7a5c1139829889994c0dbe7140f8af3ca9a7fea8276f741178b",
+  "limits": [
+    "No target executable was run; no ADB, device, APK, SDK archive or publication.",
+    "Only the selected dominance-only implementation was built; no map-hint or notification candidate is included.",
+    "ELF 16KiB LOAD alignment is static evidence, not an Android loader/device result.",
+    "Source closure and selected tool hashes are recorded; the full NDK sysroot is not exhaustively hashed."
+  ]
+}

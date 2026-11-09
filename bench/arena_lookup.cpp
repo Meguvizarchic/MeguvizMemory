@@ -28,6 +28,7 @@ constexpr u64 phase_seed_allocations = 64;
 struct Options {
     std::string shape = "fixed";
     u64 threads = 1, allocations = 4096, batch = 64, rounds = 6, warmup = 2;
+    bool prepared_single = false;
 };
 void check(mgmem_status status, const char *operation) {
     if (status != MGMEM_OK)
@@ -102,11 +103,24 @@ struct Round {
 Round run_round(const Options &options) {
     const u64 total = options.allocations * options.threads;
     mgmem_domain_options_v1 config{sizeof(config), MGMEM_ABI_MAJOR, MGMEM_ABI_MINOR,
-        0, MGMEM_ARENA, 0, total * 512 + chunk_bytes, chunk_bytes, nullptr};
+        0, MGMEM_ARENA, 0, options.prepared_single ? chunk_bytes : total * 512 + chunk_bytes,
+        chunk_bytes, nullptr};
     mgmem_domain *domain = nullptr;
     check(mgmem_domain_create_v1(&config, &domain), "create");
     u64 providers_before_timed = 0;
-    if (options.shape == "phase") {
+    if (options.prepared_single) {
+        mgmem_handle_v1 owner{};
+        check(mgmem_allocate_v1(domain, chunk_bytes, 64, &owner), "single_prepare");
+        check(mgmem_release_v1(domain, owner), "single_prepare_release");
+        check(mgmem_arena_reset_v1(domain), "single_prepare_reset");
+        mgmem_snapshot_v1 ready{};
+        check(mgmem_domain_snapshot_v1(domain, &ready, sizeof(ready)), "single_ready_snapshot");
+        if (ready.active_allocations || ready.active_leases || ready.live_bytes || ready.retiring_bytes ||
+                ready.reserved_bytes || ready.provider_allocation_count != 1 ||
+                ready.backing_bytes != chunk_bytes || ready.peak_backing_bytes != chunk_bytes)
+            throw std::runtime_error("single_preparation_resources_mismatch");
+        providers_before_timed = ready.provider_allocation_count;
+    } else if (options.shape == "phase") {
         // Prepare all B storage before timing. A's established shape cache then
         // has no provider publication during B that could invalidate its bias.
         const u64 prepared = (total * 64 + phase_seed_allocations * 32 + chunk_bytes - 1) / chunk_bytes;
@@ -228,6 +242,9 @@ Round run_round(const Options &options) {
     result.providers_before_timed = providers_before_timed;
     if (options.shape == "phase" && result.providers != providers_before_timed)
         throw std::runtime_error("provider_published_during_B_phase");
+    if (options.prepared_single && (providers_before_timed != 1 || result.providers != 1 ||
+            result.backing_peak != chunk_bytes))
+        throw std::runtime_error("prepared_single_capacity_changed");
     const auto closing = Clock::now();
     check(mgmem_domain_begin_close_v1(domain), "begin_close");
     check(mgmem_domain_collect_v1(domain), "collect");
@@ -259,14 +276,23 @@ int main(int argc, char **argv) {
             else if (key == "--batch") options.batch = number(value);
             else if (key == "--rounds") options.rounds = number(value);
             else if (key == "--warmup") options.warmup = number(value);
+            else if (key == "--profile") {
+                if (value != "default" && value != "prepared-single")
+                    throw std::runtime_error("unknown_profile");
+                options.prepared_single = value == "prepared-single";
+            }
             else throw std::runtime_error("unknown_option");
         }
         if ((options.shape != "fixed" && options.shape != "mixed" && options.shape != "phase") || !options.threads ||
-                options.threads > 16 || options.allocations < 128 || options.allocations > 65536 ||
+                options.threads > 16 || (!options.prepared_single && options.allocations < 128) ||
+                options.allocations > 65536 ||
                 options.allocations * options.threads > 262144 || !options.batch || options.batch > 256 ||
                 options.rounds < 2 || options.rounds > 64 || options.warmup > 16 ||
                 ((options.allocations + options.batch - 1) / options.batch) * options.threads * options.rounds > 262144)
             throw std::runtime_error("workload_out_of_bounds");
+        if (options.prepared_single && (options.shape == "phase" || options.threads != 1 ||
+                options.allocations != 32 || options.batch != 32))
+            throw std::runtime_error("prepared_single_requires_fixed_or_mixed_32_requests_one_thread_batch32");
         const auto module = module_path();
         for (u64 round = 0; round < options.warmup; ++round) (void)run_round(options);
         std::vector<Round> rounds;
@@ -282,7 +308,8 @@ int main(int argc, char **argv) {
         }
         const u64 operations = options.allocations * options.threads * options.rounds;
         std::cout << std::setprecision(15) << "{\"schema_version\":1,\"workload\":"
-            << quote(options.shape == "phase" ? "arena_lookup_phase_shift_v1" : "arena_lookup_composite_v1") << ','
+            << quote(options.prepared_single ? "arena_lookup_prepared_single_v1" :
+                options.shape == "phase" ? "arena_lookup_phase_shift_v1" : "arena_lookup_composite_v1") << ','
             << "\"success\":true,\"scope\":\"SYNTHETIC_SHARED_DOMAIN_API_NOT_PRODUCT\","
             << "\"runtime_module\":" << quote(module) << ",\"abi\":" << mgmem_abi_version_v1()
             << ",\"shape\":" << quote(options.shape) << ",\"threads\":" << options.threads
@@ -301,7 +328,7 @@ int main(int argc, char **argv) {
             std::cout << "{\"workflow_ns\":" << round.workflow_ns << ",\"close_ns\":" << round.close_ns
                 << ",\"completed_operations\":" << round.completed << ",\"checksum\":" << round.checksum
                 << ",\"peak_backing_bytes\":" << round.backing_peak << ",\"provider_allocation_count\":" << round.providers;
-            if (options.shape == "phase")
+            if (options.shape == "phase" || options.prepared_single)
                 std::cout << ",\"provider_allocation_count_before_timed\":" << round.providers_before_timed;
             std::cout << ",\"allocation_batch_ns_per_op\":[";
             for (size_t sample = 0; sample < round.allocation_ns_per_op.size(); ++sample) {
@@ -315,6 +342,8 @@ int main(int argc, char **argv) {
             std::cout << ",\"phase_seed_allocations\":" << phase_seed_allocations
                 << ",\"phase_seed_bytes\":32,\"phase_seed_alignment\":8,\"timed_phase_bytes\":64,\"timed_phase_alignment\":16"
                 << ",\"phase_prepared_chunks\":" << (options.allocations * options.threads * 64 + phase_seed_allocations * 32 + chunk_bytes - 1) / chunk_bytes;
+        if (options.prepared_single)
+            std::cout << ",\"profile\":\"prepared-single\",\"prepared_chunks\":1,\"preparation_alignment\":64,\"preparation_reset\":true";
         std::cout << ",\"performance_qualified\":false}\n";
         return 0;
     } catch (const std::exception &error) {

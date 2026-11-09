@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-09",
+  "state": "ADOPTED_MINIMAL_ARENA_DOMINANCE_WITH_RECORDED_TINY_COST",
+  "performance_qualified": false,
+  "base_commit": "988ea2c6bb14e4021af89e5995d1c331b9860696",
+  "baseline_core_sha256": "744d596caa6f69aa587d40a5ec6d7717f62c66c83591d9ac69f00971662fc80a",
+  "selected_core_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe",
+  "selected_change": "Reuse cached first-fit lower bound only when both bytes and normalized alignment are no smaller; existing overwrites and invalidations remain.",
+  "adoption_reason": "Main mixed 1/4-thread workflow and both latency tails improved in all eight original paired observations. No new state, allocation, dependency or public ABI.",
+  "known_cost": {
+    "scope": "ROUND_1_DOMINANCE_TINY_FIXED",
+    "workflow_p50_paired_ratio": 1.0267857142857144,
+    "workflow_p50_paired_delta_ns_per_op": 10.546875,
+    "allocation_p50_paired_ratio_approx": 1.13697,
+    "allocation_p95_paired_ratio_approx": 1.2713,
+    "small_workflow_improvement": "NOT_PROVEN"
+  },
+  "selected_performance_evidence": "Only round-1 dominance-main/tiny/single: 160 processes, 80 pairs, 10 groups. Later candidate rounds are not pooled or inherited.",
+  "system_performance": "NO_DOMINANCE_ONLY_SYSTEM_PERFORMANCE_RUN; other System counter groups belong solely to their rejected candidates.",
+  "rounds": [
+    {
+      "name": "round-1",
+      "processes": 576,
+      "pairs": 288,
+      "groups": 42,
+      "summary": "round-1-summary.json",
+      "complete_report": "round-1-full.json.gz",
+      "plan_sha256": "57f366cf9825b50b91c9202eb1614681b148edfce68472472c10a1b21d7bd0a7"
+    },
+    {
+      "name": "round-2",
+      "processes": 416,
+      "pairs": 208,
+      "groups": 32,
+      "summary": "round-2-summary.json",
+      "complete_report": "round-2-full.json.gz",
+      "plan_sha256": "e882e530c6eda72e7c9d9031620147f4bf5d224568ed812c92e1ef463b269f7c"
+    },
+    {
+      "name": "round-3",
+      "processes": 256,
+      "pairs": 128,
+      "groups": 22,
+      "summary": "round-3-summary.json",
+      "complete_report": "round-3-full.json.gz",
+      "plan_sha256": "032e97264f977241d1d8a3903a52d7c69ff3ee749760c4345ed4386d136ac2d5"
+    }
+  ],
+  "total_processes": 1248,
+  "total_pairs": 624,
+  "total_groups": 96,
+  "sources": {
+    "adopted-dominance": {
+      "patch": "adopted-dominance.patch",
+      "core_source_sha256": "c8be3d52cbfbb7dc724322859e02e5ccdb6ff4481101e6532f25b04a763881fe"
+    },
+    "not-adopted-notify": {
+      "patch": "not-adopted-notify.patch",
+      "core_source_sha256": "9d37253686cf78ee7251515395f7106b9e8723d88c0b520729086d59fad4f1f5"
+    },
+    "not-adopted-scan-notify": {
+      "patch": "not-adopted-scan-notify.patch",
+      "core_source_sha256": "dbd8889d3c1b629b4f7069e6aeac9b91fe11d4d4e3032d09759b174fdbe2a930"
+    },
+    "not-adopted-all-metadata-hint": {
+      "patch": "not-adopted-all-metadata-hint.patch",
+      "core_source_sha256": "7e99afc9ec6d4fab5cbeae4c5473d01be4a49ad105db524db2ad412ecf6e367c"
+    },
+    "not-adopted-scan-all-metadata-hint": {
+      "patch": "not-adopted-scan-all-metadata-hint.patch",
+      "core_source_sha256": "82e7a07f519d28b7171528f009332795cbc07d38ffc6f6505caa39ee944fe0e1"
+    },
+    "not-adopted-scan-allocation-hint": {
+      "patch": "not-adopted-scan-allocation-hint.patch",
+      "core_source_sha256": "00434bbc4093965b07054a553ecc72c2dc3727ffdb3064f782b39a976d8ac5b6"
+    }
+  },
+  "patch_application": "git apply --unidiff-zero <patch> against the baseline core; these source snapshots are preserved independently of the current checkout.",
+  "rejected_variants": "OPEN notify gating, all map hints and allocation-only map hints remain experiments; no additional sampling, retries or excluded pairs.",
+  "new_profile": {
+    "name": "prepared-single",
+    "workload": "arena_lookup_prepared_single_v1",
+    "allocations": 32,
+    "threads": 1,
+    "batch": 32,
+    "prepared_bytes": 4096,
+    "prepared_alignment": 64,
+    "provider_before_and_after": 1,
+    "preparation_and_close_in_workflow": false
+  },
+  "qualification": {
+    "host_core": "45_OF_45",
+    "host_cpp": "12_OF_12",
+    "host_asan": "45_OF_45",
+    "android": "ARM64_CROSS_COMPILE_AND_ELF_STATIC_ONLY",
+    "device_commands": 0,
+    "new_android_sdk_aar_apk": false,
+    "bil_changed": false,
+    "formal_release": "NOT_PERFORMED",
+    "long_term_goal": "REMAINS_PAUSED_OUTSIDE_THIS_ROUND"
+  },
+  "limits": [
+    "Synthetic Windows x64 observations only; CPU/affinity/other activity and thread scheduling uncontrolled.",
+    "Concurrent mixed peak backing differs and is preserved; no same-memory-cost or RSS/energy claim.",
+    "P50/P95 are batch/round statistics, not individual API latency; close and profile preparation are excluded from Arena workflow.",
+    "Every report was frozen and audited before selecting the current source; archived snapshots preserve historical source hashes.",
+    "ASan is not TSan, leak freedom or all-interleavings proof; 16KiB ELF alignment is not loader/runtime validation."
+  ],
+  "files": {
+    "round-1-full.json.gz": {
+      "bytes": 223964,
+      "sha256": "51593dbead7ba4f30c12e8dd2e9396885f64cad30b8feaf8bd88a5cdc99e54e4",
+      "uncompressed_bytes": 3378326,
+      "uncompressed_sha256": "0421074f39e8e5c65f3f9cf1fb6e83de5a53370ec7ed5eb4b0c966a7aaefdf82"
+    },
+    "round-1-summary.json": {
+      "bytes": 1189847,
+      "sha256": "7dcbe1c7518b693331757f27f34df17cf78b27d98d205d476e4a6c83f2941132"
+    },
+    "round-2-full.json.gz": {
+      "bytes": 170000,
+      "sha256": "40faca589ba0fa31458651fe1bc811a80b1a17db0d53a57dd9c60fc4229d8048",
+      "uncompressed_bytes": 2517136,
+      "uncompressed_sha256": "2f1652fbd2e331eee9d28e688e3672bc7b8ab6b4a017facc3bc096c2ad5e9e50"
+    },
+    "round-2-summary.json": {
+      "bytes": 945835,
+      "sha256": "73db90c3dd27668db2f35f8b60c4da649fb88a757de21bfdd931d399b3f98ce2"
+    },
+    "round-3-full.json.gz": {
+      "bytes": 121952,
+      "sha256": "2fd9d935f1483a09d49dacee553eabfe7fca7522559a9b7921235c564a4dd189",
+      "uncompressed_bytes": 1653094,
+      "uncompressed_sha256": "3443c34773a671ea6224e457772f5c998ab7307333e7977f3bcbc6a38ee48ffa"
+    },
+    "round-3-summary.json": {
+      "bytes": 702139,
+      "sha256": "392f9b06594f239d165dadf01991574ea3fb169257d05b8d262cd9e06582a3b8"
+    },
+    "round-1-advice.json": {
+      "bytes": 231004,
+      "sha256": "a9dda492fc1968fec26901e081921bf2f75c88eac21b2f616a742b5c18f62260"
+    },
+    "round-2-advice.json": {
+      "bytes": 554654,
+      "sha256": "f860c493ea896f2f181e4f6a3ae0b8e934354a08ab69e70b71eeac8f81ca8199"
+    },
+    "round-3-advice.json": {
+      "bytes": 671109,
+      "sha256": "54da85d3edcace6c3faf05560c837e4aa69691aaabe51d51a4e4836b20a872d1"
+    },
+    "dominance-absolute-costs.json": {
+      "bytes": 6895,
+      "sha256": "338466cd78c65699e7d50eb5061f99188a381196092ded452c79da25e18270fe"
+    },
+    "scan-notify-source-audit.json": {
+      "bytes": 3364,
+      "sha256": "9b421c3b9f16a7372c6bf1ce1ef8260c506ca371fe2a3455577e5f97adfb0430"
+    },
+    "metadata-source-audit.json": {
+      "bytes": 2915,
+      "sha256": "4d48d3833a6abc63089565bfd6bde46bd871a06512c74c1470c9013e47314b9c"
+    },
+    "adopted-dominance.patch": {
+      "bytes": 927,
+      "sha256": "dad879e8e7862109c424fbed6bf1901809a3fc4a37c54b0aed523b35a3fe57dd"
+    },
+    "not-adopted-notify.patch": {
+      "bytes": 514,
+      "sha256": "1f149fc95329c6aed0e7d23398c63148a71fcaa9532f63f68d3cebda1e5e37b3"
+    },
+    "not-adopted-scan-notify.patch": {
+      "bytes": 1401,
+      "sha256": "a198cbe5ecf38605448468d4f75e58cb199f5f6fc5d68aad5b9e0af4055a6bf1"
+    },
+    "not-adopted-all-metadata-hint.patch": {
+      "bytes": 956,
+      "sha256": "8e30650ad7f5de9c0cceebecb41fd31f0614b5b8a89821d5b9959fc5b1630bc4"
+    },
+    "not-adopted-scan-all-metadata-hint.patch": {
+      "bytes": 1843,
+      "sha256": "19e578593c14e44d3265448e076b209f76f26a2f01f8c09b295e0c557aafa183"
+    },
+    "not-adopted-scan-allocation-hint.patch": {
+      "bytes": 1644,
+      "sha256": "6e8fd08b7cecb45b152db48bb8728524b85c15427e891f79bbb8c07dd3ff0402"
+    },
+    "selected-host-validation.json": {
+      "bytes": 3290,
+      "sha256": "75574fa95bff466d17003d420cf42af094b4e3bb63d66f240cc11710dbe157c6"
+    },
+    "selected-arm64-static.json": {
+      "bytes": 2587,
+      "sha256": "3f97c7e87567e4909bd4bd3aee5f2fb16eb664faf9df2abd832a453f6b0d88e6"
+    },
+    "historical-asan-loader-failure.json": {
+      "bytes": 1045,
+      "sha256": "e18246ecb83cecd5f29cad0708e9393f43a08f72a0234676e0c232f3fb9b389e"
+    }
+  }
+}
