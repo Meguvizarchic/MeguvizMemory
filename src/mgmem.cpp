@@ -84,7 +84,17 @@ mgmem_status guarded(Function &&function) noexcept {
     }
 }
 
-struct RangeClaim { uintptr_t begin; uintptr_t end; u64 external_id; u64 token; bool releasing; };
+struct RangeClaim {
+    uintptr_t begin;
+    uintptr_t end;
+    u64 external_id;
+    u64 token;
+    bool releasing;
+    // External imports and custom-provider backings may return arbitrary
+    // addresses, so their claims must be checked against every live range.
+    // Default-allocator blocks cannot overlap one another.
+    bool foreign;
+};
 
 // Registry references belong to one explicit cleanup path. Destruction never
 // drops an uncertain claim retained by a poisoned domain.
@@ -345,7 +355,28 @@ using LeaseTable = HandleTable<Lease>;
 // void callback retains its historical provider-reuse behavior.
 std::mutex range_mutex;
 std::list<RangeClaim> range_claims;
+// Dropped nodes are spliced here and reused, so a steady allocate/release loop
+// performs no node allocation while range_mutex is held. The cap bounds idle
+// retention; beyond it the node is erased instead.
+std::list<RangeClaim> range_spares;
+constexpr size_t max_claim_spares = 256;
 u64 next_claim = 1;
+// Non-releasing foreign claims. When zero, every live claim is a default
+// allocator block, which cannot overlap another live default block; the only
+// possible overlap is with a releasing claim, which publish ignores anyway.
+u64 active_foreign_claims = 0;
+
+// Caller holds range_mutex. Reuses a spare node when one is available; the
+// returned node still carries stale field values and must be fully overwritten.
+std::list<RangeClaim>::iterator claim_node_acquire() {
+    if (range_spares.empty()) {
+        range_claims.emplace_back();
+        return std::prev(range_claims.end());
+    }
+    auto node = range_spares.begin();
+    range_claims.splice(range_claims.end(), range_spares, node);
+    return node;
+}
 
 mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &backing) noexcept {
     backing.claim_active = false;
@@ -362,23 +393,37 @@ mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &
         }
         if (next_claim == max_u64) return MGMEM_OVERFLOW;
         const u64 token = next_claim++;
-        range_claims.push_back({begin, end, external_id, token, false});
-        backing.claim_node = std::prev(range_claims.end());
+        backing.claim_node = claim_node_acquire();
+        auto &claim = *backing.claim_node;
+        claim.begin = begin;
+        claim.end = end;
+        claim.external_id = external_id;
+        claim.token = token;
+        claim.releasing = false;
+        claim.foreign = true;
+        ++active_foreign_claims;
         backing.claim_active = true;
         return MGMEM_OK;
     } catch (const std::bad_alloc &) { return MGMEM_OUT_OF_MEMORY; }
     catch (...) { return MGMEM_PROVIDER_ERROR; }
 }
 
-mgmem_status reserve_owned_claim(Backing &backing) noexcept {
+mgmem_status reserve_owned_claim(Backing &backing, bool foreign) noexcept {
     backing.claim_active = false;
     backing.claim_node = {};
     try {
         std::lock_guard<std::mutex> lock(range_mutex);
         if (next_claim == max_u64) return MGMEM_OVERFLOW;
         const u64 token = next_claim++;
-        range_claims.push_back({0, 0, 0, token, false});
-        backing.claim_node = std::prev(range_claims.end());
+        backing.claim_node = claim_node_acquire();
+        auto &claim = *backing.claim_node;
+        claim.begin = 0;
+        claim.end = 0;
+        claim.external_id = 0;
+        claim.token = token;
+        claim.releasing = false;
+        claim.foreign = foreign;
+        if (foreign) ++active_foreign_claims;
         backing.claim_active = true;
         return MGMEM_OK;
     } catch (const std::bad_alloc &) { return MGMEM_OUT_OF_MEMORY; }
@@ -397,8 +442,13 @@ mgmem_status publish_owned_claim(const Backing &backing, void *data, u64 bytes, 
         return MGMEM_PROVIDER_ERROR;
     }
     const auto own = backing.claim_node;
-    for (auto it = range_claims.begin(); it != range_claims.end(); ++it) {
-        if (it != own && !it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
+    // A default-allocator block cannot overlap another live default block, so
+    // with no foreign claim the scan can only find a releasing claim, which is
+    // skipped anyway. Custom providers and imports must still be checked.
+    if (own->foreign || active_foreign_claims != 0) {
+        for (auto it = range_claims.begin(); it != range_claims.end(); ++it) {
+            if (it != own && !it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
+        }
     }
     own->begin = begin;
     own->end = end;
@@ -409,13 +459,21 @@ mgmem_status publish_owned_claim(const Backing &backing, void *data, u64 bytes, 
 void releasing_claim(const Backing &backing, bool releasing) noexcept {
     if (!backing.claim_active) return;
     std::lock_guard<std::mutex> lock(range_mutex);
-    backing.claim_node->releasing = releasing;
+    auto &claim = *backing.claim_node;
+    if (claim.foreign && claim.releasing != releasing) {
+        if (releasing) { if (active_foreign_claims) --active_foreign_claims; }
+        else ++active_foreign_claims;
+    }
+    claim.releasing = releasing;
 }
 
 void drop_claim(Backing &backing) noexcept {
     if (!backing.claim_active) return;
     std::lock_guard<std::mutex> lock(range_mutex);
-    range_claims.erase(backing.claim_node);
+    auto node = backing.claim_node;
+    if (node->foreign && !node->releasing && active_foreign_claims) --active_foreign_claims;
+    if (range_spares.size() >= max_claim_spares) range_claims.erase(node);
+    else range_spares.splice(range_spares.end(), range_claims, node);
     backing.claim_active = false;
     backing.claim_node = {};
 }
@@ -750,7 +808,7 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
             domain->backing.erase(backing_it);
             throw;
         }
-        const auto claim_status = reserve_owned_claim(*backing_it);
+        const auto claim_status = reserve_owned_claim(*backing_it, domain->custom_provider);
         if (claim_status != MGMEM_OK) {
             domain->allocations.erase(id);
             invalidate_arena_search(*domain);

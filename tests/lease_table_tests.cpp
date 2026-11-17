@@ -663,6 +663,62 @@ void test_backing_list_identity_splice_and_erase() {
     first.push_back(left.last().node);
     check_backing_list(left, first);
 }
+
+// The default-provider publish fast path is only exact while no non-releasing
+// foreign claim is live. Exercise the counter transitions and spare-node reuse
+// directly so a drift cannot silently disable alias detection.
+void test_range_claim_foreign_counter_lifecycle() {
+    const u64 base_foreign = active_foreign_claims;
+    const size_t base_claims = range_claims.size();
+    alignas(16) static unsigned char buffer[4096];
+    const auto owned_address = reinterpret_cast<uintptr_t>(buffer);
+    const auto foreign_address = reinterpret_cast<uintptr_t>(buffer + 1024);
+
+    Backing owned{};
+    TABLE_CHECK(reserve_owned_claim(owned, false) == MGMEM_OK);
+    TABLE_CHECK(active_foreign_claims == base_foreign);
+    TABLE_CHECK(range_claims.size() == base_claims + 1);
+    bool unsafe = false;
+    TABLE_CHECK(publish_owned_claim(owned, buffer, 64, unsafe) == MGMEM_OK && !unsafe);
+
+    Backing imported{};
+    TABLE_CHECK(claim_range(buffer + 1024, 64, 0x9e3779b97f4a7c15, imported) == MGMEM_OK);
+    TABLE_CHECK(active_foreign_claims == base_foreign + 1);
+    TABLE_CHECK(range_claims.size() == base_claims + 2);
+
+    // A default publish while a foreign claim is live must still scan; a
+    // disjoint address remains safe.
+    Backing second{};
+    TABLE_CHECK(reserve_owned_claim(second, false) == MGMEM_OK);
+    TABLE_CHECK(publish_owned_claim(second, buffer + 2048, 64, unsafe) == MGMEM_OK && !unsafe);
+
+    // An import overlapping the live owned range must be rejected.
+    Backing overlapping{};
+    TABLE_CHECK(claim_range(buffer + 8, 16, 0x123456789abcdef0, overlapping) == MGMEM_BUSY);
+    TABLE_CHECK(active_foreign_claims == base_foreign + 1);
+
+    // Dropping the foreign claim restores the fast-path condition.
+    drop_claim(imported);
+    TABLE_CHECK(active_foreign_claims == base_foreign);
+    TABLE_CHECK(range_claims.size() == base_claims + 2);
+
+    // Default churn must reuse spare nodes and keep both containers bounded.
+    for (int index = 0; index < 600; ++index) {
+        Backing churn{};
+        TABLE_CHECK(reserve_owned_claim(churn, false) == MGMEM_OK);
+        TABLE_CHECK(publish_owned_claim(churn, buffer + 256 + (index % 8) * 64, 32, unsafe) == MGMEM_OK);
+        drop_claim(churn);
+    }
+    TABLE_CHECK(range_claims.size() == base_claims + 2);
+    TABLE_CHECK(active_foreign_claims == base_foreign);
+    TABLE_CHECK(range_spares.size() <= max_claim_spares);
+
+    drop_claim(owned);
+    drop_claim(second);
+    TABLE_CHECK(range_claims.size() == base_claims);
+    TABLE_CHECK(active_foreign_claims == base_foreign);
+    TABLE_CHECK(range_spares.size() <= max_claim_spares);
+}
 }
 
 int main() {
@@ -679,7 +735,8 @@ int main() {
         {"c_api_owner_growth_oom_keeps_arena_cursor", test_c_api_owner_growth_oom_keeps_arena_cursor},
         {"lease_capacity_prediction_lifecycle", test_lease_capacity_prediction_lifecycle},
         {"owner_capacity_prediction_lifecycle", test_owner_capacity_prediction_lifecycle},
-        {"backing_list_identity_splice_and_erase", test_backing_list_identity_splice_and_erase}
+        {"backing_list_identity_splice_and_erase", test_backing_list_identity_splice_and_erase},
+        {"range_claim_foreign_counter_lifecycle", test_range_claim_foreign_counter_lifecycle}
     };
     for (const auto &test : tests) {
         test.run();
