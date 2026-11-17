@@ -78,6 +78,65 @@ prepared-single profile，不把原有 2～4 块 tiny 当作单块。
 
 原始本机日志、工具身份和路径留在忽略目录；公开结果引用具体提交和工作负载。论文中的收益数字不作为本库实测数据。
 
+## 2026-11-17 Pack 受保护 producer fence 协调桥（已合入）
+
+Pack 侧已在 `bbbf529`（MeguvizCompute HEAD，22 文件）合入受保护 AHB producer fence
+协调桥；Memory 侧只保留可选 guarded target，默认构建与旧 SDK 普通路径不变。本轮只有
+宿主测试和 Android 交叉编译/链接，**没有真机、模拟器、GPU 驱动或 RSS 证据**。
+
+合入内容：
+
+1. 资源级 producer fence 与内容代际绑定：fence 成功且 cleanup gate 打开前不执行 GPU
+   读取；确证失败报 `MGC_PRODUCER_FAILED`，未知状态继续隔离。
+2. worker 就绪序调度：未就绪的 guarded 任务留在 pending 列表，不再占住同 session
+   队头；`accept()` 仍拒绝在飞资源上的第二张 ticket，deferred GPU 任务仍独占 worker。
+3. Android guarded 用 session eventfd 加依赖 fence fd 的 `poll()` 取代 5 ms 轮询；
+   host 测试构建没有可 poll 的 fd，保留 5 ms 有界等待，另以 1 s watchdog 兜底无
+   fd、无通知的错误路径。
+4. AhbAllocator 的 producer waiter 相对此前 guarded 候选由 16 槽缩为 2 槽；
+   SessionIdentity wake 改为 eventfd（host 保留 epoch 与条件变量），不新增每
+   session 分配。
+
+非设备结果：host-pack 9/9、host-runtime 20/20、host-gles 24/24、host-integration
+4/4；arm64-v8a 与 armeabi-v7a CPU、arm64-v8a Vulkan 交叉编译和消费者链接通过；旧
+SDK 普通路径链接通过，guarded 配置在缺新符号时按预期 fail-closed。Android 编译期
+静态布局增量：AhbAllocator +264→+40 B、SessionIdentity +95→+3 B；resource、session、
+ticket 不变，只在 guarded ON 构建中出现 4 B 的 producer wake 探针符号。反向结果同样
+保留：host 配对唤醒两个口径（fence 优先/cleanup 优先）的 P50 中位增量分别为
+2.0/0.95 µs（候选更慢），两个口径均 8/8 对更慢，单对增量分别 0.2–4.1 µs 与
+0.3–2.8 µs，P95 混合；host 配对生命周期 P50 候选快约 11.1 µs（8 对中 2 对慢），
+`operator new` 次数 0 增量、请求字节每批 −3584 B（8 session/16 resource）。host
+harness 不覆盖 Android eventfd/poll 路径，该路径只经过 arm64-v8a Vulkan guarded
+ON/OFF 交叉编译。
+证据在本地忽略目录 `build/pack-fence-opt2-20261117/final-evidence-r2.json`，同目录另有
+`apply-manifest-final.json`、`review-final.patch`；公开结论以本页和提交 `bbbf529`
+为准。
+
+## Memory 侧待优化队列（2026-11-17，只读排查）
+
+以下来自本轮只读排查。第 1、2 项已实现并验证，其余待量化。
+
+1. **已实现（2026-11-17）**：`src/mgmem.cpp` 的 `range_claims` 增加 `foreign` 标记与
+   `active_foreign_claims` 计数；默认 provider 且无活跃外部 claim 时
+   `publish_owned_claim` 跳过全表扫描（可证明等价：默认 allocator 的 live block 互不
+   重叠，releasing 本来就被跳过），custom provider 与 import 仍全量检查。另加
+   `range_spares` 复用已 drop 节点，稳态不在 `range_mutex` 内分配。A/B（同机、96 进程、
+   12 组矩阵：domain 1/32 × forward/reverse/shuffled × 1/4 线程）preparation p50 比例
+   0.11–0.15，release 0.78–0.99，workflow 0.16–0.26，无反向组。证据见
+   `build/pack-fence-opt2-20261117/m1-claim-ab-full/receipt.json`。
+2. **已实现（2026-11-17，仅 `active_probes`）**：`adapters/android/native/pressure_jni.cpp`
+   的 `Holder` 增加 `probe_mutex`/`probe_changed`，`Probe` 析构在释放后通知；reaper 用
+   `wait_for(predicate, 25 ms 兜底)` 等待 `active_probes` 归零，去掉固定 25 ms 定时器。
+   collect 的 `MGMEM_BUSY` 重试与 reaper 发布退避保持原样（无 JNI 通知源，且正常路径
+   0 次迭代）。新增 `jni_lock_probe-close-wait` 回归。
+3. AHB 上传每帧的堆分配：`mgmem_ahb_upload_submit` 目前至少 new 上传句柄、platform
+   与 `gpu_ahb` reservation 三处，待统计实际次数与复用价值。
+4. Arena first-fit 游标按同形、混合、单块分别量化后，再决定是否保留（「下一轮研究
+   队列」第 1 项）。
+5. `copyTo` 与 read/write 在同一字节数和校验口径下比较（「下一轮研究队列」第 2 项）。
+
+这些都不改变现有合同；没有设备结果前不承诺收益或无回归。
+
 ## 历史结论（988ea2c）：shape 调校否决，稳定登记引用保留实验
 
 Android 本轮 tiny mixed 的 allocation P50 四对均变慢，应优先检查混合路径开销。现有 ARM64 代码生成在成功复用路径保留3条store，写入 valid、bytes、alignment、iterator 四个字段；当前不同shape成功时也会执行。这是现有策略的合法写入，不能仅凭指令数认定其解释了退化。

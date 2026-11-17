@@ -57,3 +57,21 @@ Android 使用现有 NDK `30.0.16248370` 的 `build/cmake/android.toolchain.cmak
 首轮 96 块计划在第 36 块末遇 Windows 收据替换访问冲突，144 次 native 均成功，但末次环境回执缺失；35 个有效块和全部失败记录独立保留，判 INCONCLUSIVE。修复为最多 0.9 秒有界重试及追加命令 journal，真实 Windows 短/长读句柄冲突和日志恢复回归通过，并已进入 Windows CI。
 
 唯一一次独立重试重新 pilot 后固定 32 块，128 次任务、环境和关闭检查完整通过；配对几何时间比的描述性净增量 1.0793899%，探索性 95% 区间 −0.0234357%～2.3315899%。前后半程 log-ratio 偏移超过预设 0.01，最终仍 INCONCLUSIVE；不混池、不追加 pilot、不接入 BIL。两组 backing 峰值均为 10,540,184 B。详情与原始入口见 `docs/PERFORMANCE_A1_A3.md`、`docs/BIL_ADOPTION_DECISION.md`；设备窗口已结束，后续只在主机归档。
+
+## 后续批次：Pack 受保护 producer fence 协调桥（2026-11-17）
+
+Pack 侧 `bbbf529`（MeguvizCompute HEAD）合入 22 文件的 guarded producer fence 协调桥，Memory 侧只读验证其可选 guarded 交接；本批未改 Memory 源码，未提交。运行 `20261117-170044-4cf676a1` 的 65 步回执全部通过，Vulkan 未跳过。
+
+| 证据 | 实际结果 | 适用限制 |
+|---|---|---|
+| host-pack / host-runtime / host-gles / host-integration | CTest 9/9、20/20、24/24、4/4 PASS | 宿主自定义 harness 与 Pack 自带测试；`MGC_GUARDED_PRODUCER_FENCE_EXPERIMENTAL=ON` |
+| arm64-v8a、armeabi-v7a CPU 与 arm64-v8a Vulkan | 交叉编译、安装和 C/C++ 消费者链接通过 | 只做交叉编译/链接，未在设备、模拟器或 GPU 上执行 |
+| guarded Vulkan 复编 ON/OFF | 两次均 PASS_CROSS_LINKED | 复用冻结的 ncnn/glslang SDK，不是完整依赖重建 |
+| 旧 SDK 普通路径 | 默认构建与消费者链接通过 | guarded 配置在缺新符号时按设计 fail-closed（`CMake Error`，未被计为通过） |
+| Android 编译期静态布局 | AhbAllocator +264→+40 B、SessionIdentity +95→+3 B；resource/session/ticket 0 | ELF 符号长度差，不是 RSS、分配器可用尺寸或驱动内存 |
+| host 配对唤醒 | P50 中位增量 2.0 µs（fence 优先）/0.95 µs（cleanup 优先），均 8/8 对更慢；P95 混合 | 合成 fence 状态，实际 Pack worker；不覆盖 Android eventfd/poll 路径 |
+| host 配对生命周期 | P50 候选快约 11.1 µs，8 对中 2 对慢；new 次数 0 增量，请求字节每批 −3584 B | 8 session/16 resource 的 64 B 负载；不计 malloc、线程栈或 RSS |
+
+执行源码与提交一致性另行核对：`bbbf529` 的 22 个文件与冻结测试快照逐字节相同（3 个 `.inc` 仅行尾 CRLF 差异），`apply-manifest-final.json` 的全部 `testedSha256` 在快照上复现。宿主为 MSVC 19.51.36247.0 / Release，构建工具为 Android SDK 自带 CMake 4.1.2 与 Ninja，没有安装新依赖。
+
+原始回执在本地忽略目录 `build/pack-fence-opt2-20261117/final-evidence-r2.json`（`state=PASS`，3866 个文件哈希）、`apply-manifest-final.json`、`review-final.patch`，运行日志在 `build/guarded-fence-validation-20261117/runs/20261117-170044-4cf676a1`。该路径未进入公开产物；本批没有设备执行、GPU 驱动计时、RSS、能耗或产品端到端结论，也不构成 Android 性能资格。

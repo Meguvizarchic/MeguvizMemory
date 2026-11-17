@@ -438,6 +438,33 @@ bool auto_retry_case(Fixture &f,const std::string &test_case) {
     return first_failure && retained && while_publishing && automatic && publication && (error?retained_error:normal) &&
         f.lifetime_retains==1 && f.lifetime_releases==1 && f.jni_unlocked && external_open && zero;
 }
+
+// A close that races a held diagnostic Probe must wait for the release instead
+// of completing early, then finish once the last Probe is released.
+bool probe_close_case(Fixture &f) {
+    active=&f;pending_exception=false;
+    const auto id=JNI_NAME(nativeCreate)(&env,nullptr,4096,2048,0,256,
+                        reinterpret_cast<jobject>(1),reinterpret_cast<jlongArray>(2));
+    if(id<=0)return false;
+    f.id=static_cast<u64>(id);f.state=bridge(f.id);
+    if(!f.state || !f.state->owned)return false;
+    const auto probe=JNI_NAME(nativeHoldProbe)(&env,nullptr,static_cast<jlong>(f.id),64);
+    if(!probe)return false;
+    const bool readable=JNI_NAME(nativeReadProbe)(&env,nullptr,probe)==JNI_TRUE;
+    std::atomic<int> first{static_cast<int>(MGMEM_BUSY)};
+    std::thread caller([&]{first.store(mgmem_android_pressure_unregister_v1(f.id));});
+    // Longer than the 25 ms notification backstop, so a held Probe must keep the
+    // closer waiting rather than letting the close complete early.
+    std::this_thread::sleep_for(std::chrono::milliseconds(40));
+    const bool still_open=exists(f.id);
+    JNI_NAME(nativeReleaseProbe)(&env,nullptr,probe);
+    const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+    while(exists(f.id) && std::chrono::steady_clock::now()<deadline)std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    caller.join();
+    const bool closed=first.load()==MGMEM_OK && !exists(f.id);
+    active=nullptr;
+    return readable && still_open && closed && f.calls==1 && f.global_deletes==2;
+}
 }
 int main(int argc,char **argv) {
     using namespace test;
@@ -480,6 +507,8 @@ int main(int argc,char **argv) {
             f.lifetime_retains==1 && f.lifetime_releases==1;
         mgmem_domain_begin_close_v1(domain);mgmem_domain_collect_v1(domain);mgmem_domain_drain_v1(domain,0);
         if(mgmem_domain_destroy_v1(domain)!=MGMEM_OK)pass=false;
+    } else if(test_case=="probe-close-wait") {
+        pass=probe_close_case(f);
     } else {
         make_done(f,test_case=="error-quarantine"?MGMEM_PROVIDER_ERROR:MGMEM_OK);
         if(test_case=="callback-reentry") {

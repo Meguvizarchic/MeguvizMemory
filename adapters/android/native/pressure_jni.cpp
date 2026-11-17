@@ -26,6 +26,11 @@ constexpr unsigned close_open=0,close_starting=1,close_admitted=2;
 struct Holder {
     mgmem_domain *domain = nullptr;
     std::atomic<u64> active_probes{0};
+    // active_probes is updated and waited on under this mutex so a Probe
+    // release racing with the closer cannot be missed. The closer keeps a 25 ms
+    // timeout as a backstop.
+    std::mutex probe_mutex;
+    std::condition_variable probe_changed;
     ~Holder() {
         // Owned-domain reaper retains Holder while any diagnostic lease exists.
         // No final cleanup is delegated to the last Java lease-close thread.
@@ -65,12 +70,19 @@ struct Probe {
     std::mutex mutex;
     std::shared_ptr<Holder> holder;
     mgmem_borrow_v1 view{};
-    explicit Probe(std::shared_ptr<Holder> value):holder(std::move(value)) {holder->active_probes.fetch_add(1);}
+    explicit Probe(std::shared_ptr<Holder> value):holder(std::move(value)) {
+        std::lock_guard<std::mutex> lock(holder->probe_mutex);
+        holder->active_probes.fetch_add(1,std::memory_order_relaxed);
+    }
     ~Probe() {
         if (view.lease.id && mgmem_borrow_release_v1(holder->domain,view.lease)!=MGMEM_OK) std::terminate();
         // A quiet core is not sufficient to destroy a raw domain: the complete
         // last C API call must have returned before the owner can disappear.
-        holder->active_probes.fetch_sub(1,std::memory_order_release);
+        {
+            std::lock_guard<std::mutex> lock(holder->probe_mutex);
+            holder->active_probes.fetch_sub(1,std::memory_order_release);
+        }
+        holder->probe_changed.notify_all();
     }
 };
 std::mutex registry_mutex;
@@ -188,8 +200,15 @@ void reap(u64 id,const std::shared_ptr<Bridge> &state) noexcept {
     if (result==MGMEM_OK && state->owned) {
         auto *domain=state->owned->domain;
         result=mgmem_domain_begin_close_v1(domain);
-        while(result==MGMEM_OK && state->owned->active_probes.load(std::memory_order_acquire)!=0)
-            std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        // Wait for the last diagnostic lease to release. The condition variable
+        // removes the fixed 25 ms timer; the timeout remains as a lost-notify
+        // backstop so a missed wakeup can never hang the closer.
+        while(result==MGMEM_OK) {
+            std::unique_lock<std::mutex> lock(state->owned->probe_mutex);
+            if (state->owned->active_probes.load(std::memory_order_acquire)==0) break;
+            state->owned->probe_changed.wait_for(lock,std::chrono::milliseconds(25),
+                [&]{return state->owned->active_probes.load(std::memory_order_acquire)==0;});
+        }
         while (result==MGMEM_OK) {
             const auto status=mgmem_domain_collect_v1(domain);
             if (status==MGMEM_BUSY) {std::this_thread::sleep_for(std::chrono::milliseconds(25));continue;}
