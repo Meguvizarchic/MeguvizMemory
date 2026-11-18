@@ -1,0 +1,18 @@
+MeguvizMemory
+Copyright 2026 MeguvizMemory contributors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party components and references
+=====================================
+
+1. LLVM runtime notice (Android toolchain)
+   - File: third_party_notices/llvm-NOTICE.txt, distributed verbatim from the
+     NDK toolchain NOTICE (Apache License v2.0 with LLVM Exceptions).
+   - Usage: installed with the Android package under share/MeguvizMemory/licenses.
+     It is not an additional production allocator or backend.
+
+2. External source trees (read-only reference, not bundled)
+   - DexMeguviz / BIL / Compute / Media were read read-only to align ownership
+     and ABI contracts. Their source, binaries, and data are not copied into
+     this repository; no external parser closure is distributed with Memory.

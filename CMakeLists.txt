@@ -42,6 +42,8 @@ else()
     target_compile_options(mgmem_pressure PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
   endif()
 endif()
+install(FILES LICENSE NOTICE DESTINATION ${CMAKE_INSTALL_DATADIR}/MeguvizMemory/licenses)
+
 if(ANDROID)
   target_link_options(mgmem PRIVATE "-Wl,-z,max-page-size=16384")
   install(FILES third_party_notices/llvm-NOTICE.txt DESTINATION ${CMAKE_INSTALL_DATADIR}/MeguvizMemory/licenses)
