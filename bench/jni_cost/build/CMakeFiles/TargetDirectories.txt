@@ -1,5 +1,0 @@
-D:/DevArea/MeguvizMemory/bench/jni_cost/build/CMakeFiles/mgmem_pressure_jni.dir
-D:/DevArea/MeguvizMemory/bench/jni_cost/build/CMakeFiles/jni_cost_classes.dir
-D:/DevArea/MeguvizMemory/bench/jni_cost/build/CMakeFiles/run_jni_cost.dir
-D:/DevArea/MeguvizMemory/bench/jni_cost/build/CMakeFiles/ALL_BUILD.dir
-D:/DevArea/MeguvizMemory/bench/jni_cost/build/CMakeFiles/ZERO_CHECK.dir
