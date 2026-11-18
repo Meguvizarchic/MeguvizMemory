@@ -1,0 +1,21 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(MeguvizMemory CONFIG REQUIRED)
+find_dependency(MeguvizCompute CONFIG REQUIRED)
+include(CheckCXXSourceCompiles)
+set(_mgmem_ahb_saved_libraries "${CMAKE_REQUIRED_LIBRARIES}")
+set(CMAKE_REQUIRED_LIBRARIES MeguvizMemory::mgmem MeguvizCompute::core android)
+unset(_mgmem_ahb_has_checked_release CACHE)
+check_cxx_source_compiles("#include <mgmem/mgmem.h>
+#include <meguviz/compute_android.h>
+int main() { int fd = -1; AHardwareBuffer *buffer = nullptr; MgcLeaseInfo info{}; return
+  (int)mgmem_import_external_checked_v1(nullptr, nullptr, nullptr) + mgc_lease_info(nullptr, &info) +
+  mgc_android_get_buffer(nullptr, &buffer) + mgc_android_release_to_external(nullptr, &fd) +
+  mgc_android_set_acquire_fence(nullptr, fd); }" _mgmem_ahb_has_checked_release)
+set(CMAKE_REQUIRED_LIBRARIES "${_mgmem_ahb_saved_libraries}")
+unset(_mgmem_ahb_saved_libraries)
+if(NOT _mgmem_ahb_has_checked_release)
+  message(FATAL_ERROR "AHB READ bridge requires Memory checked import and Compute Android external access symbols")
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/MeguvizMemoryAhbReadBridgeTargets.cmake")
+check_required_components(MeguvizMemoryAhbReadBridge)
