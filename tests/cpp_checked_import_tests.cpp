@@ -58,6 +58,9 @@ void assert_quarantine(mgmem::domain &domain, uint64_t expected_bytes) {
     mgmem_import_snapshot_v1 imports{};
     CHECK(domain.import_snapshot(imports) == MGMEM_OK);
     CHECK(imports.poisoned == 1 && imports.external_backing_bytes == expected_bytes);
+    const auto observed = domain.observe();
+    CHECK(observed.ok() && observed.quarantined && observed.imports.poisoned == 1);
+    CHECK(observed.imports.external_backing_bytes == expected_bytes);
     mgmem::owned_allocation denied;
     CHECK(domain.allocate(1, 1, denied) == MGMEM_PROVIDER_ERROR && !denied);
     unsigned scoped_calls = 0;

@@ -178,6 +178,9 @@ void test_budget_failure_preserves_old_data() {
     CHECK(old.release() == MGMEM_OK);
     mgmem_snapshot_v1 state{};
     CHECK(domain.snapshot(state) == MGMEM_OK && state.backing_bytes == 0 && state.active_leases == 0);
+    const auto observed = domain.observe();
+    CHECK(observed.ok() && !observed.quarantined && observed.snapshot.backing_bytes == 0);
+    CHECK(observed.snapshot.active_leases == 0 && observed.imports.poisoned == 0);
     mgmem::domain moved = std::move(domain);
     CHECK(!domain && moved);
     CHECK(domain.begin_close() == MGMEM_INVALID_ARGUMENT);
@@ -200,6 +203,15 @@ void test_empty_and_invalid_wrappers() {
     CHECK(mgmem::domain::create(options(MGMEM_ARENA), domain) == MGMEM_OK);
     CHECK(domain.reset() == MGMEM_OK && domain.trim() == MGMEM_OK);
     CHECK(mgmem::domain::create(options(MGMEM_SYSTEM), domain) == MGMEM_INVALID_ARGUMENT);
+    const auto empty_observation = mgmem::domain{}.observe();
+    CHECK(!empty_observation.ok() && empty_observation.status == MGMEM_INVALID_ARGUMENT);
+    CHECK(empty_observation.import_status == MGMEM_INVALID_ARGUMENT && !empty_observation.quarantined);
+    mgmem::or_throw(MGMEM_OK);
+    bool thrown = false;
+    try { mgmem::or_throw(MGMEM_OUT_OF_BUDGET); } catch (const mgmem::status_error &error) {
+        thrown = error.status() == MGMEM_OUT_OF_BUDGET && error.what() != nullptr;
+    }
+    CHECK(thrown);
 }
 
 void test_scoped_allocation(uint32_t mode) {

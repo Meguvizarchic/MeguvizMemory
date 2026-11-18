@@ -14,6 +14,7 @@ namespace {
 mgmem_domain *allocated = nullptr;
 mgmem_status owner_result = MGMEM_OK, lease_result = MGMEM_OK;
 mgmem_status import_result = MGMEM_OK, snapshot_result = MGMEM_OK;
+mgmem_status domain_snapshot_result = MGMEM_OK;
 mgmem_status allocate_result = MGMEM_OK, acquire_result = MGMEM_OK;
 uint64_t pending_import_bytes = 0;
 unsigned owner_calls = 0, lease_calls = 0, destroy_calls = 0;
@@ -38,6 +39,10 @@ mgmem_status mgmem_import_external_checked_v1(mgmem_domain *, const mgmem_extern
 mgmem_status mgmem_domain_import_snapshot_v1(mgmem_domain *, mgmem_import_snapshot_v1 *out, uint32_t) {
     if (snapshot_result != MGMEM_OK) return snapshot_result;
     *out = {}; out->pending_import_bytes = pending_import_bytes; return MGMEM_OK;
+}
+mgmem_status mgmem_domain_snapshot_v1(mgmem_domain *, mgmem_snapshot_v1 *out, uint32_t) {
+    if (domain_snapshot_result != MGMEM_OK) return domain_snapshot_result;
+    *out = {}; out->domain_id = 1; return MGMEM_OK;
 }
 mgmem_status mgmem_release_v1(mgmem_domain *, mgmem_handle_v1) {
     ++owner_calls;
@@ -199,6 +204,17 @@ int main(int argc, char **argv) {
         // Fake-only metadata has no foreign callback. The wrapper never retries.
         delete allocated; allocated = nullptr; lease_live = false;
     }
+    {
+        mgmem::domain domain;
+        CHECK(mgmem::domain::create(options, domain) == MGMEM_OK);
+        snapshot_result = MGMEM_PROVIDER_ERROR; // import read fails only
+        const auto seen = domain.observe();
+        CHECK(!seen.ok() && seen.status == MGMEM_OK && seen.snapshot.domain_id == 1);
+        CHECK(seen.import_status == MGMEM_PROVIDER_ERROR && seen.imports.pending_import_bytes == 0);
+        CHECK(!seen.quarantined && !domain.quarantined()); // observation never quarantines
+        snapshot_result = MGMEM_OK;
+    }
+    CHECK(destroy_calls == 4 && allocated == nullptr);
     std::puts("{\"suite\":\"cpp-checked-fake-unconsumed\",\"status\":\"PASS\"}");
     return 0;
 }

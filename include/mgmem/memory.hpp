@@ -40,6 +40,10 @@
  * uncertain claims are intentionally retained, never force-collected/destroyed.
  * domain::quarantined() reports this sticky state while a domain wrapper exists.
  * Use explicit release to observe the status; a destructor cannot return it.
+ * Status returns are [[nodiscard]]; discard deliberately only with a (void)
+ * cast. or_throw(status) is the only throwing adapter and never retries an
+ * operation. domain::observe() is a read-only sequential sample: it never
+ * resets, closes or quarantines the domain it observes.
  * All fallible creation functions require an empty output and preserve it on
  * failure. std::bad_alloc while creating shared ownership maps to OUT_OF_MEMORY.
  *
@@ -104,6 +108,32 @@ struct domain_state {
 };
 } // namespace detail
 
+struct status_error : std::exception {
+    explicit status_error(mgmem_status s) noexcept : value_(s) {}
+    mgmem_status status() const noexcept { return value_; }
+    const char *what() const noexcept override { return "mgmem operation failed"; }
+private:
+    mgmem_status value_;
+};
+
+// Opt-in adapter for exception-style call sites. It only converts an
+// already-returned status; it never calls, retries or closes anything, and
+// must not be used where the throw would cross noexcept code.
+inline void or_throw(mgmem_status status) {
+    if (status != MGMEM_OK) throw status_error(status);
+}
+
+// One read-only observation of a domain. The three fields are sampled
+// sequentially, not atomically; quarantined is sticky and sampled last.
+struct domain_observation {
+    mgmem_snapshot_v1 snapshot{};
+    mgmem_import_snapshot_v1 imports{};
+    mgmem_status status = MGMEM_INVALID_ARGUMENT;
+    mgmem_status import_status = MGMEM_INVALID_ARGUMENT;
+    bool quarantined = false;
+    bool ok() const noexcept { return status == MGMEM_OK && import_status == MGMEM_OK; }
+};
+
 class domain;
 class owned_allocation;
 
@@ -130,7 +160,7 @@ public:
     uint64_t size_bytes() const noexcept { return view_.length; }
     uint32_t access() const noexcept { return access_; }
 
-    mgmem_status release() noexcept {
+    [[nodiscard]] mgmem_status release() noexcept {
         if (!state_) return MGMEM_OK;
         const mgmem_status status = mgmem_borrow_release_v1(state_->native, view_.lease);
         if (status == MGMEM_OK || (checked_ && status == MGMEM_PROVIDER_ERROR)) {
@@ -187,7 +217,7 @@ public:
     explicit operator bool() const noexcept { return static_cast<bool>(state_); }
     uint64_t size_bytes() const noexcept { return bytes_; }
 
-    MGMEM_CPP_BORROW_INLINE mgmem_status acquire_borrow(uint64_t offset, uint64_t length, uint32_t access,
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status acquire_borrow(uint64_t offset, uint64_t length, uint32_t access,
                                 mgmem::borrow &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -206,26 +236,26 @@ public:
     // bytes, WRITE remains exclusive. A final checked release error takes
     // precedence over the body status; body exceptions use ordinary RAII.
     template<class Function>
-    MGMEM_CPP_BORROW_INLINE mgmem_status with_read(Function &&body) const {
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status with_read(Function &&body) const {
         return with_read(0, bytes_, std::forward<Function>(body));
     }
 
     template<class Function>
-    MGMEM_CPP_BORROW_INLINE mgmem_status with_read(uint64_t offset, uint64_t length, Function &&body) const {
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status with_read(uint64_t offset, uint64_t length, Function &&body) const {
         return with_borrow<MGMEM_READ>(offset, length, std::forward<Function>(body));
     }
 
     template<class Function>
-    MGMEM_CPP_BORROW_INLINE mgmem_status with_write(Function &&body) const {
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status with_write(Function &&body) const {
         return with_write(0, bytes_, std::forward<Function>(body));
     }
 
     template<class Function>
-    MGMEM_CPP_BORROW_INLINE mgmem_status with_write(uint64_t offset, uint64_t length, Function &&body) const {
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status with_write(uint64_t offset, uint64_t length, Function &&body) const {
         return with_borrow<MGMEM_WRITE>(offset, length, std::forward<Function>(body));
     }
 
-    mgmem_status release() noexcept {
+    [[nodiscard]] mgmem_status release() noexcept {
         if (!state_) return MGMEM_OK;
         const mgmem_status status = mgmem_release_v1(state_->native, handle_);
         if (status == MGMEM_OK || (checked_ && status == MGMEM_PROVIDER_ERROR)) {
@@ -296,9 +326,9 @@ public:
     ~domain() noexcept = default;
 
     explicit operator bool() const noexcept { return static_cast<bool>(state_); }
-    bool quarantined() const noexcept { return state_ && state_->quarantined(); }
+    [[nodiscard]] bool quarantined() const noexcept { return state_ && state_->quarantined(); }
 
-    static mgmem_status create(const mgmem_domain_options_v1 &options, domain &out) noexcept {
+    [[nodiscard]] static mgmem_status create(const mgmem_domain_options_v1 &options, domain &out) noexcept {
         if (out) return MGMEM_INVALID_ARGUMENT;
         try {
             // Allocate C++ ownership before creating the C owner; OOM cannot orphan
@@ -315,7 +345,7 @@ public:
         }
     }
 
-    static mgmem_status create_system(uint64_t budget, domain &out,
+    [[nodiscard]] static mgmem_status create_system(uint64_t budget, domain &out,
                                      const mgmem_provider_v1 *provider = nullptr) noexcept {
         mgmem_domain_options_v1 options{};
         options.struct_size = sizeof(options);
@@ -327,7 +357,7 @@ public:
         return create(options, out);
     }
 
-    static mgmem_status create_arena(uint64_t budget, uint64_t chunk, domain &out,
+    [[nodiscard]] static mgmem_status create_arena(uint64_t budget, uint64_t chunk, domain &out,
                                     const mgmem_provider_v1 *provider = nullptr) noexcept {
         mgmem_domain_options_v1 options{};
         options.struct_size = sizeof(options);
@@ -340,7 +370,7 @@ public:
         return create(options, out);
     }
 
-    mgmem_status allocate(uint64_t bytes, uint64_t alignment, owned_allocation &out) const noexcept {
+    [[nodiscard]] mgmem_status allocate(uint64_t bytes, uint64_t alignment, owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
         mgmem_handle_v1 handle{};
@@ -352,7 +382,7 @@ public:
         return MGMEM_OK;
     }
 
-    mgmem_status allocate(uint64_t bytes, owned_allocation &out) const noexcept {
+    [[nodiscard]] mgmem_status allocate(uint64_t bytes, owned_allocation &out) const noexcept {
         return allocate(bytes, alignof(std::max_align_t), out);
     }
 
@@ -364,7 +394,7 @@ public:
     // Pointers must not escape the body or be queued for later asynchronous use.
     // Arena storage remains retained until explicit reset/trim, as with allocate.
     template<class Function>
-    mgmem_status with_allocation(uint64_t bytes, uint64_t alignment, Function &&body) const {
+    [[nodiscard]] mgmem_status with_allocation(uint64_t bytes, uint64_t alignment, Function &&body) const {
         using result = std::invoke_result_t<Function, void *, uint64_t>;
         static_assert(std::is_same<result, void>::value ||
                       std::is_same<result, mgmem_status>::value,
@@ -384,11 +414,11 @@ public:
     }
 
     template<class Function>
-    mgmem_status with_allocation(uint64_t bytes, Function &&body) const {
+    [[nodiscard]] mgmem_status with_allocation(uint64_t bytes, Function &&body) const {
         return with_allocation(bytes, alignof(std::max_align_t), std::forward<Function>(body));
     }
 
-    mgmem_status import_external(const mgmem_external_buffer_v1 &buffer, owned_allocation &out) const noexcept {
+    [[nodiscard]] mgmem_status import_external(const mgmem_external_buffer_v1 &buffer, owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
         mgmem_handle_v1 handle{};
@@ -402,7 +432,7 @@ public:
 
     // This method links the optional checked-import symbol. Deploy a runtime
     // that actually exports it; ABI minor 1 alone does not guarantee support.
-    mgmem_status import_external_checked(const mgmem_external_buffer_checked_v1 &buffer,
+    [[nodiscard]] mgmem_status import_external_checked(const mgmem_external_buffer_checked_v1 &buffer,
                                          owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -422,7 +452,7 @@ public:
 
     // These methods link optional arena-import symbols. The selected runtime
     // must export them as well as advertise MGMEM_CAP_ARENA_EXTERNAL_IMPORT.
-    mgmem_status import_external_arena(const mgmem_external_buffer_v1 &buffer,
+    [[nodiscard]] mgmem_status import_external_arena(const mgmem_external_buffer_v1 &buffer,
                                        owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -436,7 +466,7 @@ public:
         return MGMEM_OK;
     }
 
-    mgmem_status import_external_arena_checked(const mgmem_external_buffer_checked_v1 &buffer,
+    [[nodiscard]] mgmem_status import_external_arena_checked(const mgmem_external_buffer_checked_v1 &buffer,
                                                owned_allocation &out) const noexcept {
         if (!state_ || out) return MGMEM_INVALID_ARGUMENT;
         if (state_->quarantined()) return MGMEM_PROVIDER_ERROR;
@@ -455,36 +485,52 @@ public:
         return MGMEM_OK;
     }
 
-    mgmem_status set_budget(uint64_t bytes) const noexcept {
+    [[nodiscard]] mgmem_status set_budget(uint64_t bytes) const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_domain_set_budget_v1(state_->native, bytes);
     }
 
-    mgmem_status import_snapshot(mgmem_import_snapshot_v1 &out) const noexcept {
+    [[nodiscard]] mgmem_status import_snapshot(mgmem_import_snapshot_v1 &out) const noexcept {
         return state_ ? mgmem_domain_import_snapshot_v1(state_->native, &out, sizeof(out)) : MGMEM_INVALID_ARGUMENT;
     }
 
-    mgmem_status begin_close() const noexcept {
+    [[nodiscard]] mgmem_status begin_close() const noexcept {
         return state_ ? mgmem_domain_begin_close_v1(state_->native) : MGMEM_INVALID_ARGUMENT;
     }
-    mgmem_status collect() const noexcept {
+    [[nodiscard]] mgmem_status collect() const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_domain_collect_v1(state_->native);
     }
-    mgmem_status drain(uint64_t timeout_ms) const noexcept {
+    [[nodiscard]] mgmem_status drain(uint64_t timeout_ms) const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_domain_drain_v1(state_->native, timeout_ms);
     }
-    mgmem_status reset() const noexcept {
+    [[nodiscard]] mgmem_status reset() const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_arena_reset_v1(state_->native);
     }
-    mgmem_status trim() const noexcept {
+    [[nodiscard]] mgmem_status trim() const noexcept {
         return !state_ ? MGMEM_INVALID_ARGUMENT : state_->quarantined() ? MGMEM_PROVIDER_ERROR :
             mgmem_domain_trim_v1(state_->native);
     }
-    mgmem_status snapshot(mgmem_snapshot_v1 &out) const noexcept {
+    [[nodiscard]] mgmem_status snapshot(mgmem_snapshot_v1 &out) const noexcept {
         return state_ ? mgmem_domain_snapshot_v1(state_->native, &out, sizeof(out)) : MGMEM_INVALID_ARGUMENT;
+    }
+
+    // Read-only: snapshots first, sticky flag last. Deliberately not gated
+    // by quarantine and never sets it, unlike the checked-import failure
+    // path. On failure the matching struct stays zero-initialized.
+    [[nodiscard]] domain_observation observe() const noexcept {
+        domain_observation result{};
+        if (!state_) return result;
+        mgmem_snapshot_v1 snap{};
+        result.status = snapshot(snap);
+        if (result.status == MGMEM_OK) result.snapshot = snap;
+        mgmem_import_snapshot_v1 imports{};
+        result.import_status = import_snapshot(imports);
+        if (result.import_status == MGMEM_OK) result.imports = imports;
+        result.quarantined = quarantined();
+        return result;
     }
 
 private:

@@ -9,6 +9,10 @@ owner、lease 和域生命周期，状态仍为 `mgmem_status`。
 | 创建 Arena 域 | `domain::create_arena(budget, chunk, out)` | 预算与 chunk 大小显式；可在最后传入 provider |
 | 保存 owner，多次访问 | `memory.allocate(bytes, owner)`，再 `owner.with_read(body)` / `with_write(body)` | owner 由调用方持有；读写权限分别命名 |
 | 一次同步临时使用 | `memory.with_allocation(bytes, body)` | 回调结束归还本次 owner 和 WRITE lease |
+| 异常风格调用（可选） | `mgmem::or_throw(memory.allocate(bytes, owner))` | 只转换已返回的状态，不重试、不关闭；失败抛零分配异常 `mgmem::status_error` |
+| 一次读取域状态 | `const auto seen = memory.observe()` | 顺序采样快照、导入快照与粘性隔离标志（非原子）；只读，不 reset/close，不置隔离 |
+
+状态返回均为 `[[nodiscard]]`：确需丢弃时显式 `(void)` 强转，不要把静默忽略当成成功。
 
 创建入口完整填写当前 ABI/options 头；高级选项继续用 `domain::create(options, out)`。
 域创建一次后可以反复分配和读写，短入口不会为每次操作隐式创建另一个域。
