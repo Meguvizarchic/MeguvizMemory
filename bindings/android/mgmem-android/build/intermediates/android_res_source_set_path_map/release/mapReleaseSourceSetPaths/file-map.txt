@@ -1,9 +1,0 @@
-io.github.jichuo1.meguviz.memory.android.mgmem-android-pngs-0 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\generated\res\pngs\release
-io.github.jichuo1.meguviz.memory.android.mgmem-android-updated_navigation_xml-1 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\generated\updated_navigation_xml\release
-io.github.jichuo1.meguviz.memory.android.mgmem-android-mergeReleaseResources-2 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
-io.github.jichuo1.meguviz.memory.android.mgmem-android-mergeReleaseResources-3 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
-io.github.jichuo1.meguviz.memory.android.mgmem-android-release-4 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\intermediates\merged_res\release\mergeReleaseResources
-io.github.jichuo1.meguviz.memory.android.mgmem-android-release-5 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\build\intermediates\packaged_res\release\packageReleaseResources
-io.github.jichuo1.meguviz.memory.android.mgmem-android-main-6 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\src\main\res
-io.github.jichuo1.meguviz.memory.android.mgmem-android-release-7 D:\DevArea\MeguvizMemory\bindings\android\mgmem-android\src\release\res
-gradleHome-0 D:\Gradle

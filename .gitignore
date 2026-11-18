@@ -4,6 +4,8 @@ bench/*/build/
 /dist/
 bindings/android/.gradle/
 bindings/android/.kotlin/
+bindings/android/build/
+bindings/android/mgmem-android/build/
 bindings/android/local.properties
 /artifacts/local/
 # Exact command streams are retained locally and published as command-logs.zip.

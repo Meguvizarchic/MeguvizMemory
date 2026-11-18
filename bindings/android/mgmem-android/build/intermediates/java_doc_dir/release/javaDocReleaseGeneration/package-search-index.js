@@ -1,1 +1,0 @@
-var packageSearchIndex = [{"l":"io.github.jichuo1.meguviz.memory.android","url":"io/github/jichuo1/meguviz/memory/android/package-summary.html"}, {"l":"All packages","url":"index.html"}]
