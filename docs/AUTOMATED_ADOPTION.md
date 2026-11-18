@@ -1,9 +1,23 @@
 # 自动化接入判断（三层）
 
-日期：2026-11-18。目的：把「何处接入 Memory」从开发者逐点判断转为
+日期：2026-11-18；阶段 0–3 增强同日。目的：把「何处接入 Memory」从开发者逐点判断转为
 机器分类、影子估算与策略校验。**三层只产出推荐与证据，不切换任何
 运行时路径，不构成性能资格**；arena 晋升仍须按
 [BASELINE_PROTOCOL.md](BASELINE_PROTOCOL.md) 做同工作量 A1/A3 配对采样。
+
+## 快速开始（约 5 分钟）
+
+```text
+python tools/make_trace.py --pattern fixed --count 4096 --output build/t.jsonl
+python tools/run_adoption.py --inventory ALLOCATION_SITES.json --policy ALLOCATION_POLICY.json --out-dir build/adoption-demo
+python tools/shadow_estimate.py --trace build/t.jsonl --sweep
+```
+
+第一条生成样例轨迹（另有 `mixed`/`stream`/`staged`，金样例在 `tools/examples/`）；
+第二条一键跑分类→策略校验并打印一屏摘要，产物要求新目录、失败留 `INCOMPLETE.json`；
+第三条对单轨迹做 chunk 扫描与反事实解释。术语：**backing** 是逻辑请求容量，
+不是 RSS/PSS；**provider 节省**只数底层发布次数，**不等于加速**；
+**stream 口径**按同时存活峰值、**staged 口径**按全批共存，两者不可混比。
 
 ## Layer 1：静态分类器
 
@@ -25,8 +39,10 @@
    chunk（按对齐后批总字节向上圆整到页，上限 256 KiB，禁止默认 64 KiB）。
 5. 混合尺寸或缺分布 → `uncertain`，必须进 Layer 2，不得直接推荐。
 
-当前清单由人工按 [BIL 候选去重表](BIL_CPU_CANDIDATES_00572940.md) 与本仓
-消费者维护；用 codegraph 从源码自动抽取事实是后续可选增强，未实现。
+当前种子清单按 [BIL 候选去重表](BIL_CPU_CANDIDATES_00572940.md) 与本仓消费者维护。
+新站点可用 `tools/draft_inventory.py` 扫源码生成草案（file:line、字面尺寸、`needs_review`
+字段），人工只补 kind/形状/寿命/已有优化/批大小；传错文件类型时报错会指出像是
+哪一层的文件并给出期望结构。
 
 ## Layer 2：影子估算
 
@@ -37,12 +53,22 @@
 对齐不足者、在 `round_up(used, alignment)` 处放置、否则新发布
 `max(chunk, bytes)` 的 chunk；`--prepared-alignment` 对应预备 chunk 档。
 
+轨迹 v2 支持 `{"op":"alloc","id":N,...}`/`{"op":"free","id":N}` 寿命事件（旧行兼容）：
+System 同时报 stream 同时存活峰值与 staged 全批峰值，backing 增幅以 stream 为分母；
+arena 释放空间在 reset 前保留，free 不降其 backing。消费者侧记录用
+`tools/trace_recorder.hpp`（API 层记录请求；provider 钩子看不到 arena 子分配）。
+
 输出只含 provider 次数与逻辑 backing（峰值、padding、同形率、窗口判定），
 `latency_estimate` 恒为 null：延迟不由模型编造，宿主历史比率仅作
-`reference_host_ratios` 背景。推荐 arena 的充要条件：同形率 ≥0.90、
-provider 节省 ≥50%、backing 增幅 ≤5%、连续 3 个 64-分配窗口通过
-（窗口不足 3 个时要求全部通过）；超预算或 backing 增幅超限推荐 System；
-其余 `uncertain`。模拟已用文档 oracle 校验：128 个 64 B fixed 请求恰 2 个
+`reference_host_ratios` 背景。每份报告带中文 `explanation`（实际值对比生效门槛）；
+`--sweep` 扫描 1 KiB–256 KiB chunk、给出推荐 chunk 与「若改用 chunk=X 则达标」的
+`counterfactual`。默认门槛：同形率 ≥0.90、provider 节省 ≥50%、backing 增幅 ≤5%、
+连续 3 个 64-分配窗口通过（窗口只看同形与节省，backing 只做全程判定——大 chunk
+不会被未填满的窗口误杀）；`--preset conservative|balanced|exploratory` 或
+`--thresholds thresholds.json` 可覆盖，生效值回显于报告 `config.thresholds`。
+模拟器带核心同款同形下界缓存，20 万请求约 1 秒内完成。真实域快照可用
+`tools/snapshot_feedback.py` 与预测核对（容差外报 DRIFT 并提示重采集）。
+模拟已用文档 oracle 校验：128 个 64 B fixed 请求恰 2 个
 chunk、预备档 mixed 32 请求 1 个 chunk / 64 请求 2 个 chunk
 （[ARENA_LOOKUP.md](../bench/ARENA_LOOKUP.md)、[ARENA_SMALL_COST.md](../bench/ARENA_SMALL_COST.md)）。
 
@@ -53,8 +79,13 @@ chunk、预备档 mixed 32 请求 1 个 chunk / 64 请求 2 个 chunk
 fail-closed 校验：无条目站点默认 System/dense 并列为未覆盖（非错误）；
 `arena` 必须同时有 Layer 1 `arena_candidate` 与 SHA-256 匹配的 Layer 2
 `arena_recommended` 报告，且 budget ≥ chunk；`uncertain` 站点只允许
-`shadow`/`system`；`excluded` 站点不得用 `system` 条目变相接入。校验回执
-可作后续配对采样 freeze 的输入，本身不改 BIL 或任何消费者代码。
+`shadow`/`system`；`excluded` 站点不得用 `system` 条目变相接入；错误带
+`error_summary` 聚合计数。条目可带 `owner` 与 `review_by`，过期只告警不阻断。
+新建策略不必手写：`tools/generate_policy_draft.py` 从分类与影子报告生成草案，
+自动回填模式/chunk/budget/SHA（budget 取推荐 chunk 扫描行的峰值），人只改 rationale。
+一键入口 `tools/run_adoption.py` 串三层，未给策略时走草案路径。
+CI `core.yml` 已注册六套离线测试与一条种子漂移检查（重跑一键链须 PASS）。
+校验回执可作后续配对采样 freeze 的输入，本身不改 BIL 或任何消费者代码。
 
 ## 串联命令
 

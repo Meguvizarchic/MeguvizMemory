@@ -4,7 +4,8 @@
 
 ## 自动化接入判断三层工具（2026-11-18）
 
-新增离线三层：`tools/classify_allocation_sites.py`（站点三态分类）、`tools/shadow_estimate.py`（first-fit bump 影子记账，只估 provider/backing、延迟恒 null）、`tools/validate_allocation_policy.py`（策略 fail-closed 校验），种子文件 `ALLOCATION_SITES.json` 与 `ALLOCATION_POLICY.json` 覆盖 BIL 七候选与本仓三消费者，分类与既往人工决策一致（excluded 4、system 2、shadow 2、import 1、copyto 1）；影子模拟通过文档 oracle（fixed 128→2 chunk、预备 mixed 32→1/64→2）。三套测试 26 项通过。只产推荐与证据，不切换运行时、不构成性能/BIL 资格；说明见 [自动化接入判断](docs/AUTOMATED_ADOPTION.md)。
+新增离线三层：`tools/classify_allocation_sites.py`（站点三态分类）、`tools/shadow_estimate.py`（first-fit bump 影子记账，只估 provider/backing、延迟恒 null）、`tools/validate_allocation_policy.py`（策略 fail-closed 校验），种子文件 `ALLOCATION_SITES.json` 与 `ALLOCATION_POLICY.json` 覆盖 BIL 七候选与本仓三消费者，分类与既往人工决策一致（excluded 4、system 2、shadow 2、import 1、copyto 1）；影子模拟通过文档 oracle（fixed 128→2 chunk、预备 mixed 32→1/64→2）。
+同日阶段 0–3 增强：修大 chunk 窗口误杀与模拟加速（同形下界缓存，20 万请求 37 s→约 1 s）、错误三段式；一键 `run_adoption.py`、策略草案自动生成（SHA/chunk/budget 机器回填）、chunk 扫描与中文反事实解释；轨迹 v2 寿命事件（stream/staged 双峰值）、`make_trace.py`、`trace_recorder.hpp`（MSVC /W4/WX 编译烟测通过）、快照 DRIFT 反馈；阈值 preset/覆盖、源码清单草案扫描、策略 owner/review_by 告警、CI 六套测试加种子漂移门。每阶段经子代理审查，实质问题（预算错配、部分产物标记、阈值未透传、符号链接跟随、Windows 编码未钉死、C import `_v1` 漏报、尺寸错位锚定、过期告警不可见）已修并加回归；强制 cp1252 下复测通过。只产推荐与证据，不切换运行时、不构成性能/BIL 资格；说明见 [自动化接入判断](docs/AUTOMATED_ADOPTION.md)。
 
 ## 许可证与独立发布（2026-11-18）
 

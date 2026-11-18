@@ -32,6 +32,27 @@ jobs:
         run: cmake --build build/cpp-checked-ci --config Release --parallel 2
       - name: Verify checked C++ adapter contracts
         run: ctest --test-dir build/cpp-checked-ci -C Release --output-on-failure
+      - name: Allocation site classifier checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_classify_allocation_sites.py
+      - name: Shadow estimate checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_shadow_estimate.py
+      - name: Adoption policy validator checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_validate_allocation_policy.py
+      - name: Adoption chain stage 1 checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_run_adoption.py
+      - name: Adoption trace stage 2 checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_stage2_traces.py
+      - name: Adoption stage 3 checks
+        env: {PYTHONUTF8: "1"}
+        run: python tools/test_stage3_guards.py
+      - name: Adoption policy drift check
+        env: {PYTHONUTF8: "1"}
+        run: python tools/run_adoption.py --inventory ALLOCATION_SITES.json --policy ALLOCATION_POLICY.json --out-dir build/adoption-ci
       - name: Historical paired archive tests
         run: python tools/test_audit_paired_archive.py
       - name: Historical paired archive audit
@@ -297,6 +318,8 @@ jobs:
             artifacts/ci-packed
             artifacts/ci-pressure
             artifacts/ci-image-pressure
+            build/adoption-ci/receipt.json
+            build/adoption-ci/summary.json
             build/core/Testing/Temporary/LastTest.log
             build/capture-journal-ci/regression-receipt.json
             build/arena-lookup-smoke-ci/receipt.json
