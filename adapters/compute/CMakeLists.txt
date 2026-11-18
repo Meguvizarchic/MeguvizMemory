@@ -83,6 +83,11 @@ int main() { MgcLeaseDesc d{}; d.content_context = nullptr; d.retain_content = n
     add_test(NAME compute_arena_read_bridge COMMAND mgmem_compute_arena_read_bridge_tests)
     add_test(NAME compute_arena_read_bridge_unmap_violation COMMAND mgmem_compute_arena_read_bridge_tests --violate-unmap)
     set_tests_properties(compute_arena_read_bridge compute_arena_read_bridge_unmap_violation PROPERTIES TIMEOUT 30)
+    add_executable(mgmem_compute_short_names_e2e tests/short_names_e2e.cpp)
+    target_compile_features(mgmem_compute_short_names_e2e PRIVATE cxx_std_17)
+    target_link_libraries(mgmem_compute_short_names_e2e PRIVATE mgmem_compute_arena_read_bridge Threads::Threads)
+    add_test(NAME compute_short_names_e2e COMMAND mgmem_compute_short_names_e2e)
+    set_tests_properties(compute_short_names_e2e PROPERTIES TIMEOUT 30)
   endif()
   # Fake origin isolates an error that the real Compute contract cannot induce
   # deterministically before Memory admission without a violating concurrent caller.
