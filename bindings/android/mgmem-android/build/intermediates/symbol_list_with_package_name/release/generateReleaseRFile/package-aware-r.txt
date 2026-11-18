@@ -1,0 +1,1 @@
+io.github.jichuo1.meguviz.memory.android

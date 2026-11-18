@@ -1,0 +1,935 @@
+<!DOCTYPE HTML>
+<!-- NewPage -->
+<html lang="en"><head>
+    <title>ManagedMemoryDomain </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="dc.created" content="2020-03-25">
+    <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+    <link rel="stylesheet" type="text/css" href="../../../../../../dokka-javadoc-stylesheet.css" title="Style">
+    <link rel="stylesheet" type="text/css" href="../../../../../../jquery/jquery-ui.css" title="Style">
+    <script type="text/javascript" src="../../../../../../jquery/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="../../../../../../jquery/jquery-migrate-3.4.0.min.js"></script>
+    <script type="text/javascript" src="../../../../../../jquery/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="../../../../../../search.js"></script>
+    <script async type="text/javascript" src="../../../../../../module-search-index.js"></script>
+    <script async type="text/javascript" src="../../../../../../package-search-index.js"></script>
+    <script async type="text/javascript" src="../../../../../../type-search-index.js"></script>
+    <script async type="text/javascript" src="../../../../../../member-search-index.js"></script>
+    <script async type="text/javascript" src="../../../../../../tag-search-index.js"></script>
+</head><body>
+<script type="text/javascript">
+var pathtoroot = "../../../../../../";
+</script>
+<noscript>
+    <div>JavaScript is disabled on your browser.</div>
+</noscript><header role="banner">
+    <nav role="navigation">
+        <div class="fixedNav">
+            <!-- ========= START OF TOP NAVBAR ======= -->
+            <div class="topNav"><a id="navbar.top">
+                <!--   -->
+            </a>
+                <div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a>
+                </div>
+                <a id="navbar.top.firstrow">
+                    <!--   -->
+                </a>
+                <ul class="navList" title="Navigation">
+    <li><a href="../../../../../../index.html">Overview</a></li>
+    
+    <li><a href="package-summary.html">Package</a></li>
+    
+    <li class="navBarCell1Rev">Class</li>
+    
+    <li><a href="package-tree.html">Tree</a></li>
+    
+    <li><a href="../../../../../../deprecated.html">Deprecated</a></li>
+    <li><a href="../../../../../../index-files/index-1.html">Index</a></li>
+    <li>Help</li>
+</ul></div>
+            <div class="subNav">
+<ul class="navList" id="allclasses_navbar_top" style="display: block;">
+    <li><a href="../../../../../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+
+<ul class="navListSearch">
+<li><label for="search">SEARCH:</label>
+<input type="text" id="search" value="search" class="ui-autocomplete-input" autocomplete="off" placeholder="Search">
+<input type="reset" id="reset" value="reset">
+</li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
+<a id="skip.navbar.top">
+<!--   -->
+</a></div><!-- ========= END OF TOP NAVBAR ========= -->
+        </div>
+        <div class="navPadding">&nbsp;</div>
+        <script type="text/javascript"><!--
+        $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
+        //-->
+        </script>
+    </nav>
+</header>
+
+<main role="main">
+    <div class="header">
+        <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">io.github.jichuo1.meguviz.memory.android</a></div>
+        <h2 title="Class ManagedMemoryDomain" class="title">Class ManagedMemoryDomain</h2>
+    </div>
+    <div class="contentContainer">
+        <!-- <ul class="inheritance">
+            <li>java.lang.Object</li>
+            <li>
+                <ul class="inheritance">
+                    <li>adaptation.Adaptation</li>
+                </ul>
+            </li>
+        </ul> TODO inheritance tree -->
+        <div class="description">
+            <ul class="blockList">
+                <li class="blockList">
+                    
+                    <dl>
+                        <dt>All Implemented Interfaces:</dt>
+                        <dd>
+                            
+                            <code>java.lang.AutoCloseable</code>
+                            
+                            
+                        </dd>
+                    </dl>
+                    
+                    <hr>
+                    <pre class="wrap-overflow">
+
+public final class <span class="typeNameLabel"><a href=ManagedMemoryDomain.html>ManagedMemoryDomain</a></span>
+ implements <a href=https://developer.android.com/reference/kotlin/java/lang/AutoCloseable.html>AutoCloseable</a>
+                    </pre>
+                    <div class="block"><p>Optional managed owner for the existing Memory core and bounded byte leases. No native address or direct ByteBuffer is exposed. Explicitly close owners, leases and the domain; GC is not a cleanup mechanism.</p></div>
+
+                    <dl>
+
+                    
+
+                    
+
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="summary">
+            <ul class="blockList">
+                <li class="blockList">
+                <!-- ======== NESTED CLASS SUMMARY ======== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="nested.class.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Nested Class Summary</h3>
+                                <div class="memberSummary">
+                                    <table>
+                                        <caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+                                        <tr>
+                                            <th class="colFirst" scope="col">Modifier and Type</th>
+                                            <th class="colSecond" scope="col">Class</th>
+                                            <th class="colLast" scope="col">Description</th>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final class</code></td>
+                                            <th class="colSecond" scope="row"><code><a href="ManagedMemoryDomain.ManagedException.html">ManagedMemoryDomain.ManagedException</a></span></code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final class</code></td>
+                                            <th class="colSecond" scope="row"><code><a href="ManagedMemoryDomain.Pressure.html">ManagedMemoryDomain.Pressure</a></span></code>
+                                            </th>
+                                            <td class="colLast"><p>Optional pressure controller bound to its existing managed domain. Pressure close never closes the domain. A domain close also detaches the controller before closing its core. Polling and snapshots belong on a worker; framework notifications only submit events.</p></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final class</code></td>
+                                            <th class="colSecond" scope="row"><code><a href="ManagedMemoryDomain.Allocation.html">ManagedMemoryDomain.Allocation</a></span></code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final class</code></td>
+                                            <th class="colSecond" scope="row"><code><a href="ManagedMemoryDomain.Lease.html">ManagedMemoryDomain.Lease</a></span></code>
+                                            </th>
+                                            <td class="colLast"><p>Managed view of one existing byte lease. The underlying registration is deliberately not exposed, so a close failure can quarantine the domain.</p></td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <!-- =========== FIELD SUMMARY =========== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="field.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Field Summary</h3>
+                                <div class="memberSummary">
+                                    <table>
+                                        <caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+                                        <tr>
+                                            <th class="colFirst" scope="col">Modifier and Type</th>
+                                            <th class="colSecond" scope="col">Field</th>
+                                            <th class="colLast" scope="col">Description</th>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#OPEN>OPEN</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#CLOSING>CLOSING</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#CLOSED>CLOSED</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#QUARANTINED>QUARANTINED</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#MAX_CLEANUP_WORKERS>MAX_CLEANUP_WORKERS</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#MAX_MANAGED_DOMAINS>MAX_MANAGED_DOMAINS</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#MAX_MANAGED_ALLOCATIONS>MAX_MANAGED_ALLOCATIONS</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#MAX_MANAGED_LEASES>MAX_MANAGED_LEASES</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#MAX_CLOSE_GUARDS>MAX_CLOSE_GUARDS</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#STATUS_DOMAIN_LIMIT>STATUS_DOMAIN_LIMIT</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#STATUS_ALLOCATION_LIMIT>STATUS_ALLOCATION_LIMIT</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#STATUS_LEASE_LIMIT>STATUS_LEASE_LIMIT</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#STATUS_WORKER_LIMIT>STATUS_WORKER_LIMIT</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>public final static int</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#STATUS_CLOSE_GUARD_LIMIT>STATUS_CLOSE_GUARD_LIMIT</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <!-- ======== CONSTRUCTOR SUMMARY ======== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="constructor.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Constructor Summary</h3>
+                                <div class="memberSummary">
+                                    <table>
+                                        <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+                                        <tbody>
+                                        <tr>
+                                            <th class="colFirst" scope="col">Constructor</th>
+                                            <th class="colLast" scope="col">Description</th>
+                                        </tr>
+
+                                        
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <!-- =========== ENUM CONSTANT SUMMARY =========== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="enum.constant.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Enum Constant Summary</h3>
+                                <table class="memberSummary">
+                                    <caption><span>Enum Constants</span><span class="tabEnd">&nbsp;</span></caption>
+                                    <tr>
+                                        <th class="colFirst" scope="col">Enum Constant</th>
+                                        <th class="colLast" scope="col">Description</th>
+                                    </tr>
+                                    
+                                </table>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <!-- ========== METHOD SUMMARY =========== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="method.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Method Summary</h3>
+                                <div class="memberSummary">
+                                    <div role="tablist" aria-orientation="horizontal">
+                                        <button role="tab" aria-selected="true" aria-controls="memberSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">All Methods</button>
+                                        <!-- TODO: Instance and Concrete Methods #1118 -->
+                                    </div>
+                                    <div id="memberSummary_tabpanel" role="tabpanel">
+                                    <table aria-labelledby="t0">
+                                        <tr>
+                                            <th class="colFirst" scope="col">Modifier and Type</th>
+                                            <th class="colSecond" scope="col">Method</th>
+                                            <th class="colLast" scope="col">Description</th>
+                                        </tr>
+                                        
+                                        <tr id="i0" class="altColor">
+                                            <td class="colFirst"><code>static <a href=ManagedMemoryDomain.html>ManagedMemoryDomain</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#system(long)>system</a>(long budgetBytes) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i1" class="rowColor">
+                                            <td class="colFirst"><code>static <a href=ManagedMemoryDomain.html>ManagedMemoryDomain</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#arena(long,long)>arena</a>(long budgetBytes, long chunkBytes) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i2" class="altColor">
+                                            <td class="colFirst"><code>synchronized int</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#pendingManagedOperations()>pendingManagedOperations</a>() </code>
+                                            </th>
+                                            <td class="colLast">Per-wrapper mutating calls still reporting; not a native stack or RSS count.</td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code>static long</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#javaQuarantineSignals()>javaQuarantineSignals</a>() </code>
+                                            </th>
+                                            <td class="colLast">Saturating, per-classloader count of conservative Java quarantine signals.</td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code><a href=ManagedMemoryDomain.Allocation.html>ManagedMemoryDomain.Allocation</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#allocate(long,long)>allocate</a>(long bytes, long alignment) </code>
+                                            </th>
+                                            <td class="colLast">Allocated bytes are synchronously allocated and initialized to zero before publication.</td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
+                                            <td class="colFirst"><code>void</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#setBudget(long)>setBudget</a>(long bytes) </code>
+                                            </th>
+                                            <td class="colLast">Changes the soft admission limit; existing owners and leases survive.</td>
+                                        </tr>
+                                        
+                                        <tr id="i6" class="altColor">
+                                            <td class="colFirst"><code><a href=ManagedMemoryDomain.Pressure.html>ManagedMemoryDomain.Pressure</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#attachPressure(long,long)>attachPressure</a>(long moderateBytes, long criticalBytes) </code>
+                                            </th>
+                                            <td class="colLast">Opt in to pressure handling on this same domain.</td>
+                                        </tr>
+                                        
+                                        <tr id="i7" class="rowColor">
+                                            <td class="colFirst"><code>void</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#beginClose()>beginClose</a>() </code>
+                                            </th>
+                                            <td class="colLast">Stops admission and schedules quiet cleanup, without waiting for leases.</td>
+                                        </tr>
+                                        
+                                        <tr id="i8" class="altColor">
+                                            <td class="colFirst"><code>void</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#close()>close</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i9" class="rowColor">
+                                            <td class="colFirst"><code>int</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#state()>state</a>() </code>
+                                            </th>
+                                            <td class="colLast">Does not wait for cleanup, but takes short locks and is not hard realtime; QUARANTINED is not a successful close.</td>
+                                        </tr>
+                                        
+                                        <tr id="i10" class="altColor">
+                                            <td class="colFirst"><code>int</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#failureStatus()>failureStatus</a>() </code>
+                                            </th>
+                                            <td class="colLast">Native error for QUARANTINED, or zero if no failure is known.</td>
+                                        </tr>
+                                        
+                                        <tr id="i11" class="rowColor">
+                                            <td class="colFirst"><code>void</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#forgetClosed()>forgetClosed</a>() </code>
+                                            </th>
+                                            <td class="colLast">Releases only the closed domain's observation token.</td>
+                                        </tr>
+                                        
+                                        <tr id="i12" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html>Array</a>&lt;long&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#snapshot()>snapshot</a>() </code>
+                                            </th>
+                                            <td class="colLast">[managedState,coreState,budget,backing,reserved,peak,live,retiring, activeAllocations,activeLeases].</td>
+                                        </tr>
+                                        
+                                        <tr id="i13" class="rowColor">
+                                            <td class="colFirst"><code>static int</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#activeCleanupWorkers()>activeCleanupWorkers</a>() </code>
+                                            </th>
+                                            <td class="colLast">Current worker admission slots in this loaded runtime, not OS thread count or evidence that JNI/core libraries may be unloaded.</td>
+                                        </tr>
+                                        
+                                        <tr id="i14" class="altColor">
+                                            <td class="colFirst"><code>static <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html>Array</a>&lt;long&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=ManagedMemoryDomain.html#runtimeCounts()>runtimeCounts</a>() </code>
+                                            </th>
+                                            <td class="colLast">Per loaded JNI runtime: [domains,owners,leasePins,workers,unclaimedDomains, quarantinedDomains,closeGuards].</td>
+                                        </tr>
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <ul class="blockList">
+                                
+                                    <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
+                                        <!--   -->
+                                    </a>
+                                        <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+                                        <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString,
+                                            wait, wait, wait</code></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                </li>
+            </ul>
+        </div>
+        <div class="details">
+            <ul class="blockList">
+                <li class="blockList">
+                    <!-- ========= CONSTRUCTOR DETAIL ======== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="constructor.detail">
+                                <!--   -->
+                            </a>
+                                <h3>Constructor Detail</h3>
+                                
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <!-- ============ METHOD DETAIL ========== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="method.detail">
+                                <!--   -->
+                            </a>
+                                <h3>Method Detail</h3>
+                                
+                                <a id="system(long)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>system</h4>
+                                        <pre class="methodSignature"> static <a href=ManagedMemoryDomain.html>ManagedMemoryDomain</a> <a href=ManagedMemoryDomain.html#system(long)>system</a>(long budgetBytes)</pre>
+                                        <div class="block"></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="arena(long,long)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>arena</h4>
+                                        <pre class="methodSignature"> static <a href=ManagedMemoryDomain.html>ManagedMemoryDomain</a> <a href=ManagedMemoryDomain.html#arena(long,long)>arena</a>(long budgetBytes, long chunkBytes)</pre>
+                                        <div class="block"></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="pendingManagedOperations()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>pendingManagedOperations</h4>
+                                        <pre class="methodSignature"> synchronized int <a href=ManagedMemoryDomain.html#pendingManagedOperations()>pendingManagedOperations</a>()</pre>
+                                        <div class="block"><p>Per-wrapper mutating calls still reporting; not a native stack or RSS count.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="javaQuarantineSignals()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>javaQuarantineSignals</h4>
+                                        <pre class="methodSignature"> static long <a href=ManagedMemoryDomain.html#javaQuarantineSignals()>javaQuarantineSignals</a>()</pre>
+                                        <div class="block"><p>Saturating, per-classloader count of conservative Java quarantine signals. It is not a count of live resources, process memory, or recoverable tokens.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="allocate(long,long)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>allocate</h4>
+                                        <pre class="methodSignature"> <a href=ManagedMemoryDomain.Allocation.html>ManagedMemoryDomain.Allocation</a> <a href=ManagedMemoryDomain.html#allocate(long,long)>allocate</a>(long bytes, long alignment)</pre>
+                                        <div class="block"><p>Allocated bytes are synchronously allocated and initialized to zero before publication. Run on a suitable worker; no hard wall-clock bound is promised.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="setBudget(long)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setBudget</h4>
+                                        <pre class="methodSignature"> void <a href=ManagedMemoryDomain.html#setBudget(long)>setBudget</a>(long bytes)</pre>
+                                        <div class="block"><p>Changes the soft admission limit; existing owners and leases survive.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="attachPressure(long,long)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>attachPressure</h4>
+                                        <pre class="methodSignature"> <a href=ManagedMemoryDomain.Pressure.html>ManagedMemoryDomain.Pressure</a> <a href=ManagedMemoryDomain.html#attachPressure(long,long)>attachPressure</a>(long moderateBytes, long criticalBytes)</pre>
+                                        <div class="block"><p>Opt in to pressure handling on this same domain. Attachment and budget transitions may return BUSY; retry on a worker. A zero manual budget is supported and is never raised by a pressure restoration event. Rebinding starts from the domain's current budget, not the detached binding's former manual target; explicitly setBudget to restore a higher target.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="beginClose()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>beginClose</h4>
+                                        <pre class="methodSignature"> void <a href=ManagedMemoryDomain.html#beginClose()>beginClose</a>()</pre>
+                                        <div class="block"><p>Stops admission and schedules quiet cleanup, without waiting for leases. If worker admission fails, the domain stays CLOSING; call again to retry.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="close()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>close</h4>
+                                        <pre class="methodSignature"> void <a href=ManagedMemoryDomain.html#close()>close</a>()</pre>
+                                        <div class="block"></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="state()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>state</h4>
+                                        <pre class="methodSignature"> int <a href=ManagedMemoryDomain.html#state()>state</a>()</pre>
+                                        <div class="block"><p>Does not wait for cleanup, but takes short locks and is not hard realtime; QUARANTINED is not a successful close.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="failureStatus()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>failureStatus</h4>
+                                        <pre class="methodSignature"> int <a href=ManagedMemoryDomain.html#failureStatus()>failureStatus</a>()</pre>
+                                        <div class="block"><p>Native error for QUARANTINED, or zero if no failure is known.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="forgetClosed()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>forgetClosed</h4>
+                                        <pre class="methodSignature"> void <a href=ManagedMemoryDomain.html#forgetClosed()>forgetClosed</a>()</pre>
+                                        <div class="block"><p>Releases only the closed domain's observation token. This does not join, collect or invoke user callbacks, but takes short internal locks. A concurrent repeated call may return before the first has finished.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="snapshot()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>snapshot</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html>Array</a>&lt;long&gt; <a href=ManagedMemoryDomain.html#snapshot()>snapshot</a>()</pre>
+                                        <div class="block"><p>[managedState,coreState,budget,backing,reserved,peak,live,retiring, activeAllocations,activeLeases]. Active allocations include retiring allocations whose owner was released but still have leases. The managed and core state fields are sampled separately, not atomically. Null means unavailable for an unspecified reason; -1 means outside Java's signed range. Neither means zero or proves an API call stack has exited. A concurrent forget may make this return null or throw.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="activeCleanupWorkers()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>activeCleanupWorkers</h4>
+                                        <pre class="methodSignature"> static int <a href=ManagedMemoryDomain.html#activeCleanupWorkers()>activeCleanupWorkers</a>()</pre>
+                                        <div class="block"><p>Current worker admission slots in this loaded runtime, not OS thread count or evidence that JNI/core libraries may be unloaded.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="runtimeCounts()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>runtimeCounts</h4>
+                                        <pre class="methodSignature"> static <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html>Array</a>&lt;long&gt; <a href=ManagedMemoryDomain.html#runtimeCounts()>runtimeCounts</a>()</pre>
+                                        <div class="block"><p>Per loaded JNI runtime: [domains,owners,leasePins,workers,unclaimedDomains, quarantinedDomains,closeGuards]. Fields are sampled separately. Entries can be in creation, retiring or quarantine, so none is a precise live-owner count, process RSS, or proof that JNI/core libraries may be unloaded.</p></div>
+
+                                        <dl>
+
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                            </li>
+                        </ul>
+                    </section>
+                    
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+<footer role="contentinfo">
+    <nav role="navigation">
+        <!-- ======= START OF BOTTOM NAVBAR ====== -->
+        <div class="bottomNav"><a id="navbar.bottom">
+            <!--   -->
+        </a>
+            <div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a>
+            </div>
+            <a id="navbar.bottom.firstrow">
+                <!--   -->
+            </a>
+            <ul class="navList" title="Navigation">
+    <li><a href="../../../../../../index.html">Overview</a></li>
+    
+    <li><a href="package-summary.html">Package</a></li>
+    
+    <li class="navBarCell1Rev">Class</li>
+    
+    <li><a href="package-tree.html">Tree</a></li>
+    
+    <li><a href="../../../../../../deprecated.html">Deprecated</a></li>
+    <li><a href="../../../../../../index-files/index-1.html">Index</a></li>
+    <li>Help</li>
+</ul></div>
+        <a id="skip.navbar.bottom">
+            <!--   -->
+        </a>
+        <div class="subNav">
+<ul class="navList" id="allclasses_navbar_top" style="display: block;">
+    <li><a href="../../../../../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
+<a id="skip.navbar.top">
+<!--   -->
+</a></div><!-- ======== END OF BOTTOM NAVBAR ======= -->
+    </nav>
+</footer><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content" id="ui-id-1" tabindex="0"
+    style="display: none;"></ul>
+<span role="status" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></span>
+</body>
+</html>

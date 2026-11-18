@@ -1,0 +1,9 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/ManagedMemoryDomain.Allocation///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/ManagedMemoryDomain.Allocation.html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/ManagedMemoryDomain.Lease///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/ManagedMemoryDomain.Lease.html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/ManagedMemoryDomain.ManagedException///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/ManagedMemoryDomain.ManagedException.html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/ManagedMemoryDomain.Pressure///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/ManagedMemoryDomain.Pressure.html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/MemoryPressureAdapter.Backend///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/MemoryPressureAdapter.Backend.html
+$dokka.location:io.github.jichuo1.meguviz.memory.android/NativePressureBackend.LeaseProbe///PointingToDeclaration/io/github/jichuo1/meguviz/memory/android/NativePressureBackend.LeaseProbe.html
+io.github.jichuo1.meguviz.memory.android

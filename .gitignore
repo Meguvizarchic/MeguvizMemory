@@ -2,6 +2,9 @@
 bench/*/build/
 /install/
 /dist/
+bindings/android/.gradle/
+bindings/android/.kotlin/
+bindings/android/local.properties
 /artifacts/local/
 # Exact command streams are retained locally and published as command-logs.zip.
 /artifacts/arm64-20261030/paired/commands/

@@ -2,6 +2,8 @@
 
 本轮通用 AAR 把同一候选的 arm64-v8a、armeabi-v7a、x86_64 放在一个文件中；Java 类、keep 规则、manifest 和 notice 三份逐字节相同，六个共享库逐项继承自对应单 ABI AAR，并与该 ABI SDK 一致。原候选 ZIP 和三个 SDK 保留。
 
+Maven Central 坐标（独立发布，[发布链](https://github.com/Meguvizarchic/MeguvizMemory/blob/main/bindings/android/README.md)）：`io.github.jichuo1.meguviz:mgmem-android:1.2.1`。暂存包已按 Gradle 9.8.2 + AGP 9.4.1 + JDK 17 打包（AAR 含三 ABI `.so`、sources/javadoc jar，POM 为 Apache-2.0）；正式上传待签名与命名空间验证完成。
+
 ## Java / Kotlin 应用
 
 把 `MeguvizMemory-bfd0e65-universal.aar` 放入应用的 `libs/`，沿用项目现有 Android Gradle 工具链。最低支持 API 27，已有更高的 minSdk 保持原值：

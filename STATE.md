@@ -2,6 +2,10 @@
 
 最近补充：2026-11-18。当前交付 **1.2.1 功能工程预览 / native ABI 1.1**。公开仓库为 [Meguvizarchic/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
+## 许可证与独立发布（2026-11-18）
+
+Memory 已确定为 Apache-2.0（根目录 `LICENSE`/`NOTICE`，与家族 Drawable/Hook/Ref/DexMeguviz 同口径）；CMake 将二者装入 `share/MeguvizMemory/licenses`，Android 包另带 `third_party_notices/llvm-NOTICE.txt`。发布链位于 [bindings/android/](bindings/android/README.md)：AGP 9.4.1 + Gradle 9.8.2 + Kotlin 2.4.21 + JDK 17 + compileSdk 37/minSdk 27，与家族同版本；核心与五个桥的 CMake 版本已统一提升至 1.2.1（包版本文件实测 `PACKAGE_VERSION "1.2.1"`）。坐标 `io.github.jichuo1.meguviz:mgmem-android:1.2.1`，暂存包（含 AAR/POM/sources/javadoc/module）已在三 ABI 上过静态门禁（`PASS_SCOPED_ENGINEERING_CANDIDATE`，`device_executed=false`）。经确认采用独立发布，未接入 MeguvizFamily 的 `family.toml`/BOM；剩余正式上传前置为本机 GPG 签名、Central Portal 命名空间验证与上传后 `verify-central` 核对。16 KB 对齐、核心 26 项、28 个离线套件（含补参的真实 Windows OS sharing PASS）与卫生扫描（无构建产物、无密钥/令牌）均已静态通过；armv7 设备覆盖、API34 长稳、性能/BIL 资格仍缺失。
+
 ## 单乘高位哈希与新猎点测量（2026-11-18）
 
 句柄表索引由 SplitMix64 双乘改为单乘 Fibonacci 高位哈希（ID 为单调计数器）。

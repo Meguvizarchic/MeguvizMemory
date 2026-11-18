@@ -75,3 +75,19 @@ Pack 侧 `bbbf529`（MeguvizCompute HEAD）合入 22 文件的 guarded producer 
 执行源码与提交一致性另行核对：`bbbf529` 的 22 个文件与冻结测试快照逐字节相同（3 个 `.inc` 仅行尾 CRLF 差异），`apply-manifest-final.json` 的全部 `testedSha256` 在快照上复现。宿主为 MSVC 19.51.36247.0 / Release，构建工具为 Android SDK 自带 CMake 4.1.2 与 Ninja，没有安装新依赖。
 
 原始回执在本地忽略目录 `build/pack-fence-opt2-20261117/final-evidence-r2.json`（`state=PASS`，3866 个文件哈希）、`apply-manifest-final.json`、`review-final.patch`，运行日志在 `build/guarded-fence-validation-20261117/runs/20261117-170044-4cf676a1`。该路径未进入公开产物；本批没有设备执行、GPU 驱动计时、RSS、能耗或产品端到端结论，也不构成 Android 性能资格。
+
+## 后续批次：许可证、版本与发布链静态收尾（2026-11-18）
+
+本批未改 Memory 核心源码：项目许可证确定为 Apache-2.0（`LICENSE`/`NOTICE` 与家族 Drawable/Hook/Ref/DexMeguviz 同口径，SHA256 `cfc774…`）；核心与五个桥的 CMake 版本统一提升至 1.2.1（派生工具与测试中的硬编码产物名同步，无版本约束的 `find_package` 引用不受影响）；新增独立 Android Maven 发布链（`bindings/android/`，坐标 `io.github.jichuo1.meguviz:mgmem-android:1.2.1`，AGP 9.4.1 + Gradle 9.8.2 + JDK 17，与家族同版本，未进 family BOM）。
+
+| 证据 | 实际结果 | 适用限制 |
+|---|---|---|
+| `MgmemConfigVersion`（build） | `PACKAGE_VERSION "1.2.1"` | 配置期生成内容 |
+| Windows x64 / MSVC Release ctest | 26/26 PASS | 本轮提升后复跑；测试源码 `lease_table_tests` 有既有 C4189 警告，未屏蔽 |
+| 三 ABI Android 候选构建（NDK 30 / VS CMake） | `PASS_SCOPED_ENGINEERING_CANDIDATE`（`device_executed=false`） | 静态门禁；命中 SDK 闭包白名单缺口（`LICENSE`/`NOTICE`）后已修并重跑通过 |
+| 16 KB 页对齐（旧通用 AAR 抽查 + 构建器静态门） | 6 个 `.so` 全部 `PT_LOAD` ≥ 16K | 不证明真实 16KB loader 运行 |
+| 离线测试套件（`tools/test_*.py`） | 29 个全部跑完、无真失败 | 2 个需 `--output` 参数属用法（补跑 PASS）；`test_android_jni_cmake_config` 需 cmake 入 PATH（补跑 32/32 PASS）；补跑的 Windows OS sharing 为真实写共享 PASS |
+| 密钥/产物卫生 | 干净 | tracked 树无构建产物；`grep` 仅命中记录器内的过滤词；无 `.env`/keystore |
+| Gradle 暂存发布 | `publishCentralPublicationToCentralStagingRepository` 成功 | 未签名暂存态；上传与验签未做 |
+
+本批为宿主合成与静态口径；没有设备执行、正式发布或性能资格（16 KB 真实 loader、MTE/HWASan、API34 长稳、性能、BIL 独立缺失）。

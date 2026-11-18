@@ -1,0 +1,6 @@
+lib/arm64-v8a/libmgmem.so->Project
+lib/arm64-v8a/libmgmem_pressure_jni.so->Project
+lib/armeabi-v7a/libmgmem.so->Project
+lib/armeabi-v7a/libmgmem_pressure_jni.so->Project
+lib/x86_64/libmgmem.so->Project
+lib/x86_64/libmgmem_pressure_jni.so->Project

@@ -1,0 +1,8 @@
+-keep class io.github.jichuo1.meguviz.memory.android.NativePressureBackend { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.NativeMemoryLease { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain$Allocation { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain$Lease { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain$Pressure { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain$ManagedException { *; }
+-keep class io.github.jichuo1.meguviz.memory.android.ManagedPressureBackend { *; }
