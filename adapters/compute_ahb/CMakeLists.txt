@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(MeguvizMemoryAhbReadBridge VERSION 0.1.0 LANGUAGES CXX)
+project(MeguvizMemoryAhbReadBridge VERSION 1.2.1 LANGUAGES CXX)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 

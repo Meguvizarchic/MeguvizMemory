@@ -1,6 +1,6 @@
 # MeguvizMemory 工程状态
 
-最近补充：2026-11-18。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [Meguvizarchic/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
+最近补充：2026-11-18。当前交付 **1.2.1 功能工程预览 / native ABI 1.1**。公开仓库为 [Meguvizarchic/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
 
 ## 单乘高位哈希与新猎点测量（2026-11-18）
 

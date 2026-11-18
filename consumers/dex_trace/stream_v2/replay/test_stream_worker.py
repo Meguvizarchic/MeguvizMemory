@@ -333,7 +333,7 @@ class StreamContracts(unittest.TestCase):
     def test_real_system_and_arena_if_available(self):
         candidates = [wire.safe.ROOT / 'build/windows-candidate-ce2a5b2-20261101/candidate-readback/sdk/bin/mgmem.dll',
                       wire.safe.ROOT / 'build/core/Release/mgmem.dll',
-                      wire.safe.ROOT / 'build/core/libmgmem.so.0.2.0']
+                      wire.safe.ROOT / 'build/core/libmgmem.so.1.2.1']
         core = next((p for p in candidates if p.is_file() and not p.is_symlink()), None)
         if core is None: self.skipTest('host shared Memory core unavailable')
         self.core = core

@@ -257,8 +257,8 @@ def collect():
             comments['state']=='PASS_NONALLOC_COMMENT_OUTSIDE_LOAD_REMOVED_ON_COPY', 'android_proof_scope')
     for abi in ABIS:
         candidate = android['profiles'][abi]
-        aar_path = SANITIZED/'aar'/abi/'MeguvizMemory-Android-Pressure-0.2.0.aar'
-        sdk_path = SANITIZED/'archives'/('MeguvizMemory-0.2.0-android-'+abi+'-sanitized-sdk.zip')
+        aar_path = SANITIZED/'aar'/abi/'MeguvizMemory-Android-Pressure-1.2.1.aar'
+        sdk_path = SANITIZED/'archives'/('MeguvizMemory-1.2.1-android-'+abi+'-sanitized-sdk.zip')
         aar, sdk = read_workspace(aar_path), read_workspace(sdk_path)
         require(identity(aar)=={'bytes':candidate['AAR_candidate_bytes'],'sha256':candidate['AAR_candidate_sha256']} and
                 identity(sdk)=={'bytes':sdk_proof['profiles'][abi]['bytes'],'sha256':sdk_proof['profiles'][abi]['sha256']} and
@@ -297,7 +297,7 @@ def collect():
     windows=proof['evidence/windows/shareable-evidence.json']
     win_cmp=proof['evidence/windows/binary-comparison.json']
     win_scan=proof['evidence/windows/path-scan.json']
-    win=read_workspace(SHAREABLE/'MeguvizMemory-0.2.0-windows-x64-feature-preview.zip')
+    win=read_workspace(SHAREABLE/'MeguvizMemory-1.2.1-windows-x64-feature-preview.zip')
     require(windows['state']=='PASS_SCOPED_SANITIZED_INSTALLED_CONSUMERS' and
             win_cmp['state']=='PASS_SANITIZED_BINARY_COMPARISON_CONSUMER_PENDING' and
             win_cmp['source_preserved'] is True and win_cmp['untouched_files_byte_identical'] is True and
@@ -356,7 +356,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--private-identifiers-file',type=Path,required=True,
                         help='Ignored local file of private markers; values are never printed')
-    parser.add_argument('--output',type=Path,default=ROOT/'dist/MeguvizMemory-0.2.0-Feature-Preview-20261101.zip')
+    parser.add_argument('--output',type=Path,default=ROOT/'dist/MeguvizMemory-1.2.1-Feature-Preview-20261101.zip')
     parser.add_argument('--verify-only',action='store_true',help='Run all source, archive and privacy checks without writing')
     args=parser.parse_args()
     private_file=args.private_identifiers_file.resolve(strict=True)

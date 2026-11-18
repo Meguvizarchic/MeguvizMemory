@@ -1,6 +1,6 @@
 # 安装、消费、关闭与回退
 
-当前功能预览为0.2.0、native ABI1.1，旧ABI1.0的POD布局和符号保持兼容。除原CPU backing、owner/lease、System/arena外，新增唯一外部region导入、软预算及独立Android压力适配。新安装前缀为 `install/features-host` / `install/features-arm64`，不覆盖历史0.1 SDK；旧实验和下文原双消费者收据仍适用于其固定快照。新功能用法与限定验证范围见[阶段收尾](FEATURE_STAGE_20261030.md)、[导入](EXTERNAL_IMPORT.md)、[Android压力](ANDROID_PRESSURE.md)和[packed reader](PACKED_READER.md)。功能、设备、家族集成、性能和发布继续分别资格。
+当前功能预览为1.2.1、native ABI1.1，旧ABI1.0的POD布局和符号保持兼容。除原CPU backing、owner/lease、System/arena外，新增唯一外部region导入、软预算及独立Android压力适配。新安装前缀为 `install/features-host` / `install/features-arm64`，不覆盖历史0.1 SDK；旧实验和下文原双消费者收据仍适用于其固定快照。新功能用法与限定验证范围见[阶段收尾](FEATURE_STAGE_20261030.md)、[导入](EXTERNAL_IMPORT.md)、[Android压力](ANDROID_PRESSURE.md)和[packed reader](PACKED_READER.md)。功能、设备、家族集成、性能和发布继续分别资格。
 
 ## 安装后的独立消费
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(MeguvizMemory VERSION 0.2.0 LANGUAGES C CXX)
+project(MeguvizMemory VERSION 1.2.1 LANGUAGES C CXX)
 
 option(BUILD_SHARED_LIBS "Build the public shared library" ON)
 option(MGMEM_BUILD_TESTS "Build ownership and failure-path verification" ON)

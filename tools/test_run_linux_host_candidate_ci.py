@@ -539,13 +539,13 @@ class RunnerContracts(unittest.TestCase):
                   'consumer': consumer}
         files = {'SOURCE.json': common.json_bytes(source), 'MANIFEST.json': common.json_bytes(report),
                  'README.md': b'candidate', 'NOTICE-LLVM.txt': b'notice',
-                 'sdk/include/mgmem/example.h': b'header', 'sdk/lib/libmgmem.so.0.2.0': core,
+                 'sdk/include/mgmem/example.h': b'header', 'sdk/lib/libmgmem.so.1.2.1': core,
                  'sdk/lib/libmgmem_pressure_jni.so': jni, 'sdk/lib/libmgmem_pressure.a': pressure,
                  'java/managed-api.jar': jar}
         for name in ('MeguvizMemoryConfig.cmake', 'MeguvizMemoryConfigVersion.cmake',
                      'MeguvizMemoryTargets.cmake', 'MeguvizMemoryTargets-release.cmake'):
             files['sdk/lib/cmake/MeguvizMemory/' + name] = b'fixture'
-        links = {'sdk/lib/libmgmem.so': 'libmgmem.so.1', 'sdk/lib/libmgmem.so.1': 'libmgmem.so.0.2.0'}
+        links = {'sdk/lib/libmgmem.so': 'libmgmem.so.1', 'sdk/lib/libmgmem.so.1': 'libmgmem.so.1.2.1'}
         self.journal_fixture(root)
         return raw, files, links, report
 
@@ -556,7 +556,7 @@ class RunnerContracts(unittest.TestCase):
             source, actual, journal = subject.validate_candidate(payload, ['ci-sentinel-unrelated'], lock, root)
             self.assertEqual(journal['steps'], 17)
             self.assertEqual(actual['consumer']['default_cases'], 12)
-            direct_link = dict(links); direct_link['sdk/lib/libmgmem.so'] = 'libmgmem.so.0.2.0'
+            direct_link = dict(links); direct_link['sdk/lib/libmgmem.so'] = 'libmgmem.so.1.2.1'
             subject.validate_candidate(host.tar_bytes(files, direct_link), ['ci-sentinel-unrelated'], lock, root)
             wrong_link = dict(links); wrong_link['sdk/lib/libmgmem.so'] = 'libmgmem_pressure_jni.so'
             with self.assertRaisesRegex(ValueError, 'candidate_core_link_mismatch'):

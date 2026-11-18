@@ -4,7 +4,7 @@
 
 该独立构建仅接收完整、ready 的 Compute CPU READ lease，将实际映射作为 Memory SYSTEM 域的一个只读外部 backing。这里没有 GPU/AHB 映射、部分范围导入、Memory → Compute allocator 注入或数据复制。它不改变 Memory core/AAR 的默认依赖；使用者必须自行提供真实且互相兼容的 Compute SDK 和 Memory SDK。
 
-适配器要求 Memory 的 `mgmem_import_external_checked_v1` 符号及 `MGMEM_CAP_CHECKED_EXTERNAL_RELEASE` 能力。两者是可选 ABI 1.1 扩展，并非所有 0.2.0/ABI 1.1 Memory 构建都包含它们。桥为静态库，与缺少该符号的 Memory SDK 链接时必须失败；运行时换入不含符号的共享库也不支持。使用者须部署同一个、具有该能力的 Memory runtime，不能仅依据版本号判断支持。
+适配器要求 Memory 的 `mgmem_import_external_checked_v1` 符号及 `MGMEM_CAP_CHECKED_EXTERNAL_RELEASE` 能力。两者是可选 ABI 1.1 扩展，并非所有 1.2.1/ABI 1.1 Memory 构建都包含它们。桥为静态库，与缺少该符号的 Memory SDK 链接时必须失败；运行时换入不含符号的共享库也不支持。使用者须部署同一个、具有该能力的 Memory runtime，不能仅依据版本号判断支持。
 
 单独配置、构建、安装：
 

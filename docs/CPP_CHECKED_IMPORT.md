@@ -1,6 +1,6 @@
 # C++ 可检查外部导入
 
-`mgmem::domain::import_external_checked` 是头文件形式的可选 C++17 适配，接收 `mgmem_external_buffer_checked_v1` 并返回现有 move-only `mgmem::owned_allocation`。它沿用完整外部 region、origin retain/release、单一 runtime、只读/写 lease 和软预算合同；不会复制存储或跨 ABI 暴露 C++ 容器。该方法直接链接 `mgmem_import_external_checked_v1`：调用程序必须确保部署的同一个 Memory 运行库导出该符号且具有对应 capability，不能仅凭 ABI 1.1 或 0.2.0 判断可用。旧运行库在加载时就可能因缺符号失败；需要动态回退时由集成方先解析同一运行库的符号并核对 capability。
+`mgmem::domain::import_external_checked` 是头文件形式的可选 C++17 适配，接收 `mgmem_external_buffer_checked_v1` 并返回现有 move-only `mgmem::owned_allocation`。它沿用完整外部 region、origin retain/release、单一 runtime、只读/写 lease 和软预算合同；不会复制存储或跨 ABI 暴露 C++ 容器。该方法直接链接 `mgmem_import_external_checked_v1`：调用程序必须确保部署的同一个 Memory 运行库导出该符号且具有对应 capability，不能仅凭 ABI 1.1 或 1.2.1 判断可用。旧运行库在加载时就可能因缺符号失败；需要动态回退时由集成方先解析同一运行库的符号并核对 capability。
 
 ## 释放状态与隔离
 

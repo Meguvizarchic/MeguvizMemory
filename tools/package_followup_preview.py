@@ -23,7 +23,7 @@ STAGE = ROOT / 'artifacts/continuation-next-20261101'
 ANDROID = ROOT / 'build/followup-20261101-android-sanitized-v1'
 ABIS = ('arm64-v8a', 'x86_64', 'armeabi-v7a')
 LOCK_DEFAULT = ROOT / 'artifacts/followup-delivery-20261101/SOURCE_LOCK.json'
-OUTPUT_DEFAULT = ROOT / 'dist/MeguvizMemory-0.2.0-Followup-Preview-20261101.zip'
+OUTPUT_DEFAULT = ROOT / 'dist/MeguvizMemory-1.2.1-Followup-Preview-20261101.zip'
 
 ANDROID_META = {
     'sanitizer_manifest': 'sanitizer_manifest.json',
@@ -253,8 +253,8 @@ def check_android(data: dict) -> None:
     require(classes['java_source_sha256'] == file_sha(java) and
             classes['cpp_header_sha256'] == file_sha(cpp), 'android_current_source_mismatch')
     for abi in ABIS:
-        a = file_data(ANDROID / 'aar' / abi / 'MeguvizMemory-Android-Pressure-0.2.0.aar')
-        s = file_data(ANDROID / 'archives' / ('MeguvizMemory-0.2.0-android-' + abi + '-followup-sdk.zip'))
+        a = file_data(ANDROID / 'aar' / abi / 'MeguvizMemory-Android-Pressure-1.2.1.aar')
+        s = file_data(ANDROID / 'archives' / ('MeguvizMemory-1.2.1-android-' + abi + '-followup-sdk.zip'))
         p, q, c = manifest['profiles'][abi], privacy['profiles'][abi], classes['profiles'][abi]
         require(identity(a) == {'bytes': p['AAR_candidate_bytes'], 'sha256': p['AAR_candidate_sha256']} and
                 sha(a) == q['AAR_sha256'] == c['aar_sha256'] and

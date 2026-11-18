@@ -745,7 +745,7 @@ def validate_candidate(data, markers, lock_bytes, work):
     actual_headers = {name.removeprefix('sdk/include/mgmem/'): {'bytes': len(value), 'sha256': digest_bytes(value)}
                       for name, value in files.items() if name.startswith('sdk/include/mgmem/')}
     require(expected_headers and actual_headers == expected_headers, 'candidate_header_mismatch')
-    core_name, jni_name = 'sdk/lib/libmgmem.so.0.2.0', 'sdk/lib/libmgmem_pressure_jni.so'
+    core_name, jni_name = 'sdk/lib/libmgmem.so.1.2.1', 'sdk/lib/libmgmem_pressure_jni.so'
     pressure_name, jar_name = 'sdk/lib/libmgmem_pressure.a', 'java/managed-api.jar'
     cmake_names = {'sdk/lib/cmake/MeguvizMemory/' + name for name in (
         'MeguvizMemoryConfig.cmake', 'MeguvizMemoryConfigVersion.cmake',

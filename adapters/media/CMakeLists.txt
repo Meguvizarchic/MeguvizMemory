@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(MeguvizMemoryMediaReadBridge VERSION 0.1.0 LANGUAGES CXX)
+project(MeguvizMemoryMediaReadBridge VERSION 1.2.1 LANGUAGES CXX)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
