@@ -58,6 +58,16 @@ mgmem_status mgmem_compute_import_read_v1(
     mgmem_compute_unmap_error_v1 on_unmap_error, void *error_context,
     mgmem_handle_v1 *out, int32_t *out_compute_status);
 
+/* Arena-domain variant of the same full, ready CPU READ import contract.
+ * Link the separate arena_read_bridge target and a Memory runtime exporting
+ * mgmem_import_external_arena_checked_v1 with both advertised capabilities.
+ * Imported backing is charged to the arena domain but does not supply arena
+ * storage. The SYSTEM-only function above retains its original behavior. */
+mgmem_status mgmem_compute_import_arena_read_v1(
+    mgmem_domain *domain, MgcLease *lease, uint64_t external_id,
+    mgmem_compute_unmap_error_v1 on_unmap_error, void *error_context,
+    mgmem_handle_v1 *out, int32_t *out_compute_status);
+
 #ifdef __cplusplus
 }
 #endif

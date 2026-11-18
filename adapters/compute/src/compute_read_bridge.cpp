@@ -66,10 +66,12 @@ mgmem_status translate(MgcStatus status) noexcept {
 }
 }
 
-extern "C" mgmem_status mgmem_compute_import_read_v1(
+using ImportChecked = mgmem_status (*)(mgmem_domain *, const mgmem_external_buffer_checked_v1 *, mgmem_handle_v1 *);
+
+mgmem_status mgmem_compute_import_read_impl(
     mgmem_domain *domain, MgcLease *lease, uint64_t external_id,
     mgmem_compute_unmap_error_v1 on_unmap_error, void *error_context,
-    mgmem_handle_v1 *out, int32_t *out_compute_status) {
+    mgmem_handle_v1 *out, int32_t *out_compute_status, ImportChecked import_checked) {
     if (out_compute_status) *out_compute_status = MGC_SUCCESS;
     if (!out) return MGMEM_INVALID_ARGUMENT;
     *out = {};
@@ -122,7 +124,7 @@ extern "C" mgmem_status mgmem_compute_import_read_v1(
     external.retain = retain_mapping;
     external.release_checked = release_callback;
     external.managing_runtime_origin = mgmem_runtime_origin_v1();
-    const auto result = mgmem_import_external_checked_v1(domain, &external, out);
+    const auto result = import_checked(domain, &external, out);
     if (!mapping->transferred.load(std::memory_order_acquire)) {
         status = finish_mapping(mapping);
         if (status != MGC_SUCCESS) {
@@ -135,4 +137,12 @@ extern "C" mgmem_status mgmem_compute_import_read_v1(
     }
     release_reference(mapping);
     return result;
+}
+
+extern "C" mgmem_status mgmem_compute_import_read_v1(
+    mgmem_domain *domain, MgcLease *lease, uint64_t external_id,
+    mgmem_compute_unmap_error_v1 on_unmap_error, void *error_context,
+    mgmem_handle_v1 *out, int32_t *out_compute_status) {
+    return mgmem_compute_import_read_impl(domain, lease, external_id, on_unmap_error, error_context,
+                                          out, out_compute_status, mgmem_import_external_checked_v1);
 }

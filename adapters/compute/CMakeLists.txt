@@ -15,7 +15,31 @@ target_link_libraries(mgmem_compute_read_bridge PUBLIC MeguvizMemory::mgmem Megu
 set_target_properties(mgmem_compute_read_bridge PROPERTIES EXPORT_NAME read_bridge CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 add_library(MeguvizMemoryComputeReadBridge::read_bridge ALIAS mgmem_compute_read_bridge)
 
+option(MGMEM_COMPUTE_BRIDGE_BUILD_ARENA "Build the optional arena import bridge when supported by the Memory SDK" ON)
+if(MGMEM_COMPUTE_BRIDGE_BUILD_ARENA)
+  include(CheckCXXSourceCompiles)
+  set(_mgmem_saved_required_libraries "${CMAKE_REQUIRED_LIBRARIES}")
+  set(CMAKE_REQUIRED_LIBRARIES MeguvizMemory::mgmem)
+  unset(_mgmem_has_checked_arena_import CACHE)
+  check_cxx_source_compiles("#include <mgmem/mgmem.h>
+int main() { return (int)mgmem_import_external_arena_checked_v1(nullptr, nullptr, nullptr) + (int)MGMEM_CAP_ARENA_EXTERNAL_IMPORT; }"
+    _mgmem_has_checked_arena_import)
+  set(CMAKE_REQUIRED_LIBRARIES "${_mgmem_saved_required_libraries}")
+  unset(_mgmem_saved_required_libraries)
+  if(_mgmem_has_checked_arena_import)
+    # A separate archive preserves the legacy bridge's link-time dependencies.
+    add_library(mgmem_compute_arena_read_bridge STATIC src/compute_arena_read_bridge.cpp)
+    target_compile_features(mgmem_compute_arena_read_bridge PUBLIC cxx_std_17)
+    target_link_libraries(mgmem_compute_arena_read_bridge PUBLIC mgmem_compute_read_bridge)
+    set_target_properties(mgmem_compute_arena_read_bridge PROPERTIES EXPORT_NAME arena_read_bridge CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
+    add_library(MeguvizMemoryComputeReadBridge::arena_read_bridge ALIAS mgmem_compute_arena_read_bridge)
+  endif()
+endif()
+
 install(TARGETS mgmem_compute_read_bridge EXPORT MeguvizMemoryComputeReadBridgeTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+if(TARGET mgmem_compute_arena_read_bridge)
+  install(TARGETS mgmem_compute_arena_read_bridge EXPORT MeguvizMemoryComputeReadBridgeTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT MeguvizMemoryComputeReadBridgeTargets NAMESPACE MeguvizMemoryComputeReadBridge::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MeguvizMemoryComputeReadBridge)
@@ -52,6 +76,14 @@ int main() { MgcLeaseDesc d{}; d.content_context = nullptr; d.retain_content = n
   endif()
   add_test(NAME compute_read_bridge COMMAND mgmem_compute_read_bridge_tests)
   add_test(NAME compute_read_bridge_unmap_violation COMMAND mgmem_compute_read_bridge_tests --violate-unmap)
+  if(TARGET mgmem_compute_arena_read_bridge)
+    add_executable(mgmem_compute_arena_read_bridge_tests tests/arena_read_bridge_tests.cpp)
+    target_compile_features(mgmem_compute_arena_read_bridge_tests PRIVATE cxx_std_17)
+    target_link_libraries(mgmem_compute_arena_read_bridge_tests PRIVATE mgmem_compute_arena_read_bridge Threads::Threads)
+    add_test(NAME compute_arena_read_bridge COMMAND mgmem_compute_arena_read_bridge_tests)
+    add_test(NAME compute_arena_read_bridge_unmap_violation COMMAND mgmem_compute_arena_read_bridge_tests --violate-unmap)
+    set_tests_properties(compute_arena_read_bridge compute_arena_read_bridge_unmap_violation PROPERTIES TIMEOUT 30)
+  endif()
   # Fake origin isolates an error that the real Compute contract cannot induce
   # deterministically before Memory admission without a violating concurrent caller.
   add_executable(mgmem_compute_fake_pre_admission tests/fake_pre_admission.cpp src/compute_read_bridge.cpp)

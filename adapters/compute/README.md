@@ -1,5 +1,7 @@
 # Compute CPU READ → Memory 桥（可选）
 
+短名入口和完整资源释放示例见 [只读导入调用](SHORT_NAMES.md)。
+
 该独立构建仅接收完整、ready 的 Compute CPU READ lease，将实际映射作为 Memory SYSTEM 域的一个只读外部 backing。这里没有 GPU/AHB 映射、部分范围导入、Memory → Compute allocator 注入或数据复制。它不改变 Memory core/AAR 的默认依赖；使用者必须自行提供真实且互相兼容的 Compute SDK 和 Memory SDK。
 
 适配器要求 Memory 的 `mgmem_import_external_checked_v1` 符号及 `MGMEM_CAP_CHECKED_EXTERNAL_RELEASE` 能力。两者是可选 ABI 1.1 扩展，并非所有 0.2.0/ABI 1.1 Memory 构建都包含它们。桥为静态库，与缺少该符号的 Memory SDK 链接时必须失败；运行时换入不含符号的共享库也不支持。使用者须部署同一个、具有该能力的 Memory runtime，不能仅依据版本号判断支持。
@@ -15,6 +17,8 @@ cmake --install build/compute-bridge --config Release
 ```
 
 消费时同时提供三个安装前缀，使用 `find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED)` 与 `MeguvizMemoryComputeReadBridge::read_bridge`。请按 Compute SDK 的构建方式匹配工具链及 MSVC CRT；桥不复制、嵌入或发布 Compute SDK。
+
+需要把完整 Compute READ backing 导入 Memory Arena 域时，使用 `find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED COMPONENTS arena_read_bridge)`，链接独立的 `MeguvizMemoryComputeReadBridge::arena_read_bridge`，调用 `mgmem_compute_import_arena_read_v1`。它沿用相同映射保活与 checked release 合同，并计入该 Arena 域的预算；导入的 backing 不参与 Arena 子分配。该目标要求同一 Memory runtime 同时提供 `MGMEM_CAP_ARENA_EXTERNAL_IMPORT`、`MGMEM_CAP_CHECKED_EXTERNAL_RELEASE` 和 `mgmem_import_external_arena_checked_v1`。构建时检测所选 SDK 的声明和符号，缺失时不生成该目标，也可通过 `MGMEM_COMPUTE_BRIDGE_BUILD_ARENA=OFF` 显式关闭。原 SYSTEM 桥保留独立目标与原依赖，使用旧 runtime 的调用者无需链接 Arena 扩展。
 
 ## 身份、权限和关闭
 
