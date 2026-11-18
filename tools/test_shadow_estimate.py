@@ -85,6 +85,20 @@ class ShadowTest(unittest.TestCase):
             self.assertEqual(report["requests"], 64)
             self.assertEqual(len(report["trace_sha256"]), 64)
 
+    def test_large_chunk_not_rejected_by_window(self):
+        # Stage 0 regression: a 64-request window fills only part of a
+        # 16 KiB chunk; that must not count as backing growth.
+        report = shadow.estimate([[FIXED] * 4096], 16384)
+        self.assertEqual(report["verdict"], "arena_recommended")
+        self.assertEqual(report["arena"]["provider_calls_peak"], 16)
+
+    def test_large_trace_fast_enough(self):
+        import time
+        start = time.monotonic()
+        report = shadow.estimate([[FIXED] * 200000], 4096)
+        self.assertLess(time.monotonic() - start, 5.0)
+        self.assertEqual(report["arena"]["provider_calls_peak"], 3125)
+
     def test_invalid_trace_rejected(self):
         for bad in ('{"bytes": 0}\n', '{"bytes": 64, "alignment": 3}\n',
                     '{"bytes": true}\n', 'not json\n', '\n'):

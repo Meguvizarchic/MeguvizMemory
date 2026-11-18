@@ -95,6 +95,16 @@ class ValidatorTest(unittest.TestCase):
             with self.assertRaises(validator.PolicyError):
                 validator.validate(bad, classification([("s", "system_candidate")]), {})
 
+    def test_error_summary_aggregates_and_inventory_hint(self):
+        receipt = validator.validate(
+            policy([entry("a", "system"), entry("b", "system")]),
+            classification([("s", "system_candidate")]), {})
+        self.assertEqual(receipt["error_summary"], {"site_not_in_classification": 2})
+        with self.assertRaises(validator.PolicyError) as caught:
+            validator.validate(policy([]),
+                               {"schema_version": 1, "sites": [{"id": "x", "kind": "stack"}]}, {})
+        self.assertIn("site inventory", str(caught.exception))
+
     def test_full_cli_chain(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)

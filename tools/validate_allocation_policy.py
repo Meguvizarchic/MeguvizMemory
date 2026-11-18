@@ -26,9 +26,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import hashlib
 import json
 from pathlib import Path
+import re
 import sys
 
 SCHEMA_VERSION = 1
@@ -55,6 +57,11 @@ def load_classification(payload) -> dict:
     sites = payload.get("sites")
     if not isinstance(sites, list):
         raise PolicyError("classification sites must be a list")
+    if sites and isinstance(sites[0], dict) and "kind" in sites[0] \
+            and "classification" not in sites[0]:
+        raise PolicyError(
+            "these rows carry 'kind' and look like a site inventory, not classifier "
+            "output; run tools/classify_allocation_sites.py first and pass its result")
     result = {}
     for row in sites:
         if not isinstance(row, dict) or not isinstance(row.get("id"), str):
@@ -91,18 +98,42 @@ def load_policy(payload) -> list:
             value = entry.get(name)
             if value is not None and not (_is_int(value) and value > 0):
                 raise PolicyError(f"{site}: {name} must be a positive int")
+        owner = entry.get("owner")
+        if owner is not None and not (isinstance(owner, str) and owner.strip()):
+            raise PolicyError(f"{site}: owner must be a non-empty string")
+        review_by = entry.get("review_by")
+        if review_by is not None:
+            if not isinstance(review_by, str) or not re.fullmatch(
+                    r"\d{4}-\d{2}-\d{2}", review_by):
+                raise PolicyError(f"{site}: review_by must be an ISO date (YYYY-MM-DD)")
+            try:
+                date.fromisoformat(review_by)
+            except ValueError as failure:
+                raise PolicyError(
+                    f"{site}: review_by must be an ISO date (YYYY-MM-DD)") from failure
     return entries
 
 
-def validate(policy_payload, classification_payload, shadows: dict) -> dict:
+def validate(policy_payload, classification_payload, shadows: dict,
+             today=None) -> dict:
     """shadows maps site_id -> (file_sha256, parsed report)."""
     entries = load_policy(policy_payload)
     classifications = load_classification(classification_payload)
-    errors, checked = [], []
+    errors, checked, warnings = [], [], []
+    today = today or date.today()
     covered = set()
     for entry in entries:
         site, mode = entry["site_id"], entry["mode"]
         covered.add(site)
+        # Review hygiene is reported for every entry, even one that also
+        # fails a hard check below, so an overdue policy stays visible.
+        review_by = entry.get("review_by")
+        if review_by is None:
+            warnings.append({"site_id": site, "reason": "review_date_missing",
+                             "review_by": None, "owner": entry.get("owner")})
+        elif date.fromisoformat(review_by) < today:
+            warnings.append({"site_id": site, "reason": "review_overdue",
+                             "review_by": review_by, "owner": entry.get("owner")})
         classification = classifications.get(site)
         if classification is None:
             errors.append({"site_id": site, "reason": "site_not_in_classification"})
@@ -140,6 +171,9 @@ def validate(policy_payload, classification_payload, shadows: dict) -> dict:
                 continue
         checked.append({"site_id": site, "mode": mode, "classification": classification})
     uncovered = sorted(set(classifications) - covered)
+    error_summary = {}
+    for row in errors:
+        error_summary[row["reason"]] = error_summary.get(row["reason"], 0) + 1
     return {
         "schema_version": SCHEMA_VERSION,
         "tool": "validate_allocation_policy",
@@ -148,6 +182,8 @@ def validate(policy_payload, classification_payload, shadows: dict) -> dict:
         "result": "PASS" if not errors else "FAIL",
         "checked": checked,
         "errors": errors,
+        "error_summary": error_summary,
+        "warnings": warnings,
         "uncovered_sites_default_system": uncovered,
     }
 
@@ -157,6 +193,9 @@ def _load_json(path: Path):
 
 
 def main(argv=None) -> int:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--policy", required=True, type=Path)
     parser.add_argument("--classification", required=True, type=Path)

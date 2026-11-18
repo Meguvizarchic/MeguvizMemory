@@ -104,7 +104,18 @@ def validate_inventory(payload) -> list:
         raise InventoryError("inventory schema_version must be 1")
     sites = payload.get("sites")
     if not isinstance(sites, list) or not sites:
-        raise InventoryError("inventory sites must be a non-empty list")
+        hint = ""
+        if isinstance(payload.get("entries"), list):
+            hint = (" This file has 'entries' and looks like an allocation policy "
+                    "(Layer 3); pass a site inventory instead, e.g. ALLOCATION_SITES.json.")
+        raise InventoryError(
+            "inventory sites must be a non-empty list; expected "
+            '{"schema_version": 1, "sites": [{"id": ..., "kind": ...}]}.' + hint)
+    if sites and isinstance(sites[0], dict) and "classification" in sites[0] \
+            and "kind" not in sites[0]:
+        raise InventoryError(
+            "these rows carry 'classification' and look like classifier output, "
+            "not an inventory; pass the original site inventory (rows need 'kind')")
     validated = [validate_site(site) for site in sites]
     ids = [site["id"] for site in validated]
     if len(ids) != len(set(ids)):
@@ -204,6 +215,9 @@ def classify_inventory(payload) -> dict:
 
 
 def main(argv=None) -> int:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", required=True, type=Path)
     parser.add_argument("--output", type=Path)

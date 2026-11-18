@@ -85,6 +85,15 @@ class ClassifierTest(unittest.TestCase):
             with self.assertRaises(classifier.InventoryError):
                 classifier.classify_inventory(bad)
 
+    def test_wrong_file_kind_gets_fix_hint(self):
+        with self.assertRaises(classifier.InventoryError) as caught:
+            classifier.classify_inventory({"schema_version": 1, "entries": []})
+        self.assertIn("looks like an allocation policy", str(caught.exception))
+        with self.assertRaises(classifier.InventoryError) as caught:
+            classifier.classify_inventory({"schema_version": 1, "sites": [
+                {"id": "x", "classification": "excluded"}]})
+        self.assertIn("classifier output", str(caught.exception))
+
     def test_cli_writes_output(self):
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
