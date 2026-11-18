@@ -1,6 +1,23 @@
 # MeguvizMemory 工程状态
 
-最近补充：2026-11-09。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [jichuo1/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
+最近补充：2026-11-18。当前交付 **0.2.0 功能工程预览 / native ABI 1.1**。公开仓库为 [Meguvizarchic/MeguvizMemory](https://github.com/Meguvizarchic/MeguvizMemory)。正式 Release、性能资格和 BIL 接入尚未完成。
+
+## 单乘高位哈希与新猎点测量（2026-11-18）
+
+句柄表索引由 SplitMix64 双乘改为单乘 Fibonacci 高位哈希（ID 为单调计数器）。
+三方对照（同 exe、双 DLL、AB/BA 配对）：small-cost stages 四组 hot P50 比
+0.85–0.91、31/32 对有利，A/A 同口径约 0.99–1.03；claim reverse/shuffled
+workflow 0.949/0.987 与 A/A 噪声同量级、无回归；恒等哈希对照在 batch64
+退化至 1.11–1.15（步长 2 的 ID 聚簇），证明混合不可省。核心/JNI 49/49 通过；
+SplitMix 声明文件随之移除。合成宿主口径，不构成正式性能资格。
+同轮新测量（均判不值得改，保留基准）：Backing 节点单闲置复用与 A/A 不可区分；
+`range_mutex` 四次取锁无法从域锁/堆锁分离且 publish 不可无锁化；
+import 线性扫描约 2.85 ns/存活 claim（约 3.5k 存活达 10 µs/次）；
+Arena reset 约 13 ns + 3.4 ns/chunk；aligned 分支上限约 1–2 ns/对；
+domain 布局热路径 4–7 行、重排至多省 2–3 行；C++ 空借用比 C 约 +16 ns/次
+（[bench/cpp_borrow](bench/cpp_borrow/cpp_borrow.cpp)）；JNI 托管清零斜率
+约 0.19 ns/B、write staging 约 2.1× 于 read（[bench/jni_cost](bench/jni_cost/README.md)）。
+适配器一键验证入口为 [tools/verify_adapters.py](tools/verify_adapters.py)（实跑 57 项全绿）。
 
 ## C++ 常用调用简化（2026-11-09）
 

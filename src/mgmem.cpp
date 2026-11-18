@@ -15,6 +15,9 @@
 #include <type_traits>
 #include <utility>
 
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
 #if defined(_WIN32)
 #include <malloc.h>
 #ifndef NOMINMAX
@@ -239,10 +242,21 @@ class HandleTable {
     size_t size_ = 0;
 
     static size_t index(u64 id, size_t mask) noexcept {
-        // SplitMix64's public-domain output mixing, without generator state.
-        id = (id ^ (id >> 30)) * 0xbf58476d1ce4e5b9ull;
-        id = (id ^ (id >> 27)) * 0x94d049bb133111ebull;
-        return static_cast<size_t>(id ^ (id >> 31)) & mask;
+        // IDs are a monotonic counter, so single-multiply Fibonacci hashing
+        // (Knuth multiplicative hash, high bits) distributes them well with
+        // one multiply on the dependency chain. mask is capacity-1 for a
+        // power-of-two capacity, so its highest set bit gives the width.
+        // Measured against the previous SplitMix64 finalizer and an identity
+        // control: the identity variant degrades at batch 64 (stride-2 IDs
+        // cluster), this variant improves every measured group.
+#if defined(_MSC_VER)
+        unsigned long highest = 0;
+        _BitScanReverse64(&highest, static_cast<unsigned __int64>(mask));
+        const unsigned bits = static_cast<unsigned>(highest) + 1;
+#else
+        const unsigned bits = 64u - static_cast<unsigned>(__builtin_clzll(mask));
+#endif
+        return static_cast<size_t>((id * 0x9E3779B97F4A7C15ull) >> (64u - bits));
     }
 
     static Slot *place(Slot *slots, size_t capacity, const Slot &value) noexcept {
