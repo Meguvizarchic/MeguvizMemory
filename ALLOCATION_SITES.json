@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "scope": "Static site inventory for automated adoption classification. Facts only; no performance qualification. BIL rows follow docs/BIL_CPU_CANDIDATES_00572940.md at BIL main 00572940.",
+  "sites": [
+    {"id": "bil.frame-scratch", "kind": "existing_pool", "existing_optimization": true,
+     "shape": "unknown", "lifetime": "short_batch"},
+    {"id": "bil.frame-buffer-ledger", "kind": "existing_pool", "existing_optimization": true,
+     "shape": "unknown", "lifetime": "long"},
+    {"id": "bil.frame-guard-geometry", "kind": "stack", "heap_allocation": false,
+     "shape": "unknown", "lifetime": "short_batch"},
+    {"id": "bil.frame-engine-staging", "kind": "gpu", "existing_optimization": true,
+     "shape": "unknown", "lifetime": "escape_async"},
+    {"id": "bil.frame-engine-local-containers", "kind": "heap_blocks",
+     "shape": "unknown", "lifetime": "escape_async", "size_bytes": null},
+    {"id": "bil.danmaku-flat", "kind": "lease_transfer", "both_endpoints_leases": false,
+     "shape": "unknown", "lifetime": "short_batch"},
+    {"id": "bil.dexkit-session", "kind": "single_buffer",
+     "size_bytes": {"typical": 10540184}, "lifetime": "long",
+     "needs_stable_address": true, "shape": "fixed", "alignment": 64},
+    {"id": "repo.dex-import-consumer", "kind": "single_buffer",
+     "size_bytes": {"typical": 10540184}, "lifetime": "long",
+     "external_owner_borrowable": true, "shape": "fixed", "alignment": 64},
+    {"id": "repo.image-workspace", "kind": "heap_blocks",
+     "shape": "unknown", "lifetime": "short_batch", "size_bytes": null},
+    {"id": "repo.lease-transfer", "kind": "lease_transfer", "both_endpoints_leases": true,
+     "size_bytes": {"typical": 65536}, "shape": "fixed", "lifetime": "short_batch"}
+  ]
+}

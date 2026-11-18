@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "scope": "Adoption policy derived from ALLOCATION_SITES.json via tools/classify_allocation_sites.py. Records decisions and evidence only; switches no runtime path and qualifies no performance. Sites without an entry default to System/dense.",
+  "entries": [
+    {"site_id": "bil.frame-scratch", "mode": "excluded", "rollback": "system",
+     "rationale": "P1-07 five-slot reuse already exists; not counted as a Memory increment."},
+    {"site_id": "bil.frame-buffer-ledger", "mode": "excluded", "rollback": "system",
+     "rationale": "P2-05 holder packing and idle reuse already exist."},
+    {"site_id": "bil.frame-guard-geometry", "mode": "excluded", "rollback": "system",
+     "rationale": "Stack/std::array geometry; no proven heap allocation point."},
+    {"site_id": "bil.frame-engine-staging", "mode": "excluded", "rollback": "system",
+     "rationale": "Engine/ncnn/GPU owners keep staging and retirement."},
+    {"site_id": "bil.frame-engine-local-containers", "mode": "system", "rollback": "system",
+     "rationale": "Containers must outlive submit_and_wait; an arena chunk would stay pinned. Compare plain reserve first."},
+    {"site_id": "bil.danmaku-flat", "mode": "shadow", "rollback": "system",
+     "rationale": "Endpoints are Rust/Java arrays, not leases; migration cost unknown until shadow data exists."},
+    {"site_id": "bil.dexkit-session", "mode": "system", "rollback": "system",
+     "rationale": "Single dense long-lived input; arena saves no provider call (recorded A1/A3 backing ratio 1.0)."},
+    {"site_id": "repo.dex-import-consumer", "mode": "import", "rollback": "system",
+     "rationale": "Stable preloaded owner can be borrowed via the external-import contract instead of copied."},
+    {"site_id": "repo.image-workspace", "mode": "shadow", "rollback": "system",
+     "rationale": "Buffer sizes follow image dimensions; distribution must be shadow-estimated per workload."},
+    {"site_id": "repo.lease-transfer", "mode": "copyto", "rollback": "system",
+     "rationale": "Both endpoints are existing leases; direct transfer removes the Java staging array."}
+  ]
+}
