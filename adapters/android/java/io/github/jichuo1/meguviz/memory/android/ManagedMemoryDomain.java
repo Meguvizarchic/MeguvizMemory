@@ -6,7 +6,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * No native address or direct ByteBuffer is exposed. Explicitly close owners,
  * leases and the domain; GC is not a cleanup mechanism. */
 public final class ManagedMemoryDomain implements AutoCloseable {
-    static { System.loadLibrary("mgmem_pressure_jni"); }
+    static {
+        // See NativeMemoryLease: pure-Java unit tests may skip the load.
+        if (!Boolean.getBoolean("io.github.jichuo1.meguviz.memory.skipNativeLoad"))
+            System.loadLibrary("mgmem_pressure_jni");
+    }
 
     public static final int OPEN = 0;
     public static final int CLOSING = 1;
@@ -514,6 +518,8 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         private final ManagedMemoryDomain domain;
         private volatile NativeMemoryLease delegate;
         private volatile int closeState = NativeMemoryLease.CLOSE_OPEN;
+        /** Thread currently inside withDirectBuffer; only touched under this monitor. */
+        private Thread directBufferThread;
         private int closeFailure = NativeMemoryLease.CLOSE_FAILURE_UNKNOWN;
         private Lease(ManagedMemoryDomain domain) { this.domain = domain; }
 
@@ -531,6 +537,26 @@ public final class ManagedMemoryDomain implements AutoCloseable {
             if (closeState != NativeMemoryLease.CLOSE_OPEN) throw new IllegalStateException("lease closing or closed");
             delegate.write(offset, source, arrayOffset, count);
         }
+        /** Callback receiving a direct view of this lease; see {@link #withDirectBuffer}. */
+        @FunctionalInterface
+        public interface DirectBufferAction {
+            void accept(java.nio.ByteBuffer buffer) throws Exception;
+        }
+        /** Runs {@code action} with a direct ByteBuffer over this lease, for
+         * consumers whose contract is a ByteBuffer. The buffer must not be
+         * retained or used after the callback returns or after this lease
+         * closes; the full lifetime rule is on NativeMemoryLease. */
+        public void withDirectBuffer(long offset, long length,
+                                     DirectBufferAction action) throws Exception {
+            if (action == null) throw new NullPointerException("action");
+            if (closeState != NativeMemoryLease.CLOSE_OPEN) throw new IllegalStateException("lease closing or closed");
+            synchronized (this) { directBufferThread = Thread.currentThread(); }
+            try {
+                delegate.withDirectBuffer(offset, length, buffer -> action.accept(buffer));
+            } finally {
+                synchronized (this) { directBufferThread = null; }
+            }
+        }
         /** Direct bounded transfer between existing leases; no Java array is needed. */
         public void copyTo(Lease destination, long sourceOffset, long destinationOffset, int count) {
             if (destination == null) throw new NullPointerException("destination");
@@ -541,6 +567,8 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         }
         @Override public void close() {
             synchronized (this) {
+                if (Thread.currentThread() == directBufferThread)
+                    throw new IllegalStateException("close inside withDirectBuffer callback");
                 if (closeState != NativeMemoryLease.CLOSE_OPEN) return;
                 closeState = NativeMemoryLease.CLOSE_RELEASING;
             }

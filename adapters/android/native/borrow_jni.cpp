@@ -258,3 +258,26 @@ extern "C" JNIEXPORT jint JNICALL JNI_NAME(nativeClose)(JNIEnv *, jclass, jlong 
     try { return token > 0 ? close_registration(static_cast<u64>(token), true) : MGMEM_INVALID_ARGUMENT; }
     catch (...) { return MGMEM_PROVIDER_ERROR; }
 }
+
+/* The returned buffer aliases the leased range without copying and holds no
+ * reference to the lease: Java restricts it to a scoped callback under the
+ * lease monitor, the same lifetime rule as a C borrow pointer. The entry
+ * lock is only held while the view is validated and the buffer is created. */
+extern "C" JNIEXPORT jobject JNICALL JNI_NAME(nativeDirectBuffer)(JNIEnv *env, jclass,
+    jlong token, jlong offset, jlong length) {
+    try {
+        if (token <= 0 || offset < 0 || length <= 0 ||
+            length > static_cast<jlong>(std::numeric_limits<jint>::max()))
+            return nullptr;
+        auto entry = lookup(static_cast<u64>(token));
+        if (!entry) return nullptr;
+        std::lock_guard<std::mutex> lock(entry->mutex);
+        if (!entry->ready || entry->closed || !entry->claimed) return nullptr;
+        const auto start = static_cast<u64>(offset);
+        const auto count = static_cast<u64>(length);
+        if (start > entry->view.length || count > entry->view.length - start)
+            return nullptr;
+        auto *bytes = static_cast<unsigned char *>(entry->view.data) + static_cast<size_t>(start);
+        return env->NewDirectByteBuffer(bytes, length);
+    } catch (...) { return nullptr; }
+}

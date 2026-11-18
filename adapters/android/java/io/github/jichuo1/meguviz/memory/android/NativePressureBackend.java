@@ -6,7 +6,11 @@ import android.os.Looper;
 /** Narrow JNI backend: registered IDs are not native pointers. Native close
  * schedules final controller cleanup; it never joins a worker on the caller. */
 public final class NativePressureBackend implements MemoryPressureAdapter.Backend, AutoCloseable {
-    static { System.loadLibrary("mgmem_pressure_jni"); }
+    static {
+        // See NativeMemoryLease: pure-Java unit tests may skip the load.
+        if (!Boolean.getBoolean("io.github.jichuo1.meguviz.memory.skipNativeLoad"))
+            System.loadLibrary("mgmem_pressure_jni");
+    }
     private final long registration;
     private final AtomicBoolean closing = new AtomicBoolean();
     private static final int CLOSE_OPEN = 0, CLOSE_ADMITTING = 1, CLOSE_ACCEPTED = 2, CLOSE_UNKNOWN = 3;

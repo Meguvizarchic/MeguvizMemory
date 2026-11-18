@@ -1,12 +1,22 @@
 package io.github.jichuo1.meguviz.memory.android;
 
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 /** Bounded access to a native Memory lease registered by trusted native code.
- * No native pointer or direct buffer escapes. Close may synchronously run the
+ * No native pointer escapes. A direct ByteBuffer view is available only inside
+ * {@link #withDirectBuffer} callbacks, under the same lifetime rule as a C
+ * borrow pointer: the buffer must not be retained or used after the callback
+ * returns or after this lease closes. Close may synchronously run the
  * original owner/provider callback; use a suitable cleanup thread. */
 public final class NativeMemoryLease implements AutoCloseable {
-    static { System.loadLibrary("mgmem_pressure_jni"); }
+    static {
+        // JVM unit tests that only exercise pure-Java logic may set this
+        // property to load the classes without the JNI library present;
+        // any native call then fails with UnsatisfiedLinkError.
+        if (!Boolean.getBoolean("io.github.jichuo1.meguviz.memory.skipNativeLoad"))
+            System.loadLibrary("mgmem_pressure_jni");
+    }
     /** Maximum bytes in one write; separately invoked writes commit independently. */
     public static final int MAX_WRITE_BYTES = 1024 * 1024;
     /** Maximum bytes in one lease-to-lease transfer; no staging is allocated. */
@@ -22,6 +32,8 @@ public final class NativeMemoryLease implements AutoCloseable {
     private long token;
     private final long length;
     private final boolean writable;
+    /** Thread currently inside withDirectBuffer; only touched under this monitor. */
+    private Thread directBufferThread;
     private volatile int closeState = CLOSE_OPEN;
     private int closeFailure = CLOSE_FAILURE_UNKNOWN;
 
@@ -113,6 +125,47 @@ public final class NativeMemoryLease implements AutoCloseable {
         if (status != 0) throw new IllegalStateException("native transfer failed: " + status);
     }
 
+    /** Callback receiving a direct view of this lease; see the lifetime rule. */
+    @FunctionalInterface
+    public interface DirectBufferAction {
+        void accept(ByteBuffer buffer) throws Exception;
+    }
+
+    /** Runs {@code action} with a direct ByteBuffer over
+     * {@code [offset, offset + length)} of this lease, for consumers whose
+     * contract is a ByteBuffer (for example JNI staging APIs).
+     *
+     * <p>The buffer aliases the leased native range with no copying. This
+     * object's monitor is held for the whole callback, so a concurrent
+     * {@link #close()} cannot release the range mid-callback. The buffer is
+     * cleared (limit 0) on return as a best-effort guard, but a retained
+     * reference used after return or after close accesses released memory:
+     * retaining it is a programming error with the same consequences as
+     * retaining a C borrow pointer. A READ lease yields a read-only buffer.
+     * The buffer's byte order is the ByteBuffer default (big-endian); set it
+     * explicitly when the consumer needs native order. Direct access is not
+     * synchronized with concurrent {@link #read}/{@link #write} calls beyond
+     * this lease's own READ/WRITE exclusivity contract.
+     */
+    public synchronized void withDirectBuffer(long offset, long length,
+                                              DirectBufferAction action) throws Exception {
+        Objects.requireNonNull(action, "action");
+        if (offset < 0 || length <= 0 || length > Integer.MAX_VALUE ||
+                offset > this.length || length > this.length - offset)
+            throw new IndexOutOfBoundsException("lease direct buffer range");
+        if (token == 0) throw new IllegalStateException("lease closed");
+        ByteBuffer buffer = nativeDirectBuffer(token, offset, length);
+        if (buffer == null) throw new IllegalStateException("direct buffer unavailable");
+        directBufferThread = Thread.currentThread();
+        try {
+            action.accept(writable ? buffer : buffer.asReadOnlyBuffer());
+        } finally {
+            directBufferThread = null;
+            buffer.clear();
+            buffer.limit(0);
+        }
+    }
+
     /** Stops admission once and releases the lease outside this object's lock.
      * A concurrent repeated close may return before that release finishes; only
      * its first caller receives any error. A native failure is quarantined; a
@@ -120,6 +173,8 @@ public final class NativeMemoryLease implements AutoCloseable {
     @Override public void close() {
         final long previous;
         synchronized (this) {
+            if (Thread.currentThread() == directBufferThread)
+                throw new IllegalStateException("close inside withDirectBuffer callback");
             if (token == 0) return;
             previous = token;
             token = 0;
@@ -145,4 +200,5 @@ public final class NativeMemoryLease implements AutoCloseable {
     private static native int nativeTransfer(long source, long sourceOffset, long destination,
                                              long destinationOffset, int count);
     private static native int nativeClose(long registration);
+    private static native ByteBuffer nativeDirectBuffer(long registration, long offset, long length);
 }

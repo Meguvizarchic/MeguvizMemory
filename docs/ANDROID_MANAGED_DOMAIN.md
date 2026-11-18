@@ -1,6 +1,6 @@
 # 可选 Android 托管内存域
 
-`ManagedMemoryDomain` 是现有共享 Memory 核心上的可选 Java owner/lease 包装，不提供原始地址或直接 ByteBuffer。`system(budgetBytes)` 和 `arena(budgetBytes, chunkBytes)` 分别使用默认 System 和 arena provider；不接管全局分配，也不支持通用外部内存导入。`attachPressure` 可显式启用同域压力控制；单独附着不会注册 Android 回调，需由宿主组合 `ManagedPressureBackend` 与 `MemoryPressureAdapter`。使用方法、预算仲裁及结果窗口见[同域压力合同](ANDROID_MANAGED_PRESSURE_CONTRACT.md)。
+`ManagedMemoryDomain` 是现有共享 Memory 核心上的可选 Java owner/lease 包装，不提供原始地址。lease 另提供作用域受限的直接 ByteBuffer 视图 `withDirectBuffer(offset, length, action)`：缓冲别名 lease 原生区间（零拷贝，READ lease 为只读视图，字节序为 ByteBuffer 默认大端、需要时由回调内显式设置），回调期间 lease 监视器被持有故并发 close 不能中途释放，回调内自关会被拒绝，返回后缓冲被清零限长作尽力失效；保留引用在回调后或 lease 关闭后使用与保留 C 借用指针同等危险，属编程错误。异步交接不得使用该视图，应持有 lease 本身。`system(budgetBytes)` 和 `arena(budgetBytes, chunkBytes)` 分别使用默认 System 和 arena provider；不接管全局分配，也不支持通用外部内存导入。`attachPressure` 可显式启用同域压力控制；单独附着不会注册 Android 回调，需由宿主组合 `ManagedPressureBackend` 与 `MemoryPressureAdapter`。使用方法、预算仲裁及结果窗口见[同域压力合同](ANDROID_MANAGED_PRESSURE_CONTRACT.md)。
 
 `allocate` 同步分配并对全部字节清零后交付；所有尺寸、对齐和范围必须合法。预算限制核心 backing 准入，不是 RSS 或进程总内存上限；降低预算不会撤销已有 owner 和 lease。元数据、Java 对象和清理线程不计入该预算。分配、清零、owner/lease 关闭可能耗时，安排在工作线程。应在将任务入队前取得 lease，任务完成后关闭 lease；owner 关闭不会使已取得的 lease 失效。不要依赖 GC 释放资源。
 
