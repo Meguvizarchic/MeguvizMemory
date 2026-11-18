@@ -84,6 +84,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    // Prefab metadata is generated below (generatePrefabTree) and merged
+    // into the AAR: AGP's prefabPublishing cannot publish libraries that
+    // only exist as prebuilt jniLibs without an externalNativeBuild.
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -99,6 +102,66 @@ tasks.withType<Javadoc>().configureEach {
 }
 
 tasks.named("preBuild") { dependsOn(extractJni) }
+
+// Hand-authored Prefab package (schema 2) over the same candidate bytes,
+// so CMake consumers can find_package(mgmem-android) and link
+// mgmem-android::mgmem / ::mgmem_pressure_jni with the public headers.
+val prefabDir = layout.buildDirectory.dir("prefabTree")
+val generatePrefabTree = tasks.register("generatePrefabTree") {
+    description = "Generate the prefab/ tree merged into the AAR."
+    dependsOn(extractJni)
+    val includeDir = rootProject.file("../../include")
+    inputs.dir(jniDir)
+    inputs.dir(includeDir)
+    inputs.property("version", publicationVersion)
+    outputs.dir(prefabDir)
+    doLast {
+        val root = prefabDir.get().asFile
+        root.deleteRecursively()
+        val prefabRoot = root.resolve("prefab")
+        prefabRoot.mkdirs()
+        // Prefab package metadata is schema 1 in the current CLI: the
+        // dependencies field is mandatory even when empty.
+        prefabRoot.resolve("prefab.json").writeText(
+            "{\"name\":\"mgmem-android\",\"schema_version\":1,\"dependencies\":[]," +
+                "\"version\":\"${publicationVersion.get()}\"}\n")
+        val modules = linkedMapOf(
+            "mgmem" to ("libmgmem.so" to ""),
+            "mgmem_pressure_jni" to ("libmgmem_pressure_jni.so" to ":mgmem"),
+        )
+        val abis = jniDir.get().asFile.listFiles { f -> f.isDirectory }
+            ?.map { it.name }?.sorted().orEmpty()
+        require(abis.isNotEmpty()) { "extractJni produced no ABI directories" }
+        for ((module, spec) in modules) {
+            val (library, export) = spec
+            val moduleDir = prefabRoot.resolve("modules/$module")
+            includeDir.copyRecursively(moduleDir.resolve("include"), overwrite = true)
+            // library_name omitted: it defaults to lib<module>.so, which
+            // is exactly the candidate file name for both modules.
+            moduleDir.resolve("module.json").writeText(
+                "{\"export_libraries\":[" +
+                    (if (export.isEmpty()) "" else "\"$export\"") + "],\"android\":{}}\n")
+            for (abi in abis) {
+                val source = jniDir.get().asFile.resolve("$abi/$library")
+                require(source.isFile) { "missing $library for $abi" }
+                val libDir = moduleDir.resolve("libs/android.$abi")
+                libDir.mkdirs()
+                source.copyTo(libDir.resolve(library), overwrite = true)
+                libDir.resolve("abi.json").writeText(
+                    "{\"abi\":\"$abi\",\"api\":27,\"ndk\":30,\"stl\":\"none\"}\n")
+            }
+        }
+    }
+}
+
+// AGP registers the AAR bundling task lazily (its name varies by AGP
+// version), so hook every Zip task whose name looks like the AAR bundle.
+tasks.withType<org.gradle.api.tasks.bundling.Zip>().configureEach {
+    if (name.contains("bundle", ignoreCase = true) && name.contains("aar", ignoreCase = true)) {
+        dependsOn(generatePrefabTree)
+        from(prefabDir)
+    }
+}
 
 tasks.register("verifyNoExternalRuntime") {
     val runtimeClasspath = configurations.named("releaseRuntimeClasspath")

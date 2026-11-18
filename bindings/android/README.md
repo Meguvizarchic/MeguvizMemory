@@ -13,14 +13,14 @@ cd bindings/android
 
 # 2. 组装（会先跑 mergeUniversalAar + extractJni）
 .\gradlew.bat :mgmem-android:assembleRelease `
-  "-Pmgmem.candidateZip=D:/DevArea/MeguvizMemory/dist/MeguvizMemory-Android-Candidate-06f275e.zip" `
-  "-Pmgmem.candidateSha256=1d383c36bdc97a97e0812d365752fb1db75104b40e27f380d4a6bc4871a32823" `
+  "-Pmgmem.candidateZip=D:/DevArea/MeguvizMemory/dist/MeguvizMemory-Android-Candidate-mgmembb.zip" `
+  "-Pmgmem.candidateSha256=d05b16eec51fd5c8568223832459196581340b05ac0b986df00680cec4d922a2" `
   --offline
 
 # 3. 发布到本地暂存仓库（build/central-staging，不进公开仓库）
 .\gradlew.bat :mgmem-android:publishCentralPublicationToCentralStagingRepository `
-  "-Pmgmem.candidateZip=D:/DevArea/MeguvizMemory/dist/MeguvizMemory-Android-Candidate-06f275e.zip" `
-  "-Pmgmem.candidateSha256=1d383c36bdc97a97e0812d365752fb1db75104b40e27f380d4a6bc4871a32823" `
+  "-Pmgmem.candidateZip=D:/DevArea/MeguvizMemory/dist/MeguvizMemory-Android-Candidate-mgmembb.zip" `
+  "-Pmgmem.candidateSha256=d05b16eec51fd5c8568223832459196581340b05ac0b986df00680cec4d922a2" `
   --offline
 ```
 

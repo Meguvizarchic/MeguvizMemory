@@ -370,7 +370,7 @@ def native_names(source):
     names = set()
     for klass in ('NativeMemoryLease', 'NativePressureBackend', 'ManagedMemoryDomain'):
         text = (source / (JAVA_BASE + klass + '.java')).read_text(encoding='utf-8')
-        methods = re.findall(r'\bprivate\s+static\s+native\s+[\w\[\]]+\s+(\w+)\s*\(', text)
+        methods = re.findall(r'\bprivate\s+static\s+native\s+[\w.\[\]]+\s+(\w+)\s*\(', text)
         require(methods and len(methods) == len(set(methods)), 'java_native_declarations')
         require(all('_' not in name for name in methods), 'unsupported_jni_name_escape')
         names.update(JAVA_PREFIX + klass + '_' + name for name in methods)
@@ -614,7 +614,8 @@ def build_candidate(args, work, source, lock_bytes, records, markers):
     for klass in ('NativeMemoryLease', 'NativePressureBackend', 'ManagedMemoryDomain'):
         output = run_tool([tools['javap'], '-private', '-classpath', classes,
                            'io.github.jichuo1.meguviz.memory.android.' + klass], work, operations, 'javap-' + klass)
-        methods = re.findall(r'\bprivate\s+static\s+native\s+[\w\[\]]+\s+(\w+)\s*\(', output)
+        # javap prints qualified return types (e.g. java.nio.ByteBuffer).
+        methods = re.findall(r'\bprivate\s+static\s+native\s+[\w.\[\]]+\s+(\w+)\s*\(', output)
         expected = {name[len(JAVA_PREFIX + klass + '_'):] for name in expected_jni
                     if name.startswith(JAVA_PREFIX + klass + '_')}
         require(set(methods) == expected and len(methods) == len(expected), 'class_native_mismatch')
