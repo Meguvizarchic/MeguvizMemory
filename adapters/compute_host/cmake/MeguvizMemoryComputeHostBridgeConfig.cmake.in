@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(MeguvizMemory CONFIG REQUIRED)
+find_dependency(MeguvizCompute CONFIG REQUIRED)
+include(CheckCXXSourceCompiles)
+set(_host_bridge_saved_libraries "${CMAKE_REQUIRED_LIBRARIES}")
+set(CMAKE_REQUIRED_LIBRARIES MeguvizCompute::core)
+unset(_host_bridge_has_import CACHE)
+check_cxx_source_compiles("#include <meguviz/compute.h>
+int main() { return (int)mgc_resource_import_host_v1(nullptr, nullptr, nullptr, nullptr); }" _host_bridge_has_import)
+set(CMAKE_REQUIRED_LIBRARIES "${_host_bridge_saved_libraries}")
+unset(_host_bridge_saved_libraries)
+if(NOT _host_bridge_has_import)
+  message(FATAL_ERROR "Compute SDK requires mgc_resource_import_host_v1")
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/MeguvizMemoryComputeHostBridgeTargets.cmake")
+check_required_components(MeguvizMemoryComputeHostBridge)
