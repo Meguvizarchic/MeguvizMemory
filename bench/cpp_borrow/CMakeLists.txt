@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(MeguvizCppBorrowBench LANGUAGES CXX)
+find_package(MeguvizMemory CONFIG REQUIRED)
+find_package(Threads REQUIRED)
+add_executable(mgmem_cpp_borrow cpp_borrow.cpp)
+target_compile_features(mgmem_cpp_borrow PRIVATE cxx_std_17)
+target_link_libraries(mgmem_cpp_borrow PRIVATE MeguvizMemory::mgmem Threads::Threads)
