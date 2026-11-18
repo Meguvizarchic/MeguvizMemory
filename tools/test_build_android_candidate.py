@@ -132,7 +132,9 @@ class CandidateContracts(unittest.TestCase):
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniABI.cmake': b'',
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets.cmake': b'',
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets-release.cmake': b'',
-                 'share/MeguvizMemory/licenses/llvm-NOTICE.txt': b''}
+                 'share/MeguvizMemory/licenses/llvm-NOTICE.txt': b'',
+                 'share/MeguvizMemory/licenses/LICENSE': b'',
+                 'share/MeguvizMemory/licenses/NOTICE': b''}
         subject.validate_sdk_members(files, {'a.h': b'h'})
         with self.assertRaisesRegex(ValueError, 'sdk_unexpected_or_missing_member'):
             subject.validate_sdk_members({**files, 'bin/unexpected': b'x'}, {'a.h': b'h'})
@@ -150,7 +152,9 @@ class CandidateContracts(unittest.TestCase):
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniABI.cmake': b'',
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets.cmake': b'',
                  'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets-release.cmake': b'',
-                 'share/MeguvizMemory/licenses/llvm-NOTICE.txt': b''}
+                 'share/MeguvizMemory/licenses/llvm-NOTICE.txt': b'',
+                 'share/MeguvizMemory/licenses/LICENSE': b'',
+                 'share/MeguvizMemory/licenses/NOTICE': b''}
         subject.validate_sdk_members(files, {'a.h': b'h'})
         for name in ('lib/libmgmem_pressure_jni.so',
                      'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniABI.cmake',

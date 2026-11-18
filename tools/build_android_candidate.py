@@ -409,7 +409,9 @@ def validate_sdk_members(files, headers):
                      'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniABI.cmake',
                      'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets.cmake',
                      'lib/cmake/MeguvizMemory/MeguvizMemoryAndroidJniTargets-release.cmake',
-                     'share/MeguvizMemory/licenses/llvm-NOTICE.txt'})
+                     'share/MeguvizMemory/licenses/llvm-NOTICE.txt',
+                     'share/MeguvizMemory/licenses/LICENSE',
+                     'share/MeguvizMemory/licenses/NOTICE'})
     require(set(files) == required, 'sdk_unexpected_or_missing_member')
 
 
@@ -699,6 +701,8 @@ def build_candidate(args, work, source, lock_bytes, records, markers):
             if file.is_file(): sdk_files[file.relative_to(sdk).as_posix()] = file.read_bytes()
         validate_sdk_members(sdk_files, source_headers)
         require(sdk_files.get('share/MeguvizMemory/licenses/llvm-NOTICE.txt') == notice, 'sdk_notice_mismatch')
+        require(sdk_files.get('share/MeguvizMemory/licenses/LICENSE') == (source / 'LICENSE').read_bytes(), 'sdk_license_mismatch')
+        require(sdk_files.get('share/MeguvizMemory/licenses/NOTICE') == (source / 'NOTICE').read_bytes(), 'sdk_license_notice_mismatch')
         sdk_files['lib/libmgmem.so'] = sanitized['core']
         sdk_files['lib/libmgmem_pressure.a'] = static_clean
         sdk_files['lib/libmgmem_pressure_jni.so'] = sanitized['jni']
