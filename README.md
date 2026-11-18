@@ -84,6 +84,14 @@ build/image/mgmem_image input.ppm output.pgm
 
 Windows 运行消费者前将 `install/host/bin` 加入当前进程 PATH；Unix 按安装位置配置动态库搜索路径。完整 DexMeguviz 消费者需要真实外部源码和 DEX 输入，见 [集成说明](docs/INTEGRATION.md)，未捆绑或伪造 Dex SDK。
 
+可选适配器（`adapters/` 下各自独立构建，不改变核心依赖图）：Compute CPU 只读桥（含 Arena 变体与短名入口）、Compute 宿主资源桥、AHB 读取/GPU/GLES 上传桥、Media 只读桥。宿主一次性验证全部桥（需外部 Compute/Media 已安装前缀）：
+
+```powershell
+python tools/verify_adapters.py --build-core --compute-prefix <Compute前缀> --media-prefix <Media前缀> --msvc-runtime MultiThreaded
+```
+
+脚本按依赖顺序配置/构建/测试/安装每个桥，核对测试计数（能力探针降级会显式 WARN，`--strict` 时失败），Android 目标在宿主运行中显式 SKIP。各桥合同见其目录内 README。
+
 ## 所有权与关闭
 
 `allocate` 返回 owner handle；访问前获取读/写 lease。读 lease 可共享，写 lease 排斥其他 lease。owner release 后已有 lease 保活 backing，最后一次访问结束再归还 lease。异步任务必须先取得 lease 再入队。
