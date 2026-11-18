@@ -7,6 +7,14 @@
 新增离线三层：`tools/classify_allocation_sites.py`（站点三态分类）、`tools/shadow_estimate.py`（first-fit bump 影子记账，只估 provider/backing、延迟恒 null）、`tools/validate_allocation_policy.py`（策略 fail-closed 校验），种子文件 `ALLOCATION_SITES.json` 与 `ALLOCATION_POLICY.json` 覆盖 BIL 七候选与本仓三消费者，分类与既往人工决策一致（excluded 4、system 2、shadow 2、import 1、copyto 1）；影子模拟通过文档 oracle（fixed 128→2 chunk、预备 mixed 32→1/64→2）。
 同日阶段 0–3 增强：修大 chunk 窗口误杀与模拟加速（同形下界缓存，20 万请求 37 s→约 1 s）、错误三段式；一键 `run_adoption.py`、策略草案自动生成（SHA/chunk/budget 机器回填）、chunk 扫描与中文反事实解释；轨迹 v2 寿命事件（stream/staged 双峰值）、`make_trace.py`、`trace_recorder.hpp`（MSVC /W4/WX 编译烟测通过）、快照 DRIFT 反馈；阈值 preset/覆盖、源码清单草案扫描、策略 owner/review_by 告警、CI 六套测试加种子漂移门。每阶段经子代理审查，实质问题（预算错配、部分产物标记、阈值未透传、符号链接跟随、Windows 编码未钉死、C import `_v1` 漏报、尺寸错位锚定、过期告警不可见）已修并加回归；强制 cp1252 下复测通过。只产推荐与证据，不切换运行时、不构成性能/BIL 资格；说明见 [自动化接入判断](docs/AUTOMATED_ADOPTION.md)。
 
+## BIL 全量接入尝试（2026-11-18）
+
+在 BIL `main@fe54f9c5` 隔离 worktree 分支 `codex/mgmem-full-integration-20261118`（`91782d37`，未推）以默认关闭的 opt-in 开关接入暂存 AAR：单测 4/4、assembleDebug（双 ARM .so 均 STORED）、R8（JNI 名保留）、关开关默认构建均通过，NDK 手工链接探针可链 AAR 的 .so。结论是构建兼容但生产热点仍不可迁：阻塞为未上 Central/未进 BOM、Java 侧无 ByteBuffer 互操作、AAR 无 prefab。逐站点结论与解锁顺序见 [实战记录](docs/BIL_INTEGRATION_ATTEMPT_20261118.md)；BIL 不接入决定不变。
+
+## 实战问题改进：Prefab 与 ByteBuffer 互操作（2026-11-18）
+
+按 BIL 实战清单同日改进：lease 新增作用域受限零拷贝 `withDirectBuffer`（JNI `nativeDirectBuffer`、回调期监视器保活、自关拒绝、READ 只读视图），托管宿主 50/50 通过；三处 Java 类支持 `io.github.jichuo1.meguviz.memory.skipNativeLoad` 系统属性跳过类初始化载库（纯 JVM 逻辑测试）；AAR 手工注入 Prefab 包（schema 1：`prefab.json` 含 dependencies、双模块头与三 ABI 库），并重建候选 `MeguvizMemory-Android-Candidate-mgmembb.zip`（sha256 `d05b16ee…`，PASS_SCOPED_ENGINEERING_CANDIDATE）使 .so 与新 JNI 符号同批。BIL 实验分支再提交 Prefab 探针后 assembleDebug 通过（探针 DT_NEEDED 仅 libmgmem 与系统库）；同轮发现 BIL gradlew.bat 恒设 `JDK_JAVA_OPTIONS` 会让 AGP prefab 校验把 NOTE 行当致命错误，属 BIL 侧待修。候选构建器同步修点分返回类型正则。中央发布、设备验证仍未做。
+
 ## 许可证与独立发布（2026-11-18）
 
 Memory 已确定为 Apache-2.0（根目录 `LICENSE`/`NOTICE`，与家族 Drawable/Hook/Ref/DexMeguviz 同口径）；CMake 将二者装入 `share/MeguvizMemory/licenses`，Android 包另带 `third_party_notices/llvm-NOTICE.txt`。发布链位于 [bindings/android/](bindings/android/README.md)：AGP 9.4.1 + Gradle 9.8.2 + Kotlin 2.4.21 + JDK 17 + compileSdk 37/minSdk 27，与家族同版本；核心与五个桥的 CMake 版本已统一提升至 1.2.1（包版本文件实测 `PACKAGE_VERSION "1.2.1"`）。坐标 `io.github.jichuo1.meguviz:mgmem-android:1.2.1`，暂存包（含 AAR/POM/sources/javadoc/module）已在三 ABI 上过静态门禁（`PASS_SCOPED_ENGINEERING_CANDIDATE`，`device_executed=false`）。经确认采用独立发布，未接入 MeguvizFamily 的 `family.toml`/BOM；剩余正式上传前置为本机 GPG 签名、Central Portal 命名空间验证与上传后 `verify-central` 核对。16 KB 对齐、核心 26 项、28 个离线套件（含补参的真实 Windows OS sharing PASS）与卫生扫描（无构建产物、无密钥/令牌）均已静态通过；armv7 设备覆盖、API34 长稳、性能/BIL 资格仍缺失。
