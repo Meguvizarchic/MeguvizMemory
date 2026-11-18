@@ -20,7 +20,7 @@
 
 ## 实际复现入口
 
-宿主 CMake/build/install 步骤见 README 与 INTEGRATION。当前机器的实际目录为 `build/host-ninja`、`build/host-asan`、`install/host`、`build/dex-locked`、`build/image`。Python 运行既有解释器，没有安装 Python 依赖：
+宿主 CMake/build/install 步骤见 README 与 INTEGRATION。构建 owned-region 诊断时需显式设置 `-DMGMEM_BUILD_BENCHMARKS=ON`。当前机器的实际目录为 `build/host-ninja`、`build/host-asan`、`install/host`、`build/dex-locked`、`build/image`。Python 运行既有解释器，没有安装 Python 依赖：
 
 ```powershell
 $env:PATH = "$PWD/install/host/bin;" + $env:PATH

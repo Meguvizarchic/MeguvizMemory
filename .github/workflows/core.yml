@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Configure
-        run: cmake -S . -B build/core -DCMAKE_BUILD_TYPE=Release -DMGMEM_BUILD_JNI_HOST_TESTS=ON -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/host
+        run: cmake -S . -B build/core -DCMAKE_BUILD_TYPE=Release -DMGMEM_BUILD_JNI_HOST_TESTS=ON -DMGMEM_BUILD_BENCHMARKS=ON -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/host
       - name: Build
         run: cmake --build build/core --config Release --parallel 2
       - name: Core safety verification
