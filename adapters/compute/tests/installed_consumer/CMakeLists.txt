@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 project(InstalledComputeBridgeConsumer LANGUAGES CXX)
-find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED)
+find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED COMPONENTS read_bridge)
 find_package(Threads REQUIRED)
 add_executable(installed_bridge_consumer ../read_bridge_tests.cpp)
 target_compile_features(installed_bridge_consumer PRIVATE cxx_std_17)
