@@ -143,12 +143,6 @@ int main() {
         }
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,id,0,as_array(data),0,
             MGMEM_ANDROID_BORROW_MAX_WRITE_BYTES+1,JNI_TRUE)==MGMEM_INVALID_ARGUMENT);
-        Array before_oom{std::vector<jbyte>(8,0)},after_oom{std::vector<jbyte>(8,0)};
-        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,id,0,as_array(before_oom),0,8,JNI_FALSE)==MGMEM_OK);
-        mgmem_borrow_test_fail_staging_allocation();
-        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,id,0,as_array(data),0,4,JNI_TRUE)==MGMEM_OUT_OF_MEMORY);
-        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,id,0,as_array(after_oom),0,8,JNI_FALSE)==MGMEM_OK && before_oom.data==after_oom.data);
-        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,id,0,as_array(data),0,4,JNI_TRUE)==MGMEM_OK);
         REQUIRE(mgmem_release_v1(f.domain,f.owner)==MGMEM_OK);
         REQUIRE(mgmem_domain_begin_close_v1(f.domain)==MGMEM_OK);
         REQUIRE(JNI_NAME(nativeClose)(env,nullptr,id)==MGMEM_OK);f.finish();
@@ -203,6 +197,7 @@ int main() {
             REQUIRE(gate_changed.wait_for(lock,std::chrono::seconds(10),[]{return writes_entered==parallel;}));
         }
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(data),0,static_cast<jint>(chunk),JNI_TRUE)==MGMEM_OUT_OF_BUDGET);
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(data),0,1,JNI_TRUE)==MGMEM_OUT_OF_BUDGET);
         Array untouched{std::vector<jbyte>(1,0)};
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(untouched),0,1,JNI_FALSE)==MGMEM_OK && untouched.data[0]==0x5a);
         std::atomic<bool> closed{false};
@@ -211,6 +206,11 @@ int main() {
         {std::lock_guard<std::mutex> lock(gate_mutex);release_write=true;block_write=false;gate_changed.notify_all();}
         for(auto &thread:writers)thread.join();closer.join();
         REQUIRE(closed && owner.pins==parallel+1);
+        mgmem_borrow_test_fail_staging_allocation();
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(data),0,static_cast<jint>(chunk),JNI_TRUE)==MGMEM_OUT_OF_MEMORY);
+        Array after_oom{std::vector<jbyte>(chunk,0)};
+        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(after_oom),0,static_cast<jint>(chunk),JNI_FALSE)==MGMEM_OK);
+        REQUIRE(after_oom.data==std::vector<jbyte>(chunk,0x5a));
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,ids.back(),0,as_array(data),0,static_cast<jint>(chunk),JNI_TRUE)==MGMEM_OK);
         for(unsigned i=1;i<ids.size();++i) REQUIRE(JNI_NAME(nativeClose)(env,nullptr,ids[i])==MGMEM_OK);
         REQUIRE(owner.pins==1 && mgmem_domain_collect_v1(domain)==MGMEM_OK &&
@@ -226,9 +226,7 @@ int main() {
         Array cleared{std::vector<jbyte>(32,0)}, output{std::vector<jbyte>(32,0)};
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(cleared),0,32,JNI_TRUE)==MGMEM_OK);
         // No array JNI function or staging allocation is needed for transfer.
-        mgmem_borrow_test_fail_staging_allocation();
         REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,from,4,to,8,16)==MGMEM_OK);
-        REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(cleared),0,1,JNI_TRUE)==MGMEM_OUT_OF_MEMORY);
         REQUIRE(JNI_NAME(nativeCopy)(env,nullptr,to,0,as_array(output),0,32,JNI_FALSE)==MGMEM_OK);
         for (unsigned i=0;i<32;++i) REQUIRE(output.data[i]==(i>=8 && i<24 ? 0x5a : 0));
         REQUIRE(JNI_NAME(nativeTransfer)(nullptr,nullptr,to,0,from,0,1)==MGMEM_UNSUPPORTED);

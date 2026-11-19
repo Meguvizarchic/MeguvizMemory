@@ -78,7 +78,7 @@ public final class NativeMemoryLeaseJvmTest {
         rejected(() -> read.copyTo(read,0,0,1),IllegalStateException.class);
         java.nio.ByteBuffer[] delivered = new java.nio.ByteBuffer[1];
         Exception injectedBody = new Exception("nested callback");
-        read.withDirectBuffer(0, 16, outer -> {
+        read.withDirectBuffer(outer -> {
             try {
                 read.withDirectBuffer(1, 1, inner -> { delivered[0] = inner; throw injectedBody; });
                 throw new AssertionError("nested exception missing");

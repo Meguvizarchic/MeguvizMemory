@@ -104,7 +104,8 @@ public final class NativeMemoryLease implements AutoCloseable {
      * native staging buffer is allocated. Each call commits independently.
      * Tokens are admitted under separate short object locks; a transfer already
      * admitted may complete while close starts, or fail before copying if native
-     * close wins. No two Java object monitors are held together. */
+     * close wins. Call outside direct-buffer callbacks when transferring between
+     * different leases, so callback monitors cannot introduce a lock cycle. */
     public void copyTo(NativeMemoryLease destination, long sourceOffset,
                        long destinationOffset, int count) {
         Objects.requireNonNull(destination, "destination");
@@ -135,6 +136,12 @@ public final class NativeMemoryLease implements AutoCloseable {
         void accept(ByteBuffer buffer) throws Exception;
     }
 
+    /** Opens a direct view of the entire lease. The same length limit and
+     * callback lifetime apply as for {@link #withDirectBuffer(long, long, DirectBufferAction)}. */
+    public void withDirectBuffer(DirectBufferAction action) throws Exception {
+        withDirectBuffer(0, length, action);
+    }
+
     /** Runs {@code action} with a direct ByteBuffer over
      * {@code [offset, offset + length)} of this lease, for consumers whose
      * contract is a ByteBuffer (for example JNI staging APIs).
@@ -147,9 +154,10 @@ public final class NativeMemoryLease implements AutoCloseable {
      * retaining it is a programming error with the same consequences as
      * retaining a C borrow pointer. A READ lease yields a read-only buffer.
      * The buffer's byte order is the ByteBuffer default (big-endian); set it
-     * explicitly when the consumer needs native order. Direct access is not
-     * synchronized with concurrent {@link #read}/{@link #write} calls beyond
-     * this lease's own READ/WRITE exclusivity contract.
+     * explicitly when the consumer needs native order. Other threads calling
+     * {@link #read} or {@link #write} on this lease wait for the callback.
+     * Callers must coordinate direct access with transfers already admitted by
+     * {@link #copyTo} and with any access through native aliases.
      */
     public synchronized void withDirectBuffer(long offset, long length,
                                               DirectBufferAction action) throws Exception {

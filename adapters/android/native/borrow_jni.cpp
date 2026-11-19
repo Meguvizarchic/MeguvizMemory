@@ -13,6 +13,7 @@
 namespace {
 using u64 = uint64_t;
 constexpr u64 max_token = static_cast<u64>(std::numeric_limits<jlong>::max());
+constexpr size_t inline_staging_bytes = 1024;
 
 struct Entry {
     std::mutex mutex;
@@ -57,6 +58,25 @@ private:
     size_t bytes_;
     bool admitted_ = false;
 };
+
+mgmem_status commit_array_write(JNIEnv *env, jbyteArray array, jint offset, jint count,
+                                jbyte *staging, jbyte *destination) {
+    env->GetByteArrayRegion(array, offset, count, staging);
+    if (env->ExceptionCheck()) return MGMEM_PROVIDER_ERROR;
+    std::memcpy(destination, staging, static_cast<size_t>(count));
+    return MGMEM_OK;
+}
+
+// Keep the scratch frame out of reads and the heap-backed write path.
+#if defined(_MSC_VER)
+__declspec(noinline)
+#elif defined(__GNUC__)
+__attribute__((noinline))
+#endif
+mgmem_status write_small_array(JNIEnv *env, jbyteArray array, jint offset, jint count, jbyte *destination) {
+    jbyte staging[inline_staging_bytes];
+    return commit_array_write(env, array, offset, count, staging, destination);
+}
 
 std::shared_ptr<Entry> lookup(u64 token) {
     std::lock_guard<std::mutex> lock(registry_mutex);
@@ -205,16 +225,16 @@ extern "C" JNIEXPORT jint JNICALL JNI_NAME(nativeCopy)(JNIEnv *env, jclass, jlon
         const auto size = static_cast<size_t>(count);
         StagingReservation reservation(size);
         if (!reservation.admitted()) return MGMEM_OUT_OF_BUDGET;
-        std::unique_ptr<jbyte[]> staging;
+        // Copy through staging so a JNI exception cannot modify the lease.
+        if (size <= inline_staging_bytes)
+            return write_small_array(env, array, array_offset, count, bytes);
 #if defined(MGMEM_BORROW_TESTING)
-        if (!fail_next_staging_allocation.exchange(false, std::memory_order_relaxed))
+        if (fail_next_staging_allocation.exchange(false, std::memory_order_relaxed))
+            return MGMEM_OUT_OF_MEMORY;
 #endif
-            staging.reset(new (std::nothrow) jbyte[size]);
+        std::unique_ptr<jbyte[]> staging(new (std::nothrow) jbyte[size]);
         if (!staging) return MGMEM_OUT_OF_MEMORY;
-        env->GetByteArrayRegion(array, array_offset, count, staging.get());
-        if (env->ExceptionCheck()) return MGMEM_PROVIDER_ERROR;
-        std::memcpy(bytes, staging.get(), size);
-        return MGMEM_OK;
+        return commit_array_write(env, array, array_offset, count, staging.get(), bytes);
     } catch (...) { return MGMEM_PROVIDER_ERROR; }
 }
 

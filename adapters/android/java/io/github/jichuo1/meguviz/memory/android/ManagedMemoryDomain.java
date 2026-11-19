@@ -149,7 +149,7 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         if (bytes <= 0 || alignment <= 0 || (alignment & (alignment - 1)) != 0)
             throw new IllegalArgumentException("positive size and power-of-two alignment required");
         // Allocate the Java wrapper first; Java OOM cannot orphan a native owner.
-        Allocation result = new Allocation(this);
+        Allocation result = new Allocation(this, bytes);
         enterJavaReport();
         try {
             final long value;
@@ -163,7 +163,6 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                 throw failure("allocate", -value);
             }
             result.token = value;
-            result.length = bytes;
             return result;
         } finally { leaveJavaReport(); }
     }
@@ -409,11 +408,18 @@ public final class ManagedMemoryDomain implements AutoCloseable {
 
     public static final class Allocation implements AutoCloseable {
         private final ManagedMemoryDomain domain;
+        private final long length;
         private long token;
-        private long length;
-        private Allocation(ManagedMemoryDomain owner) { domain = owner; }
-        public synchronized long length() { return length; }
+        private Allocation(ManagedMemoryDomain owner, long length) {
+            domain = owner;
+            this.length = length;
+        }
+        public synchronized long length() { return token == 0 ? 0 : length; }
 
+        /** Acquires a READ lease over the entire allocation. */
+        public Lease borrowRead() { return borrowRead(0, length); }
+        /** Acquires an exclusive WRITE lease over the entire allocation. */
+        public Lease borrowWrite() { return borrowWrite(0, length); }
         public Lease borrowRead(long offset, long bytes) { return borrow(offset, bytes, false); }
         public Lease borrowWrite(long offset, long bytes) { return borrow(offset, bytes, true); }
 
@@ -496,7 +502,7 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                 final long owner;
                 synchronized (this) {
                     if (token == 0) return;
-                    owner = token; token = 0; length = 0;
+                    owner = token; token = 0;
                 }
                 final int status;
                 try { status = nativeRelease(owner); }
@@ -537,8 +543,14 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         }
         /** Callback receiving a direct view of this lease; see {@link #withDirectBuffer}. */
         @FunctionalInterface
-        public interface DirectBufferAction {
+        public interface DirectBufferAction extends NativeMemoryLease.DirectBufferAction {
+            @Override
             void accept(java.nio.ByteBuffer buffer) throws Exception;
+        }
+        /** Opens a direct view of the entire lease, subject to the same length
+         * and lifetime limits as {@link #withDirectBuffer(long, long, DirectBufferAction)}. */
+        public void withDirectBuffer(DirectBufferAction action) throws Exception {
+            withDirectBuffer(0, length(), action);
         }
         /** Runs {@code action} with a direct ByteBuffer over this lease, for
          * consumers whose contract is a ByteBuffer. The buffer must not be
@@ -548,7 +560,7 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                                      DirectBufferAction action) throws Exception {
             if (action == null) throw new NullPointerException("action");
             if (closeState != NativeMemoryLease.CLOSE_OPEN) throw new IllegalStateException("lease closing or closed");
-            delegate.withDirectBuffer(offset, length, action::accept);
+            delegate.withDirectBuffer(offset, length, action);
         }
         /** Direct bounded transfer between existing leases; no Java array is needed. */
         public void copyTo(Lease destination, long sourceOffset, long destinationOffset, int count) {
