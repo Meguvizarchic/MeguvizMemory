@@ -23,7 +23,8 @@ static bool wrong_context = false, missing_extension = false;
 static std::vector<GLenum> errors;
 static std::string events;
 static GLint active = 0x84C3, texture = 77, unpack_buffer = 66, alignment = 8, row_length = 9, skip_rows = 3, skip_pixels = 2;
-static int pixel_store_calls = 0;
+static int pixel_store_calls = 0, buffer_bind_calls = 0, active_texture_calls = 0;
+static size_t source_row_bytes = 16;
 static unsigned char pixels[64]{};
 enum class Mode { normal, oom_after_error, lost_after_error, restore_error, dup_error, delete_error, context_after_target, setup_oom };
 static Mode mode = Mode::normal;
@@ -64,10 +65,11 @@ extern "C" void glBindTexture(GLenum type, GLuint value) {
     if (value == 77 && mode == Mode::restore_error) errors.push_back(GL_INVALID_OPERATION);
 }
 extern "C" void glBindBuffer(GLenum type, GLuint value) {
+    ++buffer_bind_calls;
     CHECK(type == GL_PIXEL_UNPACK_BUFFER); unpack_buffer = static_cast<GLint>(value);
     if (!value && mode == Mode::setup_oom) errors.push_back(GL_OUT_OF_MEMORY);
 }
-extern "C" void glActiveTexture(GLenum value) { active = static_cast<GLint>(value); }
+extern "C" void glActiveTexture(GLenum value) { ++active_texture_calls; active = static_cast<GLint>(value); }
 extern "C" void glPixelStorei(GLenum name, GLint value) {
     ++pixel_store_calls;
     switch (name) {
@@ -82,8 +84,15 @@ extern "C" void glTexSubImage2D(GLenum target, GLint level, GLint x, GLint y,
     GLsizei width, GLsizei height, GLenum format, GLenum type, const void *data) {
     CHECK(target == GL_TEXTURE_2D && !level && !x && !y && width == 4 && height == 4);
     CHECK(format == GL_RGBA && type == GL_UNSIGNED_BYTE && texture == 99);
-    CHECK(!unpack_buffer && alignment == 1 && row_length == 4 && !skip_rows && !skip_pixels);
-    CHECK(data); std::memcpy(pixels, data, sizeof(pixels)); events += 'U';
+    CHECK(!unpack_buffer && !skip_rows && !skip_pixels && active == 0x84C3);
+    CHECK(alignment == 1 || alignment == 2 || alignment == 4 || alignment == 8);
+    CHECK(reinterpret_cast<uintptr_t>(data) % alignment == 0);
+    const size_t row_bytes = 4 * static_cast<size_t>(row_length ? row_length : width);
+    const size_t step = (row_bytes + alignment - 1) / alignment * alignment;
+    CHECK(data && step == source_row_bytes);
+    for (int row = 0; row < height; ++row)
+        std::memcpy(pixels + row * 16, static_cast<const unsigned char *>(data) + row * step, 16);
+    events += 'U';
     if (mode == Mode::oom_after_error) { errors.push_back(GL_INVALID_OPERATION); errors.push_back(GL_OUT_OF_MEMORY); }
     if (mode == Mode::lost_after_error) { errors.push_back(GL_INVALID_OPERATION); errors.push_back(GL_CONTEXT_LOST); }
 }
@@ -136,10 +145,54 @@ static mgmem_gpu_ahb_view view(unsigned char *data) {
 static void initial_state() {
     CHECK(active == 0x84C3 && texture == 77 && unpack_buffer == 66 && alignment == 8 && row_length == 9 && skip_rows == 3 && skip_pixels == 2);
 }
+static void check_unpack_calls(unsigned char *data) {
+    // A packed upload with default unpack parameters should only bind the texture.
+    unpack_buffer = row_length = skip_rows = skip_pixels = 0;
+    alignment = 4;
+    auto *p = open();
+    int32_t detail = 0;
+    CHECK(mgmem_upload_platform_write(p, view(data), 16, &detail) == MGMEM_OK);
+    CHECK(!pixel_store_calls && !buffer_bind_calls && !active_texture_calls);
+    CHECK(alignment == 4 && !row_length && texture == 77 && !std::memcmp(pixels, data, 64));
+    CHECK(mgmem_upload_platform_cleanup(p, &detail) == MGMEM_OK);
+    mgmem_upload_platform_discard(p);
+
+    // An odd pixel stride with alignment 8 requires an alignment adjustment.
+    // Row padding in the source must never appear in the uploaded pixels.
+    source_row_bytes = 20;
+    alignment = 8;
+    alignas(8) unsigned char padded[80]{};
+    std::memset(padded, 0xff, sizeof(padded));
+    for (int row = 0; row < 4; ++row) std::memcpy(padded + row * 20, data + row * 16, 16);
+    auto padded_view = view(padded);
+    padded_view.length = sizeof(padded);
+    p = open();
+    CHECK(mgmem_upload_platform_write(p, padded_view, source_row_bytes, &detail) == MGMEM_OK);
+    CHECK(pixel_store_calls == 4 && !buffer_bind_calls && !active_texture_calls);
+    CHECK(alignment == 8 && !row_length && texture == 77 && !std::memcmp(pixels, data, 64));
+    CHECK(mgmem_upload_platform_cleanup(p, &detail) == MGMEM_OK);
+    mgmem_upload_platform_discard(p);
+
+    source_row_bytes = 16;
+    alignment = 4;
+    alignas(8) unsigned char unaligned[65]{};
+    std::memcpy(unaligned + 1, data, 64);
+    p = open();
+    CHECK(mgmem_upload_platform_write(p, view(unaligned + 1), source_row_bytes, &detail) == MGMEM_OK);
+    CHECK(pixel_store_calls == 6 && !buffer_bind_calls && !active_texture_calls);
+    CHECK(alignment == 4 && !row_length && texture == 77 && !std::memcmp(pixels, data, 64));
+    CHECK(mgmem_upload_platform_cleanup(p, &detail) == MGMEM_OK);
+    mgmem_upload_platform_discard(p);
+}
 int main(int argc, char **argv) {
     CHECK(argc == 2);
-    unsigned char data[64]; for (int i = 0; i < 64; ++i) data[i] = static_cast<unsigned char>(i);
+    alignas(8) unsigned char data[64];
+    for (int i = 0; i < 64; ++i) data[i] = static_cast<unsigned char>(i);
     int32_t detail = 0;
+    if (!std::strcmp(argv[1], "unpack")) {
+        check_unpack_calls(data);
+        std::puts("PASS packed and padded uploads only write necessary unpack state"); return 0;
+    }
     if (!std::strcmp(argv[1], "unsupported")) {
         missing_extension = true; mgmem_upload_platform *p = nullptr;
         CHECK(mgmem_upload_platform_open(&p, &detail) == MGMEM_UNSUPPORTED && !p && events.empty());

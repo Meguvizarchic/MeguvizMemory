@@ -86,10 +86,8 @@ bool fatal_gl(int32_t status) noexcept {
     return status == -1 || status == GL_OUT_OF_MEMORY || status == 0x0507; /* GL_CONTEXT_LOST */
 }
 struct State {
-    GLint active = 0, texture = 0, unpack_buffer = 0, alignment = 0, row_length = 0, skip_rows = 0, skip_pixels = 0;
+    GLint texture = 0, unpack_buffer = 0, alignment = 0, row_length = 0, skip_rows = 0, skip_pixels = 0;
     bool snapshot(const mgmem_upload_platform *p, int32_t *detail) noexcept {
-        glGetIntegerv(GL_ACTIVE_TEXTURE, &active);
-        if (!gl_clean(detail) || !current(p)) return false;
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
         if (!gl_clean(detail) || !current(p)) return false;
         glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &unpack_buffer);
@@ -103,19 +101,23 @@ struct State {
         glGetIntegerv(GL_UNPACK_SKIP_PIXELS, &skip_pixels);
         return gl_clean(detail) && current(p);
     }
-    bool restore(const mgmem_upload_platform *p, int32_t *detail) const noexcept {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        if (!gl_clean(detail) || !current(p)) return false;
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
-        if (!gl_clean(detail) || !current(p)) return false;
-        glPixelStorei(GL_UNPACK_SKIP_ROWS, skip_rows);
-        if (!gl_clean(detail) || !current(p)) return false;
-        glPixelStorei(GL_UNPACK_SKIP_PIXELS, skip_pixels);
-        if (!gl_clean(detail) || !current(p)) return false;
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, static_cast<GLuint>(unpack_buffer));
-        if (!gl_clean(detail) || !current(p)) return false;
-        glActiveTexture(static_cast<GLenum>(active));
-        if (!gl_clean(detail) || !current(p)) return false;
+    bool set_pixel_store(const mgmem_upload_platform *p, const State &to, int32_t *detail) const noexcept {
+        const auto set = [&](GLenum name, GLint from, GLint value) {
+            if (from == value) return true;
+            glPixelStorei(name, value);
+            return gl_clean(detail) && current(p);
+        };
+        return set(GL_UNPACK_ALIGNMENT, alignment, to.alignment) &&
+            set(GL_UNPACK_ROW_LENGTH, row_length, to.row_length) &&
+            set(GL_UNPACK_SKIP_ROWS, skip_rows, to.skip_rows) &&
+            set(GL_UNPACK_SKIP_PIXELS, skip_pixels, to.skip_pixels);
+    }
+    bool restore(const mgmem_upload_platform *p, const State &upload, int32_t *detail) const noexcept {
+        if (!upload.set_pixel_store(p, *this, detail)) return false;
+        if (unpack_buffer) {
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, static_cast<GLuint>(unpack_buffer));
+            if (!gl_clean(detail) || !current(p)) return false;
+        }
         glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
         return gl_clean(detail) && current(p);
     }
@@ -171,6 +173,16 @@ mgmem_status mgmem_upload_platform_write(mgmem_upload_platform *p, const mgmem_g
     if (!egl_clean(detail) || !gl_clean(detail)) return MGMEM_PROVIDER_ERROR;
     State previous{};
     if (!previous.snapshot(p, detail)) return MGMEM_PROVIDER_ERROR;
+    State upload{};
+    // GLES unpack alignment is 1, 2, 4 or 8. Keep it only when both the
+    // source address and row stride meet the current alignment.
+    const auto source_layout = reinterpret_cast<uintptr_t>(view.data) | source_stride;
+    const auto alignment_mask = static_cast<unsigned>(previous.alignment) - 1;
+    upload.alignment = (source_layout & alignment_mask) == 0 ? previous.alignment : 1;
+    const auto row_pixels = source_stride / 4;
+    // A zero row length already means the upload width.
+    if (row_pixels != view.width || previous.row_length != 0)
+        upload.row_length = static_cast<GLint>(row_pixels);
     const auto native = p->client(view.buffer);
     if (!native || !egl_clean(detail) || !current(p)) return MGMEM_PROVIDER_ERROR;
     const EGLint attrs[] = {EGL_IMAGE_PRESERVED_KHR, EGL_TRUE, EGL_NONE};
@@ -180,11 +192,11 @@ mgmem_status mgmem_upload_platform_write(mgmem_upload_platform *p, const mgmem_g
     if (!p->texture || !gl_clean(detail) || !current(p)) return MGMEM_PROVIDER_ERROR;
     glBindTexture(GL_TEXTURE_2D, p->texture);
     bool ok = gl_clean(detail) && current(p);
-    if (ok) { glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0); ok = gl_clean(detail) && current(p); }
-    if (ok) { glPixelStorei(GL_UNPACK_ALIGNMENT, 1); ok = gl_clean(detail) && current(p); }
-    if (ok) { glPixelStorei(GL_UNPACK_ROW_LENGTH, static_cast<GLint>(source_stride / 4)); ok = gl_clean(detail) && current(p); }
-    if (ok) { glPixelStorei(GL_UNPACK_SKIP_ROWS, 0); ok = gl_clean(detail) && current(p); }
-    if (ok) { glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); ok = gl_clean(detail) && current(p); }
+    if (ok && previous.unpack_buffer) {
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        ok = gl_clean(detail) && current(p);
+    }
+    if (ok) ok = previous.set_pixel_store(p, upload, detail);
     if (ok) {
         /* This call itself may invalidate target pixels. Its errors and every
          * later error require quarantine even if TexSubImage was not issued. */
@@ -199,7 +211,7 @@ mgmem_status mgmem_upload_platform_write(mgmem_upload_platform *p, const mgmem_g
     if (!current(p) || fatal_gl(*detail)) return MGMEM_PROVIDER_ERROR;
     const int32_t body_error = *detail;
     int32_t restore_error = 0;
-    const bool restored = previous.restore(p, &restore_error);
+    const bool restored = previous.restore(p, upload, &restore_error);
     if (!restored) { *detail = restore_error; return MGMEM_PROVIDER_ERROR; }
     *detail = body_error;
     return ok ? MGMEM_OK : MGMEM_PROVIDER_ERROR;
