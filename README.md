@@ -1,128 +1,59 @@
-<div align="center">
-
-<img src="docs/brand/MeguvizMemory.svg" width="96" height="96" alt="MeguvizMemory">
+<p align="center"><img src="docs/brand/MeguvizMemory.svg" width="96" height="96" alt=""></p>
 
 # MeguvizMemory
 
-**显式 CPU 内存域、有界 arena 与所有权 / 借用合同库**
+MeguvizMemory 给一组 CPU 缓冲区设定共同的预算，并管理它们的生命周期。例如，解码器把一帧图像交给后台任务时，可以先取得读借用，再提交任务。即使解码器随后释放自己的句柄，后台任务仍能读完这一帧。
 
-System provider · mgmem ABI · 受控字节 lease
+核心提供 C 接口和 C++17 封装。Android 应用可以通过 Java 或 Kotlin 使用托管内存域。只有通过域申请或导入的内存才计入预算，应用的其他分配仍由原分配器管理。
 
-<br>
-
-[![Language](https://img.shields.io/badge/lang-Python-DEA584?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory)
-[![Issues](https://img.shields.io/github/issues/Meguvizarchic/MeguvizMemory?style=flat-square&labelColor=2d3a55)](https://github.com/Meguvizarchic/MeguvizMemory/issues)
-
-[构建和安装](#构建和安装) · [所有权与关闭](#所有权与关闭)
-
-</div>
-
----
-
-<details>
-<summary><b>目录</b></summary>
-
-- [构建和安装](#构建和安装)
-- [所有权与关闭](#所有权与关闭)
-
-</details>
-
----
-
-2026-11-09 Android 新候选与三 ABI 通用 AAR 已生成，copyTo/Arena 的限定 R8 与 arm64 真机验证通过；见 [Android 快速接入](docs/ANDROID_QUICKSTART.md)及[本轮证据](artifacts/android-round-20261109/)。
-
-当前开发接续与快路径说明见 [性能路径与接入](docs/PERFORMANCE_PATHS.md)，各项实测范围见 [STATE.md](STATE.md)。何处接入可先用离线三层判断（分类、影子估算、策略校验），见 [自动化接入判断](docs/AUTOMATED_ADOPTION.md)。让 AI 一站式完成迁移（盘点→分类→影子→策略→改码→验证）时，用仓内项目技能 [migrate-to-meguvizmemory](.agents/skills/migrate-to-meguvizmemory/SKILL.md)：在支持技能的编码代理里打开本仓库后点名该 skill 并说明要迁移的模块即可，技能内含硬规则、逐步命令、各语言改码模板与验收清单。
-
-显式 CPU 内存域、System provider、有界 arena 和可验证的所有权/借用合同。当前版本为 **1.2.1 功能工程预览**，核心原生接口使用 `mgmem_*_v1` / ABI 1.1，压力适配另提供可选的 v2 接口。独立于 BIL、Xposed、GPU 后端及 Android UI；不接管进程全局 allocator。
-
-继续开发：新增可选的外部释放状态检查、Java 受控字节 lease，以及独立的 Compute CPU 只读桥；宿主功能检查通过，新增 Android 运行、R8 和性能资格仍待验证。见[开发状态](STATE.md)。
-
-后续源码还补充了 C++ checked 导入、Java 关闭状态与独立 Java 图像消费者；此前预览包不包含这些改动。[当前证据](artifacts/continuation-next-20261101/README.md)。
-
-最新源码提供可选 Java 托管 System/Arena 域及同域压力绑定，并修复控制器创建与并发关闭的竞争；宿主检查通过。已从 `2e25092` 快照生成新的三 ABI Android 和 Windows 宿主工程候选；Android 运行验证仍待完成。[托管域合同](docs/ANDROID_MANAGED_DOMAIN.md)、[压力合同](docs/ANDROID_MANAGED_PRESSURE_CONTRACT.md)、[候选证据](artifacts/delivery-20261101/final-candidates-2e25092.json)。
-
-新版还提供 [Android 后台使用示例](consumers/android_managed/README.md)和[多域 Arena 功能诊断](bench/TLB_MULTI_ARENA.md)；宿主或源码编译通过不代表 Android 运行、硬件机制或性能资格。
-
-首个0.2功能阶段收尾：packed reader、外部CPU内存安全导入、Android压力与自身RSS/PSS观测适配已实现。Host Release/ASan各10项、Java packed32/真实oracle288、Android原生9/ART32/压力20功能通过；家族仅合同审计，BIL不接入，性能与正式发布仍未资格。见[阶段收尾](docs/FEATURE_STAGE_20261030.md)。
-上一消费者阶段（closefix1）完成DEX外部导入、图像压力/预算/异步关闭及原生900秒循环；当时JNI可重入锁修复后的API33 Android长稳未获资格。旧阶段结果见[交付与阻塞](docs/CONSUMER_CLOSEOUT_20261030.md)，不覆盖下述新版验证。
-最新Android关闭阶段：本机停滞复现时观察到cgroup冻结；JNI自动通知重试与错误路径已修复。最终脱敏安装版API33 arm64真机15分钟采样无冻结、关闭归零，API34 x86_64模拟器短测通过；这是限定设备与工作量的功能/稳定性证据。见[关闭调查](docs/ANDROID_CLOSE_INVESTIGATION_20261030.md)。
-提供 CMake 安装包、C ABI 与可选 C++17 move-only RAII 适配。没有新增第三方生产依赖。许可证为 Apache-2.0（见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)）；Android Maven 发布链位于 [bindings/android/](bindings/android/README.md)，坐标 `io.github.jichuo1.meguviz:mgmem-android:1.2.1`（独立发布，未进家族 BOM），暂存包已通过三 ABI 静态门禁，正式上传待签名与命名空间验证完成。
-
-本批交付范围与证据见 [STATE.md](STATE.md)、[验证记录](docs/VERIFICATION.md) 和 [TASKS.json](TASKS.json)。功能验证、设备运行、性能收益、TLB 机制和发布资格分别记录；研究模型中的 3.55% 等数值不代表本库实测。
-
-源码锁及历史采集记录按原始字节校验；仓库检出时保留 Git 中的字节，不应为统一换行而重新归一化历史文件。
-
-已完成 API 37、arm64、4 KB 真机的核心/C/C++ 安全用例；独立真实 DEX A1/A3 比较完成 32 块、128 次任务，性能为 INCONCLUSIVE，当前不接入 BIL。点估计与探索性区间不构成稳定收益，详见 [性能报告](docs/PERFORMANCE_A1_A3.md) 和 [接入决定](docs/BIL_ADOPTION_DECISION.md)。
-
-DEX直接借用/复制四组、图像full/三行环持久工作区和真实v2采集器均已实现并在新arm64设备执行。core3与196消费者功能用例通过；pilot128任务完成，DEX正式4/12窗口后环境停止，图像因pilot精度不足未进入正式轮。未取得稳定性能或资源净收益，见[v2最终结果](docs/DEVICE_V2_RESULTS.md)。普通借用/布局资源优化与Memory增量分开；自身RSS/PSS已有观测能力，同完成量资源收益及能量仍未验证。
+[原生项目接入](docs/INTEGRATION.md) · [Android 快速接入](docs/ANDROID_QUICKSTART.md) · [评估已有模块](docs/AUTOMATED_ADOPTION.md)
 
 ## 构建和安装
 
+从仓库根目录执行以下命令。需要 CMake 3.25 或更高版本、C 编译器和支持 C++17 的 C++ 编译器。Windows 可在 Visual Studio 开发者 PowerShell 中运行。
+
 ```sh
-cmake -S . -B build/core -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PWD/install/host"
-cmake --build build/core --config Release --parallel 2
+cmake -S . -B build/core -DCMAKE_BUILD_TYPE=Release
+cmake --build build/core --config Release
 ctest --test-dir build/core -C Release --output-on-failure
-cmake --install build/core --config Release
+cmake --install build/core --config Release --prefix "$PWD/install/host"
 ```
 
-Windows 使用已初始化的 Visual Studio C++ 开发环境。当前机器也可用 `tools/host-build.cmd` 包装上述 CMake 参数；`MGMEM_VS_ROOT` 可覆盖 Visual Studio 路径。地址检测构建用 `-DMGMEM_SANITIZE=ON`，MSVC 运行时须能找到其 `clang_rt.asan_dynamic-x86_64.dll`。`BUILD_SHARED_LIBS=OFF` 提供 PIC 静态核心，家族组合仍须遵守单一最终 runtime 合同。
-
-消费者独立配置，只使用安装导出目标：
+配置应用时，将 `CMAKE_PREFIX_PATH` 指向上一步得到的 `install/host`。在应用的 `CMakeLists.txt` 中链接自己的目标（示例中为 `my_app`）。
 
 ```cmake
 find_package(MeguvizMemory CONFIG REQUIRED)
-target_link_libraries(my_consumer PRIVATE MeguvizMemory::mgmem)
+target_link_libraries(my_app PRIVATE MeguvizMemory::mgmem)
 ```
 
-```sh
-cmake -S consumers/image -B build/image -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/install/host"
-cmake --build build/image --config Release
-# P6 RGB → 整数灰度 → clamp 边缘 3×3 box blur → P5 PGM
-build/image/mgmem_image input.ppm output.pgm
-# System 对照使用 --system；两种模式工作量与输出相同。
-```
+C 使用 `<mgmem/mgmem.h>`，C++ 使用 `<mgmem/memory.hpp>`。仓库自带一个读取 PPM、输出灰度 PGM 的小程序，可用来确认本机安装。[运行图像示例](docs/INTEGRATION.md#运行图像示例)
 
-Windows 运行消费者前将 `install/host/bin` 加入当前进程 PATH；Unix 按安装位置配置动态库搜索路径。完整 DexMeguviz 消费者需要真实外部源码和 DEX 输入，见 [集成说明](docs/INTEGRATION.md)，未捆绑或伪造 Dex SDK。
+## 选择内存域
 
-可选适配器（`adapters/` 下各自独立构建，不改变核心依赖图）：Compute CPU 只读桥（含 Arena 变体与短名入口）、Compute 宿主资源桥、AHB 读取/GPU/GLES 上传桥、Media 只读桥。宿主一次性验证全部桥（需外部 Compute/Media 已安装前缀）：
+| 你的数据怎样使用 | 适用方式 |
+|---|---|
+| 单个缓冲区较大，或各块数据在不同时间用完 | 选 **System**。每块分配在最后一个持有者归还后单独释放。 |
+| 一批临时对象一起用完 | 选 **Arena**。C/C++ 可在批末复位并把内存块留给下一批。Java 托管域可由整个批次共同持有，在批末关闭。 |
+| 数据已经由解码器或其他库持有，且来源能保证地址稳定 | **导入外部内存**。由来源保留和释放底层存储，多个子范围共用一次导入。[导入约定](docs/EXTERNAL_IMPORT.md) |
 
-```powershell
-python tools/verify_adapters.py --build-core --compute-prefix <Compute前缀> --media-prefix <Media前缀> --msvc-runtime MultiThreaded
-```
-
-脚本按依赖顺序配置/构建/测试/安装每个桥，核对测试计数（能力探针降级会显式 WARN，`--strict` 时失败），Android 目标在宿主运行中显式 SKIP。各桥合同见其目录内 README。
+预算包括域已持有的底层存储和正在进行的分配预留。Arena 即使归还了批内每个对象，仍会保留内存块供下次使用。进程 RSS、Java 对象和 GPU 显存需分别观测。
 
 ## 所有权与关闭
 
-`allocate` 返回 owner handle；访问前获取读/写 lease。读 lease 可共享，写 lease 排斥其他 lease。owner release 后已有 lease 保活 backing，最后一次访问结束再归还 lease。异步任务必须先取得 lease 再入队。
+分配返回一个持有者（owner）。每次访问由一份借用（lease）限定字节范围和读写权限。同一块内存允许多个读者，写者需要独占。归还 owner 后不能再借出，但已经取得的 lease 可以用到任务结束。异步提交失败或任务取消时，也要归还提前取得的 lease。
 
-常用 C++17 路径见[创建、复用读写与临时工作区](docs/CPP_CONVENIENCE.md)。在已有域上，同步临时调用可以封装为：
+- **C++** 的同步临时缓冲区用 `domain.with_allocation`，回调退出时归还。需要跨线程访问时显式持有 lease。最后一个持有者可能在当前线程同步回收内存。[C++ 用法与完整示例](docs/CPP_CONVENIENCE.md)
+- **C** 先调用 `mgmem_domain_begin_close_v1` 停止新申请和借用，等已有任务归还资源，再由清理线程执行 `collect`。`drain` 用于等待关闭完成。[原生关闭顺序](docs/INTEGRATION.md#关闭内存域)
+- **Android** 的 Java 调用方可用 try-with-resources 归还 allocation 和 lease。域的 `close()` 启动后台清理，观察到 `CLOSED` 后调用 `forgetClosed()` 归还观察令牌。[托管域生命周期](docs/ANDROID_MANAGED_DOMAIN.md)
 
-```cpp
-#include <mgmem/memory.hpp>
-#include <cstddef>
-#include <cstring>
+## 其他接入方式
 
-mgmem_status fill_workspace(mgmem::domain &memory) {
-    return memory.with_allocation(4096, [](void *data, uint64_t bytes) {
-        std::memset(data, 0, static_cast<std::size_t>(bytes));
-    });
-}
-```
+| 要处理的数据 | 适配器 |
+|---|---|
+| 在 CPU 上读取 Compute 缓冲区或 Media 帧 | [导入 Compute 只读映射](adapters/compute/README.md) · [导入 Media 帧](adapters/media/README.md) |
+| 把 Memory 数据交给 Compute | [创建 Compute 宿主资源](adapters/compute_host/README.md) |
+| 访问 Android 硬件缓冲区 | [CPU 映射](adapters/compute_ahb/README.md) · [交给已有 GPU 执行器写入](adapters/compute_gpu_ahb/README.md) · [用 GLES 上传 RGBA8 图像](adapters/gpu_ahb_gles/README.md) |
 
-函数将状态返回调用方；指针仅在同步回调内有效，owner 与 WRITE lease 按原 RAII 合同归还。默认对齐为 `alignof(std::max_align_t)`，Arena 已释放空间仍需显式 reset 后复用。核心实现与历史实测见[自适应元数据优化](docs/ADAPTIVE_METADATA_OPTIMIZATION.md)。
+评估已有模块时，从分配位置、实际大小和最后一次访问入手。仓库提供离线评估工具，以及可在支持项目技能的编辑器中调用的 `$migrate-to-meguvizmemory`。[迁移指南](docs/AUTOMATED_ADOPTION.md) · [项目技能](.agents/skills/migrate-to-meguvizmemory/SKILL.md) · [性能测量与结果](docs/PERFORMANCE_PATHS.md)
 
-```text
-OPEN → begin_close → CLOSING
-  → 完成并 release 全部 owner/lease
-  → cleanup worker 调用 collect（同步 provider 释放）
-  → CLOSED → drain 等待确认 → destroy
-```
-
-`begin_close` 不等待任务、不运行 provider 回调；`drain(0)` 只轮询，超时不强制释放。`collect`、`trim` 及最后一次 System release 可能同步调用 provider，需安排在允许阻塞的线程。C++ RAII 的最后一个 wrapper 同样负责同步 cleanup。裸指针、裸 domain 指针及运行库卸载都有外部寿命要求，完整合同见 [ADR](docs/ADR-001-ownership-and-abi.md) 和头文件。
-
-预算约束唯一managed backing（owned和imported）与pending reservation，不包含allocator/容器元数据或RSS/PSS。arena的retained含reset前不能复用的已释放空间，不能直接称为RSS节省。Android压力适配JNI已有；通用ByteBuffer借用、slab、page hint、TLB placement和GPU桥未选择。
-
-本仓库保留实现与可审查进度；没有发布正式 Release 或宣称 BIL 性能获益。原始研究附件留在本地 `research/`，公开文档仅记录其 hash、合同摘要及当前实现状态。
-
-最新v2：新设备API33/arm64/4KB的core3与196消费者用例通过；pilot128任务完成，图像因精度不足停止formal，DEX formal64次成功后因环境门槛中止。正式性能未获资格，BIL保持原实现。详见[v2结果与区间纠正](docs/DEVICE_V2_RESULTS.md)。
+源码版本为 **1.2.1 工程预览**，核心原生 ABI 为 **1.1**。项目采用 Apache-2.0 许可证。[版本与验证范围](STATE.md) · [LICENSE](LICENSE) · [NOTICE](NOTICE)
