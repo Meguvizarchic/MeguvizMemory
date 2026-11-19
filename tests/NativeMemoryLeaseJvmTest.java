@@ -76,6 +76,17 @@ public final class NativeMemoryLeaseJvmTest {
         rejected(() -> read.read(0,output,Integer.MAX_VALUE,1),IndexOutOfBoundsException.class);
         read.read(16,output,16,0);
         rejected(() -> read.copyTo(read,0,0,1),IllegalStateException.class);
+        java.nio.ByteBuffer[] delivered = new java.nio.ByteBuffer[1];
+        Exception injectedBody = new Exception("nested callback");
+        read.withDirectBuffer(0, 16, outer -> {
+            try {
+                read.withDirectBuffer(1, 1, inner -> { delivered[0] = inner; throw injectedBody; });
+                throw new AssertionError("nested exception missing");
+            } catch (Exception error) { require(error == injectedBody); }
+            require(outer.limit() == 16 && delivered[0].isReadOnly() && delivered[0].limit() == 0);
+            rejected(read::close, IllegalStateException.class);
+            require(read.closeState() == NativeMemoryLease.CLOSE_OPEN);
+        });
         read.close();read.close();
         require(read.closeState()==NativeMemoryLease.CLOSE_RELEASED && read.closeFailureStatus()==NativeMemoryLease.CLOSE_FAILURE_UNKNOWN);
         rejected(() -> read.read(0,output,0,1),IllegalStateException.class);

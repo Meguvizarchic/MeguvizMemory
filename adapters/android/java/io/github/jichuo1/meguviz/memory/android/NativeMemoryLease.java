@@ -32,8 +32,8 @@ public final class NativeMemoryLease implements AutoCloseable {
     private long token;
     private final long length;
     private final boolean writable;
-    /** Thread currently inside withDirectBuffer; only touched under this monitor. */
-    private Thread directBufferThread;
+    // Set under the lease monitor. The managed wrapper also checks it before close admission.
+    private volatile Thread directBufferThread;
     private volatile int closeState = CLOSE_OPEN;
     private int closeFailure = CLOSE_FAILURE_UNKNOWN;
 
@@ -63,6 +63,10 @@ public final class NativeMemoryLease implements AutoCloseable {
      * means no native status was returned, so the release outcome is unknown. */
     public int closeFailureStatus() {
         return closeState == CLOSE_FAILED ? closeFailure : CLOSE_FAILURE_UNKNOWN;
+    }
+
+    boolean inDirectBufferCallback() {
+        return directBufferThread == Thread.currentThread();
     }
 
     private void range(long offset, byte[] array, int arrayOffset, int count) {
@@ -156,11 +160,13 @@ public final class NativeMemoryLease implements AutoCloseable {
         if (token == 0) throw new IllegalStateException("lease closed");
         ByteBuffer buffer = nativeDirectBuffer(token, offset, length);
         if (buffer == null) throw new IllegalStateException("direct buffer unavailable");
+        if (!writable) buffer = buffer.asReadOnlyBuffer();
+        Thread enclosing = directBufferThread;
         directBufferThread = Thread.currentThread();
         try {
-            action.accept(writable ? buffer : buffer.asReadOnlyBuffer());
+            action.accept(buffer);
         } finally {
-            directBufferThread = null;
+            directBufferThread = enclosing;
             buffer.clear();
             buffer.limit(0);
         }
@@ -173,7 +179,7 @@ public final class NativeMemoryLease implements AutoCloseable {
     @Override public void close() {
         final long previous;
         synchronized (this) {
-            if (Thread.currentThread() == directBufferThread)
+            if (inDirectBufferCallback())
                 throw new IllegalStateException("close inside withDirectBuffer callback");
             if (token == 0) return;
             previous = token;

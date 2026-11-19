@@ -294,8 +294,28 @@ public final class ManagedMemoryDomainJvmTest {
         ManagedMemoryDomain.Allocation owner = d.allocate(64, 8);
         ManagedMemoryDomain.Lease lease = owner.borrowRead(0, 64);
         owner.close(); d.beginClose(); nativeInject(16);
-        rejectedStatus(lease::close, ManagedMemoryDomain.STATUS_CLOSE_GUARD_LIMIT,
-                "guard limit was not reported");
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        arm(14);
+        Thread first = new Thread(() -> {
+            try { rejectedStatus(lease::close, ManagedMemoryDomain.STATUS_CLOSE_GUARD_LIMIT,
+                    "guard limit was not reported"); }
+            catch (Throwable failure) { error.set(failure); }
+        });
+        first.start();
+        entered(14);
+        synchronized (d) {
+            // Hold the Java report open after native admission has failed.
+            release(14);
+            long deadline = System.nanoTime() + 5_000_000_000L;
+            while (first.getState() != Thread.State.BLOCKED && System.nanoTime() - deadline < 0) Thread.yield();
+            check(first.getState() == Thread.State.BLOCKED && d.pendingManagedOperations() == 1,
+                    "failed close did not reach its reporting tail");
+            check(lease.closeState() == NativeMemoryLease.CLOSE_RELEASING, "retry reopened before reporting finished");
+            lease.close();
+            check(counts()[6] == 0, "concurrent close admitted a second guard");
+        }
+        join(first);
+        if (error.get() != null) throw new AssertionError("first close", error.get());
         check(lease.closeState() == NativeMemoryLease.CLOSE_OPEN &&
                 d.state() == ManagedMemoryDomain.CLOSING && counts()[2] == 1 && counts()[6] == 0,
                 "known pre-admission failure consumed lease");

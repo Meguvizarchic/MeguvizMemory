@@ -93,7 +93,7 @@ struct TestGate {
     bool armed = false, entered = false, released = false, timed_out = false;
 };
 TestGate allocate_gate, borrow_gate, pin_gate, state_gate, begin_gate, drop_gate, failure_gate, publish_gate;
-TestGate guard_exit_gate, guard_post_exit_gate;
+TestGate guard_exit_gate, guard_post_exit_gate, guard_admission_failure_gate;
 TestGate pressure_attach_gate, pressure_budget_gate, pressure_submit_tail_gate;
 std::atomic<bool> fail_worker{false}, throw_after_create{false}, throw_after_allocate{false},
     throw_after_borrow{false}, fail_drop{false}, throw_after_drop{false},
@@ -119,6 +119,7 @@ TestGate *test_gate(jint kind) noexcept {
     case 11: return &pressure_attach_gate;
     case 12: return &pressure_budget_gate;
     case 13: return &pressure_submit_tail_gate;
+    case 14: return &guard_admission_failure_gate;
     default: return nullptr;
     }
 }
@@ -878,7 +879,10 @@ extern "C" JNIEXPORT jlong JNICALL JNI_NAME(nativeGuardEnter)(JNIEnv *env, jclas
     try {
         d = domain_for(id); if (!d) return failed(MGMEM_STALE_HANDLE);
 #if defined(MGMEM_MANAGED_TESTING)
-        if (fail_guard_admission.exchange(false)) return failed(managed_guard_limit);
+        if (fail_guard_admission.exchange(false)) {
+            wait_test_gate(guard_admission_failure_gate);
+            return failed(managed_guard_limit);
+        }
 #else
         (void)env;
 #endif

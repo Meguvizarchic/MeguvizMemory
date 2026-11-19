@@ -1,5 +1,32 @@
 package io.github.jichuo1.meguviz.memory.android;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 public final class ManagedMemoryDomainPlainJvmTest {
+    private static void checkConcurrentViews(ManagedMemoryDomain.Lease lease) throws Exception {
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread waiter = new Thread(() -> {
+            try { lease.withDirectBuffer(0, 1, view -> {
+                if (view.remaining() != 1) throw new AssertionError("waiting view range");
+            }); }
+            catch (Throwable error) { failure.set(error); }
+        });
+        lease.withDirectBuffer(0, 2, outer -> {
+            lease.withDirectBuffer(0, 1, inner -> { });
+            waiter.start();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+            while (waiter.getState() != Thread.State.BLOCKED && System.nanoTime() - deadline < 0) Thread.yield();
+            if (waiter.getState() != Thread.State.BLOCKED) throw new AssertionError("second callback did not wait");
+            try { lease.close(); throw new AssertionError("enclosing callback admitted close"); }
+            catch (IllegalStateException expected) { }
+            if (lease.closeState() != NativeMemoryLease.CLOSE_OPEN || outer.limit() != 2)
+                throw new AssertionError("rejected close changed active lease");
+        });
+        waiter.join(5000);
+        if (waiter.isAlive() || failure.get() != null) throw new AssertionError("waiting callback", failure.get());
+    }
+
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < 2; ++i) {
             ManagedMemoryDomain d = i == 0 ? ManagedMemoryDomain.system(8192) : ManagedMemoryDomain.arena(8192, 4096);
@@ -20,6 +47,7 @@ public final class ManagedMemoryDomainPlainJvmTest {
             });
             lease.read(0, data, 0, data.length);
             if (data[1] != 7) throw new AssertionError("direct buffer writeback");
+            checkConcurrentViews(lease);
             java.nio.ByteBuffer[] escaped = new java.nio.ByteBuffer[1];
             lease.withDirectBuffer(0, 64, buffer -> escaped[0] = buffer);
             if (escaped[0].limit() != 0) throw new AssertionError("buffer not invalidated after callback");

@@ -3,8 +3,8 @@ package io.github.jichuo1.meguviz.memory.android;
 import java.util.concurrent.atomic.AtomicLong;
 
 /** Optional managed owner for the existing Memory core and bounded byte leases.
- * No native address or direct ByteBuffer is exposed. Explicitly close owners,
- * leases and the domain; GC is not a cleanup mechanism. */
+ * A lease can expose its bytes for the duration of a direct-buffer callback.
+ * Explicitly close owners, leases and the domain. */
 public final class ManagedMemoryDomain implements AutoCloseable {
     static {
         // See NativeMemoryLease: pure-Java unit tests may skip the load.
@@ -518,8 +518,6 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         private final ManagedMemoryDomain domain;
         private volatile NativeMemoryLease delegate;
         private volatile int closeState = NativeMemoryLease.CLOSE_OPEN;
-        /** Thread currently inside withDirectBuffer; only touched under this monitor. */
-        private Thread directBufferThread;
         private int closeFailure = NativeMemoryLease.CLOSE_FAILURE_UNKNOWN;
         private Lease(ManagedMemoryDomain domain) { this.domain = domain; }
 
@@ -550,12 +548,7 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                                      DirectBufferAction action) throws Exception {
             if (action == null) throw new NullPointerException("action");
             if (closeState != NativeMemoryLease.CLOSE_OPEN) throw new IllegalStateException("lease closing or closed");
-            synchronized (this) { directBufferThread = Thread.currentThread(); }
-            try {
-                delegate.withDirectBuffer(offset, length, buffer -> action.accept(buffer));
-            } finally {
-                synchronized (this) { directBufferThread = null; }
-            }
+            delegate.withDirectBuffer(offset, length, action::accept);
         }
         /** Direct bounded transfer between existing leases; no Java array is needed. */
         public void copyTo(Lease destination, long sourceOffset, long destinationOffset, int count) {
@@ -567,16 +560,17 @@ public final class ManagedMemoryDomain implements AutoCloseable {
         }
         @Override public void close() {
             synchronized (this) {
-                if (Thread.currentThread() == directBufferThread)
+                if (delegate.inDirectBufferCallback())
                     throw new IllegalStateException("close inside withDirectBuffer callback");
                 if (closeState != NativeMemoryLease.CLOSE_OPEN) return;
                 closeState = NativeMemoryLease.CLOSE_RELEASING;
             }
             boolean counted = false;
+            boolean retryable = false;
             try {
                 try { domain.enterJavaReport(); counted = true; }
                 catch (ManagedException error) {
-                    if (error.status() == STATUS_CLOSE_GUARD_LIMIT) closeState = NativeMemoryLease.CLOSE_OPEN;
+                    if (error.status() == STATUS_CLOSE_GUARD_LIMIT) retryable = true;
                     else { domain.quarantineAfterUnknown(error.status()); closeFailure = error.status(); closeState = NativeMemoryLease.CLOSE_FAILED; }
                     throw error;
                 }
@@ -592,7 +586,7 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                     if (status == STATUS_CLOSE_GUARD_LIMIT || status == 3 || status == 2) {
                         // Known failure before guard admission: no native release
                         // was attempted, so the same lease may be retried.
-                        closeState = NativeMemoryLease.CLOSE_OPEN;
+                        retryable = true;
                     } else {
                         domain.quarantineAfterUnknown(status);
                         closeFailure = status; closeState = NativeMemoryLease.CLOSE_FAILED;
@@ -626,11 +620,13 @@ public final class ManagedMemoryDomain implements AutoCloseable {
                 closeState = problem == null ? NativeMemoryLease.CLOSE_RELEASED : NativeMemoryLease.CLOSE_FAILED;
                 if (problem != null) throw propagate(problem);
             } finally {
-                if (closeState == NativeMemoryLease.CLOSE_RELEASING) {
+                if (!retryable && closeState == NativeMemoryLease.CLOSE_RELEASING) {
                     domain.quarantineAfterUnknown(-1);
                     closeFailure = -1; closeState = NativeMemoryLease.CLOSE_FAILED;
                 }
                 if (counted) domain.leaveJavaReport();
+                // Publish retry admission last. This attempt must never observe a later close.
+                if (retryable) closeState = NativeMemoryLease.CLOSE_OPEN;
             }
         }
     }
