@@ -1,37 +1,62 @@
-# Android 快速接入
+# 在 Android 应用中使用 MeguvizMemory
 
-本轮通用 AAR 把同一候选的 arm64-v8a、armeabi-v7a、x86_64 放在一个文件中；Java 类、keep 规则、manifest 和 notice 三份逐字节相同，六个共享库逐项继承自对应单 ABI AAR，并与该 ABI SDK 一致。原候选 ZIP 和三个 SDK 保留。
+Java 和 Kotlin 可以直接使用 `ManagedMemoryDomain`。如果应用还要从 C 或 C++ 访问同一块内存，可以使用 AAR 内的 Prefab 模块，也可以按 ABI 链接原生 SDK。
 
-Maven Central 坐标（独立发布，[发布链](https://github.com/Meguvizarchic/MeguvizMemory/blob/main/bindings/android/README.md)）：`io.github.jichuo1.meguviz:mgmem-android:1.2.1`。暂存包已按 Gradle 9.8.2 + AGP 9.4.1 + JDK 17 打包（AAR 含三 ABI `.so`、sources/javadoc jar，POM 为 Apache-2.0）；正式上传待签名与命名空间验证完成。
+**系统与工具链要求。** `mgmem-android:1.2.1` 的 Gradle AAR 最低可在 API 27 运行，应用编译时需要 Android SDK 37.2 或更高版本。使用 37.2 时，在应用的 `android` 块中写 `compileSdk { version = release(37) { minorApiLevel = 2 } }`。AAR 包含 `arm64-v8a`、`armeabi-v7a` 和 `x86_64`，应用可以只打包自己支持的 ABI。
 
-## Java / Kotlin 应用
+## 给应用添加依赖
 
-把 `MeguvizMemory-bfd0e65-universal.aar` 放入应用的 `libs/`，沿用项目现有 Android Gradle 工具链。最低支持 API 27，已有更高的 minSdk 保持原值：
+将 AAR 放在应用模块的 `libs/` 目录，再在 `app/build.gradle.kts` 中引用。下面用的是本地 Maven 仓库中的文件名。若拿到的是直接组装的 `mgmem-android-release.aar`，把路径末尾换成该文件名。
 
 ```kotlin
-// app/build.gradle.kts
-android { defaultConfig { minSdk = 27 } }
 dependencies {
-    implementation(files("libs/MeguvizMemory-bfd0e65-universal.aar"))
+    implementation(files("libs/mgmem-android-1.2.1.aar"))
 }
 ```
 
-Java 托管域与 lease 接口由 AAR 提供。`input`、`output` 是调用方已持有的 `ManagedMemoryDomain.Allocation`，以下代码在工作线程执行，`count` 最大为1 MiB：
+团队使用 Maven 仓库分发 AAR 时，在项目已有的仓库配置中加入存放该包的仓库，依赖写成 `implementation("io.github.jichuo1.meguviz:mgmem-android:1.2.1")`。版本单独指定。仓库自带的 Gradle 工程可以生成 AAR 和本地 Maven 仓库。[从候选包组装 AAR](../bindings/android/README.md)
+
+## 读写第一块缓冲区
+
+下面的方法接收一个已打开的域，申请一个 4 字节整数的空间，写入后再读出。把方法放进自己的 Java 类，导入 `io.github.jichuo1.meguviz.memory.android.ManagedMemoryDomain` 和 `java.nio.ByteOrder`，在工作线程调用。
 
 ```java
-try (ManagedMemoryDomain.Lease source = input.borrowRead(0, count);
-     ManagedMemoryDomain.Lease target = output.borrowWrite(0, count)) {
-    source.copyTo(target, 0, 0, count);
+static int roundTrip(ManagedMemoryDomain domain, int value) throws Exception {
+    try (ManagedMemoryDomain.Allocation slot = domain.allocate(4, 4)) {
+        try (ManagedMemoryDomain.Lease writer = slot.borrowWrite(0, 4)) {
+            writer.withDirectBuffer(0, 4, b -> b.order(ByteOrder.nativeOrder()).putInt(value));
+        }
+        try (ManagedMemoryDomain.Lease reader = slot.borrowRead(0, 4)) {
+            byte[] result = new byte[4];
+            reader.read(0, result, 0, result.length);
+            return java.nio.ByteBuffer.wrap(result).order(ByteOrder.nativeOrder()).getInt();
+        }
+    }
 }
 ```
 
-两端已有 lease 时，原生层按 memmove 语义复制，不经过 Java 数组中转。先取得 lease 再提交异步任务，任务结束后关闭它；调用方继续负责 owner 和域的 `beginClose`、完成确认与 `forgetClosed`。关闭超时不强制释放。完整[托管生命周期](ANDROID_MANAGED_DOMAIN.md)及[借用合同](ANDROID_NATIVE_BORROW.md)保持适用。
+应用可用 `ManagedMemoryDomain.system(1024 * 1024)` 创建预算为 1 MiB 的域，在多次调用间复用。上例中写借用先归还，读借用才能取得。直接视图及其切片只能在回调内使用。需要在归还 lease 后继续保留数据时，可以像上例那样读到自己的数组中。两个已有 lease 之间的传输用 `copyTo`，单次最多 1 MiB。[借用方式与限制](ANDROID_NATIVE_BORROW.md)
 
-新 Java 与原生库须使用同一批制品。不要把这个 AAR 的类与旧 JNI 混配；旧库可能没有 nativeTransfer。应用已有的 ABI 选择可缩小最终 APK，不必手工拆分或拼装此 AAR。
+组件退出时，停止提交新任务，调用 `domain.beginClose()`，让在途任务归还 allocation 和 lease。在后台观察到 `CLOSED` 后调用 `domain.forgetClosed()`。调用 `close()` 和 `beginClose()` 一样，都只启动关闭流程。[处理等待和关闭错误](ANDROID_MANAGED_DOMAIN.md#关闭内存域) · [带系统压力回调的后台示例](../consumers/android_managed/README.md)
 
-## 仅 C / C++ 的 Android 消费者
+## 应用含 C 或 C++ 代码
 
-从同一候选解开对应 ABI 的 `MeguvizMemory-sdk.zip`，分别放在 `third_party/mgmem/<ABI>/`。在 Android NDK 配置中显式设置包目录：
+**使用带 Prefab 的 Gradle AAR。** 在应用模块启用 Prefab，然后在应用的 `CMakeLists.txt` 中链接目标。`app_native` 表示应用自己的原生目标。
+
+```kotlin
+android {
+    buildFeatures { prefab = true }
+}
+```
+
+```cmake
+find_package(mgmem-android CONFIG REQUIRED)
+target_link_libraries(app_native PRIVATE mgmem-android::mgmem)
+```
+
+需要从原生侧注册借用或压力控制器时，再链接 `mgmem-android::mgmem_pressure_jni`。如果 AAR 内没有 `prefab/prefab.json`，可用同批次的原生 SDK。
+
+**使用独立 SDK。** 将各 ABI 的 SDK 解到 `third_party/mgmem/<ABI>/`，示例路径相对于应用的 `CMakeLists.txt`。
 
 ```cmake
 set(MeguvizMemory_DIR
@@ -40,14 +65,4 @@ find_package(MeguvizMemory CONFIG REQUIRED)
 target_link_libraries(app_native PRIVATE MeguvizMemory::mgmem)
 ```
 
-此示例使用 SDK 自身提供的共享核心。需要原生注册 JNI 借用/压力时，要求 `COMPONENTS android_jni` 并链接 `MeguvizMemory::android_jni`，详见[候选SDK合同](ANDROID_CANDIDATE_BUILDER.md)。Java AAR 与 native SDK 联合接入时必须同批、最终只装载同一个共享核心；不要另把相同库手工复制进 jniLibs，也不要用 pickFirst 掩盖不同运行库的冲突。
-
-## 重建通用 AAR 与证据边界
-
-```text
-python tools/merge_android_candidate_aar.py --candidate dist/MeguvizMemory-Android-Candidate-bfd0e65-20261109.zip --candidate-sha256 7fe27be15cf7a12469959a3283c3fb9cd7e2aa2d78941b570ec0a08e48b451bd --output dist/MeguvizMemory-bfd0e65-universal.aar
-```
-
-输出必须是新的 dist AAR，工具拒绝覆盖。它核对输入候选摘要、共同成员、两库/ABI 闭包及 SDK/AAR 身份，并在发布前逐成员回读；没有重新编译 Java 或原生代码。
-
-单 ABI 候选、R8 诊断和 arm64 运行记录不能自动升级成“由通用 AAR 构建的应用已验证”。本次通用制品只取得成员字节继承与归档回读证据；仍应以应用实际构建及安装结果确认最终 APK 的 ABI、签名和原生库包装。16 KiB loader、MTE、产品性能与正式发布资格分别查看[工程状态](../STATE.md)。
+若需 JNI 注册，查找时加 `COMPONENTS android_jni` 并链接 `MeguvizMemory::android_jni`。Java 类、JNI 和核心共享库应来自同一套制品。若 APK 合并时出现重复的 `libmgmem.so`，先检查 Prefab、SDK 和 `jniLibs` 安装了哪几份，确保所有调用方共享同一份核心。[SDK 目录与组件](ANDROID_CANDIDATE_BUILDER.md)

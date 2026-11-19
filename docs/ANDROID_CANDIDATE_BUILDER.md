@@ -1,6 +1,6 @@
 # Android 工程候选构建器
 
-`tools/build_android_candidate.py` 从独立、固定的源码快照构建三个单 ABI 的 Android AAR 和 native SDK，输出一个本地工程候选 ZIP。它不调用 ADB，不创建诊断 APK、签名密钥，也不发布或修改其他仓库。该候选不是正式 Release；项目许可证仍须由项目负责人确定。
+`tools/build_android_candidate.py` 用固定的源码快照构建 Android 候选包。每种 ABI 各有一份 AAR 和一份原生 SDK，三组制品收在一个本地 ZIP 中，可用于应用集成或继续组装通用 AAR。项目采用 Apache-2.0 许可证，分发时一并保留 [LICENSE](../LICENSE) 和 [NOTICE](../NOTICE)。
 
 ## 输入与运行
 

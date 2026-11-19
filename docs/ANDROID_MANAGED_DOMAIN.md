@@ -1,17 +1,42 @@
-# 可选 Android 托管内存域
+# Android 托管内存域
 
-`ManagedMemoryDomain` 是现有共享 Memory 核心上的可选 Java owner/lease 包装，不提供原始地址。lease 另提供作用域受限的直接 ByteBuffer 视图 `withDirectBuffer(offset, length, action)`：缓冲别名 lease 原生区间（零拷贝，READ lease 为只读视图，字节序为 ByteBuffer 默认大端、需要时由回调内显式设置），回调期间 lease 监视器被持有故并发 close 不能中途释放，回调内自关会被拒绝，返回后缓冲被清零限长作尽力失效；保留引用在回调后或 lease 关闭后使用与保留 C 借用指针同等危险，属编程错误。异步交接不得使用该视图，应持有 lease 本身。`system(budgetBytes)` 和 `arena(budgetBytes, chunkBytes)` 分别使用默认 System 和 arena provider；不接管全局分配，也不支持通用外部内存导入。`attachPressure` 可显式启用同域压力控制；单独附着不会注册 Android 回调，需由宿主组合 `ManagedPressureBackend` 与 `MemoryPressureAdapter`。使用方法、预算仲裁及结果窗口见[同域压力合同](ANDROID_MANAGED_PRESSURE_CONTRACT.md)。
+`ManagedMemoryDomain` 适合需要显式预算、从 Java 或 Kotlin 管理原生 CPU 缓冲区的组件。组件持有域，调用方持有每次分配得到的 `Allocation`，任务在访问字节期间持有 `Lease`。[Android 接入示例](ANDROID_QUICKSTART.md#读写第一块缓冲区)
 
-`allocate` 同步分配并对全部字节清零后交付；所有尺寸、对齐和范围必须合法。预算限制核心 backing 准入，不是 RSS 或进程总内存上限；降低预算不会撤销已有 owner 和 lease。元数据、Java 对象和清理线程不计入该预算。分配、清零、owner/lease 关闭可能耗时，安排在工作线程。应在将任务入队前取得 lease，任务完成后关闭 lease；owner 关闭不会使已取得的 lease 失效。不要依赖 GC 释放资源。
+## 申请和访问
 
-`beginClose()` 停止新操作准入并安排清理，不等待 owner 或 lease；已有准入操作可能在其返回后完成并交付结果。如已附着压力控制器，后台先封闭压力入场并销毁 controller、归还其 owner pin，再关闭核心域。关闭期间最后的 owner 和 lease 必须显式关闭；如果注册了系统回调，宿主还须关闭 adapter 以注销回调。线程或槽位不足时域保持 CLOSING，可以重试 `beginClose`；工作线程可自行限时轮询 `state`，超时不会强制销毁。`state`、`beginClose`、`forgetClosed` 和观测方法仍可能取短锁、创建线程或受调度影响，不承诺无锁或硬实时。重复 lease.close 在另一调用 RELEASING 时可能提前返回，必须看 `closeState` 判断完成。`forgetClosed` 仅删除已关闭域的观察令牌和保留的压力结果；并发重复调用可能提前返回，失败后可重试，不会重试核心 destroy。
+- `system(budgetBytes)` 适合各块独立释放的缓冲区。`arena(budgetBytes, chunkBytes)` 适合一批一起使用的临时数据，可为一批工作创建一个托管域，在批末关闭。需要显式复位同一个 Arena、跨批复用底层块时，使用原生接口。[原生 Arena 的复用](CPP_CONVENIENCE.md#域的结束与复用)
+- `allocate(bytes, alignment)` 同步申请并清零整个范围。预算针对本域底层存储。降低预算只影响后续申请，已有的 owner 和 lease 可以继续使用。大块清零和最后一次释放应由工作线程承担。
+- `borrowRead(offset, bytes)` 可与同一 allocation 的其他读借用共存，`borrowWrite` 需要独占。任务跨线程时，先取得 lease，再提交任务。若提交被拒绝、任务取消或抛出异常，负责该任务的一方仍需关闭 lease。关闭 allocation 后，已取得的 lease 可以继续访问。资源需要显式归还。
 
-当全部访问 raw domain 的核心 C 调用均已返回，owner、lease pin、注册取消/关闭 guard 均已清空后，后台 worker 才执行 collect、drain 和 destroy。借用适配器的 lifetime 回调返回后可能仍有适配器自身 registry/JNI 栈，wrapper guard 将 lease 关闭及取消结果纳入等待。Java 操作报告期内即使 native 已 CLOSED，`state` 保守报告 CLOSING，且 `forgetClosed` 拒绝；QUARANTINED 始终优先。`pendingManagedOperations()` 只是此 Java wrapper 正在报告的变更操作计数，不是 native 栈计数。
+已有 `byte[]` 时用 `read` 或 `write`，两端都是 lease 时用 `copyTo`。只在同步回调里接受 `ByteBuffer` 的接口适合用 `withDirectBuffer`。READ 借用得到只读视图，视图初始为大端。读写原生数值时按数据格式显式选择字节序。视图长度为 1 到 `Integer.MAX_VALUE` 字节，并须落在 lease 内。[传输上限和关闭状态](ANDROID_NATIVE_BORROW.md)
 
-无法确认操作或 JNI 异常结果时保守隔离，保守保留无法确定状态的元数据与尚可保留的资源，不重复释放、不强制销毁；若 destroy 已消费域而其回执失败，原域可能已经不存在，不可假定内存一定仍保留；`QUARANTINED` 不是成功关闭。JNI 抛出的 RuntimeException 和 Error 原样传播，意外 checked 异常包装为 IllegalStateException 并保留 cause。Java 侧先记录 sticky 隔离，再尽力通知 native；即便通知失败或观察令牌已删除，也不能把错误视为消失。状态不保证严格单调：迟到的 Java 异常可使先前观察到的 CLOSED 变为 QUARANTINED；不承诺 Thread.stop 或进程崩溃的原子性。CLOSED 只说明已确认的核心清理与受管报告期结束，不证明其他 Java/JNI 栈或 detached worker 已退出；JNI 和核心库必须在进程内保持加载，不能据此卸载。
+视图及其 `slice()`、`duplicate()` 都只能在本次回调内使用。正常或异常退出时，库会把交给回调的视图的 `limit` 设为零。调用方创建的切片和副本视图仍受同一使用期限约束。同一线程可嵌套访问同一 lease，内层返回后外层视图仍可用。在回调内关闭这份 lease 会抛出 `IllegalStateException`。其他线程的释放可能等待回调结束，所以不要在回调里等待负责关闭它的线程。
 
-每个 JNI runtime 限制 1024 个域记录、65536 个 owner 记录、65536 个 lease pin、65536 个关闭 guard、32 个清理 worker；每个 Java 域还限制 65536 个同时报告操作。独立状态码区分这些槽位限制与核心 backing 预算不足。`runtimeCounts()` 各字段异时采样，记录可能处于创建、退休或隔离状态，不能解释为可用 handle、精确 live 数、RSS 或全进程清单；native 隔离计数可能漏掉 Java-only 未知状态。`javaQuarantineSignals()` 是每 classloader 饱和累计信号，不是资源数量。worker 数是准入槽位而非 OS 线程退出证明。
+## 关闭内存域
 
-`snapshot()` 返回 `[managedState, coreState, budget, backing, reserved, peak, live, retiring, activeAllocations, activeLeases]`；managed 状态与核心快照分时采样，不能当作同一时刻的原子组合。activeAllocations 包括退休和可能在途的条目，不是当前 owner 数。null 表示原因未细分的不可用，不代表零；-1 表示超出 Java 有符号范围。观察不能据以自行 destroy 或判断 JNI 栈退出。
+`beginClose()` 和 `close()` 都会停止新操作并安排后台清理。已准入的操作可能稍后才交付结果。域的持有者应保留域引用，直到关闭得到确认。应用若注册过系统压力回调，还要关闭对应的 adapter 以注销回调。[带压力回调的完整示例](../consumers/android_managed/README.md)
 
-此合同及宿主回归不构成 Android 真机、R8、性能或发布资格证明。
+| `state()` | 调用方的处理 |
+|---|---|
+| `OPEN` | 可以申请及借用。准备退出时，先停止提交新任务，再调用 `beginClose()`。 |
+| `CLOSING` | 让已受理的任务归还 owner 和 lease，由后台收集并销毁域。使用有时间上限的后台等待，超时后保留引用，稍后再查。若 `beginClose()` 因清理线程名额不足失败，可在稍后重试该调用。 |
+| `CLOSED` | 此域的核心清理已得到确认。若需最后一份快照，先读取，再调 `forgetClosed()` 归还观察令牌及保留的压力结果。 |
+| `QUARANTINED` | 有操作的结果无法确认。通过 `failureStatus()` 记录错误，停止使用该域。可能已消费的释放不能重试。 |
+
+多个线程同时关闭一份 lease 时，重复调用可能在第一次释放结束前返回。用 `closeState()` 区分 `CLOSE_RELEASING`、`CLOSE_RELEASED` 和 `CLOSE_FAILED`。失败时再读 `closeFailureStatus()`。如果托管关闭尚未进入实际释放便因名额不足被拒，原调用抛错，清理收尾后状态恢复到 `CLOSE_OPEN`，这时可重试。
+
+后台清理会等已准入的原生调用、借用和关闭操作结束。Java 仍在报告操作结果时，`state()` 会暂报 `CLOSING`，`forgetClosed()` 也可能暂时被拒。并发的重复 `forgetClosed()` 可先返回。归还令牌失败后可以重试这一步。晚到的 JNI 错误可能使已观察为 `CLOSED` 的域转入隔离。核心和 JNI 库应在进程内持续加载。
+
+## 预算、压力与诊断
+
+`attachPressure(moderateBytes, criticalBytes)` 为同一域绑定压力控制器。需要 Android 系统回调时，组合 `ManagedPressureBackend` 和 `MemoryPressureAdapter`。域关闭时，后台先停止控制器、释放其持有的引用，再关闭核心域。[压力控制器与事件结果](ANDROID_MANAGED_PRESSURE_CONTRACT.md)
+
+`snapshot()` 返回以下字段，单位为字节的数值包括 `budget` 到 `retiring`。其中 `reserved` 是尚在进行的分配预留，`peak` 是底层容量加预留的历史峰值。
+
+```text
+[managedState, coreState, budget, backing, reserved, peak, live, retiring, activeAllocations, activeLeases]
+```
+
+托管状态和核心状态分时采样。`activeAllocations` 也可能包含 owner 已归还但仍有 lease 的记录。`null` 表示快照不可用，`-1` 表示字段超出 Java 有符号整数范围。遗忘令牌后读取可能抛异常。元数据、Java 对象、线程栈和进程 RSS 需单独观测。
+
+每份 JNI 运行库最多登记 1,024 个域、65,536 个 allocation、65,536 个 lease 和 65,536 个关闭保护记录，同时最多准入 32 个清理 worker。一个 Java 域同时报告的操作上限为 65,536。`ManagedException.status()` 能区分登记名额耗尽和底层存储预算不足。`pendingManagedOperations()` 仅统计当前 Java 域正在报告的操作。`runtimeCounts()` 分项采样，包含创建中、回收中和隔离记录。`javaQuarantineSignals()` 是当前类加载器的累计隔离信号。

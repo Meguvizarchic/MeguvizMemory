@@ -1,26 +1,19 @@
-# C++17 常用短路径
+# 用 C++17 管理内存域和借用
 
-使用 `<mgmem/memory.hpp>`，链接安装导出的 `MeguvizMemory::mgmem`。短入口复用现有
-owner、lease 和域生命周期，状态仍为 `mgmem_status`。
+包含 `<mgmem/memory.hpp>`，链接 `MeguvizMemory::mgmem`。域、分配和借用都可移动。每份分配和借用独立持有域，因此移动或销毁外层 `domain` 对象不会让已经借出的地址提前失效。[安装和链接](INTEGRATION.md)
 
-| 场景 | 短入口 | 明确保留的选择 |
-|---|---|---|
-| 创建 System 域 | `domain::create_system(budget, out)` | 预算显式；可在最后传入 provider |
-| 创建 Arena 域 | `domain::create_arena(budget, chunk, out)` | 预算与 chunk 大小显式；可在最后传入 provider |
-| 保存 owner，多次访问 | `memory.allocate(bytes, owner)`，再 `owner.with_read(body)` / `with_write(body)` | owner 由调用方持有；读写权限分别命名 |
-| 一次同步临时使用 | `memory.with_allocation(bytes, body)` | 回调结束归还本次 owner 和 WRITE lease |
-| 异常风格调用（可选） | `mgmem::or_throw(memory.allocate(bytes, owner))` | 只转换已返回的状态，不重试、不关闭；失败抛零分配异常 `mgmem::status_error` |
-| 一次读取域状态 | `const auto seen = memory.observe()` | 顺序采样快照、导入快照与粘性隔离标志（非原子）；只读，不 reset/close，不置隔离 |
-
-状态返回均为 `[[nodiscard]]`：确需丢弃时显式 `(void)` 强转，不要把静默忽略当成成功。
-
-创建入口完整填写当前 ABI/options 头；高级选项继续用 `domain::create(options, out)`。
-域创建一次后可以反复分配和读写，短入口不会为每次操作隐式创建另一个域。
+| 需要做什么 | 接口 |
+|---|---|
+| 分块申请、各自释放 | `domain::create_system(budget, out)` |
+| 按批申请、整批复用 | `domain::create_arena(budget, chunk, out)` |
+| 多次读写同一块数据 | `memory.allocate(bytes, owner)`，随后 `owner.with_read(body)` 或 `owner.with_write(body)` |
+| 临时使用一块可写空间 | `memory.with_allocation(bytes, body)` |
+| 把数据交给异步任务 | 在提交前用 `owner.acquire_borrow(...)` 取得借用，由任务持有至最后一次访问 |
+| 查看域状态 | `memory.observe()` 顺序读取快照、导入快照和隔离标志 |
 
 ## 完整示例
 
-以下程序展示创建域、复用 owner 和临时工作区，逐步处理失败状态。载荷最初未初始化；
-示例中的 `memset` 是调用方明确要求的写入。
+下面的程序写入一块 4 KiB 缓冲区，重新借出并逐字节校验，再申请一次临时空间。原生存储最初未初始化。示例中的 64 KiB 是演示用的 Arena 块大小，实际用量可以根据批次轨迹选择。
 
 ```cpp
 #include <mgmem/memory.hpp>
@@ -55,69 +48,20 @@ int main() {
 }
 ```
 
-`allocate(bytes, owner)` 与省略 alignment 的 `with_allocation` 使用
-`alignof(std::max_align_t)`。需要更高对齐时传入显式 alignment：
-`allocate(bytes, alignment, owner)` 或 `with_allocation(bytes, alignment, body)`。
-这些入口保留原 API 的预算、权限和失败状态，不隐式重试，也不自动初始化载荷。
+创建域或分配时使用空的输出对象，检查返回的 `mgmem_status` 后再使用它。省略对齐时采用 `alignof(std::max_align_t)`。需要更高对齐时使用 `allocate(bytes, alignment, owner)` 或 `with_allocation(bytes, alignment, body)`。
 
 ## 读写范围和作用域
 
-`with_read(body)` / `with_write(body)` 访问完整 owner；子范围使用
-`with_read(offset, length, body)` / `with_write(offset, length, body)`。两个整数均为
-字节数，越界或零长度在调用回调前返回失败。
+`with_read(body)` 和 `with_write(body)` 访问整块数据。只处理其中一段时，用 `with_read(offset, length, body)` 或 `with_write(offset, length, body)`。偏移与长度都按字节计，零长度或越界会在进入回调前返回错误。
 
-READ 回调接收 `const void *`，可以嵌套其他 READ；WRITE 回调接收 `void *`，与
-同 allocation 的其他读写借用排斥。外部只读输入仍拒绝 WRITE。回调返回 `void`
-表示本体正常完成，也可返回 `mgmem_status`；其他返回类型会在编译时被拒绝。
-回调自身返回的状态原样传出，不据此隔离域；quarantine 依据原生 checked 清理的实际结果。
+读回调取得 `const void *`，同一块数据可有多个读借用。写回调取得 `void *`，需要独占该 allocation。回调可以返回 `void`，也可以返回 `mgmem_status` 让调用方处理业务错误。指针的使用期限止于回调返回。异步任务应持有自己的 `mgmem::borrow`，包括处理提交失败和取消的路径。
 
-指针只在同步回调内有效，不能返回、缓存或交给晚于回调完成的任务。异步工作继续
-使用显式 `acquire_borrow`，入队前取得 lease，最后一次访问后归还。回调期间移动或
-归还 owner、移动 domain wrapper 时，本地 lease 仍保活 native 域和载荷。
+偏好异常的调用方可以写 `mgmem::or_throw(memory.allocate(bytes, owner))`。失败时，`mgmem::status_error::what()` 返回已知状态名（如 `MGMEM_OUT_OF_BUDGET`），`status()` 保留原始状态值。需要在 `noexcept` 函数中处理错误时，直接检查返回值。
 
-`with_read` / `with_write` 正常结束时明确归还 lease。若 checked 外部输入的最后一次
-lease 归还失败，其错误优先于回调状态返回，域进入 quarantine；可通过原 domain
-wrapper 的 `quarantined()` 观察，后续准入返回 `MGMEM_PROVIDER_ERROR`。这不代表
-未知的外部释放可以重试。
-
-回调异常沿原 RAII 合同清理并继续传播，checked 清理失败仍可留下可观察的
-quarantine。普通清理失败的既有 fail-stop 合同保持；未消费的释放错误立即终止，
-不会为了完成短调用再重放一次释放。
+回调抛异常时，局部借用随栈展开释放。若使用 checked 外部导入，最后一次归还报告 `MGMEM_PROVIDER_ERROR` 时，域会进入隔离。正常返回路径上，这一清理错误优先于回调的返回值。可用 `quarantined()` 查看隔离状态，避免重试可能已被消费的外部释放。普通析构也要求底层清理成功，违反 provider 约定可能触发 `std::terminate`。要在析构前取得清理错误，可显式调用 `release()`。[Checked 导入约定](CPP_CHECKED_IMPORT.md)
 
 ## 域的结束与复用
 
-短调用不会隐式 reset 或 close 整个域。Arena 的已释放空间在显式 `reset()` 后复用，
-`trim()` / collect 按原合同归还 backing。未进入 quarantine 的最后一份共享所有权
-归还时，现有 C++ RAII 会同步执行关闭、collect、drain 和 destroy；这可能调用 provider，应在允许
-同步清理的线程结束最后一次所有权。需要观测关闭状态时，仍使用原显式关闭接口。
+Arena 要等整批 owner 和 lease 归还后才可 `reset()`。它保留底层块供下一批复用。空闲时 `trim()` 可把底层块归还。正常情况下，最后一份共享所有权的析构会同步完成关闭、收集和销毁。把最后一次释放安排在允许阻塞的线程，尤其是使用自定义 provider 时。[原生关闭顺序](INTEGRATION.md#关闭内存域)
 
-功能、构建与性能验证分别记录；便捷入口不自动取得新的性能资格。
-
-## 本轮验证与性能范围
-
-本轮核心和 C ABI 头逐字节保持 `7f076e5` 的版本，只改可选 C++ 层及测试。
-System/Arena 的创建、默认对齐、whole/subrange 读写、异常、提前归还及移动保活，
-均有实际回归。最终核心/JNI 48/48、C++ 15/15、ASan 48/48、C++ ASan 15/15、
-安装版消费者 1/1（14 个 RAII case）通过；两个错误回调类型按预期编译拒绝。
-
-Windows MSVC Release 同一程序、相同载荷与存活集合下，三版各 192 个进程，
-另各 24 个真实核心计数进程，分别独立保存。首版及只展开内部函数的第二版存在
-稳定双位数 P50 代价，均未采用。最终版本针对完整短借用链请求 MSVC 内联，
-实际热循环没有额外直接 C++ 调用；其他编译器使用普通 inline。没有更改全局优化
-开关、禁用异常或屏蔽 C4714；Release/Debug `/W4 /WX` 的递归、异常及函数指针
-兼容控制均编译通过。内联请求仍受[编译器约束](https://learn.microsoft.com/en-us/cpp/cpp/inline-functions-cpp?view=msvc-170)。
-
-最终八组已有 owner 读写的完整 wall P50 配对比为 **0.97175–1.02113**，差中位
-约 **−6.15 到 +7.91 ns/op**。两侧原生调用、provider 事件、有效创建字段、
-当前 EXE 绑定范围的 C++ 上游申请、校验和与归零资源逐 round 相同。
-这不等于跨平台或任意回调都没有时间成本。
-
-保留的明显尾部反向：System whole READ 的完整 wall P95 **1.12876**，约
-**+28.81 ns/op**；Arena subrange WRITE 的 P95 **1.10359**，约 **+17.82 ns/op**，
-均为 6/8 对慢，前后半及 AB/BA 同样保留反向，不能归为噪声。两个 whole WRITE
-的 P50 也约为 **1.02113/1.02019**。诊断 EXE 的 `.text` 相对首版增加 656 B，
-不是所有客户端的固定体积成本。全部正反向、源码和生成代码分别归档。
-
-Android 只新编链消费者 1 ELF、编译 3 REL TU，核验复用的原核心 SO；没有执行
-目标。以上不构成 Android 运行、RSS、能耗或正式产品性能资格。
-[完整采用决定、三轮对照与全部反向](../artifacts/cpp-convenience-20261109/decision.json)。
+需要评估回调封装的成本时，可查阅相同读写负载下的宿主对照，结果中同时列出了中位耗时和较慢的尾部样本。[C++ 回调测量记录](../artifacts/cpp-convenience-20261109/decision.json)

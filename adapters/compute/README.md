@@ -16,7 +16,7 @@ cmake --build build/compute-bridge --config Release
 cmake --install build/compute-bridge --config Release
 ```
 
-消费时同时提供三个安装前缀，使用 `find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED)` 与 `MeguvizMemoryComputeReadBridge::read_bridge`。请按 Compute SDK 的构建方式匹配工具链及 MSVC CRT；桥不复制、嵌入或发布 Compute SDK。
+消费时同时提供三个安装前缀，用 `find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED)` 查找默认 System 桥，或在调用中显式指定 `COMPONENTS read_bridge`。链接目标为 `MeguvizMemoryComputeReadBridge::read_bridge`。工具链及 MSVC CRT 应与独立安装的 Compute SDK 匹配。
 
 需要把完整 Compute READ backing 导入 Memory Arena 域时，使用 `find_package(MeguvizMemoryComputeReadBridge CONFIG REQUIRED COMPONENTS arena_read_bridge)`，链接独立的 `MeguvizMemoryComputeReadBridge::arena_read_bridge`，调用 `mgmem_compute_import_arena_read_v1`。它沿用相同映射保活与 checked release 合同，并计入该 Arena 域的预算；导入的 backing 不参与 Arena 子分配。该目标要求同一 Memory runtime 同时提供 `MGMEM_CAP_ARENA_EXTERNAL_IMPORT`、`MGMEM_CAP_CHECKED_EXTERNAL_RELEASE` 和 `mgmem_import_external_arena_checked_v1`。构建时检测所选 SDK 的声明和符号，缺失时不生成该目标，也可通过 `MGMEM_COMPUTE_BRIDGE_BUILD_ARENA=OFF` 显式关闭。原 SYSTEM 桥保留独立目标与原依赖，使用旧 runtime 的调用者无需链接 Arena 扩展。
 

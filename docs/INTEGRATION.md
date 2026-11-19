@@ -1,87 +1,66 @@
-# 安装、消费、关闭与回退
+# 在 C 或 C++ 项目中使用 MeguvizMemory
 
-当前功能预览为1.2.1、native ABI1.1，旧ABI1.0的POD布局和符号保持兼容。除原CPU backing、owner/lease、System/arena外，新增唯一外部region导入、软预算及独立Android压力适配。新安装前缀为 `install/features-host` / `install/features-arm64`，不覆盖历史0.1 SDK；旧实验和下文原双消费者收据仍适用于其固定快照。新功能用法与限定验证范围见[阶段收尾](FEATURE_STAGE_20261030.md)、[导入](EXTERNAL_IMPORT.md)、[Android压力](ANDROID_PRESSURE.md)和[packed reader](PACKED_READER.md)。功能、设备、家族集成、性能和发布继续分别资格。
-
-## 安装后的独立消费
-
-在已配置 CMake 和 C++ 编译器的终端执行以下重建步骤。Windows 可以使用 `tools/host-build.cmd` 进入已配置的 MSVC 环境并转发 CMake 参数；该脚本不自动建立消费者运行时 PATH。
-
-```powershell
-cmake -S . -B build/host -DCMAKE_BUILD_TYPE=Release
-cmake --build build/host --config Release
-ctest --test-dir build/host -C Release --output-on-failure
-cmake --install build/host --config Release --prefix "$PWD/install/host"
-
-cmake -S consumers/image -B build/image -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$PWD/install/host"
-cmake --build build/image --config Release
-
-cmake -S consumers/dex -B build/dex -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$PWD/install/host" "-DDEXMEGUVIZ_SOURCE_DIR=$PWD/build/locked-inputs/DexMeguviz"
-cmake --build build/dex --config Release --target mgmem_dex_consumer
-```
-
-以上是复现入口，不表示只阅读本文便完成了运行。生成器和工具链必须与所用二进制目录一致；不要在同一个目录更换 Ninja/Visual Studio 或编译器。多配置生成器将消费者可执行文件置于配置子目录。Windows 运行前让 `install/host/bin` 位于本次终端的 PATH，Linux 使用安装后对应共享库的合法搜索路径。需要记录实际加载的库路径与哈希，不能因能找到另一个旧 DLL 而算安装消费通过。
-
-独立工程使用：
+先按[构建和安装](../README.md#构建和安装)安装核心。配置使用方时，将 `CMAKE_PREFIX_PATH` 设为安装前缀。公共目标是 `MeguvizMemory::mgmem`，包含路径、链接选项和使用共享库所需的编译定义随目标传递。
 
 ```cmake
-find_package(MeguvizMemory 0.1 CONFIG REQUIRED)
-target_link_libraries(my_cpu_consumer PRIVATE MeguvizMemory::mgmem)
+find_package(MeguvizMemory CONFIG REQUIRED)
+target_link_libraries(my_app PRIVATE MeguvizMemory::mgmem)
 ```
 
-两个现有入口分别是 `mgmem_image input.ppm output.pgm [--system]` 和 `mgmem_dex_consumer input.dex [--arena]`。图像程序读取 P6 RGB、转换灰度并做模糊；Dex 程序读取真实 DEX 字节、调用真实 DexMeguviz borrowed-source/查询 API，并检查结果跨 snapshot 的寿命。前者默认 arena，后者默认 System。它们从安装包导入 Memory；Dex 自身采用显式指定的只读源码输入，不将其说成安装后的 Dex SDK。
+默认安装共享库。需要把核心静态链接进一个最终二进制时，可以在构建核心时加 `-DBUILD_SHARED_LIBS=OFF`。在多个动态库间传递句柄的程序应共用同一份运行库。句柄只在其来源运行库的本次加载期间有效。
 
-Dex 工程没有有效 Git HEAD，存在其他会话的开发材料。使用它时锁定实际参与编译源码与 fixture 的哈希，并在构建前后检查漂移。它的已有 miniz 是解析器内部依赖，Memory core 不引入该依赖。文件格式 fixture 的功能通过不等于 BIL 宿主或真实 APK 场景资格。
+## 运行图像示例
 
-收尾核验期间，外部会话更新了 Dex 的 CMake 和任务元数据。因此最终验证改用本工作区 `build/locked-inputs/DexMeguviz` 的冻结快照，以 `build/dex-locked` 构建，fixture 也从该快照读取。最终 SOURCE_LOCK 的 DexMeguviz 根指向此快照，不再要求活跃外库永久保持不变。可重放输入另存为本地 `dist/MeguvizMemory-0.1.0-DexConsumer-inputs.zip`，仅记录 hash，不向公开 Git 仓库复制整个外部项目。复现时优先解压该输入并把 `DEXMEGUVIZ_SOURCE_DIR` 指向它。
+示例从磁盘读取 8 位 P6 RGB 图像，转成灰度，做 3×3 均值模糊，再输出 P5 PGM。在仓库根目录执行，`CMAKE_PREFIX_PATH` 指向刚安装的库。
 
-## 申请、借用与原始 owner
+```sh
+cmake -S consumers/image -B build/image -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$PWD/install/host"
+cmake --build build/image --config Release --target mgmem_image
+```
 
-创建 domain 时固定 provider、模式和 backing 预算。配置表携带 `struct_size`、ABI major/minor 和必需 flag；不支持的版本或必需能力明确拒绝。System 通过每次逻辑申请建立独立 backing；arena 在自有 chunk 中密集分配，最后一次使用结束后才允许 reset 复用。
+Linux 使用单配置生成器时，可直接用仓库内的小图验证结果。
 
-`mgmem_allocate_v1` 返回 allocation owner。写入先取得 `MGMEM_WRITE` lease，完成后释放；只读消费先取得 `MGMEM_READ` lease。读 lease 可共存，写 lease 排斥同 allocation 上的其他 lease。异步任务必须在接受/入队前取得 lease；失败、取消和回调异常路径也必须归还。释放 owner 后禁止新 borrow，已有 lease 继续保活 backing，直到最后一次访问完成。
+```sh
+build/image/mgmem_image artifacts/verification-20261030/consumers/image-17x13.ppm build/image/result.pgm
+```
 
-借用地址不交给 `free`、`delete`、别库的释放函数或另一个 provider。allocation、lease 与 domain 必须始终由创建该 domain 的同一套 runtime API 管理；`runtime_origin` 负责拒绝错误来源的句柄，不能替调用方推断或调度正确的原始函数表。原始 domain 指针在 destroy 后失效，所有 destroy 与其他 API 调用由消费者串行化。
+Windows 使用 Visual Studio 生成器时，在同一个 PowerShell 窗口运行以下命令。
 
-容量增长使用“申请新 backing → 保持必要旧访问 → 迁移/初始化 → 发布新 owner → 旧 lease 完成后释放”的显式过程。预算涵盖旧新 backing 共存和 pending reservation。OOM/预算拒绝不能丢弃仍有用的旧 owner，也不能偷偷减少工作量。Memory 默认不清零，输入初始化是消费者责任，必须计入与基线一致的工作量和阶段。
+```powershell
+$env:PATH = "$PWD/install/host/bin;$env:PATH"
+.\build\image\Release\mgmem_image.exe artifacts/verification-20261030/consumers/image-17x13.ppm build/image/result.pgm
+```
 
-快照的 `backing_bytes` 是唯一managed请求容量，0.2起同时包含owned与imported backing。live/retiring/retained和新import snapshot均为相应子项，不能再次与backing相加。预算不包括allocator/核心元数据、RSS/PSS或外部GPU/驱动容量。其他库观察同一backing时记录借用关系，不能重复计为第二份CPU所有权。
+生成的图像宽 17、高 13。默认走 Arena，在命令末尾加 `--system` 可用相同输入运行 System。若移动了共享库，需让运行时的动态库搜索路径指向相应安装目录。
 
-## Provider 合同
+DEX 示例另需提供真实的 DexMeguviz 源码目录（`DEXMEGUVIZ_SOURCE_DIR`）、支持 C++20 的编译器及 DEX 输入。其 `mgmem_dex_consumer input.dex` 默认用 System，`--arena` 选用 Arena。[DEX 借用示例](DEX_BORROW_CONTRACT.md) · [导入已有 DEX 缓冲区](DEX_EXTERNAL_IMPORT.md)
 
-核心复制 vtable 并 retain context；最终成功关闭且销毁 domain 后 release context。所有 allocate/deallocate/retain/release 回调都必须线程安全，包括不同 domain 共用 context 的场景；回调不能抛异常，也不能重入同一 domain。调用发生在核心锁外，不代表回调被串行化。
+## 申请和借用
 
-allocate 必须失败原子：成功返回指定容量和对齐的未初始化存储；失败留下空输出。deallocate 必须使用最初的地址、容量、对齐和原始 provider。返回成功后仍未分配、失败时偷偷留下资源、抛异常后是否释放不明，都是 provider 违约，无法通过通用重试安全推断。
+创建域时指定模式、预算与可选的 provider。使用 C 接口时填写 `mgmem_domain_options_v1` 的结构大小和 ABI 版本。C++ 的 `create_system` 和 `create_arena` 会填写这些字段。[C 头文件](../include/mgmem/mgmem.h) · [C++ 示例](CPP_CONVENIENCE.md)
 
-回收回调违约使 domain poisoned，核心保留错误及未确认释放的记账，不自动重试可能已经释放的地址。最终 destroy 调用 provider.release 后若回调抛异常，domain 已被消耗，返回 `MGMEM_PROVIDER_ERROR` 也不能重试或访问该指针。`MGMEM_BUSY` 的前置条件拒绝则不消耗 domain。正常 provider 必须遵守 no-throw 合同，使该违约分支不会发生。
+1. 用 `mgmem_allocate_v1` 申请 owner，字节数须大于零，对齐值须是 2 的幂。原生分配的内容需要由写入方初始化。
+2. 用 `mgmem_borrow_acquire_v1` 借出一段范围。`MGMEM_READ` 可共享，`MGMEM_WRITE` 排斥同一 allocation 上的其他借用。需要排队的任务在提交前取得 lease，拒绝提交、取消和正常完成都要归还。
+3. `mgmem_release_v1` 归还 owner，停止新的借用。已有 lease 仍保有地址，在最后一次访问后用 `mgmem_borrow_release_v1` 归还。地址和句柄都交还给创建它们的运行库。
 
-## 关闭与清理线程
+需要扩容时，先申请新块并完成初始化或复制，再交付新 owner。预算要容得下新旧两块暂时共存。新申请失败时，原 owner 仍可继续使用。`backing_bytes` 统计域持有的底层容量，含完整导入的外部内存。`reserved_bytes` 统计在途预留。快照中的 live、retiring 和 retained 都已包含在 backing 中。[外部内存与预算](EXTERNAL_IMPORT.md)
 
-状态为 `OPEN → CLOSING → CLOSED`。`mgmem_domain_begin_close_v1` 关闭新申请/新 borrow 的准入，不等待任务、lease 或 provider 回收。它是普通同步 API，内部短期互斥不构成硬实时或 lock-free 保证；UI 线程不得执行可能等待自身任务的清理。
+## 关闭内存域
 
-正常顺序：
+以下是直接使用 C 接口时的顺序。Java 托管域会安排自己的清理线程。[Android 关闭流程](ANDROID_MANAGED_DOMAIN.md#关闭内存域)
 
-1. 停止接收本域新任务并调用 `begin_close`。
-2. 已受理任务继续完成或取消，按原寿命释放 allocation owner 与 lease。
-3. 清理 worker 调用 `mgmem_domain_collect_v1`。存在 owner、lease、申请或另一轮回收时返回 `MGMEM_BUSY`；条件具备时同步调用原 provider 回收，成功后进入 CLOSED。该调用可能受 provider 时延影响，不能放在负责完成任务的 UI/worker 上等待。
-4. 观察方用 `mgmem_domain_drain_v1` 等待 CLOSED；`timeout_ms=0` 仅轮询，drain 从不执行 provider 回调，也不代替 collect。超时保留 owner/provider，不释放仍活跃的存储。
-5. collect worker 结束、其他 API 不再访问本域后，最终 owner 调用 destroy。
+1. 停止提交新任务，调用 `mgmem_domain_begin_close_v1`。已准入的工作可以继续完成。
+2. 让持有者和在途任务归还 owner 与 lease。最后一次 System 释放可能同步调用 provider，需安排在允许阻塞的线程。
+3. 在清理线程调用 `mgmem_domain_collect_v1`。返回 `MGMEM_BUSY` 表示仍有资源、操作或另一轮回收在途。待它们结束再收集。成功后域进入 `CLOSED`。
+4. 其他线程可用 `mgmem_domain_drain_v1` 等待关闭。超时为零时只查询状态。若等待超时，应保留域，让清理线程继续工作。持有 lease 的线程须先归还它，才能等待依赖它的关闭。
+5. 所有域调用都已退出后，由唯一的最终持有者调用 `mgmem_domain_destroy_v1`。此后域指针失效。
 
-不能只调用 begin_close 和 drain 而忘记安排 collect。不要在 drain 超时后销毁 domain、卸载 DSO、reset、purge 或释放借用 context。`trim` 和 `arena_reset` 同样要求没有活跃 owner/lease/pending 操作；trim 是同步回收，reset 只重置安全闲置的 arena。
+需要继续使用 Arena 时，等整批 owner 和 lease 归还后调用 `mgmem_arena_reset_v1` 复用已有块。需要归还底层容量时，在域空闲且仍开放时调用 `mgmem_domain_trim_v1`。
 
-## JNI 与家族组合边界
+## 自定义 provider 与跨库使用
 
-0.2已交付Android压力适配JNI、opaque注册和不逃逸的受控字节lease，支持有边界的 `byte[]` 读写复制；自有托管域也提供此能力，见[压力合同](ANDROID_PRESSURE.md)和[借用合同](ANDROID_NATIVE_BORROW.md)。通用可逃逸Java ByteBuffer借用和Rust bridge仍未选择，也没有让Java任意持有native DirectByteBuffer的接口。generation检查不能使已逃逸的Java ByteBuffer在底层释放后安全。Java/JNI异步任务必须在受理前取得真实保活关系，并逐条验证取消、结果逃逸和关闭。
+核心复制 provider 函数表并持有其 context。回调可能从不同线程并发调用，必须线程安全、遵守无异常约定，并避免重入同一域。申请成功时提供满足容量和对齐的存储，失败时留下空输出。归还时要使用原始 provider、地址、容量和对齐。
 
-Compute/Media的真实源码和安装SDK已在相邻MeguvizPack工作区找到，详见[消费者审计](audit/consumers.md)及[当前合同核实](FAMILY_MEMORY_CONTRACTS.md)。Compute管理资源、content lease、submit和GPU retirement；Media管理帧、时间线和背压。可选的 [Compute CPU READ-map → Memory 导入桥](../adapters/compute/README.md)已有宿主限定验证；Memory-owned backing 注入 Compute 的 provider 接口及 Android/产品运行资格仍未具备。CPU内存可回收状态不能用GPU已提交、逻辑帧释放或仅持有AHB对象代替。
+若回收结果未知，核心会隔离相应状态并保留未确认的记账。不可重试可能已经释放过的地址。尤其是最终 `destroy` 因 provider 的 context 释放回调抛出异常而返回 `MGMEM_PROVIDER_ERROR` 时，域已被消费。因前置条件返回 `MGMEM_BUSY` 时，域仍归调用方持有。[所有权与 ABI 约定](ADR-001-ownership-and-abi.md)
 
-官方 Compute/Media/RIFE 组合有最终单 DSO、单 Compute/ncnn/STL 闭包合同。未来链接 Memory 静态 PIC core 时，必须重新核对最终链接图、导出表、依赖闭包、实际加载模块和 origin-owner：一个最终组合只拥有一份 Memory core，不附带第二套 GPU pool/ncnn/runtime。独立 Memory JNI DSO 不能与该组合重复实现后混用句柄。双独立 runtime 拒绝交叉 handle 的宿主测试是防误用证据，不能替代这项最终产物资格。
-
-`runtime_origin` 是当前已装载模块中的路由 cookie，取自该 runtime anchor 的地址。它不是永久资源身份、持久化格式或卸载/重新加载代次。句柄不可跨进程保存恢复；所有 domain、owner、lease、任务和回调必须在 DSO 卸载前销毁，禁止卸载后复用旧句柄。即使重新加载恰好得到同一模块地址，旧指针和句柄仍无效。
-
-## 禁用与回退
-
-默认选择System/dense。arena是显式生命周期策略；placement、page hint、slab、通用ByteBuffer借用和GPU桥均未选择，Android压力JNI独立可用。新设备、固件变化、预算不合格或策略回归时，之后的新domain使用相同适用预算的System provider，必要时由消费者回退现有合格实现并记录原因。
-
-已经创建的 domain 继续使用其原始 provider 完成并清理，不能把旧指针交给新 provider、在线搬移稳定地址、取消寿命检查或通过无界申请掩盖预算拒绝。旧 domain 尚未 collect/destroy 时同时建立替代 domain，需要把两者共存峰值纳入消费者总预算。当前没有经资格验证的特殊 TLB 策略，不能依据芯片营销名称启用它。
-
-发布前必须分别核验 ABI/功能、资源稳定、消费者正确性、设备 loader、产品延迟与性能回归预算。未经采样的收益、能量、PMU/PFN 机制、Android 16KB 真机及 BIL LSPosed 行为保持未验证；单个 fixture 或源码构建通过不会提升这些状态。
+Compute 资源的映射、GPU 完成信号和 Media 帧各有自己的寿命。组合时使用对应适配器，包含多个动态库的应用应在所有域、任务和回调结束后才考虑卸载运行库。回退到 System 或应用原实现时，仅更改新任务的分配方式，让旧域按原来的释放路径结束。[跨库所有权](FAMILY_MEMORY_CONTRACTS.md) · [Compute 只读映射](../adapters/compute/README.md) · [Media 帧](../adapters/media/README.md)

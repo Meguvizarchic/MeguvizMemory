@@ -1,6 +1,20 @@
-# 性能路径与接入（2026-11-09）
+# 选择和测量内存路径
 
-先完成同一工作量与所有权语义，再比较耗时。宿主微基准、Android 运行和真实消费者净收益分别记录；本轮不接入 BIL。
+想知道某处值不值得换成 Arena，先看同一时刻有多少块仍在使用，以及各块能否一起归还。单次分配变快，整帧耗时仍可能被清零、复制或最后一次释放抵消。
+
+| 工作负载 | 值得比较的两种做法 | 记录什么 |
+|---|---|---|
+| 一批短命小块 | System 逐块申请与 Arena 按批复位 | 全批耗时、峰值 backing 和底层申请次数，固定尺寸与混合尺寸分开测量 |
+| Java 已持有源和目标 lease | 复用同一个中转数组的 `read` / `write` 与 lease 间的 `copyTo` | 在相同字节数和调用次数下比较复制耗时，并核对目标字节 |
+| 消费者同步读取已有缓冲区 | 直接借用与复制到自有缓冲区后再读 | 把原数据的持有时间、复制、查询和释放都计入 |
+| 多线程共享域 | 保持真实提交和取消顺序，比较现有实现与候选路径 | 每批完成时间、中位和尾部延迟、收尾时仍持有的资源 |
+
+为每种做法使用相同输入、预算和输出校验。先用轨迹检查内存块大小是否合适，再在目标设备运行完整任务。快照给出域内底层容量。若关心应用实际占用，还要在相同采样时机观察进程内存。[分配轨迹和策略](AUTOMATED_ADOPTION.md) · [配对测量方法](BASELINE_PROTOCOL.md)
+
+已有对照可按问题查阅。Java 传输测量比较了两端已有 lease 时的复制成本。Arena 报告区分同形、混合及小负载。设备报告记录 DEX 与图像的完整工作负载、样本数和停止条件。[Java 传输](../bench/LEASE_TRANSFER.md) · [Arena 查找](../bench/ARENA_LOOKUP.md) · [小负载](ARENA_SMALL_WORKLOAD.md) · [设备上的 DEX 和图像结果](DEVICE_V2_RESULTS.md)
+
+<details>
+<summary>历次实现、测量数据与取舍（按原记录保留）</summary>
 
 ## 已选择的实现
 
@@ -146,3 +160,5 @@ Android 本轮 tiny mixed 的 allocation P50 四对均变慢，应优先检查�
 后续稳定登记节点引用 v2 虽在逆序／打散释放中降低完整流程耗时，arm64 Arena mixed 四线程 workflow 配对比仍为 1.378，tiny fixed 为 1.420。主线继续保留 token 查找；候选存于实验分支，不引入默认开关。宿主 v1、v2 和 arm64 v2 各 160 进程分别独立审计，不混池；并发 mixed 的峰值 backing 差异也保留，不能将全部代价归因于索引指令。见[采用决定及限制](CLAIM_REFERENCE_EXPERIMENT.md)与[完整证据索引](../artifacts/claim-release-20261109/decision.json)。
 
 方向参考[LLVM BumpPtrAllocator源码](https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/Support/Allocator.h)与[mimalloc原论文](https://www.microsoft.com/en-us/research/wp-content/uploads/2019/06/mimalloc-tr-v1.pdf)的简短快路径与维护组织；没有移植它们不同的释放和预算语义。
+
+</details>
