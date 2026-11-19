@@ -91,8 +91,8 @@ int sync_file_wait_impl(int fd, int timeout_ms, Now now, Poll poll_once, Ioctl i
         if (timeout_ms >= 0) {
             const auto current = now();
             if (current >= deadline) return 1;
-            const auto left = std::chrono::duration_cast<std::chrono::milliseconds>(deadline - current).count();
-            remaining = static_cast<int>(left >= INT_MAX ? INT_MAX : left + 1);
+            const auto left = std::chrono::ceil<std::chrono::milliseconds>(deadline - current).count();
+            remaining = static_cast<int>(left >= INT_MAX ? INT_MAX : left);
         }
     }
 }

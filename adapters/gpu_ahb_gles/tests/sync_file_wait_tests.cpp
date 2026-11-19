@@ -32,7 +32,16 @@ int main() {
         static_cast<sync_file_info *>(value)->status = 1; return 0;
     };
     CHECK(mgmem_detail::sync_file_wait_impl(10, 10, now, interrupted_poll, success) == 0);
-    CHECK(polls == 2 && inspections == 1 && timeouts.size() == 2 && timeouts[0] == 10 && timeouts[1] == 8);
+    CHECK(polls == 2 && inspections == 1 && timeouts.size() == 2 && timeouts[0] == 10 && timeouts[1] == 7);
+
+    polls = 0;
+    auto fractional_now = [&] { return clock::time_point{} + std::chrono::microseconds(polls ? 9500 : 0); };
+    auto retry_last_fraction = [&](pollfd *, int, int timeout) {
+        if (++polls == 1) { CHECK(timeout == 10); errno = EAGAIN; return -1; }
+        CHECK(timeout == 1); return 0;
+    };
+    CHECK(mgmem_detail::sync_file_wait_impl(10, 10, fractional_now, retry_last_fraction, never_inspect) == 1);
+    CHECK(polls == 2);
 
     ms = polls = inspections = 0;
     auto ready = [&](pollfd *p, int, int) { ++polls; p->revents = POLLIN; return 1; };
