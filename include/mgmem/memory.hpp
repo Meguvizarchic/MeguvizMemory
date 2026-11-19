@@ -111,7 +111,22 @@ struct domain_state {
 struct status_error : std::exception {
     explicit status_error(mgmem_status s) noexcept : value_(s) {}
     mgmem_status status() const noexcept { return value_; }
-    const char *what() const noexcept override { return "mgmem operation failed"; }
+    const char *what() const noexcept override {
+        switch (value_) {
+        case MGMEM_OK: return "MGMEM_OK";
+        case MGMEM_INVALID_ARGUMENT: return "MGMEM_INVALID_ARGUMENT";
+        case MGMEM_OVERFLOW: return "MGMEM_OVERFLOW";
+        case MGMEM_OUT_OF_MEMORY: return "MGMEM_OUT_OF_MEMORY";
+        case MGMEM_OUT_OF_BUDGET: return "MGMEM_OUT_OF_BUDGET";
+        case MGMEM_STALE_HANDLE: return "MGMEM_STALE_HANDLE";
+        case MGMEM_BUSY: return "MGMEM_BUSY";
+        case MGMEM_IS_CLOSED: return "MGMEM_IS_CLOSED";
+        case MGMEM_UNSUPPORTED: return "MGMEM_UNSUPPORTED";
+        case MGMEM_PROVIDER_ERROR: return "MGMEM_PROVIDER_ERROR";
+        case MGMEM_TIMEOUT: return "MGMEM_TIMEOUT";
+        default: return "unknown mgmem status";
+        }
+    }
 private:
     mgmem_status value_;
 };

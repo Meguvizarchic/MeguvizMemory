@@ -209,9 +209,11 @@ void test_empty_and_invalid_wrappers() {
     mgmem::or_throw(MGMEM_OK);
     bool thrown = false;
     try { mgmem::or_throw(MGMEM_OUT_OF_BUDGET); } catch (const mgmem::status_error &error) {
-        thrown = error.status() == MGMEM_OUT_OF_BUDGET && error.what() != nullptr;
+        thrown = error.status() == MGMEM_OUT_OF_BUDGET && std::strcmp(error.what(), "MGMEM_OUT_OF_BUDGET") == 0;
     }
     CHECK(thrown);
+    const mgmem::status_error unknown(12345);
+    CHECK(unknown.status() == 12345 && std::strcmp(unknown.what(), "unknown mgmem status") == 0);
 }
 
 void test_scoped_allocation(uint32_t mode) {
