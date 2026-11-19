@@ -1,6 +1,6 @@
 # 在 C 或 C++ 项目中使用 MeguvizMemory
 
-先按[构建和安装](../README.md#构建和安装)安装核心。配置使用方时，将 `CMAKE_PREFIX_PATH` 设为安装前缀。公共目标是 `MeguvizMemory::mgmem`，包含路径、链接选项和使用共享库所需的编译定义随目标传递。
+先按[构建和安装](../README.md#构建和安装)安装核心。配置使用方时，将 `CMAKE_PREFIX_PATH` 设为安装前缀。公共目标是 `MeguvizMemory::mgmem`，它会向 C++ 调用方传递 C++17 要求，也会传递头文件路径和共享库所需的编译定义。
 
 ```cmake
 find_package(MeguvizMemory CONFIG REQUIRED)
@@ -49,7 +49,7 @@ DEX 示例另需提供真实的 DexMeguviz 源码目录（`DEXMEGUVIZ_SOURCE_DIR
 
 以下是直接使用 C 接口时的顺序。Java 托管域会安排自己的清理线程。[Android 关闭流程](ANDROID_MANAGED_DOMAIN.md#关闭内存域)
 
-1. 停止提交新任务，调用 `mgmem_domain_begin_close_v1`。已准入的工作可以继续完成。
+1. 停止提交新任务，调用 `mgmem_domain_begin_close_v1` 停止新申请和借用。持有 lease 的任务可以继续处理已经借出的数据。
 2. 让持有者和在途任务归还 owner 与 lease。最后一次 System 释放可能同步调用 provider，需安排在允许阻塞的线程。
 3. 在清理线程调用 `mgmem_domain_collect_v1`。返回 `MGMEM_BUSY` 表示仍有资源、操作或另一轮回收在途。待它们结束再收集。成功后域进入 `CLOSED`。
 4. 其他线程可用 `mgmem_domain_drain_v1` 等待关闭。超时为零时只查询状态。若等待超时，应保留域，让清理线程继续工作。持有 lease 的线程须先归还它，才能等待依赖它的关闭。

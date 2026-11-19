@@ -37,6 +37,8 @@ static int roundTrip(ManagedMemoryDomain domain, int value) throws Exception {
 
 应用可用 `ManagedMemoryDomain.system(1024 * 1024)` 创建预算为 1 MiB 的域，在多次调用间复用。上例中写借用先归还，读借用才能取得。直接视图及其切片只能在回调内使用。需要在归还 lease 后继续保留数据时，可以像上例那样读到自己的数组中。两个已有 lease 之间的传输用 `copyTo`，单次最多 1 MiB。[借用方式与限制](ANDROID_NATIVE_BORROW.md)
 
+从当前源码组装的 AAR 支持省略整段范围，例如用 `slot.borrowWrite()` 和 `writer.withDirectBuffer(b -> b.order(ByteOrder.nativeOrder()).putInt(value))`。使用 1.2.1 成品时沿用上例中的范围参数。
+
 组件退出时，停止提交新任务，调用 `domain.beginClose()`，让在途任务归还 allocation 和 lease。在后台观察到 `CLOSED` 后调用 `domain.forgetClosed()`。调用 `close()` 和 `beginClose()` 一样，都只启动关闭流程。[处理等待和关闭错误](ANDROID_MANAGED_DOMAIN.md#关闭内存域) · [带系统压力回调的后台示例](../consumers/android_managed/README.md)
 
 ## 应用含 C 或 C++ 代码

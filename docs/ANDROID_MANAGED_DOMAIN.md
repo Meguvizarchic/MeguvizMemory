@@ -10,6 +10,8 @@
 
 已有 `byte[]` 时用 `read` 或 `write`，两端都是 lease 时用 `copyTo`。只在同步回调里接受 `ByteBuffer` 的接口适合用 `withDirectBuffer`。READ 借用得到只读视图，视图初始为大端。读写原生数值时按数据格式显式选择字节序。视图长度为 1 到 `Integer.MAX_VALUE` 字节，并须落在 lease 内。[传输上限和关闭状态](ANDROID_NATIVE_BORROW.md)
 
+从当前源码构建时可用 `allocation.borrowRead()` 或 `allocation.borrowWrite()` 借用整个 allocation，再用 `lease.withDirectBuffer(action)` 查看整个 lease。大于 `Integer.MAX_VALUE` 的 lease 可用带偏移和长度的重载分段查看。
+
 视图及其 `slice()`、`duplicate()` 都只能在本次回调内使用。正常或异常退出时，库会把交给回调的视图的 `limit` 设为零。调用方创建的切片和副本视图仍受同一使用期限约束。同一线程可嵌套访问同一 lease，内层返回后外层视图仍可用。在回调内关闭这份 lease 会抛出 `IllegalStateException`。其他线程的释放可能等待回调结束，所以不要在回调里等待负责关闭它的线程。
 
 ## 关闭内存域

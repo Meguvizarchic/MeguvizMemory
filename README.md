@@ -42,7 +42,7 @@ C 使用 `<mgmem/mgmem.h>`，C++ 使用 `<mgmem/memory.hpp>`。仓库自带一�
 
 分配返回一个持有者（owner）。每次访问由一份借用（lease）限定字节范围和读写权限。同一块内存允许多个读者，写者需要独占。归还 owner 后不能再借出，但已经取得的 lease 可以用到任务结束。异步提交失败或任务取消时，也要归还提前取得的 lease。
 
-- **C++** 的同步临时缓冲区用 `domain.with_allocation`，回调退出时归还。需要跨线程访问时显式持有 lease。最后一个持有者可能在当前线程同步回收内存。[C++ 用法与完整示例](docs/CPP_CONVENIENCE.md)
+- **C++** 的同步临时缓冲区用 `domain.with_allocation`，回调退出时归还。需要跨线程读取整块数据时，在提交前用 `owner.acquire_borrow(MGMEM_READ, lease)` 取得借用。最后一个持有者可能在当前线程同步回收内存。[C++ 用法与完整示例](docs/CPP_CONVENIENCE.md)
 - **C** 先调用 `mgmem_domain_begin_close_v1` 停止新申请和借用，等已有任务归还资源，再由清理线程执行 `collect`。`drain` 用于等待关闭完成。[原生关闭顺序](docs/INTEGRATION.md#关闭内存域)
 - **Android** 的 Java 调用方可用 try-with-resources 归还 allocation 和 lease。域的 `close()` 启动后台清理，观察到 `CLOSED` 后调用 `forgetClosed()` 归还观察令牌。[托管域生命周期](docs/ANDROID_MANAGED_DOMAIN.md)
 

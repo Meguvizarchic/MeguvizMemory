@@ -8,7 +8,7 @@
 | 按批申请、整批复用 | `domain::create_arena(budget, chunk, out)` |
 | 多次读写同一块数据 | `memory.allocate(bytes, owner)`，随后 `owner.with_read(body)` 或 `owner.with_write(body)` |
 | 临时使用一块可写空间 | `memory.with_allocation(bytes, body)` |
-| 把数据交给异步任务 | 在提交前用 `owner.acquire_borrow(...)` 取得借用，由任务持有至最后一次访问 |
+| 把整块数据交给异步任务 | 提交前调用 `owner.acquire_borrow(MGMEM_READ, lease)`，把借用移动给任务 |
 | 查看域状态 | `memory.observe()` 顺序读取快照、导入快照和隔离标志 |
 
 ## 完整示例
@@ -54,11 +54,29 @@ int main() {
 
 `with_read(body)` 和 `with_write(body)` 访问整块数据。只处理其中一段时，用 `with_read(offset, length, body)` 或 `with_write(offset, length, body)`。偏移与长度都按字节计，零长度或越界会在进入回调前返回错误。
 
-读回调取得 `const void *`，同一块数据可有多个读借用。写回调取得 `void *`，需要独占该 allocation。回调可以返回 `void`，也可以返回 `mgmem_status` 让调用方处理业务错误。指针的使用期限止于回调返回。异步任务应持有自己的 `mgmem::borrow`，包括处理提交失败和取消的路径。
+读回调取得 `const void *`，同一块数据可有多个读借用。写回调取得 `void *`，需要独占该 allocation。回调可以返回 `void`，也可以返回 `mgmem_status` 让调用方处理业务错误。指针的使用期限止于回调返回。
 
 偏好异常的调用方可以写 `mgmem::or_throw(memory.allocate(bytes, owner))`。失败时，`mgmem::status_error::what()` 返回已知状态名（如 `MGMEM_OUT_OF_BUDGET`），`status()` 保留原始状态值。需要在 `noexcept` 函数中处理错误时，直接检查返回值。
 
 回调抛异常时，局部借用随栈展开释放。若使用 checked 外部导入，最后一次归还报告 `MGMEM_PROVIDER_ERROR` 时，域会进入隔离。正常返回路径上，这一清理错误优先于回调的返回值。可用 `quarantined()` 查看隔离状态，避免重试可能已被消费的外部释放。普通析构也要求底层清理成功，违反 provider 约定可能触发 `std::terminate`。要在析构前取得清理错误，可显式调用 `release()`。[Checked 导入约定](CPP_CHECKED_IMPORT.md)
+
+## 把借用交给后台任务
+
+提交前用空的 `mgmem::borrow` 接住借用。`owner.acquire_borrow(MGMEM_READ, lease)` 借出整块，`owner.acquire_borrow(offset, length, MGMEM_READ, lease)` 借出指定范围。写入任务可用 `MGMEM_WRITE`，并通过 `lease.write_data()` 取得可写地址。
+
+以下代码把读借用移入任务。示例假定 `post` 接受可移动任务、返回 `mgmem_status`，并在拒绝提交或取消任务时销毁该任务。
+
+```cpp
+mgmem::borrow lease;
+const auto status = owner.acquire_borrow(MGMEM_READ, lease);
+if (status != MGMEM_OK) return status;
+
+return executor.post([lease = std::move(lease)] {
+    consume(lease.data(), lease.size_bytes());
+});
+```
+
+任务持有借用直到最后一次访问，期间可以归还原来的 owner。这里的 lambda 只能移动，执行器的任务类型需要支持这种捕获。若取消任务时可能执行最后一次归还，把任务销毁也安排在允许同步回收的线程。
 
 ## 域的结束与复用
 

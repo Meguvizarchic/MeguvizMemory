@@ -18,7 +18,7 @@
 
 framework 回调只做事件投递，不同步执行 trim、free 或等待清理；Java monitor、JNI registry 和域准入仍可能使用短锁，无法保证严格无等待或硬实时。`MemoryPressureAdapter.forwardedEvents()` 在该 backend 下表示入队成功，不表示预算已应用；`ManagedPressureBackend.rejectedEvents()` 是饱和累计的拒绝数，`lastNotificationStatus()` 提供最近状态，零表示已排队。系统回调没有返回值，调用方应结合这些观测处理拒绝。`awaitClosed` 的正超时只能在工作线程调用。
 
-Android API 34 起，系统不再向应用递送若干旧的 RUNNING/MODERATE/COMPLETE 等级，`onLowMemory` 也不再调用；不要假设一定收到系统回调。NORMAL 恢复必须显式提交，不能把没有回调推断为恢复。[Android ComponentCallbacks2](https://developer.android.com/reference/android/content/ComponentCallbacks2)
+Android 14（API 34）起，应用应围绕 `TRIM_MEMORY_UI_HIDDEN` 和 `TRIM_MEMORY_BACKGROUND` 处理系统通知。此 adapter 忽略 `UI_HIDDEN`，将 `BACKGROUND` 投递为 `MODERATE`。应用如果需要根据自己的生命周期释放可重建的内存，可以显式提交压力级别，也可以通过 `restoreBudget()` 显式恢复 NORMAL。[Android 应用内存管理](https://developer.android.com/topic/performance/memory/manage-app-memory)
 
 ## 预算与观测
 

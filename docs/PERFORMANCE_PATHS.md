@@ -8,10 +8,21 @@
 | Java 已持有源和目标 lease | 复用同一个中转数组的 `read` / `write` 与 lease 间的 `copyTo` | 在相同字节数和调用次数下比较复制耗时，并核对目标字节 |
 | 消费者同步读取已有缓冲区 | 直接借用与复制到自有缓冲区后再读 | 把原数据的持有时间、复制、查询和释放都计入 |
 | 多线程共享域 | 保持真实提交和取消顺序，比较现有实现与候选路径 | 每批完成时间、中位和尾部延迟、收尾时仍持有的资源 |
+| GLES → AHardwareBuffer | 在实际渲染线程上分别测紧密与带填充的 RGBA8 行距 | 分开记录 ready fence 等待、上传提交、producer fence 和清理，并校验输出 |
 
 为每种做法使用相同输入、预算和输出校验。先用轨迹检查内存块大小是否合适，再在目标设备运行完整任务。快照给出域内底层容量。若关心应用实际占用，还要在相同采样时机观察进程内存。[分配轨迹和策略](AUTOMATED_ADOPTION.md) · [配对测量方法](BASELINE_PROTOCOL.md)
 
+默认分配器只需检查外部导入和自定义 provider 的范围。导入外部缓冲仍须检查整个运行时的活动范围，避免同一片内存被重复管理。关闭时由调用方执行 `collect`，`drain` 等待域进入 `CLOSED` 或报告 provider 故障。[原生关闭顺序](INTEGRATION.md#关闭内存域)
+
 已有对照可按问题查阅。Java 传输测量比较了两端已有 lease 时的复制成本。Arena 报告区分同形、混合及小负载。设备报告记录 DEX 与图像的完整工作负载、样本数和停止条件。[Java 传输](../bench/LEASE_TRANSFER.md) · [Arena 查找](../bench/ARENA_LOOKUP.md) · [小负载](ARENA_SMALL_WORKLOAD.md) · [设备上的 DEX 和图像结果](DEVICE_V2_RESULTS.md)
+
+需要 `mgmem_tlb_owned` 或 `mgmem_tlb_multi_arena` 时，在配置 CMake 时指定 `-DMGMEM_BUILD_BENCHMARKS=ON`。两个工具会随该构建一起安装。[多 Arena 诊断用法](../bench/TLB_MULTI_ARENA.md)
+
+## 测量 Android 用户体验
+
+- **延时与平滑性**。在相同设备、刷新率、画质和输入上交替运行基线与候选。在原本执行任务的线程采集租借、提交和清理耗时。对可见帧比较截止时间超出量的 P95、P99 和掉帧数。Android 12 及以上可用 FrameTimeline 对照预期与实际呈现时机。使用 `SurfaceView` 时先确认采集能覆盖该渲染面。[Perfetto FrameTimeline](https://perfetto.dev/docs/data-sources/frametimeline) · [Android 帧时指标](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-metrics#frametimingmetric)
+- **功耗**。固定屏幕亮度、刷新率与完成量，记录温度变化。在支持的设备上按完成帧或完成任务比较能量。CPU 时间、库内分配次数与 GPU 调用次数适合定位成本，实际能量使用可用的电源轨计数器或外部仪表测量。[Perfetto 电源计数器](https://perfetto.dev/docs/data-sources/battery-counters)
+- **稳定性与兼容性**。在目标 ABI、Android 版本和 GPU 驱动上核对像素结果，以及超时、取消、前后台切换后待清理资源是否收敛。GLES 路径要求用最初的线程和 EGL 上下文完成清理。让有界等待发生在拥有该上下文的渲染线程上，并在实际帧预算内安排 `wait` 和重试。[GLES 上传合同](../adapters/gpu_ahb_gles/README.md)
 
 <details>
 <summary>历次实现、测量数据与取舍（按原记录保留）</summary>
@@ -126,9 +137,9 @@ ON/OFF 交叉编译。
 `apply-manifest-final.json`、`review-final.patch`；公开结论以本页和提交 `bbbf529`
 为准。
 
-## Memory 侧待优化队列（2026-11-17，只读排查）
+## Memory 侧 2026-11-17 的实现和待办
 
-以下来自本轮只读排查。第 1、2 项已实现并验证，其余待量化。
+以下保留当时的实现和待办，现行范围检查与关闭等待见本文开头。
 
 1. **已实现（2026-11-17）**：`src/mgmem.cpp` 的 `range_claims` 增加 `foreign` 标记与
    `active_foreign_claims` 计数；默认 provider 且无活跃外部 claim 时
