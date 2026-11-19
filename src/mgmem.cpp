@@ -368,28 +368,29 @@ using LeaseTable = HandleTable<Lease>;
 // its claim never becomes reusable until the callback has succeeded. The legacy
 // void callback retains its historical provider-reuse behavior.
 std::mutex range_mutex;
-std::list<RangeClaim> range_claims;
+std::list<RangeClaim> default_claims;
+std::list<RangeClaim> foreign_claims;
 // Dropped nodes are spliced here and reused, so a steady allocate/release loop
 // performs no node allocation while range_mutex is held. The cap bounds idle
 // retention; beyond it the node is erased instead.
 std::list<RangeClaim> range_spares;
 constexpr size_t max_claim_spares = 256;
 u64 next_claim = 1;
-// Non-releasing foreign claims. When zero, every live claim is a default
-// allocator block, which cannot overlap another live default block; the only
-// possible overlap is with a releasing claim, which publish ignores anyway.
-u64 active_foreign_claims = 0;
 
 // Caller holds range_mutex. Reuses a spare node when one is available; the
 // returned node still carries stale field values and must be fully overwritten.
-std::list<RangeClaim>::iterator claim_node_acquire() {
+std::list<RangeClaim>::iterator claim_node_acquire(std::list<RangeClaim> &claims) {
     if (range_spares.empty()) {
-        range_claims.emplace_back();
-        return std::prev(range_claims.end());
+        claims.emplace_back();
+        return std::prev(claims.end());
     }
     auto node = range_spares.begin();
-    range_claims.splice(range_claims.end(), range_spares, node);
+    claims.splice(claims.end(), range_spares, node);
     return node;
+}
+
+bool ranges_overlap(uintptr_t begin, uintptr_t end, const RangeClaim &claim) noexcept {
+    return begin < claim.end && claim.begin < end;
 }
 
 mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &backing) noexcept {
@@ -401,13 +402,16 @@ mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &
     const auto end = begin + static_cast<uintptr_t>(bytes);
     try {
         std::lock_guard<std::mutex> lock(range_mutex);
-        if (external_id) for (const auto &claim : range_claims) {
-            if (claim.external_id == external_id || (begin < claim.end && claim.begin < end))
+        for (const auto &claim : foreign_claims) {
+            if (claim.external_id == external_id || ranges_overlap(begin, end, claim))
                 return MGMEM_BUSY;
+        }
+        for (const auto &claim : default_claims) {
+            if (ranges_overlap(begin, end, claim)) return MGMEM_BUSY;
         }
         if (next_claim == max_u64) return MGMEM_OVERFLOW;
         const u64 token = next_claim++;
-        backing.claim_node = claim_node_acquire();
+        backing.claim_node = claim_node_acquire(foreign_claims);
         auto &claim = *backing.claim_node;
         claim.begin = begin;
         claim.end = end;
@@ -415,7 +419,6 @@ mgmem_status claim_range(const void *data, u64 bytes, u64 external_id, Backing &
         claim.token = token;
         claim.releasing = false;
         claim.foreign = true;
-        ++active_foreign_claims;
         backing.claim_active = true;
         return MGMEM_OK;
     } catch (const std::bad_alloc &) { return MGMEM_OUT_OF_MEMORY; }
@@ -429,7 +432,7 @@ mgmem_status reserve_owned_claim(Backing &backing, bool foreign) noexcept {
         std::lock_guard<std::mutex> lock(range_mutex);
         if (next_claim == max_u64) return MGMEM_OVERFLOW;
         const u64 token = next_claim++;
-        backing.claim_node = claim_node_acquire();
+        backing.claim_node = claim_node_acquire(foreign ? foreign_claims : default_claims);
         auto &claim = *backing.claim_node;
         claim.begin = 0;
         claim.end = 0;
@@ -437,7 +440,6 @@ mgmem_status reserve_owned_claim(Backing &backing, bool foreign) noexcept {
         claim.token = token;
         claim.releasing = false;
         claim.foreign = foreign;
-        if (foreign) ++active_foreign_claims;
         backing.claim_active = true;
         return MGMEM_OK;
     } catch (const std::bad_alloc &) { return MGMEM_OUT_OF_MEMORY; }
@@ -455,39 +457,33 @@ mgmem_status publish_owned_claim(const Backing &backing, void *data, u64 bytes, 
         unsafe_address = true;
         return MGMEM_PROVIDER_ERROR;
     }
-    const auto own = backing.claim_node;
-    // A default-allocator block cannot overlap another live default block, so
-    // with no foreign claim the scan can only find a releasing claim, which is
-    // skipped anyway. Custom providers and imports must still be checked.
-    if (own->foreign || active_foreign_claims != 0) {
-        for (auto it = range_claims.begin(); it != range_claims.end(); ++it) {
-            if (it != own && !it->releasing && begin < it->end && it->begin < end) unsafe_address = true;
-        }
-    }
-    own->begin = begin;
-    own->end = end;
-    if (!range_valid) unsafe_address = true;
+    auto &own = *backing.claim_node;
+    const auto conflicts = [&](const RangeClaim &claim) {
+        return &claim != &own && !claim.releasing && ranges_overlap(begin, end, claim);
+    };
+    // Live blocks from the default allocator are disjoint. Foreign buffers
+    // can alias either registry and may still be involved in a release callback.
+    unsafe_address = !range_valid ||
+        std::any_of(foreign_claims.begin(), foreign_claims.end(), conflicts) ||
+        (own.foreign && std::any_of(default_claims.begin(), default_claims.end(), conflicts));
+    own.begin = begin;
+    own.end = end;
     return unsafe_address ? MGMEM_PROVIDER_ERROR : MGMEM_OK;
 }
 
 void releasing_claim(const Backing &backing, bool releasing) noexcept {
     if (!backing.claim_active) return;
     std::lock_guard<std::mutex> lock(range_mutex);
-    auto &claim = *backing.claim_node;
-    if (claim.foreign && claim.releasing != releasing) {
-        if (releasing) { if (active_foreign_claims) --active_foreign_claims; }
-        else ++active_foreign_claims;
-    }
-    claim.releasing = releasing;
+    backing.claim_node->releasing = releasing;
 }
 
 void drop_claim(Backing &backing) noexcept {
     if (!backing.claim_active) return;
     std::lock_guard<std::mutex> lock(range_mutex);
     auto node = backing.claim_node;
-    if (node->foreign && !node->releasing && active_foreign_claims) --active_foreign_claims;
-    if (range_spares.size() >= max_claim_spares) range_claims.erase(node);
-    else range_spares.splice(range_spares.end(), range_claims, node);
+    auto &claims = node->foreign ? foreign_claims : default_claims;
+    if (range_spares.size() >= max_claim_spares) claims.erase(node);
+    else range_spares.splice(range_spares.end(), claims, node);
     backing.claim_active = false;
     backing.claim_node = {};
 }
@@ -533,11 +529,11 @@ struct mgmem_domain {
 };
 
 namespace {
-// The only condition-variable wait is drain(), which rejects OPEN under the
-// same mutex. Closing/poison publication still notifies while holding that lock;
-// ordinary OPEN operations cannot have a drain waiter to wake.
-void notify_drain(mgmem_domain &domain) noexcept {
-    if (domain.state != MGMEM_OPEN) domain.changed.notify_all();
+// drain waits for CLOSED or provider failure. Only publish those outcomes
+// while holding the domain mutex so ordinary retirement never wakes waiters.
+void mark_provider_poisoned(mgmem_domain &domain) noexcept {
+    domain.provider_poisoned = true;
+    if (domain.state == MGMEM_CLOSING) domain.changed.notify_all();
 }
 
 void invalidate_arena_search(mgmem_domain &domain) noexcept {
@@ -649,9 +645,8 @@ mgmem_status reclaim_standalone(mgmem_domain &domain, Backing *backing,
             --domain.external_count;
         }
     }
-    else domain.provider_poisoned = true;
+    else mark_provider_poisoned(domain);
     --domain.pending;
-    notify_drain(domain);
     return success ? MGMEM_OK : MGMEM_PROVIDER_ERROR;
 }
 
@@ -684,9 +679,12 @@ mgmem_status reclaim_all(mgmem_domain &domain, std::unique_lock<std::mutex> &loc
     domain.external_count -= external_count_released;
     --domain.pending;
     domain.maintenance = false;
-    domain.provider_poisoned = !success;
-    if (success && closing) domain.state = MGMEM_CLOSED;
-    notify_drain(domain);
+    if (!success) {
+        mark_provider_poisoned(domain);
+    } else if (closing) {
+        domain.state = MGMEM_CLOSED;
+        domain.changed.notify_all();
+    }
     return success ? MGMEM_OK : MGMEM_PROVIDER_ERROR;
 }
 } // namespace
@@ -859,7 +857,6 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
             auto &allocation = domain->allocations.find(id)->value;
             commit_allocation(*domain, allocation, bytes);
             *out = {domain->id, id, runtime_origin()};
-            notify_drain(*domain);
             return MGMEM_OK;
         }
         // Failure or close raced with admission. Reservation stays charged and
@@ -876,11 +873,10 @@ mgmem_status mgmem_allocate_v1(mgmem_domain *domain, u64 bytes, u64 alignment,
         domain->reserved_bytes -= capacity;
         --domain->pending;
         if (!reclaimed) {
-            domain->provider_poisoned = true;
+            mark_provider_poisoned(*domain);
             domain->backing_bytes += capacity;
             status = MGMEM_PROVIDER_ERROR;
         }
-        notify_drain(*domain);
         return status;
     });
 }
@@ -966,7 +962,6 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
             --domain->pending;
             commit_allocation(*domain, domain->allocations.find(id)->value, input.capacity_bytes);
             *out = {domain->id, id, runtime_origin()};
-            notify_drain(*domain);
             return MGMEM_OK;
         }
         Backing failed = *backing_it;
@@ -984,13 +979,12 @@ static mgmem_status import_external_impl(mgmem_domain *domain,
         domain->pending_import_bytes -= input.capacity_bytes;
         --domain->pending;
         if (!reclaimed) {
-            domain->provider_poisoned = true;
+            mark_provider_poisoned(*domain);
             domain->backing_bytes += input.capacity_bytes;
             domain->external_bytes += input.capacity_bytes;
             ++domain->external_count;
             status = MGMEM_PROVIDER_ERROR;
         }
-        notify_drain(*domain);
         return status;
     });
 }
@@ -1036,7 +1030,6 @@ mgmem_status mgmem_domain_set_budget_v1(mgmem_domain *domain, u64 bytes) {
         if (domain->state != MGMEM_OPEN) return MGMEM_IS_CLOSED;
         if (domain->provider_poisoned) return MGMEM_PROVIDER_ERROR;
         domain->budget = bytes;
-        notify_drain(*domain);
         return MGMEM_OK;
     });
 }
@@ -1058,7 +1051,6 @@ mgmem_status mgmem_release_v1(mgmem_domain *domain, mgmem_handle_v1 handle) {
         }
         Backing *backing = allocation.backing;
         domain->allocations.erase_found(found);
-        notify_drain(*domain);
         return domain->mode == MGMEM_SYSTEM || backing->external
             ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
     });
@@ -1112,11 +1104,9 @@ mgmem_status mgmem_borrow_release_v1(mgmem_domain *domain, mgmem_handle_v1 handl
             Backing *backing = allocation.backing;
             domain->retiring_bytes -= allocation.bytes;
             domain->allocations.erase_found(found);
-            notify_drain(*domain);
             return domain->mode == MGMEM_SYSTEM || backing->external
                 ? reclaim_standalone(*domain, backing, lock) : MGMEM_OK;
         }
-        notify_drain(*domain);
         return MGMEM_OK;
     });
 }
@@ -1152,7 +1142,6 @@ mgmem_status mgmem_domain_begin_close_v1(mgmem_domain *domain) {
     return guarded([&]() -> mgmem_status {
         std::lock_guard<std::mutex> lock(domain->mutex);
         if (domain->state == MGMEM_OPEN) domain->state = MGMEM_CLOSING;
-        notify_drain(*domain);
         return MGMEM_OK;
     });
 }

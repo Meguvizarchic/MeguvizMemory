@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <future>
 #include <mutex>
 #include <stdexcept>
 #include <thread>
@@ -174,7 +175,12 @@ void rollback() {
     auto *d = create(); auto b = o.checked(); mgmem_handle_v1 h{}; mgmem_status result = MGMEM_OK;
     std::thread worker([&] { result = mgmem_import_external_checked_v1(d, &b, &h); });
     o.wait_entered(); CHECK(mgmem_domain_begin_close_v1(d) == MGMEM_OK);
-    CHECK(mgmem_domain_collect_v1(d) == MGMEM_BUSY); o.unblock(); worker.join();
+    CHECK(mgmem_domain_collect_v1(d) == MGMEM_BUSY);
+    auto drain = std::async(std::launch::async, [&] { return mgmem_domain_drain_v1(d, 15000); });
+    CHECK(drain.wait_for(std::chrono::milliseconds(10)) == std::future_status::timeout);
+    o.unblock(); worker.join();
+    CHECK(drain.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(drain.get() == MGMEM_PROVIDER_ERROR);
     CHECK(result == MGMEM_PROVIDER_ERROR && h.id == 0 && o.retains == 1 && o.releases == 1);
     check_claim(o); quarantined(d);
 }
