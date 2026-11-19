@@ -247,6 +247,12 @@ public:
         return MGMEM_OK;
     }
 
+    // Borrow the whole allocation with the same checks as a range borrow.
+    [[nodiscard]] MGMEM_CPP_BORROW_INLINE mgmem_status acquire_borrow(uint32_t access,
+                                mgmem::borrow &out) const noexcept {
+        return acquire_borrow(0, bytes_, access, out);
+    }
+
     // Synchronous views; pointers must not escape the body. READ supplies const
     // bytes, WRITE remains exclusive. A final checked release error takes
     // precedence over the body status; body exceptions use ordinary RAII.
@@ -300,13 +306,13 @@ private:
         mgmem::borrow view;
         const auto acquired = acquire_borrow(offset, length, Access, view);
         if (acquired != MGMEM_OK) return acquired;
-        pointer data;
-        if constexpr (Access == MGMEM_READ) data = view.data();
-        else data = view.write_data();
+        pointer address;
+        if constexpr (Access == MGMEM_READ) address = view.data();
+        else address = view.write_data();
         mgmem_status body_status = MGMEM_OK;
         if constexpr (std::is_same<result, void>::value)
-            std::forward<Function>(body)(data, view.size_bytes());
-        else body_status = std::forward<Function>(body)(data, view.size_bytes());
+            std::forward<Function>(body)(address, view.size_bytes());
+        else body_status = std::forward<Function>(body)(address, view.size_bytes());
         // The body may move/release the owner and domain. Only the local lease
         // is used from here; it already pins the native domain and payload.
         const auto released = view.release();
@@ -410,22 +416,14 @@ public:
     // Arena storage remains retained until explicit reset/trim, as with allocate.
     template<class Function>
     [[nodiscard]] mgmem_status with_allocation(uint64_t bytes, uint64_t alignment, Function &&body) const {
-        using result = std::invoke_result_t<Function, void *, uint64_t>;
-        static_assert(std::is_same<result, void>::value ||
-                      std::is_same<result, mgmem_status>::value,
-                      "Workspace body must return void or mgmem_status");
         owned_allocation allocation;
-        const auto allocated = allocate(bytes, alignment, allocation);
-        if (allocated != MGMEM_OK) return allocated;
-        borrow view;
-        const auto acquired = allocation.acquire_borrow(0, bytes, MGMEM_WRITE, view);
-        if (acquired != MGMEM_OK) return acquired;
-        if constexpr (std::is_same<result, void>::value) {
-            std::forward<Function>(body)(view.write_data(), view.size_bytes());
-            return MGMEM_OK;
-        } else {
-            return std::forward<Function>(body)(view.write_data(), view.size_bytes());
-        }
+        const auto allocation_status = allocate(bytes, alignment, allocation);
+        if (allocation_status != MGMEM_OK) return allocation_status;
+        // Pass values to the workspace callback as before, including callbacks
+        // that accept an rvalue pointer or length.
+        return allocation.with_write([&body](void *workspace, uint64_t length) -> decltype(auto) {
+            return std::forward<Function>(body)(std::move(workspace), std::move(length));
+        });
     }
 
     template<class Function>

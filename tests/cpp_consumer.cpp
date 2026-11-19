@@ -99,11 +99,11 @@ void test_borrow_outlives_wrappers(uint32_t mode) {
         mgmem::owned_allocation allocation;
         CHECK(domain.allocate(128, 64, allocation) == MGMEM_OK);
         mgmem::borrow writer;
-        CHECK(allocation.acquire_borrow(0, 128, MGMEM_WRITE, writer) == MGMEM_OK);
+        CHECK(allocation.acquire_borrow(MGMEM_WRITE, writer) == MGMEM_OK);
         CHECK(writer.write_data() != nullptr);
         std::memset(writer.write_data(), 0x6a, 128);
         CHECK(writer.release() == MGMEM_OK);
-        CHECK(allocation.acquire_borrow(0, 128, MGMEM_READ, escaped) == MGMEM_OK);
+        CHECK(allocation.acquire_borrow(MGMEM_READ, escaped) == MGMEM_OK);
         CHECK(escaped.write_data() == nullptr);
         CHECK(domain.reset() == (mode == MGMEM_ARENA ? MGMEM_BUSY : MGMEM_UNSUPPORTED));
         CHECK(domain.begin_close() == MGMEM_OK);
@@ -173,7 +173,8 @@ void test_budget_failure_preserves_old_data() {
     for (unsigned i = 0; i < 128; ++i) CHECK(bytes[i] == 0xd3);
     mgmem::borrow rejected;
     CHECK(old.acquire_borrow(0, 1, MGMEM_WRITE, rejected) == MGMEM_BUSY && !rejected);
-    CHECK(old.acquire_borrow(0, 1, MGMEM_READ, reader) == MGMEM_INVALID_ARGUMENT);
+    CHECK(old.acquire_borrow(MGMEM_READ, reader) == MGMEM_INVALID_ARGUMENT);
+    CHECK(reader.data() == bytes && reader.size_bytes() == 128);
     CHECK(reader.release() == MGMEM_OK);
     CHECK(old.release() == MGMEM_OK);
     mgmem_snapshot_v1 state{};
@@ -197,6 +198,7 @@ void test_empty_and_invalid_wrappers() {
     CHECK(allocation.release() == MGMEM_OK && view.release() == MGMEM_OK);
     CHECK(domain.allocate(1, 1, allocation) == MGMEM_INVALID_ARGUMENT);
     CHECK(allocation.acquire_borrow(0, 1, MGMEM_READ, view) == MGMEM_INVALID_ARGUMENT);
+    CHECK(allocation.acquire_borrow(MGMEM_READ, view) == MGMEM_INVALID_ARGUMENT && !view);
     auto bad = options(MGMEM_SYSTEM);
     bad.required_flags = 1;
     CHECK(mgmem::domain::create(bad, domain) == MGMEM_UNSUPPORTED && !domain);
@@ -239,7 +241,7 @@ void test_scoped_allocation(uint32_t mode) {
     CHECK(domain.with_allocation(0, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
     CHECK(domain.with_allocation(64, 3, body) == MGMEM_INVALID_ARGUMENT && calls == 1);
     CHECK(domain.with_allocation(2048, body) == MGMEM_OUT_OF_BUDGET && calls == 1);
-    CHECK(domain.with_allocation(64, 64, [&](void *data, uint64_t bytes) -> mgmem_status {
+    CHECK(domain.with_allocation(64, 64, [&](void *&&data, uint64_t &&bytes) -> mgmem_status {
         ++calls;
         CHECK(data && bytes == 64 && (reinterpret_cast<uintptr_t>(data) & 63) == 0);
         return MGMEM_BUSY;
