@@ -159,7 +159,7 @@ class ReplayWorkerTests(unittest.TestCase):
         candidates = [
             subject.ROOT / 'build/windows-candidate-ce2a5b2-20261101/candidate-readback/sdk/bin/mgmem.dll',
             subject.ROOT / 'build/core/Release/mgmem.dll',
-            subject.ROOT / 'build/core/libmgmem.so.1.2.1',
+            subject.ROOT / 'build/core/libmgmem.so.1.2.2',
         ]
         core = next((p for p in candidates if p.is_file() and not p.is_symlink()), None)
         if core is None:

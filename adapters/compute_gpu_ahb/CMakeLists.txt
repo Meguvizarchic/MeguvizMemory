@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(MeguvizMemoryGpuAhbBridge VERSION 1.2.1 LANGUAGES C CXX)
+project(MeguvizMemoryGpuAhbBridge VERSION 1.2.2 LANGUAGES C CXX)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 find_package(MeguvizMemory CONFIG REQUIRED)

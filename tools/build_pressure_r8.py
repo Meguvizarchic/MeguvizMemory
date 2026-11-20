@@ -41,7 +41,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sdk", type=Path, required=True)
     parser.add_argument("--java-home", type=Path, required=True)
-    parser.add_argument("--aar", type=Path, default=ROOT / "dist/MeguvizMemory-Android-Pressure-1.2.1.aar")
+    parser.add_argument("--aar", type=Path, default=ROOT / "dist/MeguvizMemory-Android-Pressure-1.2.2.aar")
     parser.add_argument("--abi", choices=("arm64-v8a", "x86_64"), default="arm64-v8a")
     parser.add_argument("--memory-sdk", type=Path, help="paired override: installed shared SDK for selected ABI")
     parser.add_argument("--native-dir", type=Path, help="paired override: freshly built JNI for selected ABI")
@@ -88,7 +88,7 @@ def main():
             raw = path.read_bytes()
             require(raw[:6] == b"\x7fELF\x02\x01" and int.from_bytes(raw[18:20], "little") == {"arm64-v8a": 183, "x86_64": 62}[args.abi], "override_abi_mismatch")
             overrides.append({"kind": label, "path": path.resolve().relative_to(ROOT).as_posix(), "sha256": digest(path)})
-        input_aar = out / ("MeguvizMemory-Android-Pressure-1.2.1-" + args.abi + ".aar")
+        input_aar = out / ("MeguvizMemory-Android-Pressure-1.2.2-" + args.abi + ".aar")
         with zipfile.ZipFile(args.aar) as base, zipfile.ZipFile(input_aar, "x", compression=zipfile.ZIP_DEFLATED) as derived:
             require(len(base.namelist()) == len(set(base.namelist())), "duplicate_base_aar_members")
             for name in base.namelist():

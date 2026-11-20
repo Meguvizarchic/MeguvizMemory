@@ -36,9 +36,9 @@ class HostCandidateContracts(unittest.TestCase):
             self.assertEqual(subject.common.file_identity(requested), subject.common.file_identity(target))
 
     def linux_fixture(self):
-        files = {'sdk/lib/libmgmem.so.1.2.1': b'core', 'sdk/lib/libmgmem_pressure.a': b'pressure',
+        files = {'sdk/lib/libmgmem.so.1.2.2': b'core', 'sdk/lib/libmgmem_pressure.a': b'pressure',
                  'sdk/lib/libmgmem_pressure_jni.so': b'jni', 'java/managed-api.jar': b'jar'}
-        links = {'sdk/lib/libmgmem.so': 'libmgmem.so.1', 'sdk/lib/libmgmem.so.1': 'libmgmem.so.1.2.1'}
+        links = {'sdk/lib/libmgmem.so': 'libmgmem.so.1', 'sdk/lib/libmgmem.so.1': 'libmgmem.so.1.2.2'}
         return files, links
 
     def test_tar_roundtrip_preserves_only_relative_loader_links(self):
@@ -96,9 +96,9 @@ class HostCandidateContracts(unittest.TestCase):
             subject.scan_host_archive(subject.tar_bytes({'nested.zip': nested}, {}), ['never-match'], False)
 
     def test_tar_forbidden_link_and_casefold_duplicates_are_rejected(self):
-        files = {'sdk/lib/libmgmem.so.1.2.1': b'core'}
+        files = {'sdk/lib/libmgmem.so.1.2.2': b'core'}
         with self.assertRaisesRegex(ValueError, 'forbidden_host_archive_member'):
-            subject.tar_bytes(files, {'sdk/lib/private.key': 'libmgmem.so.1.2.1'})
+            subject.tar_bytes(files, {'sdk/lib/private.key': 'libmgmem.so.1.2.2'})
         with self.assertRaisesRegex(ValueError, 'duplicate_host_member'):
             subject.tar_members(subject.tar_bytes({'sdk/Foo': b'a', 'sdk/foo': b'b'}, {}))
 

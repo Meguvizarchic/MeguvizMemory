@@ -97,7 +97,7 @@ def main():
     signatures=run('verify-signature',[java,'-jar',tools/'lib/apksigner.jar','verify','--print-certs',apk])
     certificate=re.findall(r'certificate SHA-256 digest:\s*([0-9a-fA-F]+)',signatures)
     if len(certificate)!=1:raise RuntimeError('One diagnostic signing certificate expected')
-    aar=out/'MeguvizMemory-Android-Pressure-1.2.1.aar'
+    aar=out/'MeguvizMemory-Android-Pressure-1.2.2.aar'
     manifest=b'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.github.jichuo1.meguviz.memory.android"><uses-sdk android:minSdkVersion="27" /></manifest>\n'
     with zipfile.ZipFile(aar,'x',compression=zipfile.ZIP_DEFLATED) as package:
         package.writestr('AndroidManifest.xml',manifest);package.write(library_jar,'classes.jar')

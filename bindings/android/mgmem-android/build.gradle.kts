@@ -6,7 +6,7 @@ plugins {
     signing
 }
 
-val publicationVersion = providers.gradleProperty("meguviz.version").orElse("1.2.1")
+val publicationVersion = providers.gradleProperty("meguviz.version").orElse("1.2.2")
 val centralStagingDir = providers.gradleProperty("centralStagingDir").orElse("../../build/central-staging")
 val signCentral = providers.gradleProperty("meguviz.sign").map {
     require(it == "true" || it == "false") { "meguviz.sign must be true or false" }

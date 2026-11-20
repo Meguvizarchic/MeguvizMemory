@@ -407,8 +407,8 @@ def sdk_files_for_host(sdk, is_windows):
     require(expected | cmake <= set(files), 'host_sdk_member_missing')
     if not is_windows:
         require('sdk/lib/libmgmem.so' in links and 'sdk/lib/libmgmem.so.1' in links and
-                'sdk/lib/libmgmem.so.1.2.1' in files, 'host_linux_core_links_missing')
-        expected |= {'sdk/lib/libmgmem.so.1.2.1'}
+                'sdk/lib/libmgmem.so.1.2.2' in files, 'host_linux_core_links_missing')
+        expected |= {'sdk/lib/libmgmem.so.1.2.2'}
     allowed = expected | cmake | {name for name in files if name.startswith(include_prefix)}
     require(set(files) == allowed, 'host_sdk_unexpected_member')
     return files, links
@@ -691,7 +691,7 @@ def build_host(args, work, source, lock_path, records, markers, is_windows):
     pressure_export_count = validate_pressure_archive_exports(tools, clean, source, work, operations)
     files[pressure_name] = pressure_clean
 
-    core = sdk / ('bin/mgmem.dll' if is_windows else 'lib/libmgmem.so.1.2.1')
+    core = sdk / ('bin/mgmem.dll' if is_windows else 'lib/libmgmem.so.1.2.2')
     jni = sdk / ('bin/mgmem_pressure_jni.dll' if is_windows else 'lib/libmgmem_pressure_jni.so')
     core_exports = required_core_exports(source)
     expected = common.native_names(source) | {'mgmem_android_borrow_register_v1', 'mgmem_android_borrow_cancel_v1',

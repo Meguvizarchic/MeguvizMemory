@@ -663,7 +663,9 @@ def build_candidate(args, work, source, lock_bytes, records, markers):
         clean_core = clean / 'libmgmem.so'; clean_jni = clean / 'libmgmem_pressure_jni.so'; clean_static = clean / 'libmgmem_pressure.a'
         for label, before, after in (('core', original_core, clean_core), ('jni', original_jni, clean_jni),
                                      ('static', original_static, clean_static)):
-            run_tool([tools['llvm-strip'], '--strip-debug', '--remove-section=.comment', '-o', after, before],
+            # ELF shared libraries use the dynamic symbols. Keep link-time symbols in the archive.
+            strip_mode = '--strip-debug' if label == 'static' else '--strip-unneeded'
+            run_tool([tools['llvm-strip'], strip_mode, '--remove-section=.comment', '-o', after, before],
                      work, operations, abi + '-' + label + '-strip')
         comparison = {}
         sanitized = {}

@@ -47,7 +47,7 @@ configure_package_config_file(cmake/MeguvizMemoryComputeReadBridgeConfig.cmake.i
   ${CMAKE_CURRENT_BINARY_DIR}/MeguvizMemoryComputeReadBridgeConfig.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MeguvizMemoryComputeReadBridge)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/MeguvizMemoryComputeReadBridgeConfigVersion.cmake
-  VERSION 1.2.1 COMPATIBILITY SameMajorVersion)
+  VERSION 1.2.2 COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/MeguvizMemoryComputeReadBridgeConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/MeguvizMemoryComputeReadBridgeConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MeguvizMemoryComputeReadBridge)
