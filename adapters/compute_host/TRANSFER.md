@@ -1,6 +1,6 @@
 # Memory 与 Compute 缓冲传输
 
-`<mgmem/compute_transfer.h>` 提供 C 的 `mgmem_upload(&transfer)`、`mgmem_download(&transfer)`，C++ 可用 `mgmem::compute::upload(transfer)` 和 `mgmem::compute::download(transfer)`。链接 `MeguvizMemoryComputeHostBridge::host_bridge`。
+`<mgmem/compute_transfer.h>` 提供 C 接口 `mgmem_upload(&transfer)` 与 `mgmem_download(&transfer)`，C++ 可使用 `mgmem::compute::upload(transfer)` 与 `mgmem::compute::download(transfer)`，链接目标为 `MeguvizMemoryComputeHostBridge::host_bridge`。
 
 ```c
 mgmem_transfer transfer = {0};
@@ -23,8 +23,10 @@ if (result.status == MGMEM_OK && result.origin_status == MGC_ACCEPTED) {
 }
 ```
 
-上传需要目标 WRITE lease；下载需要来源 READ lease。传输复用既有 Compute `COPY`，在 Vulkan 路径会进行中转分配和 memcpy，再上传或下载；不是 GPU 内存零拷贝，也不保证性能提升。Vulkan 路径要求长度和两侧 lease 偏移为 4 字节倍数，GPU 偏移还须满足设备对齐要求。AHardwareBuffer 不支持该 `COPY` 路径；异步任务可能在提交已接受后因对齐、设备丢失或不支持的资源类型而失败，应检查 `MgcCompletion` 的终态和状态。
+上传需要目标为 `WRITE` lease；下载需要来源为 `READ` lease。传输复用既有 Compute `COPY` 通道：在 Vulkan 路径下会先进行中转分配和 `memcpy`，再执行上传或下载，因此**不是 GPU 内存零拷贝**，也不承诺性能提升。Vulkan 路径要求长度与两侧 lease 偏移量为 4 字节整数倍，GPU 侧偏移量还需满足设备对齐要求。`AHardwareBuffer` 不支持该 `COPY` 路径；异步任务即使已被接收，仍可能因对齐、设备丢失或不支持的资源类型而失败，须检查 `MgcCompletion` 的终态与状态码。
 
-调用者的 Compute lease 在成功和失败时均仍归调用者持有；桥只为提交保留并转移额外引用。Memory 缓冲的读或写借用一直保持到提交引用归还，即 GPU 工作已退休、主机最终处理和完成回调结束之后。回调可能在函数返回前执行；其上下文及 Memory domain、错误回调上下文需要保持存活，回调不得抛异常。不要在任务退休前访问提交的 lease。`mgc_ticket_query` 显示完成并不表示回调已返回；需要等待 `mgc_session_drain` 才能确认提交引用已经归还。不要在该 session 的完成回调内调用 drain，Compute 会返回 BUSY。如果失败返回没有 ticket，Memory 借用会同步归还；若底层归还自身失败则按 host bridge 的错误回调合同处理。
+无论提交成功还是失败，传入的 Compute `lease` 始终由调用方持有，桥只为本次提交保留额外引用。Memory 缓冲的读/写借用会一直保活到提交引用归还——即 GPU 工作已结束、主机后处理和完成回调均返回之后。完成回调可能在函数返回前就被触发，因此其上下文、Memory 域以及错误回调上下文都必须保持存活，且回调不得抛异常。在任务执行结束前禁止访问提交出去的 `lease`；`mgc_ticket_query` 显示完成并不代表回调已退出，必须调用 `mgc_session_drain` 确认提交引用完全归还（严禁在该 `session` 的完成回调内调用 `drain`，否则 Compute 会返回 `BUSY`）。若提交同步失败且未返回 `ticket`，Memory 借用会立即同步归还；若归还自身失败，则按 host bridge 的错误回调合同处理。
 
-此接口支持 SYSTEM 和 ARENA 域，只接受已有 Compute lease 和同一 Compute domain 的 session；不会修改 capability gate。CPU reference 只用于验证传输合同，不代表 GPU 驱动或性能已验证。
+## 适用范围与验证说明
+
+本接口支持 System 和 Arena 域，仅接收已有的 Compute `lease` 与同一 Compute 域的 `session`，不会修改原有 capability gate。CPU reference 实现仅用于验证传输合同，不代表真实 GPU 驱动或性能已获验证。

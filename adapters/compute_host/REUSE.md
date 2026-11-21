@@ -1,6 +1,6 @@
 # 复用传输准备
 
-对不变的上传数据或多次下载，`<mgmem/compute_stage.h>` 可一次准备并重复提交，省去每次重新创建 Memory 借用、Compute host resource 和 host lease。链接目标仍是 `MeguvizMemoryComputeHostBridge::host_bridge`。一次性调用继续使用 `mgmem_upload` / `mgmem_download`。
+针对上传内容不变或需多次下载的场景，`<mgmem/compute_stage.h>` 支持一次准备并重复提交，避免每次都重建 Memory 借用、Compute host resource 与 host lease，链接目标仍为 `MeguvizMemoryComputeHostBridge::host_bridge`。单次传输继续使用 `mgmem_upload` / `mgmem_download`。
 
 ```cpp
 auto prepared = mgmem::compute::prepare_upload(transfer);
@@ -21,10 +21,12 @@ if (prepared.status == MGMEM_OK) {
 }
 ```
 
-准备使用 `transfer` 的 `memory`、`allocation`、`offset`、`bytes`、`compute`、`on_error` 和 `error_context`。每次 send 使用 `session`、`device`、`request_id` 及完成回调字段；设备 lease 和返回的 ticket 仍由调用方持有。Compute 原有能力门、COPY 的对齐和 AHardwareBuffer 限制均不变。
+准备阶段仅读取 `transfer` 中的 `memory`、`allocation`、`offset`、`bytes`、`compute`、`on_error` 和 `error_context`。每次 `send` 使用 `session`、`device`、`request_id` 及完成回调字段；设备 `lease` 与返回的 `ticket` 仍由调用方持有。Compute 原有的 capability gate、COPY 对齐以及 `AHardwareBuffer` 限制均保持不变。
 
-阶段持续占有 Memory 借用。上传阶段持有 READ，内容必须在整个阶段内不变；需要逐帧更改上传内容时，请使用一次性接口或先关闭并重新准备。下载阶段持有 WRITE，完成后通过 `mgmem_stage_map` / `mgmem_stage_unmap` 安全访问数据；映射期间不允许提交或关闭。Memory 其他借用在阶段存活期间遵循普通的读写互斥。
+`stage` 在整个存活期持续占用 Memory 借用：上传阶段持有 `READ` 借用，源内容必须保持不变（若需逐帧更新内容，请使用一次性接口或关闭后重新准备）；下载阶段持有 `WRITE` 借用，完成后可通过 `mgmem_stage_map` / `mgmem_stage_unmap` 安全读写，映射期间禁止调用 `send` 或 `close`。在 `stage` 存活期间，Memory 的其他借用仍遵守正常的读写互斥规则。
 
-单个阶段最多一个提交未完成；执行、取消、完成回调和上下文释放回调结束前，新的 send、map 或 close 会返回 BUSY。调用方必须串行化所有阶段 API 调用，并确保阶段至少存活到 send 返回；回调可在 send 返回前发生，不可假设回调延迟执行。关闭成功消费阶段句柄，但 Compute 可能仍在归还最后的提交引用；销毁 Memory domain 或错误回调上下文前，仍需在 session 回调外 drain。调用方原有的 device lease 始终属于调用方。
+同一时间每个 `stage` 最多只允许一个未完成提交；在任务执行、取消、完成回调以及上下文释放回调彻底结束前，再次调用 `send`、`map` 或 `close` 会返回 `MGMEM_BUSY`。调用方必须串行化所有 `stage` 接口调用，并确保 `stage` 存活至 `send` 返回（注意完成回调可能在 `send` 返回前即已执行）。`mgmem_stage_close` 成功会消费句柄，但 Compute 侧可能仍在异步释放最后的提交引用，因此在销毁 Memory 域或错误回调上下文前，仍须在 `session` 回调外执行 `drain`。
 
-此接口适合多次传输均摊准备及最终关闭成本。它不会将 CPU 内存变成 GPU 映射，不承诺零拷贝或设备侧性能提升。
+## 适用范围与验证说明
+
+本接口适合通过多次传输均摊准备与销毁开销；它不会将 CPU 内存变为 GPU 直接映射，也不承诺零拷贝或设备端性能提升。

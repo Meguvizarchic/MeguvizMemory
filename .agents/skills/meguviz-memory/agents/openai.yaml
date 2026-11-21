@@ -1,0 +1,4 @@
+interface:
+  display_name: "MeguvizMemory 接入与迁移"
+  short_description: "为 C++ 和 Android 接入内存域预算、租约与安全关闭"
+  default_prompt: "请使用 $meguviz-memory 检查当前工程，制定最小接入或迁移方案，完成代码适配并运行验证。"
